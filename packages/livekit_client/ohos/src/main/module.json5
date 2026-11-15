@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "livekit_client",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

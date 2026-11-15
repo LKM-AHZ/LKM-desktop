@@ -1,0 +1,337 @@
+/// Used as a base exception for all authenticator exceptions thrown by this
+/// package.
+sealed class AuthenticatorException implements Exception {}
+
+/// Thrown when the user cancels the passkey flow.
+///
+/// Platforms: Android, iOS
+///
+/// Suggestions:
+/// - allow the user to start the flow again.
+class PasskeyAuthCancelledException implements AuthenticatorException {
+  /// Constructor
+  PasskeyAuthCancelledException([this.message]);
+
+  /// The message reported by the platform, if any.
+  final String? message;
+}
+
+/// Thrown when none of the allowed credentials could be used to authenticate.
+///
+/// Android reports this both when the user skips the biometric prompt and when
+/// the credential provider fails to use the selected passkey, so the two can't
+/// be told apart. It extends [PasskeyAuthCancelledException] so existing
+/// cancellation handling keeps working, while [message] holds what the
+/// platform reported.
+///
+/// Platforms: Android
+///
+/// Suggestions:
+/// - allow the user to start the flow again.
+/// - log [message] to diagnose credential provider failures.
+class CredentialNotAuthenticatedException
+    extends PasskeyAuthCancelledException {
+  /// Constructor
+  CredentialNotAuthenticatedException([super.message]);
+}
+
+/// This exception is thrown when the user tries to login but is not logged in
+/// to a Google account on his device. Being logged in to a Google account is
+/// mandatory for passkeys to work on Android devices.
+///
+/// Platforms: Android
+///
+/// Suggestions:
+/// - ask the user to sign in to his Google account first.
+/// - use a fallback method (e.g. login via email OTP)
+class MissingGoogleSignInException implements AuthenticatorException {
+  /// Constructor
+  MissingGoogleSignInException();
+}
+
+/// This exception is thrown when the passkey can not be retrieved from the
+/// entity that is used for passkey syncing. Currently this error is observed
+/// when testing on Android emulators. In these cases you need to restart the
+/// emulator using the 'Cold Boot Now' option.
+///
+/// Platforms: Android
+///
+/// Suggestions:
+/// - make sure that the user is signed in to his Google account
+class SyncAccountNotAvailableException implements AuthenticatorException {
+  /// Constructor
+  SyncAccountNotAvailableException();
+}
+
+/// Thrown when the user tries to register but one of the excluded credentials
+/// matches an existing one on your local device.
+///
+/// Platforms: Android, iOS, macOS, Web
+///
+/// Suggestions:
+/// - Inform the user that the credential already exists.
+/// - Allow the user to proceed with authentication instead of registration.
+class ExcludeCredentialsCanNotBeRegisteredException
+    implements AuthenticatorException {
+  /// Constructor
+  ExcludeCredentialsCanNotBeRegisteredException();
+}
+
+/// This exception is thrown when the user tries to login but does not have any
+/// credentials available for the authenticator.
+///
+/// Platforms: Android, iOS
+///
+/// Suggestions:
+/// - use a fallback method (e.g. login via email OTP)
+class NoCredentialsAvailableException implements AuthenticatorException {
+  /// Constructor
+  NoCredentialsAvailableException();
+}
+
+/// Thrown when the relying party domain is not associated with the app.
+class DomainNotAssociatedException implements AuthenticatorException {
+  /// Constructor
+  DomainNotAssociatedException(this.message);
+
+  /// The error message describing the association failure.
+  final String? message;
+
+  @override
+  String toString() => message ?? '';
+}
+
+/// This exception is thrown when the device does not support passkeys.
+/// Suggestions:
+/// - update the device OS to a newer version
+class DeviceNotSupportedException implements AuthenticatorException {
+  /// Constructor
+  DeviceNotSupportedException();
+}
+
+/// During the create credential flow, this is thrown when no viable creation
+/// options were found for the given CreateCredentialRequest. (no passkeys
+/// providers available or none enabled)
+///
+/// Platforms: Android
+///
+/// Suggestions:
+/// - use a fallback method (e.g. redirect the user to the device settings)
+/// - ask the user to enable passkeys in the device settings
+class NoCreateOptionException implements AuthenticatorException {
+  /// Constructor
+  NoCreateOptionException(this.message);
+
+  /// The error message describing why no creation option was available.
+  final String? message;
+
+  @override
+  String toString() => message ?? '';
+}
+
+/// This exception is thrown when the user tries to login or register but the
+/// operation times out.
+///
+/// Platforms: Android, iOS
+///
+/// Suggestions:
+/// - ask the user to try again
+class TimeoutException implements AuthenticatorException {
+  /// Constructor
+  TimeoutException(this.message);
+
+  /// The error message describing the timeout.
+  final String? message;
+
+  @override
+  String toString() => message ?? '';
+}
+
+/// This exception is thrown when a string is not a valid Base64URL encoded
+/// string.
+sealed class MalformedBase64Url implements AuthenticatorException {
+  @override
+  String toString();
+}
+
+/// This exception is thrown when the user tries to login or register but the
+/// challenge is not a valid Base64URL encoded string.
+///
+/// Platforms: Android, iOS, Web
+/// Suggestions:
+/// - make sure that the challenge is a valid Base64URL encoded string without
+///   padding
+class MalformedBase64UrlChallenge implements MalformedBase64Url {
+  /// Constructor
+  MalformedBase64UrlChallenge();
+
+  @override
+  String toString() =>
+      'Please make sure that the Challenge is a valid Base64URL encoded '
+      'string without padding.';
+}
+
+/// This exception is thrown when the user tries to login or register but the
+/// credential ID is not a valid Base64URL encoded string.
+///
+/// Platforms: Android, iOS, Web
+/// Suggestions:
+/// - make sure that the credential ID is a valid Base64URL encoded string
+///   without padding
+class MalformedBase64UrlCredentialID implements MalformedBase64Url {
+  /// Constructor
+  MalformedBase64UrlCredentialID();
+
+  @override
+  String toString() =>
+      'Please make sure that all the CredentialIDs are a valid Base64URL '
+      'encoded string without padding.';
+}
+
+/// This exception is thrown when the user tries to login or register but the
+/// user ID is not a valid Base64URL encoded string.
+///
+/// Platforms: Android, iOS, Web
+/// Suggestions:
+/// - make sure that the user ID is a valid Base64URL encoded string
+class MalformedBase64UrlUserID implements MalformedBase64Url {
+  /// Constructor
+  MalformedBase64UrlUserID();
+
+  @override
+  String toString() =>
+      'Please make sure that all the UserID is a valid Base64URL encoded '
+      'string.';
+}
+
+/// This exception is thrown when an exception is thrown by the authenticator
+/// that we do not handle so far in this package.
+///
+/// Platforms: Android, iOS
+///
+/// Suggestions:
+/// - report that case the the package authors
+class UnhandledAuthenticatorException implements AuthenticatorException {
+  /// Constructor
+  UnhandledAuthenticatorException(this.code, this.message, this.details);
+
+  /// The error code of the exception
+  final String code;
+
+  /// The error message of the exception
+  final String? message;
+
+  /// The details of the exception
+  final dynamic details;
+
+  /// Returns a string representation of the exception
+  @override
+  String toString() {
+    return 'Please report this exception to the package authors '
+        '(code: $code, message: $message, details: $details}';
+  }
+}
+
+/// This exception is thrown when passkey-related APIs are called on an
+/// unsupported Android version (API < 28).
+///
+/// Platforms: Android
+///
+/// Suggestions:
+/// - Check the device's Android version before calling passkey APIs, or handle
+///   this exception gracefully.
+class PasskeyUnsupportedException implements AuthenticatorException {
+  /// Constructor
+  PasskeyUnsupportedException([this.message]);
+
+  /// The error message, if any.
+  final String? message;
+
+  @override
+  String toString() =>
+      message ?? 'Passkeys are only supported on Android API 28 and above.';
+}
+
+/// This exception is thrown when the Android Restore Credentials APIs are
+/// called on a platform that does not have them: any platform other than
+/// Android, or an Android version below API 28.
+///
+/// Platforms: Android, iOS, macOS, Web, Windows
+///
+/// Suggestions:
+/// - Only call the restore credential methods on Android, for example by
+///   checking `defaultTargetPlatform == TargetPlatform.android` first.
+class RestoreCredentialUnsupportedException implements AuthenticatorException {
+  /// Constructor
+  RestoreCredentialUnsupportedException([this.message]);
+
+  /// The error message, if any.
+  final String? message;
+
+  @override
+  String toString() =>
+      message ?? 'Restore credentials are only available on Android.';
+}
+
+/// Thrown by a conditional (automatic) create when the platform decides not to
+/// create a passkey, typically because the user did not just sign in with a
+/// saved password for this account. No UI was shown.
+///
+/// Platforms: Android, iOS, macOS, Web
+///
+/// Suggestions:
+/// - treat it as "nothing happened" and, if you want a passkey, fall back to
+///   an ordinary (modal) create.
+class ConditionalCreateNotEligibleException implements AuthenticatorException {
+  /// Constructor
+  ConditionalCreateNotEligibleException([this.message]);
+
+  /// The error message, if any.
+  final String? message;
+
+  @override
+  String toString() =>
+      message ?? 'The platform did not create a passkey without asking.';
+}
+
+/// Thrown when a conditional (automatic) create is requested on a platform or
+/// OS version that does not support it (Windows, iOS/macOS below 18, a
+/// browser without conditional create, an Android credential provider without
+/// conditional create, or an Apple request that only allows a cross-platform
+/// authenticator).
+///
+/// Platforms: Android, iOS, macOS, Web, Windows
+///
+/// Suggestions:
+/// - fall back to an ordinary (modal) create.
+class ConditionalCreateUnsupportedException implements AuthenticatorException {
+  /// Constructor
+  ConditionalCreateUnsupportedException([this.message]);
+
+  /// The error message, if any.
+  final String? message;
+
+  @override
+  String toString() =>
+      message ?? 'Conditional passkey creation is not supported here.';
+}
+
+/// Thrown when saved passwords are requested on a platform without a
+/// credential manager that returns them to the app (anything but Android).
+///
+/// Platforms: iOS, macOS, Web, Windows
+///
+/// Suggestions:
+/// - only call `getPasswordOrPasskey` on Android and use the platform's
+///   autofill elsewhere.
+class PasswordCredentialUnsupportedException implements AuthenticatorException {
+  /// Constructor
+  PasswordCredentialUnsupportedException([this.message]);
+
+  /// The error message, if any.
+  final String? message;
+
+  @override
+  String toString() =>
+      message ?? 'Saved passwords can only be requested on Android.';
+}

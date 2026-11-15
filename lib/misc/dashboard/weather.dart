@@ -473,7 +473,8 @@ Future<String> _resolvePlaceName(double latitude, double longitude) async {
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS ||
-          defaultTargetPlatform == TargetPlatform.macOS);
+          defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.ohos);
 
   if (!canReverseGeocode) return fallback;
 
@@ -515,10 +516,7 @@ Future<WeatherSnapshot> fetchWeatherSnapshot(
   Dio apiClient, {
   bool useIpLocationOnly = false,
 }) async {
-  final location = await _resolveLocation(
-    apiClient,
-    ipOnly: useIpLocationOnly,
-  );
+  final location = await _resolveLocation(apiClient, ipOnly: useIpLocationOnly);
 
   final weather = WeatherApi(
     userAgent: 'Solian/Island (https://solsynth.dev)',
@@ -701,10 +699,7 @@ final weatherSnapshotProvider = FutureProvider.autoDispose<WeatherSnapshot>((
   final useIpLocationOnly = ref.watch(
     appSettingsProvider.select((settings) => settings.weatherNoGeolocation),
   );
-  return fetchWeatherSnapshot(
-    apiClient,
-    useIpLocationOnly: useIpLocationOnly,
-  );
+  return fetchWeatherSnapshot(apiClient, useIpLocationOnly: useIpLocationOnly);
 });
 
 // ---------------------------------------------------------------------------

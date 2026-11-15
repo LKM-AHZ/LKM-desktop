@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import runpy
 import struct
 import subprocess
 import tempfile
@@ -20,10 +21,14 @@ def verify(hap: Path, require_aot: bool = False) -> dict:
         "libflutter.so", "libwebf.so", "libquickjs.so", "libsqlite3.so",
         "libopenmls_frb.so", "libsuper_native_extensions.so",
         "libinappwebview.so", "libc++_shared.so",
+        "libmpv.so", "libohos_webrtc.so",
     }
     if require_aot:
         required.add("libapp.so")
     libraries = {}
+    runtimes = runpy.run_path(str(Path(__file__).with_name("prepare-ohos-media.py")))
+    expected_hashes = {"libmpv.so": runtimes["MPV_HASH"],
+                       "libohos_webrtc.so": runtimes["RTC_HASH"]}
     with ZipFile(hap) as archive, tempfile.TemporaryDirectory() as directory:
         corrupt = archive.testzip()
         if corrupt:
@@ -34,6 +39,20 @@ def verify(hap: Path, require_aot: bool = False) -> dict:
             raise ValueError(f"Missing runtime libraries: {sorted(missing)}")
         for item in entries:
             data = archive.read(item)
+            name = Path(item.filename).name
+            runtime_hash = hashlib.sha256(data).hexdigest()
+            transformation = "none"
+            if name in expected_hashes and runtime_hash != expected_hashes[name]:
+                package = {"libmpv.so": "media_kit_libs_ohos_video",
+                           "libohos_webrtc.so": "flutter_webrtc"}[name]
+                original = Path(__file__).resolve().parent.parent / "packages" / package / "ohos/libs/arm64-v8a" / name
+                if not original.is_file() or hashlib.sha256(original.read_bytes()).hexdigest() != expected_hashes[name]:
+                    raise ValueError(f"Pinned native runtime source hash mismatch: {name}")
+                stripped = Path(directory) / ("expected-" + name)
+                subprocess.run([str(ndk / "llvm/bin/llvm-strip"), "-o", str(stripped), str(original)], check=True)
+                if hashlib.sha256(stripped.read_bytes()).hexdigest() != runtime_hash:
+                    raise ValueError(f"Pinned native runtime/NDK strip hash mismatch: {name}")
+                transformation = "llvm-strip"
             if (data[:6] != b"\x7fELF\x02\x01" or
                     struct.unpack_from("<H", data, 18)[0] != 183 or
                     not item.filename.startswith("libs/arm64-v8a/")):
@@ -58,6 +77,9 @@ def verify(hap: Path, require_aot: bool = False) -> dict:
                     if symbol not in defined:
                         raise ValueError(f"Missing runtime export: {symbol}")
             libraries[library.name] = {"bytes": len(data), "needed": needed}
+            if name in expected_hashes:
+                libraries[library.name].update(sha256=runtime_hash,
+                    original_sha256=expected_hashes[name], transformation=transformation)
     with hap.open("rb") as stream:
         digest = hashlib.file_digest(stream, "sha256").hexdigest()
     return {

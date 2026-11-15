@@ -27,31 +27,33 @@ class ComposeRecorder extends HookConsumerWidget {
     final recordingStartAt = useState<DateTime?>(null);
     final recordingDuration = useState<Duration>(Duration(seconds: 0));
 
-    StreamSubscription? originalAmplitude;
-    StreamController<Amplitude> amplitudeStream = StreamController();
-    var record = AudioRecorder();
+    final originalAmplitude = useRef<StreamSubscription?>(null);
+    final amplitudeStream = useMemoized(
+      () => StreamController<Amplitude>(),
+      [],
+    );
+    final record = useMemoized(() => AudioRecorder(), []);
 
     final resultPath = useState<String?>(null);
 
     Future<void> startRecord() async {
-      recording.value = true;
-
       // Check and request permission if needed
       final tempPath = !kIsWeb ? (await getTemporaryDirectory()).path : 'temp';
       final uuid = const Uuid().v4().substring(0, 8);
       if (!await record.hasPermission()) return;
 
       const recordConfig = RecordConfig(
-        encoder: AudioEncoder.pcm16bits,
+        encoder: AudioEncoder.wav,
         autoGain: true,
         echoCancel: true,
         noiseSuppress: true,
       );
-      resultPath.value = '$tempPath/solar-network-record-$uuid.m4a';
+      resultPath.value = '$tempPath/solar-network-record-$uuid.wav';
       await record.start(recordConfig, path: resultPath.value!);
+      recording.value = true;
 
       recordingStartAt.value = DateTime.now();
-      originalAmplitude = record
+      originalAmplitude.value = record
           .onAmplitudeChanged(const Duration(milliseconds: 100))
           .listen((value) async {
             amplitudeStream.add(
@@ -67,7 +69,7 @@ class ComposeRecorder extends HookConsumerWidget {
       return () {
         // Called when widget is unmounted
         Logger.root.info('[Recorder] Clean up!');
-        originalAmplitude?.cancel();
+        originalAmplitude.value?.cancel();
         amplitudeStream.close();
         record.dispose();
       };
@@ -75,9 +77,8 @@ class ComposeRecorder extends HookConsumerWidget {
 
     Future<void> stopRecord() async {
       recording.value = false;
-      await record.pause();
+      await originalAmplitude.value?.cancel();
       final newResult = await record.stop();
-      await record.cancel();
       if (newResult != null) resultPath.value = newResult;
 
       if (context.mounted) Navigator.of(context).pop(resultPath.value);

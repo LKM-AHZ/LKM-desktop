@@ -47,6 +47,10 @@ dependencies:
   solsynth_express:
     path: packages/solsynth_express
 
+  in_app_purchase_ohos:
+    path: packages/in_app_purchase_ohos
+  huawei_push:
+    path: packages/huawei_push
   flutter_hooks: ^0.21.4
   hooks_riverpod: ^3.5.0
   quick_actions: ^1.1.1
@@ -205,6 +209,10 @@ dev_dependencies:
   code_assets: ^2.2.0
   native_toolchain_c: ^0.19.6
   hooks: ^2.2.0
+  geocoding_ohos:
+    path: packages/geocoding_ohos
+  record_ohos:
+    path: packages/record_ohos
   # Exercise the registered OHOS backend through the current ImagePicker API.
   image_picker_ohos:
     path: packages/image_picker_ohos
@@ -339,6 +347,36 @@ hooks:
       additional_libraries: [m]
 
 dependency_overrides:
+  in_app_purchase:
+    path: packages/in_app_purchase
+  livekit_client:
+    path: packages/livekit_client
+  flutter_webrtc:
+    path: packages/flutter_webrtc
+  passkeys_platform_interface:
+    path: packages/passkeys_platform_interface
+  passkeys:
+    path: packages/passkeys
+  media_kit_libs_video:
+    path: packages/media_kit_libs_video
+  media_kit_video:
+    path: packages/media_kit_video
+  media_kit:
+    path: packages/media_kit
+  map_launcher:
+    path: packages/map_launcher
+  quick_actions:
+    path: packages/quick_actions
+  mobile_scanner:
+    path: packages/mobile_scanner
+  flutter_nfc_kit:
+    path: packages/flutter_nfc_kit
+  flutter_local_notifications:
+    path: packages/flutter_local_notifications
+  geocoding:
+    path: packages/geocoding
+  record:
+    path: packages/record
   image_picker:
     path: packages/image_picker
   share_plus:

@@ -1,0 +1,19 @@
+name: geocoding_ohos
+version: 1.0.0
+publish_to: none
+description: HarmonyOS geocoding backend for the current shared factory API.
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  geocoding_platform_interface: ^5.0.0
+flutter:
+  licenses: [LICENSE-OHOS]
+  plugin:
+    implements: geocoding
+    platforms:
+      ohos:
+        pluginClass: GeocodingOhosPlugin
+        dartPluginClass: GeocodingOhos

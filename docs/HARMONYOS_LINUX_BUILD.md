@@ -1,6 +1,6 @@
 # OH-Flutter Linux 本机构建记录
 
-更新日期：2026-11-14。构建宿主必须是本机 Linux x64；应用继续使用同一套 Flutter 业务代码与依赖配置。
+更新日期：2026-11-15。构建宿主必须是本机 Linux x64；应用继续使用同一套 Flutter 业务代码与依赖配置。
 
 ## 版本依据
 
@@ -122,8 +122,8 @@ flutter assemble --no-version-check \
 ### 最新应用检查结果
 
 - `flutter analyze --no-pub`：0 error、7 warning、59 info，退出码 1；集中检查本轮适配与新增测试为 0 issue。
-- 新增图片选择/分享的 2 项回归通过；原有时区、常亮、评价、音频、文件选择、菜单及 OHOS UI 回归包含于本轮全量测试且通过。真实 ArkTS 后端逻辑检查通过，原生库和 NDK 探针记录见下文。
-- `flutter test --no-pub --reporter expanded`：877 通过、21 失败、3 跳过，退出码 1。新增 2 项回归通过；逐项比较第四阶段日志，失败清单完全一致，没有新增失败（下列 8 个文件）。尚未用替换前工具链做基线对照。
+- 新增地理编码、设备、通知、认证、媒体和 RTC 的 9 项回归通过；原有录音、图片/分享、时区、常亮、评价、音频、文件选择、菜单及 OHOS UI 回归包含于本轮全量测试且通过。真实 ArkTS 后端逻辑检查通过，原生库和 NDK 探针记录见下文。
+- `flutter test --no-pub --reporter expanded`：889 通过、21 失败、3 跳过，退出码 1。新增 9 项回归通过；逐项比较第六阶段日志，失败清单完全一致，没有新增失败（下列 8 个文件）。尚未用替换前工具链做基线对照。
 - 失败涉及主题/消息截图、链接解析、页面断言、聊天布局/状态与音频探测超时；日志也有远程字体获取失败。没有将全量测试标为成功。
 
 | 测试文件 | 失败用例数 |
@@ -137,7 +137,7 @@ flutter assemble --no-version-check \
 | `test/shared/widgets/markdown_selection_test.dart` | 1 |
 | `test/theme_preview_test.dart` | 3 |
 
-完整日志与机器可读结果持久保存在 `/home/alma/harmonyos/validation/`，本轮文件名以 `lkm-desktop-phase5-` 开头；先前验证记录仍保留。
+完整日志与机器可读结果持久保存在 `/home/alma/harmonyos/validation/`，本轮文件名以 `lkm-desktop-phase7-` 开头；先前验证记录仍保留。
 
 ### 业务原生资产与 HAP
 
@@ -165,9 +165,9 @@ source buildtools/env-ohos.sh
 python3 buildtools/verify-ohos-hap.py build/ohos/hap/entry-default-unsigned.hap
 ```
 
-检查脚本验证当前业务需要的 8 个库，拒绝 GNU/Linux 依赖和错误 ELF 架构；输出 JSON 的 SHA-256 与库依赖用于复查。这项检查不证明未适配插件已能运行。HDC 设备查询返回 `[Empty]`。
+检查脚本验证当前业务需要的 10 个运行库，拒绝 GNU/Linux 依赖和错误 ELF 架构；输出 JSON 的 SHA-256 与库依赖用于复查。这项检查不证明未适配插件已能运行。HDC 设备查询返回 `[Empty]`。
 
-业务 **release HAP** 也已在 Linux 本机构建成功，使用默认图标裁剪与 ARM64 AOT，96143173 字节（96.1 MB），SHA-256 `925163221ced34997c6d379b80fc3d334f0bcb1d0a6d608f11caae3ddef30376`。持久产物为 `/home/alma/harmonyos/validation/lkm-desktop-release-unsigned.hap`。9 个动态库包含 AOT `libapp.so` 和上述 8 个运行库，CRC、架构、动态依赖及 N-API / FFI 导出检查通过。
+业务 **release HAP** 也已在 Linux 本机构建成功，使用默认图标裁剪与 ARM64 AOT，135746228 字节（135.7 MB），SHA-256 `76a6165fbb1d7f026a76e98850bd43a707491666965ad2dbbd416b34c0e73acf`。持久产物为 `/home/alma/harmonyos/validation/lkm-desktop-release-unsigned.hap`。11 个动态库包含 AOT `libapp.so` 和 10 个运行库（新增 MPV/WebRTC），CRC、架构、动态依赖及 N-API / FFI 导出检查通过。
 
 ```bash
 PATH="/usr/bin:$PATH" flutter build hap \
@@ -206,6 +206,43 @@ PATH="/usr/bin:$PATH" flutter test --no-pub test/core/ohos_image_picker_share_te
 ```
 
 上述原生逻辑与新增 2 项 Dart 回归通过，插件已进入正式原生注册器，均非 dev-only。首次真实 Linux release 构建成功，CRC、ARM64 AOT / 原生依赖和编译后的两个插件及通道名称检查通过。附加许可证按 Flutter manifest 声明进入产物。最终 release HAP 为 96143173 字节，固定保存为 `/home/alma/harmonyos/validation/lkm-desktop-phase5-release-unsigned.hap`，SHA-256 `925163221ced34997c6d379b80fc3d334f0bcb1d0a6d608f11caae3ddef30376`。最终包重新通过 CRC / ARM64 / AOT / 原生依赖检查，额外解压并逐文件核对 9 份附加许可证均已进入 NOTICES。旧版产物保持各自阶段备份。本轮日志及报告以 `lkm-desktop-phase5-` 为前缀；debug 仍是第三阶段产物。后续仍需真机相机、URI 授权和跨应用分享验收。
+
+### 第六阶段录音接入
+
+`record 7.1.2` 的 8 个 Dart 文件与当前发布版逐字节一致，继续使用 interface 2.1.0 和原平台实现。本地 `record_ohos` 以固定提交 `c719424e0cd869bf57198e71768d11f995cce849` 为来源，替换旧 record 6 后端中“所有编码都当成 AAC、提前返回启动成功、音频流不发送数据”的实现。
+
+- AAC-LC 文件使用系统 AVRecorder/M4A，PCM16 文件/流和 WAV 文件使用系统 AudioCapturer/S16LE；不支持的编码、编码流、显式设备选择明确失败，不伪造格式支持。设备不接受采样配置时返回错误，不擅自替换配置。
+- 等待原生启动、暂停、恢复、停止和销毁，错误回传；WAV 写入标准头并在停止时更新长度；短写继续写、无进展报错，FD 关闭。系统停止完成前的最后一帧先发送，再结束音频流；初始订阅握手缓冲上限 1 MiB。
+- 麦克风声明采用 `usedScene: inuse`，提供中文用途。`hasPermission(request: false)` 只检查；默认请求走系统弹窗，拒绝返回 false，SDK 异常回传。没有增加持续后台录音任务。
+- 电平换算为 dBFS；Dart 后端将 codec 返回的数值统一转为 double，避免静音 -160/满幅值 0 被编码成 int 后发生类型错误；系统强制中断和异步文件/设备错误通知状态流并尝试保留前段数据，可能不完整；后续 stop 取回路径，cancel 删除。分离 Ability/Engine 清理录音、文件和通道。
+- 共享内容编辑器通过 Flutter hooks 保持录音器/订阅/波形控制器身份，授权与启动成功后才进入录音态，使用真正的 WAV 文件，不再把裸 PCM 标为 `.m4a`，停止后不再误调用取消删除已完成文件。
+
+```bash
+node buildtools/verify-ohos-record.mjs
+PATH="/usr/bin:$PATH" flutter test --no-pub \
+  test/core/ohos_record_test.dart test/posts/compose_recorder_test.dart
+```
+
+新增 3 项回归通过；本轮全量为 880 通过、21 失败、3 跳过，与第五阶段失败清单完全一致。全量完成后补充整数电平转换，最终补丁重新通过 3 项集中回归及 0 issue 集中检查。完整 analyze 为 0 error、7 warning、59 info。首次真实构建发现 ArkTS 只允许抛出确定的 Error 类型，修正后构建成功；补充整数电平修复后的最终 Linux release 构建成功（274.5 秒）。最终 HAP 为 96163509 字节，SHA-256 `ae6bd06ab1c28159f7b8faaaed73659422ada924c530f19872f107282baf10a9`；固定备份为 `/home/alma/harmonyos/validation/lkm-desktop-phase6-release-unsigned.hap`，日志与报告均以 `lkm-desktop-phase6-` 开头。CRC、ARM64/AOT/动态依赖及 N-API/FFI 检查通过；额外检查编译后的录音插件、当前通道和最新 PCM 系统停止保护字符串，以及 10 份附加许可证进入 NOTICES。插件为正式依赖，非 dev-only。原生编译仍有 SDK 类型/能力/权限等提示，未声称无 ArkTS warning。
+
+前台录音接口与 native SDK 边界检查不能代替真机验收：HDC 仍无设备，麦克风、系统权限弹窗、实际 AAC 编码/音频路由、持续吞吐和中断生命周期仍需设备。autoGain/echoCancel/noiseSuppress 等可选标志不保证生效；未移植后台连续录音和自动中断恢复。来源和具体边界见 `packages/record_ohos/UPSTREAM.md`。debug 仍为第三阶段产物，本轮只以 release 验证新增录音实现。
+
+### 第七阶段剩余插件整合
+
+2026-11-15：将剩余项一次按实际调用链处理，完整清单见 [统一处理清单](HARMONYOS_REMAINING_MATRIX.md)。保留现有版本，统一加入地理编码、NFC、扫码、快捷操作、地图跳转、通知、Passkeys、播放器和 RTC/LiveKit 后端。桌面/Apple 专属入口继续由平台白名单保护；深链接复用共享宿主契约，Apple 网页登录复用当前服务端 OAuth 路由。
+
+```bash
+# Linux 本机统一入口，按固定提交/哈希准备原生运行库
+./buildtools/build-ohos.sh --release
+# 所有原生边界回归
+for script in buildtools/verify-ohos-*.mjs; do node "$script" || exit 1; done
+```
+
+最终 release 构建 430.7 秒，135746228 字节，SHA-256 `76a6165fbb1d7f026a76e98850bd43a707491666965ad2dbbd416b34c0e73acf`。固定产物 `/home/alma/harmonyos/validation/lkm-desktop-phase7-release-unsigned.hap`；日志/报告以 `lkm-desktop-phase7-` 开头。最终完整测试 889 通过、21 失败、3 跳过，失败清单与第六阶段逐项相同；新增 9 项回归全部通过。完整 analyze 为 0 error、7 warning、59 info，退出码 1。原生边界回归全部通过；没有把全量测试或真机验收标为成功。
+
+CRC、ARM64/AOT、全部动态依赖及既有 N-API/FFI 导出检查通过；11 个动态库包含新增的真实 MPV/WebRTC。MPV 原始 97819184 字节 / SHA-256 `45febf6194b02561572b98659e5c13b672bf86503dd4835688a284326ba18811`；Hvigor 打包会 strip 成 28283864 字节 / SHA-256 `043002a382f119ef4238443c791a850c132523fa65228eba1b5e58d45ed479c8`。校验器使用相同 NDK 从已校验原文件确定性重现 strip 后逐字节哈希比较，不跳过差异。WebRTC 11091832 字节 / SHA-256 `39f42ab2d86bdafad47102b80e69f0f0adb49b66061a9f7931b6cd5d00510ad4`；这两个库来自固定社区工件，不声称本机重编译了其完整内核。HAP 中确认了最新 RTC 权限/纹理/ICE 保护、新插件、CAMERA/MICROPHONE/NFC_TAG/定位权限及 21 份附加许可证。
+
+用户确认暂无 AGC、华为内购及 Apple OAuth 外部配置：远程推送/华为内购仍缺相应服务端协议和实际配置。当前 WebRTC 原生库没有媒体 FrameCryptor，LiveKit 独立 native 扩展等能力未实现；它们明确错误，不提供伪造成功。扫码仅后摄、快捷操作仅声明入口等限制详见清单。HDC 仍无设备，所有包未签名；实际通话、播放、NFC/相机/通知及 FIDO2 硬件交互仍需验收。debug 保持第三阶段历史产物，本轮只验证 release。
 
 ### 本地构建依赖和修复
 

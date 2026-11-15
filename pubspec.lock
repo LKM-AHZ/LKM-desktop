@@ -1028,10 +1028,9 @@ packages:
   flutter_local_notifications:
     dependency: "direct main"
     description:
-      name: flutter_local_notifications
-      sha256: e99e9c6078d1359ba131b2c1eb8d68837170836a01bf2cea3cf2fa13e62ac2ac
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/flutter_local_notifications"
+      relative: true
+    source: path
     version: "23.0.0"
   flutter_local_notifications_linux:
     dependency: transitive
@@ -1104,10 +1103,9 @@ packages:
   flutter_nfc_kit:
     dependency: "direct main"
     description:
-      name: flutter_nfc_kit
-      sha256: aaf11749318e7e5cf8c54eb6c3ee02685ccc7021efd3cf467a5f106cdc752a66
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/flutter_nfc_kit"
+      relative: true
+    source: path
     version: "3.7.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
@@ -1275,10 +1273,9 @@ packages:
   flutter_webrtc:
     dependency: "direct main"
     description:
-      name: flutter_webrtc
-      sha256: b98ef03376401e54ff87fc78907b38e562b15ca8424aba589c263eddc3c1ecf9
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/flutter_webrtc"
+      relative: true
+    source: path
     version: "1.6.3"
   freezed:
     dependency: "direct dev"
@@ -1332,10 +1329,9 @@ packages:
   geocoding:
     dependency: "direct main"
     description:
-      name: geocoding
-      sha256: "1bad8e2baa3c0574afd0a1639acf1f4ee54f82e10d497f94877e6d35f7489f07"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/geocoding"
+      relative: true
+    source: path
     version: "5.0.1"
   geocoding_android:
     dependency: transitive
@@ -1353,6 +1349,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  geocoding_ohos:
+    dependency: "direct dev"
+    description:
+      path: "packages/geocoding_ohos"
+      relative: true
+    source: path
+    version: "1.0.0"
   geocoding_platform_interface:
     dependency: transitive
     description:
@@ -1538,6 +1541,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0"
+  huawei_push:
+    dependency: "direct main"
+    description:
+      path: "packages/huawei_push"
+      relative: true
+    source: path
+    version: "1.0.0"
   image:
     dependency: "direct main"
     description:
@@ -1619,10 +1629,9 @@ packages:
   in_app_purchase:
     dependency: "direct main"
     description:
-      name: in_app_purchase
-      sha256: d8317ec2ed6fe33199957d67ee67e08a4fd4871ef93b91d7611d8ee560892afc
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/in_app_purchase"
+      relative: true
+    source: path
     version: "3.3.1"
   in_app_purchase_android:
     dependency: transitive
@@ -1632,6 +1641,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.5"
+  in_app_purchase_ohos:
+    dependency: "direct main"
+    description:
+      path: "packages/in_app_purchase_ohos"
+      relative: true
+    source: path
+    version: "1.1.0"
   in_app_purchase_platform_interface:
     dependency: transitive
     description:
@@ -1867,10 +1883,9 @@ packages:
   livekit_client:
     dependency: "direct main"
     description:
-      name: livekit_client
-      sha256: c63211bd5073b308417de2b048809c156f50cb5bda02713150478742be2a1bc1
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/livekit_client"
+      relative: true
+    source: path
     version: "2.13.2"
   local_auth:
     dependency: "direct main"
@@ -1940,10 +1955,9 @@ packages:
   map_launcher:
     dependency: "direct main"
     description:
-      name: map_launcher
-      sha256: "5201a3d76aee07df0a5b0db99e89e55a8cadadffc02e1bd4d132032e066ad1b5"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/map_launcher"
+      relative: true
+    source: path
     version: "7.0.0"
   markdown:
     dependency: "direct main"
@@ -1995,10 +2009,9 @@ packages:
   media_kit:
     dependency: "direct main"
     description:
-      name: media_kit
-      sha256: ae9e79597500c7ad6083a3c7b7b7544ddabfceacce7ae5c9709b0ec16a5d6643
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/media_kit"
+      relative: true
+    source: path
     version: "1.2.6"
   media_kit_libs_android_video:
     dependency: transitive
@@ -2032,13 +2045,19 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.4"
+  media_kit_libs_ohos_video:
+    dependency: transitive
+    description:
+      path: "packages/media_kit_libs_ohos_video"
+      relative: true
+    source: path
+    version: "0.0.1"
   media_kit_libs_video:
     dependency: "direct main"
     description:
-      name: media_kit_libs_video
-      sha256: "2b235b5dac79c6020e01eef5022c6cc85fedc0df1738aadc6ea489daa12a92a9"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/media_kit_libs_video"
+      relative: true
+    source: path
     version: "1.0.7"
   media_kit_libs_windows_video:
     dependency: transitive
@@ -2051,10 +2070,9 @@ packages:
   media_kit_video:
     dependency: "direct main"
     description:
-      name: media_kit_video
-      sha256: afaa509e7b7e0bf247557a3a740cde903a52c34ace9810f94500e127bd7b043d
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/media_kit_video"
+      relative: true
+    source: path
     version: "2.0.1"
   meta:
     dependency: transitive
@@ -2091,10 +2109,9 @@ packages:
   mobile_scanner:
     dependency: "direct main"
     description:
-      name: mobile_scanner
-      sha256: "175c62fc813c2bd762757359a2088f8cbdb72020cf85d4cd27fc4d3fe59be058"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/mobile_scanner"
+      relative: true
+    source: path
     version: "7.5.0"
   motor:
     dependency: transitive
@@ -2318,10 +2335,9 @@ packages:
   passkeys:
     dependency: "direct main"
     description:
-      name: passkeys
-      sha256: "95bea8590e95a82173462a0eb6ca193c4f5d4a98981df1ee06c0029d637b3dd3"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/passkeys"
+      relative: true
+    source: path
     version: "2.24.1"
   passkeys_android:
     dependency: transitive
@@ -2348,12 +2364,11 @@ packages:
     source: hosted
     version: "1.7.0"
   passkeys_platform_interface:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: passkeys_platform_interface
-      sha256: "1a4a39920a737dfacfb7d4bb8f03bb0d95e9fdb6c3ff2010cfeb7fc5d087eeb1"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/passkeys_platform_interface"
+      relative: true
+    source: path
     version: "2.11.0"
   passkeys_web:
     dependency: transitive
@@ -2711,10 +2726,9 @@ packages:
   quick_actions:
     dependency: "direct main"
     description:
-      name: quick_actions
-      sha256: "1d3397c1ce5cd91b732c675bc82571d316d6de8241d774927b4ea3680c860e1a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/quick_actions"
+      relative: true
+    source: path
     version: "1.1.1"
   quick_actions_android:
     dependency: transitive
@@ -2732,6 +2746,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.5"
+  quick_actions_ohos:
+    dependency: transitive
+    description:
+      path: "packages/quick_actions_ohos"
+      relative: true
+    source: path
+    version: "1.0.0"
   quick_actions_platform_interface:
     dependency: transitive
     description:
@@ -2815,10 +2836,9 @@ packages:
   record:
     dependency: "direct main"
     description:
-      name: record
-      sha256: "7c4467dec63435c9206db183f8a4672cf8a62f5e5579e45803ceada8330756e7"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/record"
+      relative: true
+    source: path
     version: "7.1.2"
   record_android:
     dependency: transitive
@@ -2852,6 +2872,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  record_ohos:
+    dependency: "direct dev"
+    description:
+      path: "packages/record_ohos"
+      relative: true
+    source: path
+    version: "1.0.0"
   record_platform_interface:
     dependency: transitive
     description:

@@ -1,0 +1,142 @@
+## 5.0.1
+
+- Fixes the `locale` parameter of the `Geocoding` constructor being ignored (#324).
+- Fixes the unit tests of the `Geocoding` class.
+
+## 5.0.0
+
+- **BREAKING CHANGES** (see our [migration guide](../docs/migrations/migrate-to-5.0.0.md))
+  - Wraps all functionality into the `Geocoding` class.
+  - Deprecates the `setLocaleIdentifier` method in favor of the `locale`
+    parameter of the `Geocoding({Locale locale})` constructor.
+  - Updates to version 5.0.0 of the `geocoding_platform_interface` package,
+    which now allows a `null` value for the `Location.timestamp` field as not
+    all platforms (mainly Android) always supply a value.
+  - Updates to version 5.0.0 of the `geocoding_android` package which
+    implements the latest `geocoding_platform_interface` version.
+  - Updates to version 1.0.0 of the `geocoding_darwin` package which
+    implements the latest `geocoding_platform_interface` version and now
+    includes support for macOS.
+
+## 4.0.0
+
+- **BREAKING CHANGES** Please update to Flutter 3.29+ before updating to this version
+- Updates Android CompileSDK to 35
+- Migrates example project to applying Gradle plugins with the declarative plugins block
+- Updates kotlin version to soon minimal supported Kotlin version `1.8.10`
+- Updates Gradle version to `8.11.1`
+- Updates iOS Platform version from `11` to `12`
+- Updates `geolocator_android` dependency version from `3.x.x` to `4.x.x`
+
+## 3.0.1
+
+- Updated links in README.md to use `https` protocol.
+
+## 3.0.0
+
+- **BREAKING CHANGES**:
+  - Locale is no longer part of the `locationFromAddress` and
+    `placemarkFromAddress`, but should be set first by `setLocaleIdentifier`.
+    This was already implemented on Android but is now working similarly on iOS.
+  - Updates documentation related to setting the locale.
+  - Added `setLocaleIdentifier` to the example app.
+  - Updates `geocoding_ios` version to 3.0.0.
+
+## 2.2.2
+
+- Updates documentation for isPresent().
+- Removes unused `LocaleIdentifier` parameter for isPresent().
+
+## 2.2.1+1
+
+- Reverts changes from version `2.2.1`, `2.2.1` should not be used. Use either version `2.2.1+1` or `3.0.0`.
+
+## 2.2.1
+
+- Updates documentation related to setting the locale.
+- Added `setLocaleIdentifier` to the example app.
+- Updates `geocoding_ios` version to 3.0.0.
+
+## 2.2.0
+
+- Exposes the `isPresent()` method which on Android returns `true` if the
+  geocoding backend service are present on the device, otherwise returns `false`.
+  On iOS this method always returns `true`.
+
+## 2.1.1
+
+- Updates the example app, so the `example/lib/main.dart` contains clear example
+  code on how to use the geocoding plugin. Mean reason for doing so is that the
+  `example/lib/main.dart` is shown in the "Example" tab on pub.dev.
+
+## 2.1.0
+
+- Upgrades the app-facing package to use the federated architecture.
+
+## 2.0.6
+
+- Upgrades `compileSdkVersion` to `33` on Android.
+- Fix issues in example project.
+
+## 2.0.5+1
+
+- Update pub.dev links.
+
+## 2.0.5
+
+- Fixed [#58](https://github.com/Baseflow/flutter-geocoding/issues/58) getting locationFromAddress freezes main thread.
+
+## 2.0.4
+
+- Fixes link to the Android migration guide in README.
+
+## 2.0.3
+
+- Upgrades `compileSdkVersion` to `31` on Android.
+- Resolves Android embedding deprecation warning.
+
+## 2.0.2
+
+- Migrate maven repository from jcenter to mavenCentral.
+
+## 2.0.1
+
+- Update the plugin version number in the README file to the newest version;
+- Update the example app to use `compileSdkversion 30` and `targetSdkversion 30` in the `build.gradle`.
+
+## 2.0.0
+
+- Migrate to null safety.
+
+## 1.0.5
+
+- Make sure the README.md specifies the correct links to Apple's CLGeocoder and Android's Geocoder APIs (see [#20](https://github.com/baseflow/flutter-geocoding/pull/20));
+- Update the documentation to mention correct usage for the `locationFromAddress` feature (see [#21](https://github.com/baseflow/flutter-geocoding/pull/21))
+
+## 1.0.4+1
+
+- Make sure the README.md mentions the correct version number.
+
+## 1.0.4
+
+- Added NoResultFoundException to indicate when no results are found, instead of PlatformException
+
+## 1.0.3+1
+
+- Make sure the supplied locale is respected (see issue [#10](https://github.com/Baseflow/flutter-geocoding/issues/10))
+
+## 1.0.3
+
+- Make sure public types defined in the geocoding_platform_interface are also available from the geocoding package (see [#6](https://github.com/Baseflow/flutter-geocoding/issues/6)).
+
+## 1.0.2
+
+- Solve `IllegalFormatConversionException` on Android when geocoding request could not be resolved (see [#5](https://github.com/Baseflow/flutter-geocoding/issues/5)).
+
+## 1.0.1
+
+- Pimp the example application
+
+## 1.0.0
+
+- Initial open-source release

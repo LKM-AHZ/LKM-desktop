@@ -526,7 +526,8 @@ class ServerStateNotifier extends Notifier<ServerState> {
       state = state.copyWith(status: 'Server running');
       return;
     }
-    if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
+    if (!kIsWeb &&
+        (Platform.isLinux || Platform.isMacOS || Platform.isWindows)) {
       state = state.copyWith(status: 'Starting...');
       try {
         await server.start();

@@ -1,6 +1,10 @@
 {
   "string": [
     {
+      "name": "microphone_reason",
+      "value": "用于录制语音消息和音频内容"
+    },
+    {
       "name": "module_desc",
       "value": "理科迷 Flutter 客户端"
     },
@@ -11,6 +15,18 @@
     {
       "name": "EntryAbility_label",
       "value": "理科迷"
+    },
+    {
+      "name": "camera_reason",
+      "value": "用于扫描二维码和条码"
+    },
+    {
+      "name": "nfc_reason",
+      "value": "用于读取和写入用户靠近的 NFC 标签"
+    },
+    {
+      "name": "location_reason",
+      "value": "用于显示当前位置天气和附近内容"
     }
   ]
 }

@@ -36,7 +36,10 @@ class DeeplinkService {
       _onDeepLink?.call(event.uri);
     });
 
-    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+    if (!kIsWeb &&
+        (Platform.isIOS ||
+            Platform.isMacOS ||
+            Platform.operatingSystem == 'ohos')) {
       _nativeChannel.setMethodCallHandler((call) async {
         if (call.method != 'onDeepLink') return;
         final rawUrl =
@@ -84,7 +87,10 @@ class DeeplinkService {
     _onDeepLink = null;
     _siteUrl = null;
 
-    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+    if (!kIsWeb &&
+        (Platform.isIOS ||
+            Platform.isMacOS ||
+            Platform.operatingSystem == 'ohos')) {
       _nativeChannel.setMethodCallHandler(null);
     }
 

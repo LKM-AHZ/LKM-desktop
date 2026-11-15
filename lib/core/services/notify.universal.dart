@@ -266,6 +266,12 @@ Future<void> initializeLocalNotifications(WidgetRef ref) async {
     },
   );
 
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+        OhosFlutterLocalNotificationsPlugin
+      >()
+      ?.requestPermissions();
+
   // Cold start: when the app was terminated and is launched by tapping a
   // notification, `onDidReceiveNotificationResponse` never fires — read the
   // launch payload explicitly instead.
@@ -350,7 +356,7 @@ Future<void> ensureFcmNotificationPlugin({
     settings: const InitializationSettings(android: androidSettings),
   );
   await plugin.show(
-    id: DateTime.now().millisecondsSinceEpoch,
+    id: DateTime.now().millisecondsSinceEpoch & 0x7fffffff,
     title: title,
     body: body,
     notificationDetails: const NotificationDetails(
@@ -378,7 +384,7 @@ Future<void> showLocalNotificationFromFcm({
 }) async {
   if (kIsWeb) return;
   await flutterLocalNotificationsPlugin.show(
-    id: DateTime.now().millisecondsSinceEpoch,
+    id: DateTime.now().millisecondsSinceEpoch & 0x7fffffff,
     title: title,
     body: body,
     notificationDetails: const NotificationDetails(

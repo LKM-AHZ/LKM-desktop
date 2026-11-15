@@ -1,0 +1,14 @@
+name: huawei_push
+version: 1.0.0
+publish_to: none
+description: HarmonyOS NEXT Push Kit token and foreground-message bridge.
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+flutter:
+  plugin:
+    platforms:
+      ohos:
+        pluginClass: HuaweiPushPlugin

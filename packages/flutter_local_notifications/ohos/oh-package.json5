@@ -1,0 +1,9 @@
+{
+  "name": "flutter_local_notifications",
+  "version": "1.0.0",
+  "main": "index.ets",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:./libs/flutter_embedding.har"
+  }
+}

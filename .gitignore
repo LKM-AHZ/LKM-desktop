@@ -71,3 +71,5 @@ webf/coverage/
 /packages/*/ohos/har/
 /packages/*/ohos/local.properties
 /packages/*/ohos/oh-package-lock.json5
+/packages/*/ohos/BuildProfile.ets
+/packages/*/ohos/libs/

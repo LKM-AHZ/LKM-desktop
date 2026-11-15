@@ -1,0 +1,17 @@
+name: quick_actions_ohos
+version: 1.0.0
+publish_to: none
+description: HarmonyOS native backend for current quick_actions method channels.
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+flutter:
+  licenses: [LICENSE-OHOS]
+  plugin:
+    implements: quick_actions
+    platforms:
+      ohos:
+        pluginClass: QuickActionsPlugin

@@ -8,12 +8,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum PushNotificationProvider {
   fcm,
   apple,
-  appk;
+  appk,
+  huawei;
 
   int get remoteType => switch (this) {
     PushNotificationProvider.fcm => 1,
     PushNotificationProvider.apple => 0,
     PushNotificationProvider.appk => 4,
+    // LKM uses platform="huawei"; never send this value to the legacy API.
+    PushNotificationProvider.huawei => throw UnsupportedError(
+      'Huawei Push uses the LKM notification token API',
+    ),
   };
 
   String get storageValue => name;
@@ -41,6 +46,9 @@ Future<PushNotificationProvider> resolvePushProvider(
   SharedPreferences prefs,
 ) async {
   if (kIsWeb) return PushNotificationProvider.fcm;
+  if (Platform.operatingSystem == 'ohos') {
+    return PushNotificationProvider.huawei;
+  }
   if (Platform.isIOS || Platform.isMacOS) {
     return PushNotificationProvider.apple;
   }

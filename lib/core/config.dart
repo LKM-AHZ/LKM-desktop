@@ -783,7 +783,10 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setDouble(kAppWindowOpacity, value);
     state = state.copyWith(windowOpacity: value);
-    Future(() => windowManager.setOpacity(value));
+    if (!kIsWeb &&
+        (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
+      Future(() => windowManager.setOpacity(value));
+    }
   }
 
   void setThemeMode(String value) {

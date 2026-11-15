@@ -1,0 +1,668 @@
+<img width="1070" alt="GitHub Repo Cover" src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/.github/images/root_headline.png">
+
+# passkeys
+
+A Flutter package to enable authentication through passkeys (based on WebAuthn / FIDO2).
+
+Take a look at https://passkeys.flutter.corbado.io for a **live demo** (this is a Flutter web deployment of the example
+on Vercel).
+
+|             | Android            | iOS                | Linux | macOS              | Web                | Windows            |
+| ----------- | ------------------ | ------------------ | ----- | ------------------ | ------------------ | ------------------ |
+| **Support** | :white_check_mark: | :white_check_mark: | :x:   | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+
+## Features
+
+- sign up and login users with passkeys on Android, iOS, macOS, Web and Windows
+- login users with conditional UI
+- derive secrets from a passkey through the WebAuthn PRF extension (see [Using the PRF extension](#using-the-prf-extension))
+
+## Getting started
+
+The best way to learn how you can set up passkeys in your Flutter app is to read the brief
+introduction below and then take a look at the example of this package.
+
+### Introduction
+
+When it comes to understanding passkeys, there are three parties:
+
+- the user of your Flutter app
+- your Flutter app (installed on a device with e.g. Face ID or Touch ID)
+- a relying party server (a backend where users' public keys will be stored)
+
+<details>
+<summary>More information on how these three parties interact with each other to make passkeys work.</summary>
+
+Like with traditional password-based authentication flows, a user has to sign up first, i.e. set up
+a passkey.
+The flow is shown in the image below.
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/register_flow.png" style="width: 100%" alt="signup">
+
+At first, the user will provide his email address or a username to your app.
+This email address will be sent to the relying party server.
+You can implement that server yourself, or you can rely on prebuilt ones (e.g. provided
+by [Corbado](https://app.corbado.com)).
+The relying party server's response will contain _publicKeyCredentialCreationOptions_.
+It contains all information required by the user's device to set up a passkey.
+
+Your app will now interact with your native device's OS (no worries, the actual work is abstracted
+by this Flutter package) to ask the user to set up a passkey.
+All he has to do is to provide his biometrics once (e.g. via Face ID or Touch ID).
+After this setup, a private key and a public key are created.
+The private key is stored securely on the user's device.
+The public key is sent to the relying party server.
+For this to work, the app has to be associated with the relying party server.
+This involves a bit of configuration in your app and on the relying party server (find more details
+below where we explain how to set up the example).
+The relying party server will validate and store the public key.
+Afterwards, it will respond with a success message (e.g. a JWT token).
+
+From now on, the user can log into your app using this biometric information.
+On each login, your app will ask the relying party server for a _challenge_.
+The relying party server generates a challenge that must be signed with the private key.
+To access that private key the app asks once again the user for his biometrics (another call to your
+native device's OS).
+After the user has provided his biometrics (e.g. by putting his finger on the fingerprint reader),
+the challenge is signed and the signed challenge is sent to the relying party server.
+Using the public key, it will validate the signed challenge and the server will answer with a
+success message (e.g. a JWT token).
+
+</details>
+
+### Example
+
+To run
+the [example](https://github.com/corbado/flutter-passkeys/blob/main/packages/passkeys/passkeys/example/lib/main.dart)
+follow these steps:
+
+1. Clone the GitHub repo `git clone git@github.com:corbado/flutter-passkeys.git`
+2. If you want to run the example on an iOS Simulator or an Android emulator, start one now (skip
+   this step if you want to start the example in a browser).
+3. Run `melos run example-passkeys-native` to start the example on iOS/Android.
+4. Sign up a new user by providing an email address and clicking _sign up_.
+5. After logging out, you can login by providing the exact same email address again or sign up
+   another user by providing a new one.
+
+Find more explanations to this example and troubleshooting in the
+example's [README](https://github.com/corbado/flutter-passkeys/blob/main/packages/passkeys/passkeys/example/README.md).
+
+## Usage
+
+To get an idea on how to use this package to sign up and login users take a look at the code below.
+It has been extracted from [corbado_auth](https://pub.dev/packages/corbado_auth).
+There we use it to build a passkey centered authentication SDK.
+To see this code in connection with a UI, take a look at the example and run it on your machine.
+Tip: You can also debug through it to get a better understanding of how it works.
+
+```dart
+_register() async {
+  final passkeyAuthenticator = PasskeyAuthenticator();
+  final relyingPartyServer = RelyingPartyServer(); // this is not part of this package
+
+  // initiate sign up by calling the relying party server
+  final webAuthnChallenge = await relyingPartyServer.startSignUpWithPasskey(
+      'user@example.com', 'Username');
+  // call the platform authenticator to register a new passkey on the device
+  final platformRes = await passkeyAuthenticator.register(webAuthnChallenge);
+  // finish sign up by calling the relying party server again
+  final relyingPartyServerRes = await relyingPartyServer.finishSignUpWithPasskey(platformRes);
+}
+```
+
+```dart
+_signIn() async {
+  final passkeyAuthenticator = PasskeyAuthenticator();
+  final relyingPartyServer = RelyingPartyServer(); // this is not part of this package
+
+  // initiate sign in by calling the relying party server
+  final webAuthnChallenge = await relyingPartyServer.startLoginWithPasskey('user@example.com');
+  // call the platform authenticator to ask the user to sign the challenge with his passkey
+  final platformRes = await passkeyAuthenticator.authenticate(webAuthnChallenge);
+  // finish sign in by calling the relying party server again
+  final relyingPartyServerRes = await relyingPartyServer.finishLoginWithPasskey(platformRes);
+}
+```
+
+We now want to quickly go through the most common use cases for Flutter developers when using
+passkeys.
+We will try to show how this package can help with each use case.
+While use case 1 is a very basic one (exploration only), 2, 3 and 4 show cases in which real apps
+are
+built.
+
+<details>
+<summary>1. Use case: You just want to prototype with passkeys</summary>
+
+You just want to see passkeys in action in a Flutter app?
+Then the example of this package is the right point for you to start.
+There is no configuration required and you can go through sign up and login flows on your emulator.
+
+**Note:**
+
+- ⚠️ You share a relying party server with other Flutter developers. Its user table is flushed every
+  day. We have built the example this way to make it very simple to set up. For an example, this
+  works totally fine, but if you want to build your own app you need your own relying party server.
+- ⚠️ You cannot run the example on physical iOS devices but only on a simulator (for Android,
+  physical devices + emulators work).
+
+</details>
+
+<details>
+<summary>2. Use case: You want to use passkeys for your app and you already have built your relying party server</summary>
+
+If you already have a relying party server that implements the WebAuthn standard, you can use this
+package to abstract away the platform specific code that is required to use passkeys.
+Take a look at the code above in the _Usage_ section to get a rough idea on how to wire your relying
+party server with this package.
+
+</details>
+
+<details>
+<summary>3. Use case: You want to use passkeys for your app but you don't want to build your own relying party server</summary>
+
+To use passkeys in your own app, you need a relying party server.
+If you don't want to build one, you can use already existing solutions.
+To save time and effort, you can use [Corbado](https://app.corbado.com) as a relying party server.
+If you want to try it out, use [corbado_auth](https://pub.dev/packages/corbado_auth).
+Find an example how to do this including a step by step
+guide [here](https://github.com/corbado/example-passkeys-flutter).
+
+FYI: You can use this approach in two variations:
+
+- You are building a new app and don't have an existing user base: In this case you can use
+  CorbadoAuth from [corbado_auth](https://pub.dev/packages/corbado_auth) and let it manage both
+  passkeys and users for you.
+- You want to introduce passkeys to an already existing app that has an existing user base: In this
+  case you can use CustomCorbadoAuth from [corbado_auth](https://pub.dev/packages/corbado_auth) and
+  let
+  it manage passkeys for you. You will continue to manage users and sessions yourself though.
+
+</details>
+
+<details>
+<summary>4. Use case: You want to use Firebase together with passkeys</summary>
+
+Firebase is a great technology that helps you with building your app.
+To use passkeys together with Firebase you can
+use [corbado_auth_firebase](https://pub.dev/packages/corbado_auth_firebase).
+
+</details>
+
+<details>
+<summary>5. Use case: You want to handle when the passkeys are not supported</summary>
+
+```dart
+if (kIsWeb) {
+  authService.authenticator.getAvailability().web().then((value) {
+    if (!value.hasPasskeySupport) {
+      // Disable passkey sign-up for Web
+      disablePasskeySignUp();
+    }
+  });
+} else if (Platform.isAndroid) {
+  authService.authenticator.getAvailability().android().then((value) {
+    if (!value.hasPasskeySupport) {
+      // Disable passkey sign-up for Android
+      disablePasskeySignUp();
+    }
+  });
+} else if (Platform.isIOS) {
+  authService.authenticator.getAvailability().ios().then((value) {
+    if (!value.hasPasskeySupport) {
+      // Disable passkey sign-up for iOS
+      disablePasskeySignUp();
+    }
+  });
+}
+```
+
+</details>
+
+## Using the PRF extension
+
+The WebAuthn [PRF extension](https://w3c.github.io/webauthn/#prf-extension) (backed by the CTAP2
+`hmac-secret` extension) lets you derive a stable, high-entropy secret from a passkey. The
+underlying key material never leaves the authenticator, and the derived secret is reproducible on
+every authentication, so it is a good building block for client-side encryption (for example to seed
+a symmetric key that encrypts a user's data).
+
+You pass a base64url-encoded `prf` salt into the registration and authentication requests, and read
+the derived secret back from `clientExtensionResults`.
+
+### Platform support
+
+| Android            | iOS                   | macOS                  | Web                | Windows            | Linux |
+| ------------------ | --------------------- | ---------------------- | ------------------ | ------------------ | ----- |
+| :white_check_mark: | :white_check_mark: (18+) | :white_check_mark: (15+) | :white_check_mark: | :white_check_mark: | :x:   |
+
+The salt is typically coordinated with your relying party server (it is part of the WebAuthn
+`extensions.prf.eval.first` input). Registration usually only reports whether PRF is `enabled`,
+while the derived secret (`results.first`) is returned during authentication.
+
+### Registration
+
+```dart
+final authenticator = PasskeyAuthenticator();
+
+final response = await authenticator.register(
+  RegisterRequestType(
+    challenge: challenge,
+    relyingParty: relyingParty,
+    user: user,
+    excludeCredentials: const [],
+    // Base64URL encoded salt, without padding.
+    prf: prfSalt,
+  ),
+);
+
+// During registration platforms typically only tell you whether PRF is
+// available for the newly created credential.
+final prf = response.clientExtensionResults?['prf'] as Map?;
+final prfEnabled = prf?['enabled'] == true;
+```
+
+### Authentication
+
+```dart
+final authenticator = PasskeyAuthenticator();
+
+final response = await authenticator.authenticate(
+  AuthenticateRequestType(
+    relyingPartyId: relyingPartyId,
+    challenge: challenge,
+    mediation: MediationType.Optional,
+    preferImmediatelyAvailableCredentials: false,
+    // Use the same salt you used during registration to obtain the same secret.
+    prf: prfSalt,
+  ),
+);
+
+// The derived secret is returned as a base64url-encoded string.
+final results =
+    (response.clientExtensionResults?['prf'] as Map?)?['results'] as Map?;
+final secret = results?['first'] as String?;
+```
+
+Use `secret` (after base64url-decoding it) as key material for your encryption, but never send it to
+your relying party server.
+
+## Automatic passkey creation (conditional create)
+
+Right after a user signs in with a saved password, the platform can create a passkey for them without
+showing any UI (WebAuthn's `mediation: "conditional"` for `navigator.credentials.create()`). Pass
+`MediationType.Conditional` to request it:
+
+```dart
+final creationOptions = await relyingPartyServer.startPasskeyRegistration();
+try {
+  final credential = await passkeyAuthenticator.register(
+    RegisterRequestType.fromJson(creationOptions, mediation: MediationType.Conditional),
+  );
+  await relyingPartyServer.finishPasskeyRegistration(credential);
+  // Tell the user: the platform may not show a notification.
+} on ConditionalCreateNotEligibleException {
+  // Nothing was created and no UI was shown; optionally offer an ordinary create.
+} on ConditionalCreateUnsupportedException {
+  // Not available here; optionally offer an ordinary create.
+}
+```
+
+- Supported on Android (when the credential provider supports it), on iOS 18 / macOS 15 and above,
+  and on the web in browsers whose `PublicKeyCredential.getClientCapabilities()` reports
+  `conditionalCreate`. Windows, older Apple versions and other browsers throw
+  `ConditionalCreateUnsupportedException`, as do Apple platforms when `authenticatorAttachment` is
+  `cross-platform`.
+- On the web, update the `bundle.js` you include in your HTML to a version with conditional create
+  support. Chrome keeps an ineligible conditional create pending until the `timeout` in the creation
+  options expires and only then throws `ConditionalCreateNotEligibleException`, so set a short
+  `timeout`. Starting another passkey operation cancels a pending one.
+- Only `MediationType.Conditional` changes the behavior of `register`. Every other `MediationType`
+  value is an ordinary create.
+- The platform decides whether to create. It typically requires that the user just signed in with a
+  password saved in the same provider, for the same username as `user.name`. On Android with Google
+  Password Manager that means a password returned through Credential Manager, not one filled in by
+  autofill.
+- iOS reports an existing passkey for the account as not eligible as well; Android reports it as
+  `ExcludeCredentialsCanNotBeRegisteredException`.
+- The resulting attestation has the user presence flag unset, so the relying party server must not
+  require user presence for these registrations.
+
+## Saved passwords and passkeys in one sheet (Android)
+
+`getPasswordOrPasskey` shows Credential Manager's sheet with the user's saved passwords and, when you
+pass authentication options, their passkeys, and returns whichever the user picks. It is Android's
+answer to passkey autofill on a sign-in form, and the way to obtain a saved password from which a
+conditional create can follow (see above).
+
+```dart
+final requestOptions = await relyingPartyServer.startPasskeyAuthentication();
+final picked = await passkeyAuthenticator.getPasswordOrPasskey(
+  requestOptions,
+  // Show nothing unless something is saved on this device.
+  preferImmediatelyAvailableCredentials: true,
+);
+if (picked.passkey != null) {
+  await relyingPartyServer.finishPasskeyAuthentication(picked.passkey!);
+} else {
+  // Sign in exactly as if the user had typed these.
+  await signInWithPassword(picked.password!.username, picked.password!.password);
+}
+```
+
+- `preferImmediatelyAvailableCredentials` defaults to the value in the authentication options, or
+  `false` without them. Their `mediation` does not apply here.
+- Pass `null` instead of authentication options to offer saved passwords only. Below Android 9
+  (API 28) only saved passwords are offered either way.
+- Throws `PasskeyAuthCancelledException` when the user dismisses the sheet and
+  `NoCredentialsAvailableException` when nothing is saved. When none of the allowed credentials
+  could be used, it throws `CredentialNotAuthenticatedException`, a subtype of
+  `PasskeyAuthCancelledException` whose `message` holds what the platform reported. Every other
+  platform throws `PasswordCredentialUnsupportedException`; use the platform's autofill there.
+
+## Restore Credentials (Android)
+
+From April 2027 Google Play requires apps with sign-in to restore the signed in state when the user
+moves to a new Android device, through Credential Manager's
+[Restore Credentials](https://developer.android.com/identity/sign-in/restore-credentials). A restore
+key is a WebAuthn credential that Android creates silently and backs up with the app data, so your
+relying party server handles it exactly like a passkey. Your app does not need to offer passkeys to
+its users to use restore keys.
+
+`createRestoreCredential` and `getRestoreCredential` take the same request types as `register` and
+`authenticate`. Restore credentials only exist on Android 9 (API 28) and above with Google Play
+services; everywhere else these two throw `RestoreCredentialUnsupportedException`, while
+`clearRestoreCredential`, which takes no request, is a no-op because there is nothing to clear.
+
+```dart
+// After the user signs in: create a restore key and register it on your server.
+final creationOptions = await relyingPartyServer.startPasskeyRegistration();
+final credential = await passkeyAuthenticator.createRestoreCredential(creationOptions);
+await relyingPartyServer.finishPasskeyRegistration(credential);
+
+// On the first launch on a new device: sign in with the restored key.
+final requestOptions = await relyingPartyServer.startPasskeyAuthentication();
+final assertion = await passkeyAuthenticator.getRestoreCredential(requestOptions);
+await relyingPartyServer.finishPasskeyAuthentication(assertion);
+
+// When the user signs out.
+await passkeyAuthenticator.clearRestoreCredential();
+```
+
+- `getRestoreCredential` throws `NoCredentialsAvailableException` when there is no restore key on the
+  device.
+- The key is backed up to the cloud when the device has end-to-end encrypted backup (Google backup
+  plus a screen lock). Otherwise it is stored locally and only moves with a cable transfer. Pass
+  `isCloudBackupEnabled: false` to always keep it local.
+- Android keeps one restore key per app. Delete the previous key on your server before creating a new
+  one, and delete it when the user signs out. Keep restore keys apart from user-created passkeys on
+  the server so they do not show up in a passkey management screen.
+- Digital Asset Links must be set up for the relying party, exactly as for passkeys.
+
+## Troubleshooting
+
+As a first step, you can rely on our integrated doctor tool to help you debug and configure your app. To enable it, simply pass debugMode: true when initializing PasskeysAuthenticator:
+
+```dart
+import 'package:passkeys/passkeys.dart';
+
+void main() {
+  final authenticator = PasskeyAuthenticator(debugMode: true);
+}
+```
+
+The doctor will automatically perform checks and provide feedback through the Passkeys package's error handling system.
+
+### Android
+
+<details>
+<summary>1. Configure Digital Asset Links (assetlinks.json)</summary>
+
+- Make sure your relying server serves a valid Digital Asset Links file at `https://<your-domain>/.well-known/assetlinks.json`.
+- The file must include a statement that grants the `delegate_permission/common.get_login_creds` relation to your app, identified by its package name and the SHA-256 fingerprint of its signing certificate (use the fingerprint of every certificate your app is signed with, including the Play Store upload key):
+
+```json
+[
+  {
+    "relation": ["delegate_permission/common.get_login_creds"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.example.yourapp",
+      "sha256_cert_fingerprints": [
+        "AA:BB:CC:..."
+      ]
+    }
+  }
+]
+```
+
+- The relying party id (RPID) you use must match the domain that hosts the `assetlinks.json` file.
+- Ensure the file is hosted without redirects and served with the `application/json` content type.
+
+</details>
+
+<details>
+<summary>2. Make sure that you have logged into a Google account.</summary>
+
+Google backs up all your passkeys so you need to be logged into a Google account to use passkeys.
+If you are not logged in, you will see the following message: "Sign in to your Google Account to
+create passkeys." and this package will throw a `SyncAccountNotAvailableException`.
+
+You can log into your Google account by opening settings, clicking on the icon in the top right and
+then on "Sign in to your Google Account".
+
+<img src="https://github.com/corbado/flutter-passkeys/blob/main/packages/passkeys/passkeys/doc/troubleshooting-sign-in-to-google-account.png?raw=true" style="width: 100%" alt="troubleshooting_google_account"/>
+</details>
+
+<details>
+<summary>3. Make sure that you have set up a screen lock or biometrics on your device.</summary>
+
+If you run the application in an emulator and it says that you can't create a passkey, you have to
+log into your Google account and properly set up a screen lock or biometrics on the device.
+
+To set up the screen lock, open the settings, search for security settings and add a PIN
+as well as a fingerprint as shown below (PIN is required for fingerprint):
+
+<img src="https://github.com/corbado/flutter-passkeys/blob/main/packages/passkeys/passkeys/doc/troubleshooting-no-screen-lock.png?raw=true" style="width: 100%" alt="troubleshooting_screen_lock"/>
+</details>
+
+<details>
+<summary>4. In case of using an emulator, make sure that is has Play Store support.</summary>
+
+During our implementation and testing, we detected some bugs when using specific API versions /
+devices of Android emulator (physical devices worked at any time though).
+To avoid these issues, make sure that you are using an emulator with the following traits:
+
+- API version 33 or 34
+- Play Store Support (indicated by the Google Play icon when you create a new emulator device):
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/play-store-support.png" style="width: 100%" alt="android-play-store-support"/>
+
+We tested this example successfully on:
+
+- Pixel 7 Pro
+- Pixel 7
+- Pixel 6a
+- Pixel 4
+
+We continuously update the package to make things work on more emulators, once there are patches by
+Google.
+
+Our recommendation if you run the example on an Android emulator is to follow these steps:
+
+1. Start your Android emulator (one of the emulators we mentioned above).
+2. Open the emulator's settings and sign into your Google account.
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/sign-in-to-google-account.png" style="width: 800px" alt="sign-in-to-google-account"/>
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/sign-in-to-google-account-details.png" style="width: 100%" alt="sign-in-to-google-account-details"/>
+
+3. Stay in the settings and add a screen lock (and optionally a fingerprint).
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/add-screen-lock.png" style="width: 100%" alt="add-screen-lock"/>
+
+4. Update Google Play (Extended Controls => Google Play => Update).
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/update-google-play.png" style="width: 100%" alt="update-google-play"/>
+
+5. Restart the emulator (cold boot).
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/restart-emulator.png" style="width: 200px" alt="restart-emulator"/>
+
+6. You can now run the example app on your Android emulator.
+
+</details>
+
+### iOS
+
+<details>
+<summary>1. Make sure to enable biometrics to use passkeys</summary>
+
+If you get an error like "Simulator requires enrolled biometrics to use passkeys" during sign up or
+login, activate Face ID for your device.
+On a simulator, this can be done under _Features_ => _Face ID_ by clicking on "Enrolled".
+
+<img src="https://raw.githubusercontent.com/corbado/flutter-passkeys/main/packages/passkeys/passkeys/doc/ios_error_enrolled_biometrics.png" style="width: 200px" alt="ios_enrolled_biometrics">
+</details>
+
+<details>
+<summary>2. The login sheet offers "Use Security Key" or "Scan QR Code" instead of the passkey</summary>
+
+When `preferImmediatelyAvailableCredentials` is `false`, iOS and macOS also offer hardware security
+keys and cross-device sign in on the login sheet. Passkeys stored by a third party credential
+provider, such as Google Password Manager or 1Password, can then end up hidden behind a
+"More options" entry, which some users read as their passkey being gone.
+
+If your relying party knows that none of the credentials in `allowCredentials` live on a security
+key, pass `canBeSecurityKey: false` so the sheet only offers passkeys:
+
+```dart
+final request = AuthenticateRequestType.fromJsonString(
+  webAuthnChallenge,
+  preferImmediatelyAvailableCredentials: false,
+  canBeSecurityKey: false,
+);
+```
+
+The flag only affects iOS and macOS and defaults to `true`.
+</details>
+
+### macOS
+
+<details>
+<summary>1. Configure Apple App Site Association (AASA) and Associated Domains</summary>
+
+- Make sure your relying server serves a valid Apple App Site Association (AASA) file at `https://<your-domain>/.well-known/apple-app-site-association`.
+- The AASA must include your app's `appID` entries, which are composed of your Apple Team ID and the macOS bundle identifier (`<TeamID>.<BundleID>`). Example reference file: `https://flutter.corbado.io/.well-known/apple-app-site-association`.
+- Add the Associated Domains entitlement to your macOS target and include your relying server domain using the `webcredentials:` prefix (e.g., `webcredentials:your-domain`), so the system can match your app to the relying party.
+- Ensure the AASA is hosted without redirects and with the correct content type.
+
+</details>
+
+### Web
+
+<details>
+<summary>1. Update your index.html to include our JavaScript library</summary>
+Our passkeys_web package relies on JavaScript for integrating with the browser's WebAuthn API.
+To make this work, you have to include our JavaScript library in your web/index.html file. If not correctly integrated the PasskeyAuthenticator would not correctly initialize and the application would crash and an exception asking to add the code below will show in your console.
+
+```html
+<script
+  src="https://github.com/corbado/flutter-passkeys/releases/download/2.4.0/bundle.js"
+  type="application/javascript"
+></script>
+```
+
+You can also take a look at this package's example to see how it is done there.
+
+</details>
+
+#### Requirements
+
+- This package requires Dart 3.11.0 / Flutter 3.41.0 or later.
+
+#### Additional Details
+
+- To support WebAssembly (Wasm) as outlined
+  in [Flutter's documentation](https://docs.flutter.dev/platform-integration/web/wasm), we had to utilize
+  `dart:js_interop`, which requires Dart 3.3.0 and Flutter 3.19.0. Therefore, Flutter 3.19.0 is the minimal requirement
+  for this feature.
+- Starting with Flutter 3.22.0 and later, when inserting the application script into the HTML, use:
+
+```html
+<script src="flutter_bootstrap.js" type="application/javascript"></script>
+```
+
+Instead of:
+
+```html
+<script src="main.dart.js" type="application/javascript"></script>
+```
+
+- To enable running or building using Wasm, simply add the `--wasm` flag to the `flutter run` or `flutter build`
+  commands.
+
+## Passkeys Doctor
+
+A diagnostic tool for Flutter Passkeys implementation that helps identify and resolve common configuration issues with WebAuthn/Passkeys.
+
+### Overview
+
+Passkeys Doctor is a diagnostic tool that helps developers identify and fix common issues with their Passkeys implementation. It performs various checks to ensure your app is properly configured for Passkeys authentication across different platforms (iOS, Android, and Web).
+
+### Features
+
+- **RPID Validation**: Verifies that your Relying Party ID (RPID) is correctly configured
+- **Platform-Specific Checks**:
+  - iOS: Validates Apple App Site Association (AASA) file configuration
+  - Android: Verifies Digital Asset Links configuration
+  - Web: Ensures RPID matches the current hostname
+- **Real-time Diagnostics**: Provides immediate feedback on configuration issues
+- **Detailed Error Reporting**: Offers specific guidance on how to fix identified issues
+
+### Usage
+
+The Passkeys Doctor is already integrated into the main Passkeys package. To enable it, simply pass `debugMode: true` when initializing PasskeysAuthenticator:
+
+```dart
+import 'package:passkeys/passkeys.dart';
+
+void main() {
+  final authenticator = PasskeyAuthenticator(debugMode: true);
+}
+```
+
+The doctor will automatically perform checks and provide feedback through the Passkeys package's error handling system.
+
+### Diagnostic Checks
+
+#### RPID Validation
+
+- Ensures RPID is properly formatted
+- Verifies RPID matches your domain
+
+#### iOS-specific Checks
+
+- Validates Apple App Site Association (AASA) file contains the app bundle
+
+#### Android-specific Checks
+
+- Validates Digital Asset Links is correctly configured
+
+#### Web-specific Checks
+
+- Ensures RPID matches current hostname
+- Validates existence of passkeys JS script
+
+### Error Handling
+
+The doctor provides detailed error messages and suggestions for fixing common issues. Each checkpoint includes:
+
+- Name of the check
+- Detailed description of the issue
+- Type of issue (error, warning, or success)
+- Suggested fixes when applicable
+
+### Best Practices
+
+1. Enable the doctor during development to catch configuration issues early
+2. Use the detailed error messages to guide your configuration fixes

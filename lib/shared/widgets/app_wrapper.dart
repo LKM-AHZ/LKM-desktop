@@ -20,6 +20,7 @@ import 'package:island/accounts/pods/friend_status_listener.dart';
 import 'package:island/accounts/screens/me/account_qr.dart';
 import 'package:island/accounts/screens/me/account_settings.dart';
 import 'package:island/core/lifecycle.dart';
+import 'package:island/core/services/notify.huawei.dart';
 import 'package:island/core/services/app_icon_service.dart';
 import 'package:island/core/services/deeplink_service.dart';
 import 'package:island/core/services/quick_actions.dart';
@@ -99,6 +100,7 @@ class AppWrapper extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(huaweiPushRegistrationProvider);
     final networkStateShowing = useState(false);
     final websocketState = ref.watch(websocketStateProvider);
     final apiState = ref.watch(networkStatusProvider);

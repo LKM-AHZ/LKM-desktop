@@ -199,20 +199,25 @@ void main(List<String> args) async {
     // Native builds have no cookie jar; the helper is a no-op there.
     await adoptSharedSession(
       prefs: prefs,
-      serverUrl: prefs.getString(kNetworkServerStoreKey) ?? kNetworkServerDefault,
+      serverUrl:
+          prefs.getString(kNetworkServerStoreKey) ?? kNetworkServerDefault,
     );
 
     try {
       await EasyLocalization.ensureInitialized();
       EasyLocalization.logger.enableBuildModes = [];
 
-      if (kIsWeb || !Platform.isLinux) {
+      if (kIsWeb ||
+          Platform.isAndroid ||
+          Platform.isIOS ||
+          Platform.isMacOS ||
+          Platform.isWindows) {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
         _firebaseIsReady = true;
+        Logger.root.info("[SplashScreen] Firebase is ready!");
       }
-      Logger.root.info("[SplashScreen] Firebase is ready!");
     } catch (err, stackTrace) {
       Logger.root.severe(
         "[SplashScreen] Failed to initialize Firebase.",
@@ -467,11 +472,7 @@ class IslandApp extends HookConsumerWidget {
         Logger.root.info(
           '[relay] Route changed from ${previous ?? 'direct'} to '
           '${next ?? 'direct'}'
-          '${next == null ? '' : ' — ${describeRelayConfig(
-              route: next,
-              serverHost: server.host,
-              serverPort: relayRequestPort(server),
-            )}'}',
+          '${next == null ? '' : ' — ${describeRelayConfig(route: next, serverHost: server.host, serverPort: relayRequestPort(server))}'}',
         );
         // The route changed, so every client built under the old overrides has
         // to be rebuilt (and flushed — see [refreshNetworkClients]).

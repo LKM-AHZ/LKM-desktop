@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:island/core/config.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'notify.huawei.dart' as huawei_notify;
 
 // Conditional imports based on platform
 import 'notify.windows.dart' as windows_notify;
@@ -98,6 +100,17 @@ Future<void> subscribePushNotification(
     throw ArgumentError(
       'BuildContext is required to register push notifications.',
     );
+  }
+
+  if (Platform.operatingSystem == 'ohos') {
+    final session = ProviderScope.containerOf(
+      effectiveContext,
+      listen: false,
+    ).read(lkmApiSessionProvider);
+    if (session.tokens == null) {
+      throw StateError('Sign in to LKM before registering Huawei Push');
+    }
+    return huawei_notify.subscribeHuaweiPush(session.client);
   }
 
   final prefs = ProviderScope.containerOf(

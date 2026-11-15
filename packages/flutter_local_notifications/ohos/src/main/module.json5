@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "flutter_local_notifications",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

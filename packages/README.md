@@ -25,6 +25,13 @@ so the tree must stay together.
 | `audio_session` / `connectivity_plus` / `file_picker` | Current API versions with OHOS native backends |
 | `flutter_timezone` / `wakelock_plus` / `in_app_review` | Current API versions with OHOS timezone, screen wake and AppGallery review backends |
 | `image_picker` / `image_picker_ohos` / `share_plus` | Current image/video picker and sharing APIs with OHOS system backends |
+| `record` / `record_ohos` | Current record 7 API with OHOS AAC, PCM16/WAV file and PCM16 stream recording |
+| `geocoding` / `geocoding_ohos` | Current factory API with request-local HarmonyOS system geocoder |
+| `flutter_nfc_kit` / `mobile_scanner` | Current NFC/scanner APIs with OHOS hardware backends |
+| `quick_actions` / `quick_actions_ohos` / `map_launcher` | Current shortcut and map launcher APIs with real system dispatch |
+| `flutter_local_notifications` / `passkeys` / `passkeys_platform_interface` | Current notification and FIDO2 interfaces with OHOS registration |
+| `flutter_webrtc` / `livekit_client` | Current RTC APIs, pinned native runtime and explicit unsupported extensions |
+| `media_kit` / `media_kit_video` / media libraries | Current playback API with pinned OHOS MPV and system texture transport |
 | `super_native_extensions` | Pinned cross-platform fork with a reproducible OHOS Rust build |
 
 The UI/input packages retain their current APIs and original platforms. All app

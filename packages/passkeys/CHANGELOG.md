@@ -1,0 +1,278 @@
+## 2.24.1
+
+ - **FIX**(passkeys_darwin): add FlutterFramework SwiftPM dependency, require Flutter 3.41 ([#337](https://github.com/corbado/flutter-passkeys/issues/337)). ([beb9528a](https://github.com/corbado/flutter-passkeys/commit/beb9528ae45aedc932ead3b3c834a65791f0c3bb))
+ - **NOTE**: requires Dart 3.11 / Flutter 3.41 or later (also for CocoaPods builds). Apps on older Flutter versions keep resolving the previous release.
+
+## 2.24.0
+
+ - **FIX**(passkeys_android): report provider failures separately from cancellations ([#333](https://github.com/corbado/flutter-passkeys/issues/333)). ([e1f76074](https://github.com/corbado/flutter-passkeys/commit/e1f76074478266113457e1ab50e98b2f9a6350a0))
+ - **FIX**(passkeys_web): map an excluded credential match to ExcludeCredentialsCanNotBeRegisteredException ([#329](https://github.com/corbado/flutter-passkeys/issues/329)). ([212ed8a5](https://github.com/corbado/flutter-passkeys/commit/212ed8a5dec2a99a933c9df45836c5a74911f4e2))
+ - **FEAT**(passkeys_web): support conditional passkey creation ([#328](https://github.com/corbado/flutter-passkeys/issues/328)). ([87b47895](https://github.com/corbado/flutter-passkeys/commit/87b478952f026a522304ec4dffe3a19306f62dee))
+ - **FEAT**(passkeys_android): get a saved password or passkey in one request ([#325](https://github.com/corbado/flutter-passkeys/issues/325)). ([62905dae](https://github.com/corbado/flutter-passkeys/commit/62905daec5cb3510385d96ded9167ba6dd03ab6f))
+ - **FEAT**(passkeys): support conditional passkey creation ([#324](https://github.com/corbado/flutter-passkeys/issues/324)). ([e0fa3b50](https://github.com/corbado/flutter-passkeys/commit/e0fa3b5061d40e9268b35f8e2952e6ce2970bf60))
+
+## 2.23.2
+
+ - Update a dependency to the latest release.
+
+## 2.23.1
+
+ - **FIX**(passkeys): declare the meta dependency required by Pigeon generated code ([#313](https://github.com/corbado/flutter-passkeys/issues/313)). ([e1f12615](https://github.com/corbado/flutter-passkeys/commit/e1f126157ef1498ff563d9c4e8622eddd16a1a50))
+
+## 2.23.0
+
+ - **FIX**(passkeys_darwin): add canBeSecurityKey to authenticate ([#310](https://github.com/corbado/flutter-passkeys/issues/310)). ([c66a16eb](https://github.com/corbado/flutter-passkeys/commit/c66a16eba8a51400bfa8bb52e40c97098b8b7aa0))
+ - **FEAT**(passkeys): add Android Restore Credentials support ([#305](https://github.com/corbado/flutter-passkeys/issues/305)). ([c4e44074](https://github.com/corbado/flutter-passkeys/commit/c4e440743cd6eec94b6e336f2377bd6928fb16df))
+
+## 2.22.3
+
+ - **FIX**(passkeys): remove unused ua_client_hints dependency ([#300](https://github.com/corbado/flutter-passkeys/issues/300)). ([a25a3de4](https://github.com/corbado/flutter-passkeys/commit/a25a3de43c02c977b797a98dcba9a74eac620c57))
+
+## 2.22.2
+
+ - Update a dependency to the latest release.
+
+## 2.22.1
+
+ - **FIX**(passkeys_darwin): compile out Signal API on Xcode older than 26.2 ([#289](https://github.com/corbado/flutter-passkeys/issues/289)). ([3731dc07](https://github.com/corbado/flutter-passkeys/commit/3731dc07755001735daef9e1b2a61ad718b1d26f))
+
+## 2.22.0
+
+ - **REFACTOR**: clean up analysis lints and refine auth exception types ([#282](https://github.com/corbado/flutter-passkeys/issues/282)). ([60312bd3](https://github.com/corbado/flutter-passkeys/commit/60312bd32b3435147341396b4a2210608aa1ff51))
+ - **REFACTOR**: adopt Dart 3.9 features and migrate the example integration tests to patrol ([#268](https://github.com/corbado/flutter-passkeys/issues/268)). ([7a1bd0de](https://github.com/corbado/flutter-passkeys/commit/7a1bd0de58f594fe423d80f15dfc98568b34df7c))
+ - **FIX**: resolve Dependabot security alerts in npm dependencies ([#277](https://github.com/corbado/flutter-passkeys/issues/277)). ([ffe1d76f](https://github.com/corbado/flutter-passkeys/commit/ffe1d76fec67dd6a5dfa3731fc912e89d50fd44b))
+ - **FIX**(passkeys_darwin): map no-credentials-available regardless of device locale ([#271](https://github.com/corbado/flutter-passkeys/issues/271)). ([7414c54a](https://github.com/corbado/flutter-passkeys/commit/7414c54a24ddde979bc2d64d19b28a52065fc8ca))
+ - **FIX**: improve error handling for excludeCredentials on iOS 26 and Android 16+ ([#237](https://github.com/corbado/flutter-passkeys/issues/237)). ([f8abd40c](https://github.com/corbado/flutter-passkeys/commit/f8abd40c119c4d5c22a02250a42bdda008a9c42a))
+ - **FEAT**(passkeys_doctor): add web/macOS/Windows checks and only run doctor in debug mode ([#284](https://github.com/corbado/flutter-passkeys/issues/284)). ([5cf5c8b7](https://github.com/corbado/flutter-passkeys/commit/5cf5c8b755dffbe550f2879e605d5254100a5e0c))
+ - **FEAT**(passkeys): expose WebAuthn Signal API ([#279](https://github.com/corbado/flutter-passkeys/issues/279)). ([c91ccc8e](https://github.com/corbado/flutter-passkeys/commit/c91ccc8e8021f65eeff42640f120d4a321df1426))
+ - **FEAT**(passkeys_web): add PRF extension support ([#274](https://github.com/corbado/flutter-passkeys/issues/274)). ([4f63d7ed](https://github.com/corbado/flutter-passkeys/commit/4f63d7ed9b6a19b7aac5527e0df1e24dd2662c23))
+ - **FEAT**(passkeys): add PRF support for iOS and Android ([#263](https://github.com/corbado/flutter-passkeys/issues/263)). ([906a5069](https://github.com/corbado/flutter-passkeys/commit/906a5069583f76a6b05813b3cc8ab3418e984b11))
+ - **DOCS**: fix mistakes across package READMEs ([#281](https://github.com/corbado/flutter-passkeys/issues/281)). ([d9b028ff](https://github.com/corbado/flutter-passkeys/commit/d9b028ff9af7a2239fd89639604dc77355771968))
+ - **DOCS**(passkeys): document the PRF extension ([#275](https://github.com/corbado/flutter-passkeys/issues/275)). ([ff009bad](https://github.com/corbado/flutter-passkeys/commit/ff009baddc05f73049f60fc454e58a642416a742))
+
+## 2.21.1
+
+ - **DOCS**(passkeys): document Android Digital Asset Links setup ([#256](https://github.com/corbado/flutter-passkeys/issues/256)). ([1777f145](https://github.com/corbado/flutter-passkeys/commit/1777f1451fc4a650deb1768cc2910237d8cca2db))
+
+## 2.21.0
+
+ - **FEAT**: add PasskeyAuthenticatorInterface implemented by PasskeyAuthenticator ([#247](https://github.com/corbado/flutter-passkeys/issues/247)). ([bcc028fc](https://github.com/corbado/flutter-passkeys/commit/bcc028fc94c8875ed3240b8ebf76755f16dcc7ac))
+
+## 2.20.0
+* Raises minimum Dart SDK to `3.4.0`.
+
+## 2.19.0
+* Updates `passkeys_darwin` dependency to `^0.4.0` (adds Swift Package Manager support for iOS/macOS).
+
+## 2.18.0
+* Adds `NoCreateOptionException` handling for register flow. (Android)
+* Updates `passkeys_doctor` dependency to `^1.3.0`.
+* Updates `passkeys_android` dependency to `^2.12.0`.
+
+## 2.17.4
+* Fixes web plugin registration bug preventing automatic inclusion in Flutter's plugin registrant. (Web)
+
+## 2.17.3
+* Fixes Base64URL encoding truncation in Windows WebAuthn helper. (Windows)
+
+## 2.17.2
+* Fixes minor issues.
+
+## 2.17.1
+* Officially adds support for Windows.
+* Fixes minor issues.
+
+## 2.17.0
+* Adds support for Windows.
+* Adds JSON String serliazation to platform interfaces.
+
+## 2.16.0
+* Fixes `Attestation` not being passed to the register function. (Web)
+* Passes `Attestation` and `ResidentKey` params to Security Key Register Handler. (iOS & macOS)
+* Handles empty `userID` returned by authenticators. (iOS & macOS)
+
+## 2.15.1
+* Fixes conditional ui failing because of security keys. (iOS)
+
+## 2.15.0
+* Adds support for macOS.
+
+## 2.14.0
+* Fixes doctor syncing issues on Web. (Web)
+* Makes `authSelectionType` optional. (Android, iOS & Web)
+
+## 2.13.0
+* Fixes UIWindow unwrapping issue when building iOS app with Flutter 3.35.0+. (iOS)
+
+## 2.12.0
+* `hasPasskeySupport` now verifies that the Android API level is 28 or higher. (Android)
+* Fixed an issue that occurred when running the app on Android devices without Google Play Services. (Android)
+
+## 2.11.0
+* Fixes handling of optional `transports` field in registration response when authenticators don't provide it. (Android & iOS)
+
+## 2.10.0
+* Added new PasskeyUnsuportedException to detect if OS is too outdated for passkeys. (Android)
+
+## 2.9.0
+* Added passkeys_doctor plugin to help with debugging passkey and configuration issues.
+* Added passkey JS bundle check to ensure the passkey JS bundle is loaded before initializing the PasskeyAuthenticator. (Web)
+
+## 2.8.2
+* Fixed a bug where an empty `userHandle` returned by `authenticate` was not being handled correctly. (Android)
+
+## 2.8.1
+* Fixed issue with Base64Url encoded userIDs not being decoded correctly. (iOS)
+* Improved exception handling for MalformedBase64Url.
+
+## 2.8.0
+* Adds new exceptions to help with debugging Base64 encoding issues.
+
+## 2.7.1
+* Fixed a bug where `hybrid` transports causes login to fail. (Web)
+
+## 2.7.0
+* Fixed Exception when trying to register while `authenticatorAttachment` is null on Safari or IOS device. (Web)
+* Added support for external security keys (Yubikey) on iOS. (iOS)
+* Added handling for timeouts in `authenticate` and `register` methods. (Android)
+
+## 2.6.0
+* Added `transports` to RegistrationResponse
+* Fixes `hasPasskeySupport` in `getAvailability` (Android)
+
+## 2.5.0
+* Introduced `getAvailability` API: Enables checking for passkey support across platforms.
+* Updated `androidx.credentials:credentials` to version 1.3.0 for improved compatibility. (Android)
+* Resolved an issue on iOS 16.0+ where a `DeviceNotSupported` exception was incorrectly thrown on supported devices. (iOS)
+* Added `hasPasskeySupport` to `AvailabilityType` to verify passkey support on web platforms. (Web)
+
+## 2.4.0
+* Added support for WebAssembly (Wasm) (Web)
+* Added handling for `CreateCredentialNoCreateOptionException` when no viable creation options were found (Android)
+
+## 2.3.0
+* Improved fallback handling in `PasskeyAuthenticator.authenticate`.
+* Added support for `preferImmediatelyAvailableCredentials` on Android.
+* Fixed `requireResidentKey` mapping for 1Password compatibility.
+
+## 2.2.0
+* Added support for AGP 8.0 and newer (Android)
+* Resolves a crash issue on iOS devices running versions below 16.0. (iOS)
+
+## 2.1.0
+* Added support for preferImmediatelyAvailableCredentials (Android and iOS)
+* Added getAvailability (Flutter web only)
+
+## 2.0.9
+* Bump version of passkeys_web and corbado_frontend_api_client
+* Removed dependencies to openapi_generator_annotations and openapi_generator
+
+## 2.0.8
+* Added NoCredentialsAvailableException to indicate that no credentials are available during a login (android)
+
+## 2.0.7
+* Bump version of passkeys_ios
+
+## 2.0.6
+* Bump version of passkeys_ios (make excludeCredentials only available for iOS 17.4 and above)
+
+## 2.0.5
+* Bump version of passkeys_android (proguard file is no longer needed)
+
+## 2.0.4
+* Map excludeCredentials error to typed exception
+
+## 2.0.3
+* Added excludeCredentials support
+
+## 2.0.2
+* Update docs
+
+## 2.0.1
+* Update docs
+
+## 2.0.0
+* Stable release for v2
+* Added flutter_web support
+* Updated conditional UI support for iOS (it is now triggered from the iOS keyboard)
+* Updated the example to showcase conditional UI
+* Removed the RelyingPartyServer interface and the Corbado implementation of it (this is now part of
+  the corbado_auth package)
+* Fix: Cancel any pending authenticator operation before register/login calls
+* BREAKING CHANGE: Parameters of "authenticateWithAutocompletion" have changed
+* BREAKING CHANGE: Removed getFacetID (no longer needed)
+* BREAKING CHANGE: For conditional UI on iOS you now need to
+  set `autofillHints: [AutofillHints.username]` for the TextField
+
+## 2.0.0-dev.3
+* Bump version of passkey_ios (fix userHandle issue)
+
+## 2.0.0-dev.2
+* Bump version of passkey_ios
+
+## 2.0.0-dev.1
+
+* Added flutter_web support
+* Updated conditional UI support for iOS (it is now triggered from the iOS keyboard)
+* Updated the example to showcase conditional UI
+* Removed the RelyingPartyServer interface and the Corbado implementation of it (this is now part of
+  the corbado_auth package)
+* Fix: Cancel any pending authenticator operation before register/login calls
+* BREAKING CHANGE: Parameters of "authenticateWithAutocompletion" have changed
+* BREAKING CHANGE: Removed getFacetID (no longer needed)
+* BREAKING CHANGE: For conditional UI on iOS you now need to
+  set `autofillHints: [AutofillHints.username]` for the TextField
+
+## 1.3.2
+
+* Bump version for passkeys_android
+
+## 1.3.1
+
+* Bump versions for passkeys_ios, passkeys_android and passkeys_platform_interface
+
+## 1.3.0
+
+* Corbado: Deprecate the customDomain setting (this does not have to be configured to production
+  projects)
+* Corbado: Added new exception type (PasskeyAlreadyExistsException)
+* Fix: Make sure that exceptions are awaited within the authenticator
+
+## 1.2.1
+
+* Improved exception handling for Android and iOS.
+
+## 1.2.0
+
+* Added autocomplete to sign in (authenticateWithAutocompletion).
+
+## 1.1.0
+
+* Added userHandle to AuthenticateResponseType.
+
+## 1.0.3
+
+* Fixed bug that happens when executing the Android example.
+* Activate alternate mode for iOS (entitlements).
+
+## 1.0.2
+
+* Improved docs.
+
+## 1.0.1
+
+* Improved docs.
+* Simplified example.
+* Bump iOS version.
+
+## 1.0.0
+
+* Better comments. Stable release.
+
+## 0.1.1
+
+* Update image links in docs.
+
+## 0.1.0
+
+* Initial open source release.

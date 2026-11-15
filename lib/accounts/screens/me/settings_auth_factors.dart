@@ -650,6 +650,8 @@ class _AuthFactorNewSheetState extends ConsumerState<AuthFactorNewSheet> {
   ) async {
     if (kIsWeb) {
       return await authenticator.getAvailability().web();
+    } else if (defaultTargetPlatform == TargetPlatform.ohos) {
+      return await authenticator.getAvailability().ohos();
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       return await authenticator.getAvailability().android();
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||

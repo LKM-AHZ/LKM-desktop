@@ -22,9 +22,12 @@ class QuickActionsService {
   Future<void> initialize(WidgetRef ref) async {
     _ref = ref;
 
-    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+    if (kIsWeb ||
+        (!Platform.isAndroid &&
+            !Platform.isIOS &&
+            Platform.operatingSystem != 'ohos')) {
       Logger.root.warning(
-        '[QuickActions] Quick Actions only supported on Android and iOS',
+        '[QuickActions] Quick Actions requires a supported mobile platform',
       );
       return;
     }

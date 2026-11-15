@@ -1,4 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -254,7 +256,7 @@ class AccountConnectionNewSheet extends HookConsumerWidget {
       final client = ref.watch(apiClientProvider);
 
       switch (selectedProvider.value.toLowerCase()) {
-        case 'apple':
+        case 'apple' when defaultTargetPlatform != TargetPlatform.ohos:
           try {
             final credential = await SignInWithApple.getAppleIDCredential(
               scopes: [AppleIDAuthorizationScopes.email],

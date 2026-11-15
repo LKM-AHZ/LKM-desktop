@@ -1,0 +1,551 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+import 'package:passkeys/availability.dart';
+import 'package:passkeys/types.dart';
+import 'package:passkeys_platform_interface/passkeys_platform_interface.dart';
+
+/// Handles platform dependent parts of the registration and authentication
+/// flow.
+class PasskeyAuthenticator
+    implements PasskeyAuthenticatorInterface, RestoreCredentialInterface {
+  /// Constructor
+  PasskeyAuthenticator({bool? debugMode})
+    : _platform = PasskeysPlatform.instance,
+      debugMode = debugMode ?? false {
+    if (this.debugMode) {
+      _doctor = PasskeysDoctor();
+    }
+  }
+
+  /// The [PasskeysDoctor] instance for debugging and checking passkeys.
+  /// Only created when [debugMode] is enabled.
+  PasskeysDoctor? _doctor;
+
+  /// The platform interface for passkeys.
+  final PasskeysPlatform _platform;
+
+  /// Indicates whether the app is in debug mode.
+  final bool debugMode;
+
+  /// Returns true only if passkeys are supported by the platform.
+  @Deprecated(
+    'Use PasskeyAvailability.isAvailable instead. '
+    'This method will be removed in a future release.',
+  )
+  Future<bool> canAuthenticate() {
+    return _platform.canAuthenticate();
+  }
+
+  /// Cancels the current authenticator operation.
+  Future<void> cancelCurrentAuthenticatorOperation() {
+    return _platform.cancelCurrentAuthenticatorOperation();
+  }
+
+  /// Returns a stream of results from the debugging doctor.
+  /// Emits nothing when [debugMode] is disabled.
+  Stream<Result> get resultStream =>
+      _doctor?.resultStream ?? const Stream<Result>.empty();
+
+  /// Creates a new passkey and stores it on the device.
+  /// Returns [RegisterResponseType] which must be sent to the relying party
+  /// server.
+  ///
+  /// When [RegisterRequestType.mediation] is [MediationType.Conditional] no UI
+  /// is shown: the platform either creates the passkey or throws
+  /// [ConditionalCreateNotEligibleException] (or
+  /// [ConditionalCreateUnsupportedException] where conditional create does
+  /// not exist).
+  @override
+  Future<RegisterResponseType> register(RegisterRequestType request) async {
+    if (debugMode) {
+      await _doctor?.check(request.relyingParty.id);
+    }
+
+    try {
+      await _platform.cancelCurrentAuthenticatorOperation();
+
+      _isValidChallenge(request.challenge);
+
+      _isValidUserID(request.user.id);
+
+      for (final credential in request.excludeCredentials) {
+        _isValidCredentialID(credential.id);
+      }
+
+      final r = await _platform.register(request);
+
+      return r;
+    } on PlatformException catch (e) {
+      if (debugMode) {
+        _doctor?.recordException(e);
+      }
+
+      switch (e.code) {
+        case 'cancelled':
+          throw PasskeyAuthCancelledException(e.message);
+        case 'exclude-credentials-match':
+          throw ExcludeCredentialsCanNotBeRegisteredException();
+        case 'android-missing-google-sign-in':
+          throw MissingGoogleSignInException();
+        case 'android-sync-account-not-available':
+          throw SyncAccountNotAvailableException();
+        case 'domain-not-associated':
+          throw DomainNotAssociatedException(e.message);
+        case 'deviceNotSupported':
+          throw DeviceNotSupportedException();
+        case 'android-passkey-unsupported':
+          throw PasskeyUnsupportedException(e.message);
+        case 'android-no-create-option':
+          throw NoCreateOptionException(e.message);
+        case 'not-eligible':
+          throw ConditionalCreateNotEligibleException(e.message);
+        case 'conditional-create-unsupported':
+          throw ConditionalCreateUnsupportedException(e.message);
+        case 'android-timeout':
+          throw TimeoutException(e.message);
+        case 'ios-security-key-timeout':
+          throw TimeoutException(e.message);
+        default:
+          if (e.code.startsWith('android-unhandled')) {
+            throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+          } else if (e.code.startsWith('ios-unhandled')) {
+            throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+          } else {
+            rethrow;
+          }
+      }
+    }
+  }
+
+  /// Shows the platform credential manager with the user's saved passwords
+  /// and, when [passkeyRequest] is given, their passkeys, and returns the one
+  /// the user picks.
+  ///
+  /// A returned password has not been checked by anyone: sign in with it as if
+  /// the user had typed it. A returned passkey assertion must be sent to the
+  /// relying party server exactly like the result of [authenticate].
+  ///
+  /// With [preferImmediatelyAvailableCredentials] no sheet is shown when
+  /// nothing is saved on the device, which suits showing it unprompted. When
+  /// it is omitted, the value from [passkeyRequest] is used, or `false` when
+  /// there is no [passkeyRequest]. The `mediation` of [passkeyRequest] does
+  /// not apply here.
+  ///
+  /// Passkeys need Android 9 (API 28) or newer. Below that only saved
+  /// passwords are offered, even when [passkeyRequest] is given.
+  ///
+  /// Throws [PasskeyAuthCancelledException] when the user dismisses the sheet,
+  /// [CredentialNotAuthenticatedException] when none of the allowed
+  /// credentials could be used, [NoCredentialsAvailableException] when nothing
+  /// is saved, and [PasswordCredentialUnsupportedException] on platforms other
+  /// than Android.
+  Future<PasswordOrPasskeyResponseType> getPasswordOrPasskey(
+    AuthenticateRequestType? passkeyRequest, {
+    bool? preferImmediatelyAvailableCredentials,
+  }) async {
+    if (debugMode && passkeyRequest != null) {
+      await _doctor?.check(passkeyRequest.relyingPartyId);
+    }
+
+    try {
+      await _platform.cancelCurrentAuthenticatorOperation();
+
+      if (passkeyRequest != null) {
+        _isValidChallenge(passkeyRequest.challenge);
+        if (passkeyRequest.allowCredentials != null) {
+          for (final credential in passkeyRequest.allowCredentials!) {
+            _isValidCredentialID(credential.id);
+          }
+        }
+      }
+
+      return await _platform.getPasswordOrPasskey(
+        passkeyRequest,
+        preferImmediatelyAvailableCredentials:
+            preferImmediatelyAvailableCredentials ??
+            passkeyRequest?.preferImmediatelyAvailableCredentials ??
+            false,
+      );
+    } on PlatformException catch (e, stackTrace) {
+      if (debugMode) {
+        _doctor?.recordException(e);
+      }
+
+      switch (e.code) {
+        case 'password-credential-unsupported':
+          throw PasswordCredentialUnsupportedException(e.message);
+        case 'cancelled':
+          throw PasskeyAuthCancelledException(e.message);
+        case 'android-credential-not-authenticated':
+          throw CredentialNotAuthenticatedException(e.message);
+        case 'android-no-credential':
+          throw NoCredentialsAvailableException();
+        case 'domain-not-associated':
+          throw DomainNotAssociatedException(e.message);
+        case 'android-sync-account-not-available':
+          throw SyncAccountNotAvailableException();
+        case 'android-timeout':
+          throw TimeoutException(e.message);
+        default:
+          if (e.code.startsWith('android-unhandled')) {
+            throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+          }
+          Error.throwWithStackTrace(e, stackTrace);
+      }
+    }
+  }
+
+  /// Authenticates a user with a passkey.
+  /// Returns [AuthenticateResponseType] which must be sent to the relying party
+  /// server.
+  @override
+  Future<AuthenticateResponseType> authenticate(
+    AuthenticateRequestType request,
+  ) async {
+    if (debugMode) {
+      await _doctor?.check(request.relyingPartyId);
+    }
+
+    try {
+      await _platform.cancelCurrentAuthenticatorOperation();
+
+      _isValidChallenge(request.challenge);
+
+      if (request.allowCredentials != null) {
+        for (final credential in request.allowCredentials!) {
+          _isValidCredentialID(credential.id);
+        }
+      }
+
+      final r = await _platform.authenticate(request);
+
+      return r;
+    } on PlatformException catch (e) {
+      if (debugMode) {
+        _doctor?.recordException(e);
+      }
+
+      switch (e.code) {
+        case 'domain-not-associated':
+          throw DomainNotAssociatedException(e.message);
+        case 'no-credentials-available':
+          throw NoCredentialsAvailableException();
+        case 'cancelled':
+          throw PasskeyAuthCancelledException(e.message);
+        case 'android-credential-not-authenticated':
+          throw CredentialNotAuthenticatedException(e.message);
+        case 'android-no-credential':
+          throw NoCredentialsAvailableException();
+        case 'deviceNotSupported':
+          throw DeviceNotSupportedException();
+        case 'android-passkey-unsupported':
+          throw PasskeyUnsupportedException(e.message);
+        case 'android-no-create-option':
+          throw NoCreateOptionException(e.message);
+        case 'android-timeout':
+          throw TimeoutException(e.message);
+        case 'ios-security-key-timeout':
+          throw TimeoutException(e.message);
+        default:
+          if (e.code.startsWith('android-unhandled')) {
+            throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+          } else if (e.code.startsWith('ios-unhandled')) {
+            throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+          } else {
+            rethrow;
+          }
+      }
+    }
+  }
+
+  /// Signals to the platform that a credential is no longer recognized by the
+  /// relying party.
+  ///
+  /// Call this after the server rejects an assertion because the credential was
+  /// deleted server-side. Where supported this removes the stale credential
+  /// from the passkey picker and autofill suggestions.
+  ///
+  /// This is a best-effort hint. It is only acted upon on Android (with a
+  /// Credential Manager provider that supports the Signal API), iOS 26.2 and
+  /// later, macOS 26.2 and later, and browsers that expose
+  /// `PublicKeyCredential.signalUnknownCredential`. On every other platform or
+  /// OS version, including older iOS and macOS releases, the call is a no-op.
+  /// On iOS and macOS it is also a no-op when the app is built with an Xcode
+  /// older than 26.2, because the underlying API is missing from those SDKs.
+  @override
+  Future<void> signalUnknownCredential(
+    SignalUnknownCredentialRequestType request,
+  ) async {
+    try {
+      _isValidCredentialID(request.credentialId);
+
+      await _platform.signalUnknownCredential(request);
+    } on PlatformException catch (e, stackTrace) {
+      _mapSignalException(e, stackTrace);
+    }
+  }
+
+  /// Signals to the platform the complete set of credentials that the relying
+  /// party still accepts for a user.
+  ///
+  /// Where supported any credentials not contained in
+  /// [SignalAllAcceptedCredentialsRequestType.allAcceptedCredentialIds] are
+  /// pruned from the passkey picker.
+  ///
+  /// This is a best-effort hint. It is only acted upon on Android (with a
+  /// Credential Manager provider that supports the Signal API), iOS 26.2 and
+  /// later, macOS 26.2 and later, and browsers that expose
+  /// `PublicKeyCredential.signalAllAcceptedCredentials`. On every other
+  /// platform or OS version, including older iOS and macOS releases, the call
+  /// is a no-op. On iOS and macOS it is also a no-op when the app is built with
+  /// an Xcode older than 26.2, because the underlying API is missing from those
+  /// SDKs.
+  @override
+  Future<void> signalAllAcceptedCredentials(
+    SignalAllAcceptedCredentialsRequestType request,
+  ) async {
+    try {
+      _isValidUserID(request.userId);
+      for (final credentialId in request.allAcceptedCredentialIds) {
+        _isValidCredentialID(credentialId);
+      }
+
+      await _platform.signalAllAcceptedCredentials(request);
+    } on PlatformException catch (e, stackTrace) {
+      _mapSignalException(e, stackTrace);
+    }
+  }
+
+  /// Creates an Android restore credential (restore key) and stores it on the
+  /// device.
+  ///
+  /// Restore keys let Android sign the user in silently on a new device. They
+  /// are WebAuthn credentials, so [request] is the same
+  /// `PublicKeyCredentialCreationOptions` your relying party server produces
+  /// for [register], and the returned [RegisterResponseType] is verified and
+  /// stored by the server exactly like a passkey. Nothing is shown to the user.
+  ///
+  /// [isCloudBackupEnabled] backs the restore key up to the cloud when the
+  /// device has end-to-end encrypted backup (Google backup plus a screen lock)
+  /// and stores it locally otherwise, so it still moves with a cable transfer.
+  /// Pass `false` to always keep it local.
+  ///
+  /// Restore credentials only exist on Android 9 (API 28) and above with
+  /// Google Play services. Everywhere else this throws
+  /// [RestoreCredentialUnsupportedException].
+  @override
+  Future<RegisterResponseType> createRestoreCredential(
+    RegisterRequestType request, {
+    bool isCloudBackupEnabled = true,
+  }) async {
+    if (debugMode) {
+      await _doctor?.check(request.relyingParty.id);
+    }
+
+    try {
+      _isValidChallenge(request.challenge);
+
+      _isValidUserID(request.user.id);
+
+      for (final credential in request.excludeCredentials) {
+        _isValidCredentialID(credential.id);
+      }
+
+      return await _platform.createRestoreCredential(
+        request,
+        isCloudBackupEnabled: isCloudBackupEnabled,
+      );
+    } on PlatformException catch (e, stackTrace) {
+      _mapRestoreCredentialException(e, stackTrace);
+    }
+  }
+
+  /// Signs the challenge in [request] with the restore credential (restore
+  /// key) on the device.
+  ///
+  /// Call this on the first launch after the app was restored on a new device.
+  /// [request] is the same `PublicKeyCredentialRequestOptions` your relying
+  /// party server produces for [authenticate], and the returned
+  /// [AuthenticateResponseType] is verified by the server exactly like a
+  /// passkey assertion. Nothing is shown to the user.
+  ///
+  /// Throws [NoCredentialsAvailableException] when there is no restore key on
+  /// the device, and [RestoreCredentialUnsupportedException] on platforms
+  /// without restore credentials.
+  @override
+  Future<AuthenticateResponseType> getRestoreCredential(
+    AuthenticateRequestType request,
+  ) async {
+    if (debugMode) {
+      await _doctor?.check(request.relyingPartyId);
+    }
+
+    try {
+      _isValidChallenge(request.challenge);
+
+      if (request.allowCredentials != null) {
+        for (final credential in request.allowCredentials!) {
+          _isValidCredentialID(credential.id);
+        }
+      }
+
+      return await _platform.getRestoreCredential(request);
+    } on PlatformException catch (e, stackTrace) {
+      _mapRestoreCredentialException(e, stackTrace);
+    }
+  }
+
+  /// Deletes the restore credential (restore key) from the device.
+  ///
+  /// Call this when the user signs out. Android does not delete restore keys
+  /// on its own, so without this call the user would be signed in again on the
+  /// next launch. On platforms without restore credentials this is a no-op.
+  @override
+  Future<void> clearRestoreCredential() async {
+    try {
+      await _platform.clearRestoreCredential();
+    } on PlatformException catch (e, stackTrace) {
+      _mapRestoreCredentialException(e, stackTrace);
+    }
+  }
+
+  Never _mapRestoreCredentialException(
+    PlatformException e,
+    StackTrace stackTrace,
+  ) {
+    if (debugMode) {
+      _doctor?.recordException(e);
+    }
+
+    switch (e.code) {
+      case 'restore-credential-unsupported':
+        throw RestoreCredentialUnsupportedException(e.message);
+      case 'android-no-credential':
+        throw NoCredentialsAvailableException();
+      case 'cancelled':
+        throw PasskeyAuthCancelledException(e.message);
+      case 'domain-not-associated':
+        throw DomainNotAssociatedException(e.message);
+      case 'android-timeout':
+        throw TimeoutException(e.message);
+      default:
+        if (e.code.startsWith('android-unhandled')) {
+          throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+        }
+        Error.throwWithStackTrace(e, stackTrace);
+    }
+  }
+
+  Never _mapSignalException(PlatformException e, StackTrace stackTrace) {
+    if (debugMode) {
+      _doctor?.recordException(e);
+    }
+
+    switch (e.code) {
+      case 'cancelled':
+        throw PasskeyAuthCancelledException(e.message);
+      case 'domain-not-associated':
+        throw DomainNotAssociatedException(e.message);
+      case 'deviceNotSupported':
+        throw DeviceNotSupportedException();
+      default:
+        if (e.code.startsWith('android-unhandled') ||
+            e.code.startsWith('ios-unhandled')) {
+          throw UnhandledAuthenticatorException(e.code, e.message, e.details);
+        }
+        Error.throwWithStackTrace(e, stackTrace);
+    }
+  }
+
+  /// Returns platform-specific information about the availability of passkeys.
+  ///
+  /// This function returns an instance of [GetAvailability], which provides
+  /// platform-specific methods to query the availability of passkeys.
+  ///
+  /// Supported methods:
+  /// - [GetAvailability.web]: For web-based platforms.
+  /// - [GetAvailability.android]: For Android platforms.
+  /// - [GetAvailability.iOS]: For iOS platforms.
+  ///
+  /// ### Example Usage
+  /// ```dart
+  /// final webAvailability = await getAvailability().web();
+  /// final androidAvailability = await getAvailability().android();
+  /// final iosAvailability = await getAvailability().iOS();
+  /// ```
+  ///
+  /// ### Notes
+  /// - Ensure you are using the correct method for the platform being queried.
+  GetAvailability getAvailability() => GetAvailability(platform: _platform);
+
+  /// Validates the given challenge string.
+  void _isValidChallenge(String challenge) {
+    if (!_isValidBase64Url(input: challenge)) {
+      if (debugMode) {
+        _doctor?.recordException(
+          PlatformException(code: 'malformed-base64-url-challenge'),
+        );
+      }
+      throw MalformedBase64UrlChallenge();
+    }
+  }
+
+  /// Validates the given credential ID string.
+  void _isValidCredentialID(String credentialID) {
+    if (!_isValidBase64Url(input: credentialID)) {
+      if (debugMode) {
+        _doctor?.recordException(
+          PlatformException(code: 'malformed-base64-url-credential-id'),
+        );
+      }
+      throw MalformedBase64UrlCredentialID();
+    }
+  }
+
+  /// Validates the given user ID string.
+  void _isValidUserID(String userID) {
+    if (!_isValidBase64Url(input: userID, allowPadding: true)) {
+      if (debugMode) {
+        _doctor?.recordException(
+          PlatformException(code: 'malformed-base64-url-user-id'),
+        );
+      }
+      throw MalformedBase64UrlUserID();
+    }
+  }
+
+  /// Validates if the given string is a valid Base64URL encoded string.
+  bool _isValidBase64Url({required String input, bool allowPadding = false}) {
+    var value = input;
+    // If padding is allowed, remove trailing '=' characters, but only up to two
+    if (allowPadding) {
+      var i = 0;
+      while (value.endsWith('=') && i < 3) {
+        value = value.substring(0, value.length - 1);
+        i++;
+      }
+
+      if (i == 3) {
+        return false;
+      }
+    }
+
+    // Base64URL should only contain A-Z, a-z, 0-9, -, _
+    final base64UrlRegex = RegExp(r'^[A-Za-z0-9\-_]+$');
+
+    if (!base64UrlRegex.hasMatch(value)) return false;
+
+    try {
+      final normalized = value.padRight(
+        value.length + (4 - value.length % 4) % 4,
+        '=',
+      );
+      base64Url.decode(normalized);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}

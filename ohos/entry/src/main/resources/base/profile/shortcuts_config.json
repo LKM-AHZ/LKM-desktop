@@ -1,0 +1,64 @@
+{
+  "shortcuts": [
+    {
+      "shortcutId": "compose_post",
+      "label": "New Post",
+      "icon": "$media:icon",
+      "wants": [
+        {
+          "bundleName": "ltd.lkmahz.desktop",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "flutter_quick_action": "compose_post"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "explore",
+      "label": "Explore",
+      "icon": "$media:icon",
+      "wants": [
+        {
+          "bundleName": "ltd.lkmahz.desktop",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "flutter_quick_action": "explore"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "chats",
+      "label": "Chats",
+      "icon": "$media:icon",
+      "wants": [
+        {
+          "bundleName": "ltd.lkmahz.desktop",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "flutter_quick_action": "chats"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "notifications",
+      "label": "Notifications",
+      "icon": "$media:icon",
+      "wants": [
+        {
+          "bundleName": "ltd.lkmahz.desktop",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "flutter_quick_action": "notifications"
+          }
+        }
+      ]
+    }
+  ]
+}

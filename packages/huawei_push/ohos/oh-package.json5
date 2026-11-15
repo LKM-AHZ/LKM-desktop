@@ -1,0 +1,6 @@
+{
+  "name": "huawei_push",
+  "version": "1.0.0",
+  "main": "index.ets",
+  "dependencies": { "@ohos/flutter_ohos": "file:./libs/flutter_embedding.har" }
+}

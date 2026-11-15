@@ -1,6 +1,6 @@
 # 跨平台插件替换进度
 
-更新日期：2026-11-14。要求：同一套业务代码、同一份 `pubspec.yaml`、同一套跨平台插件实现；不建立鸿蒙专用依赖配置或应用副本。
+更新日期：2026-11-15。要求：同一套业务代码、同一份 `pubspec.yaml`、同一套跨平台插件实现；不建立鸿蒙专用依赖配置或应用副本。
 
 ## 已修改的配置
 
@@ -102,6 +102,7 @@ WebView 的 `internal_annotations` 配套包在该 fork 中标为 1.1.1，原锁
 | `in_app_review 2.0.12` | 合入 [70faf9d1cf59](https://gitcode.com/CPF-Flutter/fluttertpc_in_app_review/commit/70faf9d1cf592c392334f06adcffea5af85a3fc0) 后端，复用当前 interface 2.0.5；OHOS 注册只覆盖商店跳转，无旧 URL launcher；已接入共享评价提示 | API 20+ / AppGallery 服务，实际弹窗、账号、上架配置及配额待真机验证 |
 | `image_picker 1.2.4` / `image_picker_ohos 0.8.13+7` | 主包 Dart 与原平台不变，合入 [1af98579e1a9](https://gitcode.com/CPF-Flutter/flutter_packages/commit/1af98579e1a95d4fca19e422d26f5b6856ac38ba) 的系统选择器/图像处理；复用当前 interface 2.11.2 通道，修正取消、并发、多视频和缓存 FD；共享编辑器已开放 OHOS 相机入口 | 硬件、URI 授权、EXIF/方向及真实拍摄生命周期待验；OHOS 不承诺 Android 的进程丢失恢复 |
 | `share_plus 13.3.1` | 当前 Dart / interface 7.2.0 不变，移植 [bfd882da6893](https://gitcode.com/CPF-Flutter/flutter_plus_plugins/commit/bfd882da6893c4c8bfa1648ac637c2d557e6f4fa) 系统分享；统一处理文本/URI/文件，复制完成后再显示，FD 和回调清理回归通过 | 面板关闭返回 unavailable，不能据此确认目标选择/实际送达；真实跨应用 URI 读取待验 |
+| `record 7.1.2` / `record_ohos 1.0.0` | 当前 Dart / interface 2.1.0 不变，基于 [c719424e0cd8](https://gitcode.com/CPF-Flutter/fluttertpc_record/commit/c719424e0cd869bf57198e71768d11f995cce849) 重做等待、错误及资源管理；AAC-LC 文件、PCM16 文件/流、WAV 文件采用实际系统采集；音量换算 dBFS | 前台录音；其他编码/编码流/显式输入设备不支持，增益/降噪等可选项不保证；麦克风、音频路由、持续采集及系统中断待真机验收 |
 | `super_native_extensions 0.9.1` | 统一保留固定 fork；补接锁定 Rust/C++ 构建，检查 N-API/FFI 导出；OHOS 复用现成 Flutter 菜单实现 | 系统菜单原实现不支持；原生拖放及 Irondash 仍待设备验证 |
 
 本地来源、归档哈希和更改范围记录于每个包的 `UPSTREAM.md`。其他平台原实现保留，根 override 对所有平台生效；没有另建鸿蒙业务副本。目录选择能力的限制源于 OHOS 文档 provider 模型，不能用不可读 URI 假装文件系统路径。
@@ -114,6 +115,7 @@ node buildtools/verify-ohos-file-picker.mjs
 node buildtools/verify-ohos-timezone-wakelock.mjs
 node buildtools/verify-ohos-review.mjs
 node buildtools/verify-ohos-image-picker-share.mjs
+node buildtools/verify-ohos-record.mjs
 PATH="/usr/bin:$PATH" flutter test --no-pub \
   test/core/ohos_audio_session_test.dart \
   test/core/ohos_file_picker_test.dart \
@@ -121,24 +123,23 @@ PATH="/usr/bin:$PATH" flutter test --no-pub \
   test/core/ohos_timezone_wakelock_test.dart \
   test/core/ohos_review_test.dart \
   test/core/ohos_image_picker_share_test.dart \
+  test/core/ohos_record_test.dart test/posts/compose_recorder_test.dart \
   test/shared/ohos_ui_compatibility_test.dart
 ```
 
 ### 当前直接插件声明盘点
 
-按本次解析后的包 manifest 重新扫描，57 个直接主依赖插件中，30 个声明 OHOS 平台。其余 27 个如下；这仅是声明盘点，既不能把 30 个全部算作已验收，也不能把 27 个全部算作必须移植：桌面/Apple 专属实现、生成工具和纯 Dart 界面可能不需要 OHOS 后端。
+按本次解析后的包 manifest 重新扫描，57 个直接主依赖插件中，41 个声明 OHOS 平台。其余 16 个如下；这仅是声明盘点，既不能把 41 个全部算作已验收，也不能把 16 个全部算作必须移植：桌面/Apple 专属实现、生成工具和纯 Dart 界面可能不需要 OHOS 后端。
 
-`desktop_drop`、`desktop_multi_window`、`firebase_analytics`、`firebase_core`、`firebase_messaging`、`flutter_local_notifications`、`flutter_native_splash`、`flutter_nfc_kit`、`flutter_webrtc`、`geocoding`、`image_picker_android`、`in_app_purchase`、`in_app_purchase_storekit`、`island_desktop_presence`、`livekit_client`、`map_launcher`、`media_kit_video`、`mobile_scanner`、`native_glass_navbar`、`passkeys`、`protocol_handler`、`quick_actions`、`record`、`sign_in_with_apple`、`snow_fall_animation`、`window_manager`、`windows_notification`。
+`desktop_drop`、`desktop_multi_window`、`firebase_analytics`、`firebase_core`、`firebase_messaging`、`flutter_native_splash`、`image_picker_android`、`in_app_purchase`、`in_app_purchase_storekit`、`island_desktop_presence`、`native_glass_navbar`、`protocol_handler`、`sign_in_with_apple`、`snow_fall_animation`、`window_manager`、`windows_notification`。
 
-当前机器可读盘点保存在 `/home/alma/harmonyos/validation/lkm-desktop-phase5-plugin-manifests.json`，与替换前 CSV 分开保留。涉及应用实际功能的缺口还包括 NFC、地理编码、扫码、地图跳转、快捷操作和应用内购买；应逐项验证调用链、现有平台保护及 OHOS 后端，不能根据 HAP 编译成功略过。
+当前机器可读盘点保存在 `/home/alma/harmonyos/validation/lkm-desktop-phase7-plugin-manifests.json`，与替换前 CSV 分开保留。本轮处理结果、平台专属项和外部配置/SDK 能力缺口见 [统一处理清单](HARMONYOS_REMAINING_MATRIX.md)。声明盘点不代表设备验收。
 
-## 尚未适配完成的依赖
+## 剩余项整合结果
 
-| 依赖 | 保留原因 | 后续处理 |
-| --- | --- | --- |
-| `media_kit_libs_video` / 播放器链 | 配套 media_kit/video 的适配源版本与当前接口不同 | 整条播放器链移植并验证 |
-| WebRTC、LiveKit、record、通知等异版适配 | 当前适配源有版本或接口差异，尚未通过回归验证 | 保留现有 API 基线，逐项移植或选择已验证版本 |
-| Firebase Messaging/Analytics、Passkeys | 尚未确认当前接口的 OHOS 后端及服务配置 | 仍是运行功能缺口 |
+地理编码、NFC、扫码、快捷操作、地图、通知、Passkeys、播放器和 RTC/LiveKit 已以当前 API 接入统一来源，Linux release HAP 已完成实际编译。源码/许可证见各包 UPSTREAM；真实后端回归、当前公共 API 测试、原生库校验均有记录。不能据此声称全部插件 API 已支持：媒体 E2EE、部分录制/设备扩展、扫码前摄等限制和需要的外部配置见 [完整清单](HARMONYOS_REMAINING_MATRIX.md)。
+
+华为远程推送、华为内购及 Apple OAuth 服务配置尚缺；用户已确认暂无配置。当前 Apple IAP 保留平台专属入口，OHOS 使用服务端网页登录路径；不会伪造 FCM/Huawei token 或商品兼容。
 
 ### 需要跨 SDK 检查的调用
 
@@ -156,7 +157,7 @@ PATH="/usr/bin:$PATH" flutter test --no-pub \
 - 源码获取：此前详细日志确认 WebF 等 Git clone 返回 HTTP 418；按两个官方域名配置 User-Agent 后，真实 Git 克隆已恢复，原来的固定提交保持不变。
 - 实际依赖解析：已成功；锁文件由 Pub 自动生成，Git 源与本地同版本移植统一由根 override 选择，各包来源见上表。
 - 最新 analyze：0 个 error、7 个 warning、59 个 info，退出码 1；本轮适配和新增测试的集中检查为 0 issue。
-- 最新 Flutter tests：877 通过、21 失败、3 跳过；新增图片选择/分享的 2 项回归通过。与第四阶段逐项比较，失败清单完全一致，无新增失败；仍未做替换前工具链基线。失败明细见 Linux 构建记录。
+- 最新 Flutter tests：889 通过、21 失败、3 跳过；新增 9 项回归通过。与第六阶段逐项比较，失败清单完全一致，无新增失败。仍未做替换前工具链基线。失败明细见 Linux 构建记录。
 - OHOS 宿主：固定 SDK 模板复用现有 `lib/`，bundleName 为 `ltd.lkmahz.desktop`，API 26。已修复原生资产被误映射为 Linux 的问题，第三阶段业务 debug / release HAP 均已在 Linux 本机构建成功；本轮继续以 release 验证新插件，含 ARM64 AOT 及所需原生库，运行验收尚未完成。最小工程三种模式的 HAP 均成功；业务真机测试尚未完成。
 
 ## SDK 切换状态
