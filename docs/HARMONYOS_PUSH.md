@@ -32,14 +32,31 @@ HarmonyOS NEXT/5+ 使用 v3 接口和 PS256 服务帐号 JWT，不能用 Android
 OAuth2 appId/clientSecret 发送方式替代。启用时缺字段或非 RSA 私钥会拒绝启动；
 默认关闭，客户端注册返回明确不可用。没有以上外部开通、凭据和签名真机，不能声称已送达。
 
+## 部署接线
+
+根仓 `docker-compose.yml` 已把上述 7 个变量同时注入 `backend`（用
+`LKM_HUAWEI_PUSH_ENABLED` 决定是否接受 `platform=huawei` 的 token 注册）与
+`worker-notification`（实际下发）。少传任何一侧都会表现为「注册成功但永远收不到」
+或「开关已开却注册被拒」，`Settings` 的 `extra="ignore"` 不会报错。
+
+- Compose：变量从根 `.env` 插值，默认关闭。私钥是多行 PEM，`.env` 用双引号包裹并把
+  换行写成 `\n`（写法见根 `.env.example`）。
+- k8s：`lkm-secrets` 经 `envFrom` 注入。`deploy/k8s/gen-secret.sh` 生成除私钥外的
+  6 个键；私钥用 `LKM_HUAWEI_PUSH_PRIVATE_KEY_PATH` 指向 PEM 文件，由脚本以 YAML `|`
+  块输出（脚本的 `get()` 只按单行解析 `.env`，不能直接放私钥）。
+
 ## 验证
 
-不依赖数据库的签名与 HTTP 契约测试：
+不依赖数据库的签名与 HTTP 契约测试，以及部署接线契约：
 
 ```sh
 cd ../LKM-service
-uv run pytest --noconftest tests/test_huawei_push.py -q
+PATH="$PWD/.venv/bin:$PATH" .venv/bin/python -m pytest --noconftest tests/test_huawei_push.py -q
+PATH="$PWD/.venv/bin:$PATH" .venv/bin/python -m pytest tests/deploy/test_env_contract.py -q
 ```
+
+`test_env_contract.py` 会断言 7 个华为推送变量同时到达 `backend` 与
+`worker-notification`，防止 compose 白名单再次漏项。
 
 接入后还需签名真机验收：授权通知、登录注册、切后台/杀进程接收、点击打开、token 更新、
 退出登录使旧 token 失效，以及关闭某类通知偏好后不下发。真实发送是否成功以 Huawei

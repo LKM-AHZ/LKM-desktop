@@ -100,18 +100,6 @@ flutter build <platform>
 
 ---
 
-## 软件包
-
-共享的 Solsynth 软件包已内嵌到本仓库的 [`packages/`](packages/README.md)（来源 Socommon `2f3b2b4`）。
-
-想要基于 Solar Network 进行开发？查看以下资源：
-
-- [开发文档](https://kb.solsynth.dev)
-- [API 文档](https://api.solsynth.dev)
-- [`solar_network_sdk`](./packages/solar_network_sdk) - 官方 Dart SDK
-
----
-
 ## 服务端
 
 Solar Network 的后端服务位于：
@@ -124,8 +112,8 @@ Solar Network 的后端服务位于：
 | 层级 | 技术 |
 |-------|------------|
 | **前端** | Flutter - 跨平台 UI 框架 |
-| **后端** | .NET + PostgreSQL 数据库 |
-| **协议** | ActivityPub (联邦宇宙)、WebSockets、REST API |
+| **后端** | Python + PostgreSQL 数据库 |
+| **协议** | WebSockets、REST API |
 
 ---
 
@@ -160,12 +148,6 @@ Solar Network 的后端服务位于：
 
 - [LICENSE.txt](./LICENSE.txt)
 - [assets/LICENSE.md](./assets/icons/LICENSE.md)（如适用）
-
----
-
-<p align="center">
-  Made with love by the Solar Network Team
-</p>
 
 ## LKM 服务地址
 

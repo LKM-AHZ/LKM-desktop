@@ -217,6 +217,9 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
       .where((font) => font.isNotEmpty)
       .toList();
   if (inUseFonts.isEmpty) inUseFonts.add('Nunito');
+  // Web 的中文回退字体默认从 fonts.gstatic.com 下载；离线/内网会缺字。
+  // 放到 fallback 末尾，不改变用户选择的主字体。
+  if (!inUseFonts.contains('NotoSansSC')) inUseFonts.add('NotoSansSC');
 
   final baseTheme = ThemeData(
     useMaterial3: true,

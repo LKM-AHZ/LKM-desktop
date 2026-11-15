@@ -287,6 +287,13 @@ flutter:
           weight: 700
         - asset: assets/fonts/Nunito-Italic.ttf
           style: italic
+    # Web 端 CanvasKit 默认从 fonts.gstatic.com 下载中文回退字体；随包一份
+    # GB2312 + 界面文案子集，离线/内网也能显示中文。许可证见 OFL-NotoSansCJK.txt。
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-Regular.otf
+        - asset: assets/fonts/NotoSansSC-Bold.otf
+          weight: 700
 
   #
   # For details regarding fonts from package dependencies,

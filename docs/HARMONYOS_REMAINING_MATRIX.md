@@ -40,7 +40,7 @@ OHOS libmpv/WebRTC 运行库由 `buildtools/prepare-ohos-media.py` 从固定来�
 
 用户已确认暂时没有 AGC/Push Kit、华为商品/验单及 Apple OAuth 外部配置。
 
-- 鸿蒙远程推送：现有 SDK 的 provider 枚举只有 apple/fcm/sop/unifiedPush/appk，缺 Huawei 发送/订阅协议；还需要当前 bundle 的 AGC Push Kit 配置与服务端 Huawei provider/token 发送实现。本轮不把本地通知或在线 WebSocket 当成系统离线推送。
+- 鸿蒙远程推送：客户端 token 注册与服务端 PS256 v3 发送已实现并接入 compose/k8s（见 [推送说明](HARMONYOS_PUSH.md)），账号切换会迁移 token 归属；仍需当前 bundle 的 AGC Push Kit 应用、服务账号密钥与签名真机才能实发验收。本轮不把本地通知或在线 WebSocket 当成系统离线推送。
 - 华为内购：需要商户应用、商品 ID 和服务端验单；当前 Apple IAP 继续只服务 Apple 目标，没有可凭空生成的 OHOS 商品。
 - Apple 网页授权：客户端可走当前服务端入口；成功登录仍取决于服务端 Apple provider/clientId/回调与域名配置。
 - Passkeys：代码调用真实 FIDO2 API；生产签名、应用 origin/RP 关联与真实设备认证仍需验收。

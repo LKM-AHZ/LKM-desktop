@@ -242,7 +242,7 @@ for script in buildtools/verify-ohos-*.mjs; do node "$script" || exit 1; done
 
 CRC、ARM64/AOT、全部动态依赖及既有 N-API/FFI 导出检查通过；11 个动态库包含新增的真实 MPV/WebRTC。MPV 原始 97819184 字节 / SHA-256 `45febf6194b02561572b98659e5c13b672bf86503dd4835688a284326ba18811`；Hvigor 打包会 strip 成 28283864 字节 / SHA-256 `043002a382f119ef4238443c791a850c132523fa65228eba1b5e58d45ed479c8`。校验器使用相同 NDK 从已校验原文件确定性重现 strip 后逐字节哈希比较，不跳过差异。WebRTC 11091832 字节 / SHA-256 `39f42ab2d86bdafad47102b80e69f0f0adb49b66061a9f7931b6cd5d00510ad4`；这两个库来自固定社区工件，不声称本机重编译了其完整内核。HAP 中确认了最新 RTC 权限/纹理/ICE 保护、新插件、CAMERA/MICROPHONE/NFC_TAG/定位权限及 21 份附加许可证。
 
-用户确认暂无 AGC、华为内购及 Apple OAuth 外部配置：远程推送/华为内购仍缺相应服务端协议和实际配置。当前 WebRTC 原生库没有媒体 FrameCryptor，LiveKit 独立 native 扩展等能力未实现；它们明确错误，不提供伪造成功。扫码仅后摄、快捷操作仅声明入口等限制详见清单。HDC 仍无设备，所有包未签名；实际通话、播放、NFC/相机/通知及 FIDO2 硬件交互仍需验收。debug 保持第三阶段历史产物，本轮只验证 release。
+用户确认暂无 AGC、华为内购及 Apple OAuth 外部配置：华为远程推送的客户端注册与服务端 PS256 v3 发送已实现并接入 compose/k8s，缺 AGC 服务账号与签名真机实发验收；华为内购仍缺商户、商品与服务端验单。当前 WebRTC 原生库没有媒体 FrameCryptor，LiveKit 独立 native 扩展等能力未实现；它们明确错误，不提供伪造成功。扫码仅后摄、快捷操作仅声明入口等限制详见清单。HDC 仍无设备，所有包未签名；实际通话、播放、NFC/相机/通知及 FIDO2 硬件交互仍需验收。debug 保持第三阶段历史产物，本轮只验证 release。
 
 ### 本地构建依赖和修复
 
