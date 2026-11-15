@@ -1,6 +1,5 @@
 import 'package:cupertino_ui/cupertino_ui.dart' as cupertino;
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pinput/pinput.dart';
@@ -9,9 +8,6 @@ void main() {
   testWidgets('shared UI supports the OHOS platform and text input', (
     tester,
   ) async {
-    final editor = QuillController.basic();
-    addTearDown(editor.dispose);
-
     expect(
       VisualDensity.defaultDensityForPlatform(TargetPlatform.ohos),
       VisualDensity.standard,
@@ -29,7 +25,7 @@ void main() {
                 onPressed: () {},
                 child: const Text('Continue'),
               ),
-              Expanded(child: QuillEditor.basic(controller: editor)),
+              const Expanded(child: TextField(maxLines: null)),
             ],
           ),
         ),

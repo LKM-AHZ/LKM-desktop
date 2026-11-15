@@ -20,3 +20,4 @@ dependencies:
       path: packages/window_manager
       ref: 6fae92d21b4c80ce1b8f71c1190d7970cf722bd4
   material_ui: ^1.5.0
+  liquid_glass_renderer: ^1.0.0-dev.2

@@ -10,8 +10,8 @@ import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/blog_api.dart';
 import 'package:island/core/config.dart';
 import 'package:island/editor/document_store.dart';
+import 'package:island/posts/widgets/compose/block_content_editor.dart';
 import 'package:island/posts/widgets/compose/compose_shared.dart';
-import 'package:island/posts/widgets/compose/quill_content_editor.dart';
 import 'package:island/shared/widgets/content/markdown.dart';
 
 @RoutePage()
@@ -76,6 +76,7 @@ class _EditorState extends ConsumerState<_Editor> {
       widget.userId,
     );
     compose = ComposeLogic.createState();
+    compose.ensureEditorLoaded();
     newDocument();
     for (final c in [
       compose.contentController,
@@ -522,10 +523,10 @@ class _EditorState extends ConsumerState<_Editor> {
           ),
           Expanded(
             child: mode == 0
-                ? QuillContentEditor(
+                ? BlockContentEditor(
                     state: compose,
                     enabled: !busy,
-                    expands: true,
+                    shrinkWrap: false,
                   )
                 : mode == 1
                 ? TextField(

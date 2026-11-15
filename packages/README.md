@@ -2,7 +2,8 @@
 
 These packages were imported from **[Socommon](https://github.com/LKM-AHZ/LKM-socommon)** —
 the LKM fork of [Solsynth's Socommon](https://src.solsynth.dev/SoSYS/Socommon) — at commit
-`2f3b2b4`, which is the revision the former `socommon` submodule pointed at.
+`2f3b2b4`, with the Socommon upstream sync at `3d8c7eb` (appflowy editor,
+`solar_editor`, pill surface and auth host hooks) applied on 2026-11-15.
 
 They are ordinary path dependencies (`packages/<name>`), so `flutter pub get` works without
 any submodule checkout. The packages depend on each other through relative `../<name>` paths,
@@ -15,11 +16,12 @@ so the tree must stay together.
 | `island_ui_foundation` | Desktop window frame, overlay systems, responsive helpers |
 | `island_desktop_presence` | Desktop idle presence and local RPC transport (Linux/macOS/Windows) |
 | `solsynth_express` | Solsynth Express marketplace / release / artifact client |
+| `appflowy_editor` | AppFlowy block editor used by the shared `SolarBlockEditor` compose surface |
 | `flutter_app_update` | Vendored fork of `azhon/flutter_app_update` |
 | `flutter_math_fork` | Vendored fork of `simpleclub/flutter_math` (KaTeX fonts loaded lazily) |
 | `protocol_handler_windows` | Vendored fork of `leanflutter/protocol_handler` |
 | `material_ui` / `cupertino_ui` | Current published UI versions with OH-Flutter platform cases |
-| `pinput` / `flutter_quill` | Current published input/editor versions with OH-Flutter platform cases |
+| `pinput` | Current published input version with OH-Flutter platform cases |
 | `code_assets` / `native_toolchain_c` | Current native-assets versions with real OHOS targets / NDK compilation |
 | `cnativeapi` / `openmls` | Existing versions with explicit OHOS hook handling |
 | `audio_session` / `connectivity_plus` / `file_picker` | Current API versions with OHOS native backends |
@@ -59,14 +61,14 @@ git clone --filter=blob:none https://github.com/LKM-AHZ/LKM-socommon /tmp/lkm-so
 git -C /tmp/lkm-socommon fetch https://src.solsynth.dev/SoSYS/Socommon.git main:upstream
 
 # 2. Diff upstream against the vendored baseline, from the app repository root
-git -C /tmp/lkm-socommon diff 2f3b2b4 upstream -- packages > /tmp/socommon.patch
+git -C /tmp/lkm-socommon diff 3d8c7eb upstream -- packages > /tmp/socommon.patch
 git apply --reject --whitespace=nowarn /tmp/socommon.patch
 
 # 3. Resolve any *.rej files, then verify
 flutter pub get && flutter analyze lib
 ```
 
-Record the new upstream commit here (replace `2f3b2b4`) once the update lands, so the next
+Record the new upstream commit here (replace `3d8c7eb`) once the update lands, so the next
 diff starts from the right baseline.
 
 OHOS backend licenses are listed under each local package's `flutter.licenses`

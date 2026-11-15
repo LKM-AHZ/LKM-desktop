@@ -112,6 +112,7 @@ const _strings = <String, dynamic>{
   'authFactorRecoveryCode': 'Recovery Code',
   'authFactorPassword': 'Password',
   'authFactorPasswordDescription': 'The password you set when you registered.',
+  'passkeyAuthenticate': 'Authenticate with Passkey',
 };
 
 /// Serves the strings above instead of reading an app's asset bundle, so the
@@ -175,8 +176,9 @@ Future<void> _settle(WidgetTester tester, {int steps = 12}) async {
 Future<_ScriptedAdapter> _pumpHost(
   WidgetTester tester,
   ResponseBody Function(RequestOptions options) respond,
-  _GatedRun run,
-) async {
+  _GatedRun run, {
+  AuthPasskeyCeremony? ceremony,
+}) async {
   final adapter = _ScriptedAdapter(respond);
   final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
     ..httpClientAdapter = adapter;
@@ -197,6 +199,8 @@ Future<_ScriptedAdapter> _pumpHost(
           authClientProvider.overrideWithValue(
             SolarNetworkClient.fromDio(dio),
           ),
+          if (ceremony != null)
+            authPasskeyCeremonyProvider.overrideWithValue(ceremony),
         ],
         child: _localized(_GatedHost(run: run)),
       ),
@@ -353,4 +357,97 @@ void main() {
       ],
     );
   });
+
+  testWidgets(
+    'elevates with the host passkey ceremony when the picker is empty',
+    (tester) async {
+      var gatedCalls = 0;
+      var ceremonies = 0;
+      var elevated = false;
+      Object? failure;
+      String? outcome;
+
+      final adapter = await _pumpHost(
+        tester,
+        (options) {
+          switch (options.path) {
+            case '/stargate/gated-action':
+              gatedCalls++;
+              return elevated
+                  ? _json({'ok': true}, 200)
+                  : _json(_sudoRequired, 403);
+            case '/stargate/auth/sudo':
+              return _json(_challengeJson('sudo-1', stepRemain: 1), 200);
+            case '/stargate/auth/challenge/sudo-1/factors':
+              // A passkey is never a pickable step, so the picker is empty.
+              return _json(<dynamic>[], 200);
+            case '/stargate/factors':
+              return _json([
+                _factorJson('factor-passkey', type: 7),
+                _factorJson('factor-password'),
+              ], 200);
+          }
+          return _json(<String, dynamic>{}, 404);
+        },
+        (context, ref) async {
+          try {
+            await withSudoRetry(
+              context,
+              ref,
+              () => ref
+                  .read(authClientProvider)
+                  .dio
+                  .post('/stargate/gated-action'),
+            );
+            outcome = 'ok';
+          } catch (err) {
+            failure = err;
+          }
+        },
+        ceremony: AuthPasskeyCeremony(
+          isAvailable: () async => true,
+          run: (challenge) async {
+            ceremonies++;
+            elevated = true;
+            return SnAuthChallenge.fromJson(
+              _challengeJson(challenge.id, stepRemain: 0),
+            );
+          },
+        ),
+      );
+
+      await tester.tap(find.text('Do gated thing'));
+      await _settle(tester);
+
+      expect(find.text('Pick a factor'), findsOneWidget);
+      expect(
+        find.text('Authenticate with Passkey'),
+        findsOneWidget,
+        reason: 'an enabled passkey is offered even though the picker is empty',
+      );
+      expect(
+        find.text('No security factor is available to confirm this action.'),
+        findsNothing,
+      );
+
+      await tester.tap(find.text('Authenticate with Passkey'));
+      await _settle(tester);
+
+      expect(ceremonies, 1);
+      expect(elevated, isTrue);
+      expect(gatedCalls, 2, reason: 'the gated request is retried once');
+      expect(outcome, 'ok');
+      expect(failure, isNull);
+      expect(
+        adapter.requests.map((r) => '${r.method} ${r.path}').toList(),
+        [
+          'POST /stargate/gated-action',
+          'POST /stargate/auth/sudo',
+          'GET /stargate/auth/challenge/sudo-1/factors',
+          'GET /stargate/factors',
+          'POST /stargate/gated-action',
+        ],
+      );
+    },
+  );
 }

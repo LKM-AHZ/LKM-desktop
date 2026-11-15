@@ -15,7 +15,6 @@ import 'package:island/chat/pods/chat_room.dart';
 import 'package:island/chat/pods/chat_summary.dart';
 import 'package:island/accounts/event_calendar.dart';
 import 'package:island/chat/widgets/chat_room_list_tile.dart';
-import 'package:island/core/services/event_bus.dart';
 import 'package:island/core/services/responsive.dart';
 import 'package:island/notifications/notification.dart';
 import 'package:island/posts/widgets/compose/post_featured.dart';
@@ -228,7 +227,6 @@ class _DashboardGridWide extends HookConsumerWidget {
 
     final showClock =
         appSettings.dashboardConfig?.showClockAndCountdown ?? true;
-    final showSearch = appSettings.dashboardConfig?.showSearchBar ?? true;
 
     final List<Widget> cards = [];
 
@@ -278,7 +276,7 @@ class _DashboardGridWide extends HookConsumerWidget {
             controller: scrollController,
             primary: false,
             slivers: [
-              // Push clock + search lower in the viewport by default.
+              // Push clock lower in the viewport by default.
               SliverToBoxAdapter(child: SizedBox(height: topBand)),
               if (showClock)
                 SliverToBoxAdapter(
@@ -287,14 +285,7 @@ class _DashboardGridWide extends HookConsumerWidget {
                     bottom: _kCardGap,
                   ),
                 ),
-              if (showSearch)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: _kGutterExpanded),
-                    child: _DashboardSearchBar(),
-                  ),
-                ),
-              if (showClock || showSearch)
+              if (showClock)
                 const SliverToBoxAdapter(child: SizedBox(height: _kBlockGap)),
               // Waterfall of section cards, centered on ultra-wide monitors.
               if (cards.isNotEmpty)
@@ -381,7 +372,6 @@ class _DashboardGridNarrowScroll extends HookConsumerWidget {
     final appSettings = ref.watch(appSettingsProvider);
     final showClock =
         appSettings.dashboardConfig?.showClockAndCountdown ?? true;
-    final showSearch = appSettings.dashboardConfig?.showSearchBar ?? true;
 
     return CustomScrollView(
       slivers: [
@@ -392,40 +382,13 @@ class _DashboardGridNarrowScroll extends HookConsumerWidget {
               compact: true,
             ).padding(horizontal: _kGutterCompact, bottom: _kCardGap),
           ),
-        if (showSearch)
-          SliverToBoxAdapter(
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: _DashboardSearchBar(),
-            ),
-          ),
-        if (showClock || showSearch)
+        if (showClock)
           const SliverToBoxAdapter(child: SizedBox(height: _kGutterCompact)),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: _kGutterCompact),
           sliver: SliverToBoxAdapter(child: _DashboardGridNarrow()),
         ),
       ],
-    );
-  }
-}
-
-/// The single search affordance both breakpoints share: a flat bar that opens
-/// the command palette.
-class _DashboardSearchBar extends StatelessWidget {
-  const _DashboardSearchBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SearchBar(
-      hintText: 'searchAnything'.tr(),
-      constraints: const BoxConstraints(minHeight: 56),
-      elevation: const WidgetStatePropertyAll(0),
-      leading: const Icon(Symbols.search).padding(horizontal: _kCardPadding),
-      readOnly: true,
-      onTap: () {
-        eventBus.fire(CommandPaletteTriggerEvent());
-      },
     );
   }
 }

@@ -833,7 +833,9 @@ void main() {
         lessThan(500),
         reason: 'the capsule ends with its controls, not at the window edge',
       );
-      expect(tuneRect.size, const Size.square(kGlassNavigationButtonSize));
+      // The trailing capsule now holds the entrances and tune actions.
+      expect(tuneRect.height, closeTo(kGlassNavigationButtonSize, 1));
+      expect(tuneRect.width, closeTo(kGlassNavigationButtonSize * 2, 1));
       expect(tuneRect.right, closeTo(1400 - kPillSideGutter, 1));
       expect(tuneRect.top, closeTo(navRect.top, 1));
       expect(chrome(nav).borderRadius, SolRadius.pillRadius);
@@ -908,14 +910,16 @@ void main() {
       lessThan(420 - kPillSideGutter),
       reason: 'the capsule hugs the picker instead of filling the row',
     );
-    // The tune action keeps the trailing edge, one circle of its own.
-    final tuneRect = tester.getRect(
-      find.descendant(
-        of: find.byType(PillSplitSliverAppBar),
-        matching: find.byTooltip('Settings'),
-      ),
+    // The actions share one capsule that keeps the trailing edge.
+    final tune = find.descendant(
+      of: find.byType(PillSplitSliverAppBar),
+      matching: find.byTooltip('Settings'),
     );
-    expect(tuneRect.right, closeTo(420 - kPillSideGutter, 1));
+    final tuneRect = tester.getRect(tune);
+    final trailingCapsule = tester.getRect(
+      find.ancestor(of: tune, matching: find.byType(PillSurface)),
+    );
+    expect(trailingCapsule.right, closeTo(420 - kPillSideGutter, 1));
     expect(tuneRect.center.dy, closeTo(navRect.center.dy, 1));
     expect(
       tuneRect.left,

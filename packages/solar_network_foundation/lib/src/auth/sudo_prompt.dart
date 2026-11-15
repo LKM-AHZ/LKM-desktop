@@ -123,6 +123,7 @@ class SudoPromptSheet extends HookConsumerWidget {
     // 0 = pick a factor, 1 = enter its credential.
     final step = useState(0);
     final isBusy = useState(false);
+    final passkeyOffered = useState(false);
     final codeController = useTextEditingController();
 
     useEffect(() {
@@ -134,6 +135,11 @@ class SudoPromptSheet extends HookConsumerWidget {
             ticket.value.id,
           );
           factors.value = fetched.where(_canCompleteInPlace).toList();
+          passkeyOffered.value = await _passkeyOffered(
+            ref,
+            client,
+            ticket.value,
+          );
           isBusy.value = false;
         } catch (err) {
           if (!context.mounted) return;
@@ -198,6 +204,36 @@ class SudoPromptSheet extends HookConsumerWidget {
           // just counted, so send the user back to the picker.
           step.value = 0;
           picked.value = null;
+          codeController.clear();
+          return;
+        }
+
+        if (!context.mounted) return;
+        showSnackBar('sudoGranted'.tr());
+        Navigator.pop(context, true);
+      } catch (err) {
+        ref.read(authErrorReporterProvider)(err);
+      } finally {
+        isBusy.value = false;
+      }
+    }
+
+    /// Settles the elevation with a registered passkey instead of a typed
+    /// secret. The assertion runs against the challenge's dedicated endpoints,
+    /// so it consumes its own factor and never touches the code step.
+    Future<void> elevateWithPasskey() async {
+      final ceremony = ref.read(authPasskeyCeremonyProvider);
+      if (ceremony == null || isBusy.value) return;
+      isBusy.value = true;
+      try {
+        final result = await ceremony.run(ticket.value);
+        ticket.value = result;
+        // The assertion consumed the passkey for this challenge; the server
+        // blacklists it, so it is not offered again.
+        passkeyOffered.value = false;
+        if (result.stepRemain > 0) {
+          picked.value = null;
+          step.value = 0;
           codeController.clear();
           return;
         }
@@ -277,6 +313,7 @@ class SudoPromptSheet extends HookConsumerWidget {
       );
     } else {
       final loaded = factors.value;
+      final offersPasskey = passkeyOffered.value;
       body = AuthFormColumn(
         children: [
           AuthFormHeader(
@@ -289,16 +326,24 @@ class SudoPromptSheet extends HookConsumerWidget {
               alignment: Alignment.centerLeft,
               child: CircularProgressIndicator(),
             )
-          else if (loaded.isEmpty)
+          else if (loaded.isEmpty && !offersPasskey)
             AuthErrorBanner(message: 'sudoNoFactors'.tr())
-          else
-            AuthFactorRadioList(
-              factors: loaded,
-              selected: picked.value,
-              blacklistedIds: ticket.value.blacklistFactors,
-              enabled: !isBusy.value,
-              onSelected: (value) => picked.value = value,
-            ),
+          else ...[
+            if (offersPasskey)
+              FilledButton.tonalIcon(
+                onPressed: isBusy.value ? null : elevateWithPasskey,
+                icon: const Icon(Symbols.fingerprint),
+                label: Text('passkeyAuthenticate'.tr()),
+              ),
+            if (loaded.isNotEmpty)
+              AuthFactorRadioList(
+                factors: loaded,
+                selected: picked.value,
+                blacklistedIds: ticket.value.blacklistFactors,
+                enabled: !isBusy.value,
+                onSelected: (value) => picked.value = value,
+              ),
+          ],
           AuthFormActions(
             isBusy: isBusy.value || picked.value == null,
             onNext: sendFactorCode,
@@ -328,8 +373,35 @@ class SudoPromptSheet extends HookConsumerWidget {
 
 /// Whether the elevation sheet can complete [factor] without leaving it — the
 /// notification, physical passport, passkey and QR factors need surfaces this
-/// prompt does not own.
+/// prompt does not own. The passkey is offered separately through
+/// [authPasskeyCeremonyProvider] rather than through the picker.
 bool _canCompleteInPlace(SnAuthFactor factor) => switch (factor.type) {
   0 || 1 || 3 || 4 || 5 => true,
   _ => false,
 };
+
+/// Whether the sheet should offer the passkey ceremony: the host supplies one
+/// for this target, the device can run it, the account has an enabled passkey
+/// factor, and the challenge has not consumed that factor yet.
+///
+/// The account's factor list is read best-effort — a failed read only means
+/// the action is not offered, never that the sheet fails to open.
+Future<bool> _passkeyOffered(
+  WidgetRef ref,
+  SolarNetworkClient client,
+  SnAuthChallenge challenge,
+) async {
+  final ceremony = ref.read(authPasskeyCeremonyProvider);
+  if (ceremony == null) return false;
+  try {
+    final accountFactors = await client.auth.getFactors();
+    for (final accountFactor in accountFactors) {
+      if (accountFactor.type != 7 || accountFactor.enabledAt == null) continue;
+      if (challenge.blacklistFactors.contains(accountFactor.id)) return false;
+      return await ceremony.isAvailable();
+    }
+    return false;
+  } catch (_) {
+    return false;
+  }
+}

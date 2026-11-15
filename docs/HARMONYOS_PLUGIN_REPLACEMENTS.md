@@ -75,15 +75,14 @@ WebView 的 `internal_annotations` 配套包在该 fork 中标为 1.1.1，原锁
 
 | 包 | 唯一实现来源 |
 | --- | --- |
-| `material_ui 1.10.0` | `packages/material_ui` |
+| `material_ui 1.11.0` | `packages/material_ui` |
 | `cupertino_ui 1.1.6` | `packages/cupertino_ui` |
 | `pinput 7.0.0` | `packages/pinput` |
-| `flutter_quill 11.6.0` | `packages/flutter_quill` |
 | `flutter_math_fork` | 原有本地包增加 OHOS 分支 |
 
 新增本地包保留实际解析的发布版本、运行时代码和许可证，来源归档 SHA-256 记录于各自 `UPSTREAM.md`；不复制上游示例和测试工程。所有平台使用同一份 override，不维护鸿蒙专用包副本。它们使用 OH-Flutter 的平台枚举，仍不宣称标准 Flutter 可直接编译。
 
-集中回归为 `test/shared/ohos_ui_compatibility_test.dart`，覆盖 OHOS 主题、PIN 输入、数学组件和富文本编辑器；该集中回归已实际运行通过。该阶段全量测试结果为 868 通过、22 失败、3 跳过；后续业务 HAP 和原生资产修复见 Linux 构建记录，不能把 UI 测试等同于全功能验证。
+集中回归为 `test/shared/ohos_ui_compatibility_test.dart`，覆盖 OHOS 主题、PIN 输入、数学组件和文本输入；该集中回归已实际运行通过。该阶段全量测试结果为 868 通过、22 失败、3 跳过；后续业务 HAP 和原生资产修复见 Linux 构建记录，不能把 UI 测试等同于全功能验证。
 
 ## 后续统一适配
 
@@ -92,11 +91,11 @@ WebView 的 `internal_annotations` 配套包在该 fork 中标为 1.1.1，原锁
 | `code_assets 2.2.0` / `native_toolchain_c 0.19.6` | 同版本本地源补齐 OHOS target、ABI 和 NDK 编译；真实 ARM64 C++ 探针通过 | 其他宿主/目标的完整矩阵尚未重跑 |
 | `cnativeapi 0.5.10` | OHOS 不构建桌面托盘库；托盘入口限制在 Windows/macOS/Linux | 这不提供手机托盘功能 |
 | `sqlite3 3.9.0` | 保留当前 API，OHOS 编译 SQLite 3.54.0 官方源码；已进入首个业务 HAP | 数据库运行与迁移需真机验证 |
-| `openmls 3.3.0` | 保留当前 FRB / Dart API；锁定 Rust 源码在 Linux 编译 OHOS ARM64，已入初始 HAP | 加密、持久化与跨端互通需真机回归 |
+| `openmls 4.0.0` | 上游大版本升级；Dart 源码无本地改动，OHOS 平台声明保留 | 4.0 的 Rust 源码需重跑 Linux→OHOS ARM64 编译并入 HAP；加密、持久化与跨端互通需真机回归 |
 | `audio_session 0.2.4` | 当前发布版合入 [62af3718564b](https://gitcode.com/CPF-Flutter/flutter_audio_session/commit/62af3718564bca39e8eba77c9cf8a75aeebfd43e) 的 OHOS 实现；修正焦点申请被拒仍返回成功，焦点/中断回归通过 | 设备音频路由、焦点与后台行为待验 |
 | `just_audio 0.10.6` | 固定 [a171f118d3e8](https://gitcode.com/oh-flutter/just_audio/commit/a171f118d3e83d698592a0a262d08107a75ed06b)，Dart 主实现与当前发布版一致；audio_session 统一使用上行本地源 | 实际播放、seek、循环和中断恢复待验 |
 | `connectivity_plus 7.3.1` | 当前 Dart/其他平台实现合入 [9514235dda40](https://gitcode.com/CPF-Flutter/flutter_plus_plugins/commit/9514235dda402b432b860a31c69d4dc5153891f5) 的 OHOS 后端；修正 codec 列表、多网络和订阅清理，原生逻辑检查通过 | 真实网络切换/权限待验 |
-| `file_picker 13.3.2` | 当前 federated API 合入 [a845c22b0c44](https://gitcode.com/oh-flutter/file_picker/commit/a845c22b0c444d1724f1d6be9600b5795358c327) 的 OHOS 后端；修正 provider 缓存、FD 关闭、字节视图及部分写入，原生逻辑检查通过 | provider 目录 URI 无法冒充绝对路径；目录/混合路径 API 明确报 UnsupportedError，选文件/保存使用原生 picker |
+| `file_picker 13.3.3` | 当前 federated API 合入 [a845c22b0c44](https://gitcode.com/oh-flutter/file_picker/commit/a845c22b0c444d1724f1d6be9600b5795358c327) 的 OHOS 后端；修正 provider 缓存、FD 关闭、字节视图及部分写入，原生逻辑检查通过 | provider 目录 URI 无法冒充绝对路径；目录/混合路径 API 明确报 UnsupportedError，选文件/保存使用原生 picker |
 | `flutter_timezone 5.1.1` | 同版本 Dart / 原平台不变，合入 [7f9d44b6dc3c](https://gitcode.com/oh-flutter/flutter_timezone/commit/7f9d44b6dc3ca7558b3a1fd1389756b39583f000) 的 OHOS 后端，继续返回 `TimezoneInfo.identifier`；原生异常回传 | OHOS 仅提供 IANA 标识，不提供可选的本地化显示名；真实系统时区切换待验 |
 | `wakelock_plus 1.8.0` | 保留当前 Pigeon 28 / interface 1.7.0，合入 [a5ae85fe13d7](https://gitcode.com/CPF-Flutter/fluttertpc_wakelock_plus/commit/a5ae85fe13d7b92ad9d48bdabd69e4117f665be6) 后端；校验通道、129/130 类型码、等待窗口操作及失败回传 | 仅控制前台窗口屏幕常亮，不保证后台任务运行；真机生命周期待验 |
 | `in_app_review 2.0.12` | 合入 [70faf9d1cf59](https://gitcode.com/CPF-Flutter/fluttertpc_in_app_review/commit/70faf9d1cf592c392334f06adcffea5af85a3fc0) 后端，复用当前 interface 2.0.5；OHOS 注册只覆盖商店跳转，无旧 URL launcher；已接入共享评价提示 | API 20+ / AppGallery 服务，实际弹窗、账号、上架配置及配额待真机验证 |

@@ -1,7 +1,13 @@
 /// Reusable building blocks shared by Solar Network Flutter clients:
-/// presentation primitives, markdown rendering, and the cloud drive service.
+/// presentation primitives, markdown rendering, the Solar editor and the
+/// cloud drive service.
 library;
 
+export 'src/solar_editor/solar_editor.dart'
+    hide
+    SolarMentionInlineSyntax,
+    SolarHighlightInlineSyntax,
+    SolarSpoilerInlineSyntax;
 export 'src/cloud_files.dart';
 export 'src/cloud_file_widgets.dart';
 export 'src/format.dart';

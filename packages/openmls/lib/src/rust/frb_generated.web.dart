@@ -101,6 +101,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  bool dco_decode_box_autoadd_bool(dynamic raw);
+
+  @protected
   FlexibleCommitOptions dco_decode_box_autoadd_flexible_commit_options(
     dynamic raw,
   );
@@ -260,6 +263,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
+
+  @protected
   MlsCapabilities? dco_decode_opt_box_autoadd_mls_capabilities(dynamic raw);
 
   @protected
@@ -338,6 +344,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt dco_decode_usize(dynamic raw);
 
   @protected
+  WelcomeGroupInfoExtensions dco_decode_welcome_group_info_extensions(
+    dynamic raw,
+  );
+
+  @protected
   WelcomeInspectResult dco_decode_welcome_inspect_result(dynamic raw);
 
   @protected
@@ -402,6 +413,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
 
   @protected
   FlexibleCommitOptions sse_decode_box_autoadd_flexible_commit_options(
@@ -613,6 +627,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
+  bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
   MlsCapabilities? sse_decode_opt_box_autoadd_mls_capabilities(
     SseDeserializer deserializer,
   );
@@ -711,6 +728,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
+  WelcomeGroupInfoExtensions sse_decode_welcome_group_info_extensions(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   WelcomeInspectResult sse_decode_welcome_inspect_result(
     SseDeserializer deserializer,
   );
@@ -729,6 +751,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_list_prim_u_8_strict(raw.welcome),
       cst_encode_opt_list_prim_u_8_strict(raw.groupInfo),
     ].jsify()!;
+  }
+
+  @protected
+  bool cst_encode_box_autoadd_bool(bool raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_bool(raw);
   }
 
   @protected
@@ -850,6 +878,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_bool(raw.createGroupInfo),
       cst_encode_bool(raw.useRatchetTreeExtension),
       cst_encode_bool(raw.keepPending),
+      cst_encode_opt_list_mls_extension(raw.groupInfoExtensions),
     ].jsify()!;
   }
 
@@ -1094,6 +1123,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  bool? cst_encode_opt_box_autoadd_bool(bool? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_box_autoadd_bool(raw);
+  }
+
+  @protected
   JSAny? cst_encode_opt_box_autoadd_mls_capabilities(MlsCapabilities? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null ? null : cst_encode_box_autoadd_mls_capabilities(raw);
@@ -1208,7 +1243,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   JSAny cst_encode_proposal_result(ProposalResult raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
-    return [cst_encode_list_prim_u_8_strict(raw.proposalMessage)].jsify()!;
+    return [
+      cst_encode_list_prim_u_8_strict(raw.proposalMessage),
+      cst_encode_list_prim_u_8_strict(raw.proposalRef),
+    ].jsify()!;
   }
 
   @protected
@@ -1252,6 +1290,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   JSAny cst_encode_usize(BigInt raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return castNativeBigInt(raw);
+  }
+
+  @protected
+  JSAny cst_encode_welcome_group_info_extensions(
+    WelcomeGroupInfoExtensions raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_list_mls_extension(raw.extensions),
+      cst_encode_mls_member_info(raw.signer),
+    ].jsify()!;
   }
 
   @protected
@@ -1426,6 +1475,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_flexible_commit_options(
@@ -1704,6 +1756,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_mls_capabilities(
     MlsCapabilities? self,
     SseSerializer serializer,
@@ -1822,6 +1877,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_welcome_group_info_extensions(
+    WelcomeGroupInfoExtensions self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_welcome_inspect_result(
@@ -2311,6 +2372,11 @@ class RustLibWire implements BaseWire {
     group_id_bytes,
   );
 
+  void wire__crate__api__engine__MlsEngine_group_ids(
+    NativePortType port_,
+    int that,
+  ) => wasmModule.wire__crate__api__engine__MlsEngine_group_ids(port_, that);
+
   void wire__crate__api__engine__MlsEngine_group_is_active(
     NativePortType port_,
     int that,
@@ -2423,6 +2489,7 @@ class RustLibWire implements BaseWire {
     JSAny credential_identity,
     JSAny signer_public_key,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   ) =>
       wasmModule.wire__crate__api__engine__MlsEngine_join_group_external_commit(
         port_,
@@ -2434,6 +2501,7 @@ class RustLibWire implements BaseWire {
         credential_identity,
         signer_public_key,
         credential_bytes,
+        replace_stored_group,
       );
 
   void wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
@@ -2448,6 +2516,7 @@ class RustLibWire implements BaseWire {
     JSAny? aad,
     bool skip_lifetime_validation,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   ) => wasmModule
       .wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
         port_,
@@ -2461,6 +2530,7 @@ class RustLibWire implements BaseWire {
         aad,
         skip_lifetime_validation,
         credential_bytes,
+        replace_stored_group,
       );
 
   void wire__crate__api__engine__MlsEngine_join_group_from_welcome(
@@ -2830,6 +2900,21 @@ class RustLibWire implements BaseWire {
         group_id_bytes,
         signer_bytes,
         extensions,
+      );
+
+  void wire__crate__api__engine__MlsEngine_welcome_group_info_extensions(
+    NativePortType port_,
+    int that,
+    JSAny config,
+    JSAny welcome_bytes,
+    JSAny? ratchet_tree_bytes,
+  ) => wasmModule
+      .wire__crate__api__engine__MlsEngine_welcome_group_info_extensions(
+        port_,
+        that,
+        config,
+        welcome_bytes,
+        ratchet_tree_bytes,
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
@@ -3275,6 +3360,11 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny group_id_bytes,
   );
 
+  external void wire__crate__api__engine__MlsEngine_group_ids(
+    NativePortType port_,
+    int that,
+  );
+
   external void wire__crate__api__engine__MlsEngine_group_is_active(
     NativePortType port_,
     int that,
@@ -3346,6 +3436,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny credential_identity,
     JSAny signer_public_key,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   );
 
   external void
@@ -3361,6 +3452,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny? aad,
     bool skip_lifetime_validation,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   );
 
   external void wire__crate__api__engine__MlsEngine_join_group_from_welcome(
@@ -3573,6 +3665,15 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny group_id_bytes,
     JSAny signer_bytes,
     JSAny extensions,
+  );
+
+  external void
+  wire__crate__api__engine__MlsEngine_welcome_group_info_extensions(
+    NativePortType port_,
+    int that,
+    JSAny config,
+    JSAny welcome_bytes,
+    JSAny? ratchet_tree_bytes,
   );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */

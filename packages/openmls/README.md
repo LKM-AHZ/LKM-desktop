@@ -130,7 +130,7 @@ that one too.
 
 **Key Packages**: `createKeyPackage`, `createKeyPackageWithOptions`, `keyPackageLifetime`, `checkLifetimeAt`
 
-**Group Lifecycle**: `createGroup`, `createGroupWithBuilder`, `joinGroupFromWelcome`, `joinGroupFromWelcomeWithOptions`, `inspectWelcome`, `exportWelcomeSecret`, `joinGroupExternalCommit`, `joinGroupExternalCommitV2`
+**Group Lifecycle**: `createGroup`, `createGroupWithBuilder`, `joinGroupFromWelcome`, `joinGroupFromWelcomeWithOptions`, `inspectWelcome`, `exportWelcomeSecret`, `welcomeGroupInfoExtensions`, `joinGroupExternalCommit`, `joinGroupExternalCommitV2`
 
 **State Queries**: `groupId`, `groupEpoch`, `groupIsActive`, `groupMembers`, `groupCiphersuite`, `groupOwnIndex`, `groupCredential`, `groupExtensions`, `groupPendingProposals`, `groupHasPendingProposals`, `groupMemberAt`, `groupMemberLeafIndex`, `groupOwnLeafNode`, `groupConfirmationTag`, `groupConfiguration`, `groupEpochAuthenticator`, `exportRatchetTree`, `exportGroupInfo`, `exportSecret`, `exportGroupContext`, `getPastResumptionPsk`
 
@@ -144,7 +144,7 @@ that one too.
 
 **Past Epoch Secrets**: `pastEpochDeletionPolicy`, `setPastEpochDeletionPolicyMaxEpochs`, `setPastEpochDeletionPolicyKeepAll`, `deleteAllPastEpochSecrets`, `deletePastEpochSecretsOlderThan`, `deletePastEpochSecretsBefore`, `deletePastEpochSecretsWithoutTimestamps`
 
-**Engine & Storage**: `close`, `isClosed`, `schemaVersion`, `deleteGroup`, `deleteKeyPackage`
+**Engine & Storage**: `close`, `isClosed`, `schemaVersion`, `groupIds`, `deleteGroup`, `deleteKeyPackage`
 
 </details>
 
@@ -392,6 +392,9 @@ make build ARGS="--target aarch64-apple-darwin"
 
 # Build for Android
 make build-android
+
+# Build for iOS (device and both simulators)
+make build-ios
 
 # Build for Web (WASM)
 make build-web

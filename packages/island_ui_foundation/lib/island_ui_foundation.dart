@@ -9,3 +9,5 @@ export 'src/draggable_overlay_sheet.dart';
 export 'src/sheet_scaffold.dart';
 export 'src/responsive_sidebar.dart';
 export 'src/window_frame.dart';
+export 'src/glass_effects.dart';
+export 'src/pill_surface.dart';

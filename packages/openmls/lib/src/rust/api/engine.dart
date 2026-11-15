@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `leaf_node_info`, `load_for_group`, `load_global`, `load_group`, `max_epochs_to_native`, `member_info`, `native_to_past_epoch_policy`, `own_private_message_error`, `process_inspected`, `proposal_info`, `proposal_type_of`, `sender_info`, `staged_commit_info`, `unix_seconds_to_system_time`, `with_cap`
+// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `hex`, `key_package_capabilities`, `leaf_node_info`, `load_for_external_join`, `load_for_group`, `load_for_welcome`, `load_global`, `load_group`, `max_epochs_to_native`, `member_info`, `native_to_past_epoch_policy`, `new_group_error`, `own_private_message_error`, `process_inspected`, `proposal_info`, `proposal_type_of`, `sender_info`, `serialize_proposal_ref`, `staged_commit_info`, `unix_seconds_to_system_time`, `welcome_error`, `with_cap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `OpLocks`, `OpSession`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `crypto`, `rand`, `storage`
 
@@ -183,6 +183,11 @@ abstract class MlsEngine implements RustOpaqueInterface {
     encryptionKey: encryptionKey,
   );
 
+  /// Creates a group with this client as its only member, under `groupId`
+  /// when one is given and a random ID otherwise.
+  ///
+  /// Fails when this engine already stores a group under `groupId`. To
+  /// reuse the ID, delete that group with `deleteGroup` first.
   Future<CreateGroupResult> createGroup({
     required MlsGroupConfig config,
     required List<int> signerBytes,
@@ -192,6 +197,11 @@ abstract class MlsEngine implements RustOpaqueInterface {
     Uint8List? credentialBytes,
   });
 
+  /// `createGroup` with the rest of OpenMLS's group builder: lifetime,
+  /// extensions and capabilities.
+  ///
+  /// Fails when this engine already stores a group under `groupId`, as
+  /// `createGroup` does.
   Future<CreateGroupResult> createGroupWithBuilder({
     required MlsGroupConfig config,
     required List<int> signerBytes,
@@ -362,12 +372,13 @@ abstract class MlsEngine implements RustOpaqueInterface {
   /// confirmation tag is only checked when the Welcome is staged into a
   /// group, which happens in `joinGroupFromWelcome` and not here.
   ///
-  /// It sees exactly the storage the real join sees:
-  /// `joinGroupFromWelcome` loads the same global scope, and pre-shared keys
-  /// live in it (they are stored ungrouped, like key packages and signature
-  /// keys). So a Welcome that carries PSKs resolves them here or fails here
-  /// for the same reason it would there — this function is never the narrower
-  /// of the two.
+  /// It sees the storage the real join opens the Welcome in: the global
+  /// scope, where pre-shared keys live (they are stored ungrouped, like key
+  /// packages and signature keys). So a Welcome that carries PSKs resolves
+  /// them here or fails here for the same reason it would there — this
+  /// function is never the narrower of the two. The join loads one thing
+  /// more, the stored group of the Welcome's ID, and refuses a Welcome whose
+  /// ID is already stored; this function does not check that.
   Future<Uint8List> exportWelcomeSecret({
     required MlsGroupConfig config,
     required List<int> welcomeBytes,
@@ -406,6 +417,20 @@ abstract class MlsEngine implements RustOpaqueInterface {
   Future<bool> groupHasPendingProposals({required List<int> groupIdBytes});
 
   Future<Uint8List> groupId({required List<int> groupIdBytes});
+
+  /// The ID of every group this engine stores, in no particular order.
+  ///
+  /// These are the groups the other methods can load, and the IDs that
+  /// `createGroup` and `joinGroupFromWelcome` refuse as already in use, as
+  /// do the external joins unless told to replace the group. A group this
+  /// client has left or been removed from stays listed until `deleteGroup`
+  /// removes it; `groupIsActive` tells the two apart.
+  ///
+  /// Only storage keys are read, never the group state behind them, so the
+  /// cost grows with the number of groups and not with their size. What an
+  /// application shows for a group — a title, the last message — is not
+  /// MLS state and is not stored here.
+  Future<List<Uint8List>> groupIds();
 
   Future<bool> groupIsActive({required List<int> groupIdBytes});
 
@@ -488,6 +513,19 @@ abstract class MlsEngine implements RustOpaqueInterface {
   /// Check whether this engine has been closed.
   bool isClosed();
 
+  /// Joins the group a GroupInfo describes by an external commit
+  /// (RFC 9420 §12.4.3.2), as the member `credentialIdentity` and
+  /// `signerPublicKey` name. `joinGroupExternalCommitV2` does the same with
+  /// more options.
+  ///
+  /// Refused, with nothing written, when this engine already stores a group
+  /// under the GroupInfo's group ID — unless `replaceStoredGroup` is true,
+  /// which is how a client rejoins a group whose state it lost track of.
+  /// Every entry stored under that group ID is then deleted, in the write
+  /// that stores the new group, so a join that fails keeps them all. The
+  /// engine cannot tell a later epoch of the stored group from another
+  /// group under the same ID, which anyone can create: replace only from a
+  /// GroupInfo whose source the application trusts to speak for that group.
   Future<ExternalJoinResult> joinGroupExternalCommit({
     required MlsGroupConfig config,
     required List<int> groupInfoBytes,
@@ -496,8 +534,20 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> credentialIdentity,
     required List<int> signerPublicKey,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   });
 
+  /// Joins the group a GroupInfo describes by an external commit, as
+  /// `joinGroupExternalCommit` does, with additional authenticated data for
+  /// the commit and the option to skip the GroupInfo's lifetime checks.
+  ///
+  /// A group this engine already stores under the GroupInfo's group ID is
+  /// refused and replaced exactly as there: refused, with nothing written,
+  /// unless `replaceStoredGroup` is true, and then every entry stored under
+  /// that group ID is deleted in the write that stores the new group. The
+  /// engine cannot tell a later epoch of the stored group from another group
+  /// under the same ID: replace only from a GroupInfo whose source the
+  /// application trusts to speak for that group.
   Future<ExternalJoinResult> joinGroupExternalCommitV2({
     required MlsGroupConfig config,
     required List<int> groupInfoBytes,
@@ -508,8 +558,18 @@ abstract class MlsEngine implements RustOpaqueInterface {
     Uint8List? aad,
     required bool skipLifetimeValidation,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   });
 
+  /// Joins the group a Welcome invites this client into.
+  ///
+  /// Fails when this engine already stores a group with the Welcome's
+  /// group ID. RFC 9420 has a joiner check that the ID is not one it is
+  /// already using, and accepting would replace the stored group with the
+  /// one the Welcome describes — whoever sent it. That includes a group
+  /// this client has left or been removed from: to accept a new invitation
+  /// into it, delete the old state with `deleteGroup` first.
+  /// `inspectWelcome` reads the group ID without joining.
   Future<JoinGroupResult> joinGroupFromWelcome({
     required MlsGroupConfig config,
     required List<int> welcomeBytes,
@@ -517,6 +577,10 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> signerBytes,
   });
 
+  /// `joinGroupFromWelcome` with OpenMLS's join options.
+  ///
+  /// Fails when this engine already stores a group with the Welcome's
+  /// group ID, as `joinGroupFromWelcome` does.
   Future<JoinGroupResult> joinGroupFromWelcomeWithOptions({
     required MlsGroupConfig config,
     required List<int> welcomeBytes,
@@ -530,6 +594,22 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> signerBytes,
   });
 
+  /// Leaves the group with a SelfRemove proposal (draft-ietf-mls-extensions),
+  /// which any member may commit without proposing the removal itself.
+  ///
+  /// Two things have to hold, or a step fails:
+  /// - The group sends its handshake messages in the clear
+  ///   (`MlsWireFormatPolicy.plaintext`): OpenMLS refuses to send a
+  ///   SelfRemove encrypted.
+  /// - Every member's leaf lists the proposal type `0x000a` in
+  ///   `MlsCapabilities.proposals`, through `createGroupWithBuilder` and
+  ///   `KeyPackageOptions.capabilities`; OpenMLS's default capabilities do
+  ///   not. Otherwise the proposal is sent, and the commit that would carry
+  ///   it is refused: "The proposal type is not supported by all group
+  ///   members".
+  ///
+  /// `leaveGroup` needs neither: it proposes an ordinary Remove of this
+  /// member.
   Future<LeaveGroupResult> leaveGroupViaSelfRemove({
     required List<int> groupIdBytes,
     required List<int> signerBytes,
@@ -562,6 +642,21 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> keyPackageBytes,
   });
 
+  /// Proposes an application's own proposal: `payload` under `proposalType`.
+  ///
+  /// `proposalType` has to be the application's own, or the call is
+  /// refused: not `0x0000` to `0x0007`, which RFC 9420 reserves and
+  /// registers, not `0x0008` to `0x000a`, which the MLS extensions draft
+  /// takes, and not a GREASE value. OpenMLS reads most of those as proposals
+  /// of its own, so such a number would go out as that proposal with this
+  /// payload: the other members could not decode it ("The content is
+  /// malformed"), while this member kept it pending, and a commit of its
+  /// pending proposals would refer to a proposal no other member has.
+  /// `0x0008` and `0x0009` OpenMLS reads as custom unless it is built with
+  /// its draft extensions, but a member whose implementation has them would
+  /// not. The private-use range, `0xf000` to `0xffff`, is free for an
+  /// application's own types. A commit can carry a custom proposal only when
+  /// every member's leaf lists its type in `MlsCapabilities.proposals`.
   Future<ProposalResult> proposeCustomProposal({
     required List<int> groupIdBytes,
     required List<int> signerBytes,
@@ -649,6 +744,18 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> memberIndices,
   });
 
+  /// Withdraws one pending proposal from this member's store: the one whose
+  /// reference is `proposalRefBytes`, as `ProposalResult.proposalRef`
+  /// returns it for a proposal of this member's.
+  ///
+  /// Only this member's copy goes. The other members keep a proposal they
+  /// received, a commit of theirs can still carry it by reference, and this
+  /// member then fails to process that commit, having nothing it refers to.
+  /// So withdraw only a proposal whose message has not been sent. The engine
+  /// reports no reference for a received proposal: to keep one out of this
+  /// member's next commit, inspect the message before processing it
+  /// (`inspectMessage`), or drop every pending proposal with
+  /// `clearPendingProposals`.
   Future<void> removePendingProposal({
     required List<int> groupIdBytes,
     required List<int> proposalRefBytes,
@@ -743,6 +850,54 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required List<int> signerBytes,
     required List<MlsExtension> extensions,
   });
+
+  /// The extensions in the GroupInfo of a Welcome
+  /// (`FlexibleCommitOptions.groupInfoExtensions`), and the member that
+  /// signed that GroupInfo, read **without joining the group**.
+  ///
+  /// They are returned only once the Welcome has been staged as
+  /// `joinGroupFromWelcome` stages it. Staging checks:
+  /// - the GroupInfo's signature, against the leaf the GroupInfo names as
+  ///   its signer, in the ratchet tree that came with the Welcome;
+  /// - that tree, against the GroupInfo;
+  /// - the confirmation tag, against the epoch's secrets.
+  ///
+  /// A Welcome that fails a check fails here.
+  ///
+  /// That proves the extensions are what `signer` wrote. It proves nothing
+  /// about who `signer` is. Usually it is the committer, but two other
+  /// parties can produce a Welcome that passes the same checks:
+  /// - any member of the new epoch, under its own signature;
+  /// - anyone who holds one of this client's key packages, from a group of
+  ///   their own.
+  ///
+  /// Before acting on the extensions, authenticate `signer` as before any
+  /// join: by its signature key, which is what the signature binds. A basic
+  /// credential's identity is whatever its owner claims.
+  ///
+  /// Nor are they a secret the newcomer alone holds: the welcome secret
+  /// that encrypts them is derived by every member that processes the
+  /// commit (RFC 9420 §12.4.2).
+  ///
+  /// Writes nothing, like `inspectWelcome` and `exportWelcomeSecret`: the
+  /// key package the Welcome is addressed to is still there for the join.
+  /// Unlike `joinGroupFromWelcomeWithOptions`, leaf lifetimes are always
+  /// checked. A Welcome without a ratchet tree extension needs
+  /// `ratchetTreeBytes`: the tree of the epoch the Welcome is for.
+  ///
+  /// Nor, since it joins nothing, does it check the Welcome's group ID
+  /// against the groups this engine stores: extensions are returned for a
+  /// Welcome under an ID that is already in use, and `joinGroupFromWelcome`
+  /// then refuses that Welcome.
+  ///
+  /// The ratchet tree extension is left out, since it is the group's tree
+  /// rather than something a committer adds. So is the external public key,
+  /// which a Welcome's GroupInfo does not carry.
+  Future<WelcomeGroupInfoExtensions> welcomeGroupInfoExtensions({
+    required MlsGroupConfig config,
+    required List<int> welcomeBytes,
+    Uint8List? ratchetTreeBytes,
+  });
 }
 
 class AddMembersResult {
@@ -787,6 +942,10 @@ class CommitResult {
   /// Publish it, like the Welcome, only once the delivery service has
   /// accepted `commit`: a party joining by external commit from it would
   /// otherwise enter an epoch that may never happen.
+  ///
+  /// It is not encrypted. With `FlexibleCommitOptions.groupInfoExtensions`
+  /// it carries those extensions, and it is created only when
+  /// `createGroupInfo` asks for it.
   final Uint8List? groupInfo;
 
   const CommitResult({required this.commit, this.welcome, this.groupInfo});
@@ -1138,15 +1297,29 @@ class ProcessedMessageResult {
 class ProposalResult {
   final Uint8List proposalMessage;
 
-  const ProposalResult({required this.proposalMessage});
+  /// The proposal's reference (RFC 9420 §5.2), serialized: what
+  /// `removePendingProposal` takes to withdraw it from this member's store
+  /// before a commit carries it.
+  ///
+  /// Withdrawing is local. The other members keep the proposal they
+  /// received, a commit of theirs can still carry it by reference, and this
+  /// member then cannot process that commit. So withdraw only a proposal
+  /// whose message has not been sent.
+  final Uint8List proposalRef;
+
+  const ProposalResult({
+    required this.proposalMessage,
+    required this.proposalRef,
+  });
 
   @override
-  int get hashCode => proposalMessage.hashCode;
+  int get hashCode => proposalMessage.hashCode ^ proposalRef.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ProposalResult &&
           runtimeType == other.runtimeType &&
-          proposalMessage == other.proposalMessage;
+          proposalMessage == other.proposalMessage &&
+          proposalRef == other.proposalRef;
 }

@@ -84,11 +84,35 @@ Optional:
 | Provider | Effect when overridden | Default |
 | --- | --- | --- |
 | `authErrorReporterProvider` | surfaces a failed elevation (no factor, rate limit) to the user | no-op |
+| `authPasskeyCeremonyProvider` | the host's WebAuthn assertion for the elevation sheet (see below) | `null` — no passkey button |
 
 `auth/auth_form_widgets.dart` and `auth/auth_factor_widgets.dart` hold the
 login-style form primitives, the factor picker and the factor descriptions that
 both the login flow and the elevation sheet render, so a host names and draws a
 factor the same way everywhere.
+
+### Passkeys in the elevation sheet
+
+Stargate never lists a passkey among a challenge's pickable factors: a passkey
+asserts through the challenge's own endpoints
+(`POST /auth/challenge/{id}/passkey/start` and `.../complete`) and settles the
+single elevation step in one ceremony. The sheet takes the ceremony from the
+host instead of depending on a WebAuthn plugin itself:
+
+```dart
+authPasskeyCeremonyProvider.overrideWith(
+  (ref) => AuthPasskeyCeremony(
+    isAvailable: () async => true, // this target can run WebAuthn
+    run: (challenge) async { /* assert, then complete the passkey step */ },
+  ),
+);
+```
+
+When the provider is null — the default — no passkey button is offered and the
+picker behaves exactly as before. When it is present the sheet offers the
+ceremony only if the account has an enabled passkey factor the challenge has not
+consumed and the device reports the ceremony available; a challenge with no
+pickable factor then shows the passkey action instead of `sudoNoFactors`.
 
 ### Localization
 
