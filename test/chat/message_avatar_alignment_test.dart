@@ -17,6 +17,7 @@ import 'package:island/core/websocket.dart';
 import 'package:island/data/database.dart';
 import 'package:island/data/message.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -201,7 +202,12 @@ void main() {
                 builder: (context) => MaterialApp(
                   locale: const Locale('en', 'US'),
                   supportedLocales: const [Locale('en', 'US')],
-                  localizationsDelegates: context.localizationDelegates,
+                  // The markdown body uses material_ui's SelectionArea,
+                  // which asserts on material_ui's own MaterialLocalizations.
+                  localizationsDelegates: [
+                    ...context.localizationDelegates,
+                    ...mui.GlobalMaterialLocalizations.delegates,
+                  ],
                   home: ProviderScope(
                     retry: (_, _) => null,
                     overrides: [
@@ -315,7 +321,12 @@ void main() {
                 builder: (context) => MaterialApp(
                   locale: const Locale('en', 'US'),
                   supportedLocales: const [Locale('en', 'US')],
-                  localizationsDelegates: context.localizationDelegates,
+                  // The markdown body uses material_ui's SelectionArea,
+                  // which asserts on material_ui's own MaterialLocalizations.
+                  localizationsDelegates: [
+                    ...context.localizationDelegates,
+                    ...mui.GlobalMaterialLocalizations.delegates,
+                  ],
                   home: ProviderScope(
                     retry: (_, _) => null,
                     overrides: [

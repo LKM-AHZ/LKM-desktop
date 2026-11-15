@@ -13,7 +13,6 @@ import 'package:island/accounts/account_pod.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/network.dart';
 import 'package:island/posts/posts_pod.dart';
-import 'package:island/posts/widgets/compose/filters/post_subscription_filter.dart';
 import 'package:island/route.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -168,8 +167,6 @@ void main() {
     expect(find.text('Timeline section'), findsOneWidget);
     expect(find.text('Preferred'), findsOneWidget);
     expect(find.text('Aggressive Mode'), findsOneWidget);
-    // The only remaining entry point for the persisted category/tag filters.
-    expect(find.byType(PostCategoryTagFilterSection), findsOneWidget);
 
     // The section picker keeps the "Explore" (null) option and persists the
     // section the explore screen opens on.

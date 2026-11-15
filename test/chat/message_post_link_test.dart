@@ -7,11 +7,15 @@ import 'package:island/chat/widgets/message_content.dart';
 import 'package:island/core/config.dart';
 import 'package:island/posts/screens/post_detail.dart';
 import 'package:island/posts/widgets/post_link_embed.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 const _postId = '0198f0c2-1d4e-7a3b-9c6d-2f5e8a1b4c7d';
-const _postLink = 'https://solian.app/posts/$_postId';
+
+/// Link parsing only accepts the configured deployment origin.
+final _postLink =
+    '${Uri.parse(kLkmServerDefault).origin}/posts/$_postId';
 
 /// The widest a message bubble gets, from `MessageContent`'s own layout: the
 /// preview has to fit what chat gives a message.
@@ -120,7 +124,12 @@ Future<void> _pumpMessage(WidgetTester tester, SnChatMessage item) async {
           builder: (context) => MaterialApp(
             locale: const Locale('en', 'US'),
             supportedLocales: const [Locale('en', 'US')],
-            localizationsDelegates: context.localizationDelegates,
+            // The markdown body uses material_ui's SelectionArea, which
+            // asserts on material_ui's own MaterialLocalizations.
+            localizationsDelegates: [
+              ...context.localizationDelegates,
+              ...mui.GlobalMaterialLocalizations.delegates,
+            ],
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
             ),

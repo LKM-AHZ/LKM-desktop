@@ -1155,7 +1155,15 @@ class FileUploader {
                     (params.channelCount ?? 0) > 0,
               )
               .timeout(const Duration(seconds: 8));
-          await player.open(Media(path), play: false);
+          // If opening hangs (no native backend, e.g. under `flutter test`),
+          // these two waits time out with nobody listening yet, which surfaces
+          // as an uncaught async error. Keep the errors on the futures.
+          durationFuture.ignore();
+          paramsFuture.ignore();
+          await player.open(
+            Media(path),
+            play: false,
+          ).timeout(const Duration(seconds: 8));
           final duration = await durationFuture;
           final params = await paramsFuture;
           final metadata = <String, dynamic>{

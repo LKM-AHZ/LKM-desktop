@@ -16,8 +16,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 const _id = '0198f0c2-1d4e-7a3b-9c6d-2f5e8a1b4c7d';
-const _webLink = 'https://solian.app/posts/$_id';
-const _schemeLink = 'solian://posts/$_id';
+
+/// The deployment's web origin: link parsing only accepts this origin, so the
+/// fixtures must point at the same server the app is configured for.
+final _webBase = Uri.parse(kLkmServerDefault).origin;
+final _webLink = '$_webBase/posts/$_id';
+const _schemeLink = 'lkm://posts/$_id';
 
 /// The post the link points at, as the server would serve it.
 SnPost _linkedPost({String? content}) => SnPost.fromJson({
@@ -166,10 +170,8 @@ void main() {
       for (final value in [
         _webLink,
         '$_webLink/',
-        'http://solian.app/posts/$_id',
-        'https://www.solian.app/posts/$_id',
         _schemeLink,
-        'solian:///posts/$_id',
+        'lkm:///posts/$_id',
       ]) {
         expect(parsePostLinkId(Uri.parse(value)), _id, reason: value);
       }
@@ -177,11 +179,11 @@ void main() {
 
     test('rejects links that are not posts', () {
       for (final value in [
-        'https://solian.app/posts',
-        'https://solian.app/chat/someone/room',
-        'solian://chat/someone/room',
+        '$_webBase/posts',
+        '$_webBase/chat/someone/room',
+        'lkm://chat/someone/room',
         'https://example.com/posts/$_id',
-        'https://api.solian.app/posts/$_id',
+        'https://api.example.com/posts/$_id',
       ]) {
         expect(parsePostLinkId(Uri.parse(value)), isNull, reason: value);
       }
@@ -191,7 +193,7 @@ void main() {
       // Taps follow the link the way the app always has, and only the embed
       // asks for a UUID before it fetches.
       expect(
-        parsePostLinkId(Uri.parse('https://solian.app/posts/categories')),
+        parsePostLinkId(Uri.parse('$_webBase/posts/categories')),
         'categories',
       );
     });
@@ -235,11 +237,11 @@ void main() {
     });
 
     test('keeps links to things that are not posts', () {
-      expect(_embeds('https://solian.app/posts/categories'), isEmpty);
-      expect(_embeds('https://solian.app/chat/someone/room'), isEmpty);
+      expect(_embeds('$_webBase/posts/categories'), isEmpty);
+      expect(_embeds('$_webBase/chat/someone/room'), isEmpty);
       expect(_embeds('https://example.com/posts/$_id'), isEmpty);
       // A post id is a UUID; anything else is not a post this can fetch.
-      expect(_embeds('https://solian.app/posts/not-a-uuid'), isEmpty);
+      expect(_embeds('$_webBase/posts/not-a-uuid'), isEmpty);
     });
   });
 

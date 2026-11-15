@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:island/core/config.dart';
 import 'package:island/shared/widgets/content/markdown.dart';
 import 'package:island_ui_foundation/island_ui_foundation.dart';
 import 'package:material_ui/material_ui.dart' as mui;
@@ -183,7 +184,7 @@ void main() {
       tester,
       MarkdownTextContent(
         content:
-            '$linked[a linked post](https://solian.app/posts/$id)\n\n'
+            '$linked[a linked post](${Uri.parse(kLkmServerDefault).origin}/posts/$id)\n\n'
             '$_secondParagraph\n',
         isSelectable: true,
       ),
