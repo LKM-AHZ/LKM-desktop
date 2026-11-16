@@ -78,7 +78,10 @@ class AccountQrScreen extends HookConsumerWidget {
     final user = ref.watch(userInfoProvider);
     final wallet = ref.watch(walletCurrentProvider);
     final supportsPhysicalPassportScan =
-        !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+        !kIsWeb &&
+        (Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.operatingSystem == 'ohos');
     final theme = Theme.of(context);
     final activeTransferRequest = useState<WalletTransferRequestData?>(null);
     final selectedSection = useState<_QrSectionId?>(_QrSectionId.profile);

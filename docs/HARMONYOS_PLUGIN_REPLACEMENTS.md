@@ -91,7 +91,7 @@ WebView 的 `internal_annotations` 配套包在该 fork 中标为 1.1.1，原锁
 | `code_assets 2.2.0` / `native_toolchain_c 0.19.6` | 同版本本地源补齐 OHOS target、ABI 和 NDK 编译；真实 ARM64 C++ 探针通过 | 其他宿主/目标的完整矩阵尚未重跑 |
 | `cnativeapi 0.5.10` | OHOS 不构建桌面托盘库；托盘入口限制在 Windows/macOS/Linux | 这不提供手机托盘功能 |
 | `sqlite3 3.9.0` | 保留当前 API，OHOS 编译 SQLite 3.54.0 官方源码；已进入首个业务 HAP | 数据库运行与迁移需真机验证 |
-| `openmls 4.0.0` | 上游大版本升级；Dart 源码无本地改动，OHOS 平台声明保留 | 4.0 的 Rust 源码需重跑 Linux→OHOS ARM64 编译并入 HAP；加密、持久化与跨端互通需真机回归 |
+| `openmls 4.0.0` | 上游大版本升级；Dart 源码无本地改动，OHOS 平台声明与 `hook/ohos.dart` 本地 hook 保留；Rust 源码已用 NDK 重编译并进入 release HAP（2026-11-16） | 加密、持久化与跨端互通需真机回归 |
 | `audio_session 0.2.4` | 当前发布版合入 [62af3718564b](https://gitcode.com/CPF-Flutter/flutter_audio_session/commit/62af3718564bca39e8eba77c9cf8a75aeebfd43e) 的 OHOS 实现；修正焦点申请被拒仍返回成功，焦点/中断回归通过 | 设备音频路由、焦点与后台行为待验 |
 | `just_audio 0.10.6` | 固定 [a171f118d3e8](https://gitcode.com/oh-flutter/just_audio/commit/a171f118d3e83d698592a0a262d08107a75ed06b)，Dart 主实现与当前发布版一致；audio_session 统一使用上行本地源 | 实际播放、seek、循环和中断恢复待验 |
 | `connectivity_plus 7.3.1` | 当前 Dart/其他平台实现合入 [9514235dda40](https://gitcode.com/CPF-Flutter/flutter_plus_plugins/commit/9514235dda402b432b860a31c69d4dc5153891f5) 的 OHOS 后端；修正 codec 列表、多网络和订阅清理，原生逻辑检查通过 | 真实网络切换/权限待验 |

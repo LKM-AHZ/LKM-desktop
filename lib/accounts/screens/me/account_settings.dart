@@ -51,7 +51,10 @@ part 'account_settings.g.dart';
 part 'account_settings.freezed.dart';
 
 bool get _supportsPhysicalPassportScan =>
-    !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+    !kIsWeb &&
+    (Platform.isAndroid ||
+        Platform.isIOS ||
+        Platform.operatingSystem == 'ohos');
 
 @riverpod
 Future<List<SnAuthFactor>> authFactors(Ref ref) async {

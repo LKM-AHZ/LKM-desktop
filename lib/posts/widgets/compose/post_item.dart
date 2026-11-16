@@ -336,7 +336,11 @@ class PostActionableItem extends HookConsumerWidget {
       }
     }
 
-    final isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+    final isMobile =
+        !kIsWeb &&
+        (Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.operatingSystem == 'ohos');
 
     void showPostActionSheet() {
       showModalBottomSheet(

@@ -201,7 +201,11 @@ class _GroupReadAvatars extends HookWidget {
     final showCounter = readerMembers.length > _maxAvatars;
     final visible = readerMembers.take(_maxAvatars).toList();
 
-    final hasAnimations = !kIsWeb && !(Platform.isAndroid || Platform.isIOS);
+    final hasAnimations =
+        !kIsWeb &&
+        !(Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.operatingSystem == 'ohos');
 
     // Reader set from the previous build — used to detect membership changes.
     final prevVisible = usePrevious(visible) ?? const <SnChatMember>[];

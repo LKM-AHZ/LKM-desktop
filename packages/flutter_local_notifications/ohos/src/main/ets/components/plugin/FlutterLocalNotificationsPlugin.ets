@@ -80,8 +80,8 @@ export default class FlutterLocalNotificationsPlugin implements FlutterPlugin, A
       }
     });
   }
-  private parameters(call: MethodCall, action?: string): Record<string, Object> {
-    const parameters: Record<string, Object> = {
+  private parameters(call: MethodCall, action?: string): ESObject {
+    const parameters: ESObject = {
       lkmNotification: true, lkmNotificationId: this.id(call),
       lkmNotificationPayload: (call.argument('payload') ?? '') as string,
     };
@@ -141,10 +141,11 @@ export default class FlutterLocalNotificationsPlugin implements FlutterPlugin, A
     if (imagePath !== null && imagePath !== undefined && typeof imagePath !== 'string') throw new Error('Invalid image path');
     const rows = row.get('actions') as Map<string, Object>[] | undefined;
     if (rows !== undefined && !Array.isArray(rows)) throw new Error('Invalid notification actions');
-    const actions: NotificationAction[] = (rows ?? []).map(action => {
+    const actions: NotificationAction[] = (rows ?? []).map((action): NotificationAction => {
       const id = action.get('id'); const title = action.get('title');
       if (typeof id !== 'string' || typeof title !== 'string') throw new Error('Invalid notification action');
-      return { id, title };
+      const parsed: NotificationAction = { id, title };
+      return parsed;
     });
     return { imagePath: typeof imagePath === 'string' ? imagePath : undefined, actions };
   }
@@ -201,19 +202,22 @@ export default class FlutterLocalNotificationsPlugin implements FlutterPlugin, A
     const id = this.id(call);
     const details = this.details(call);
     if (details?.imagePath || (details?.actions?.length ?? 0) > 0) throw new Error('System reminders support text only; image and foreground actions are unsupported');
-    const base: reminderAgentManager.ReminderRequest = {
-      reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_TIMER,
-      notificationId: id, title: (call.argument('title') ?? '') as string,
-      content: (call.argument('body') ?? '') as string, ringDuration: 0,
-      slotType: notificationManager.SlotType.SERVICE_INFORMATION,
-      wantAgent: { pkgName: context.abilityInfo.bundleName, abilityName: context.abilityInfo.name,
-        parameters: this.parameters(call) },
+    const title = (call.argument('title') ?? '') as string;
+    const content = (call.argument('body') ?? '') as string;
+    const wantAgent: reminderAgentManager.WantAgent = {
+      pkgName: context.abilityInfo.bundleName, abilityName: context.abilityInfo.name,
+      parameters: this.parameters(call),
     };
-    let request: reminderAgentManager.ReminderRequest = base;
+    let request: reminderAgentManager.ReminderRequest;
     if (call.method === 'periodicallyShow') {
       const seconds = call.argument('repeatSeconds') as number;
       if (!Number.isSafeInteger(seconds) || seconds < 86400) throw new Error('System reminder repeat intervals require whole seconds and at least one day');
-      const timer: reminderAgentManager.ReminderRequestTimer = { ...base, triggerTimeInSeconds: seconds, repeatInterval: seconds, repeatCount: 0 };
+      const timer: reminderAgentManager.ReminderRequestTimer = {
+        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_TIMER,
+        notificationId: id, title, content, ringDuration: 0,
+        slotType: notificationManager.SlotType.SERVICE_INFORMATION, wantAgent,
+        triggerTimeInSeconds: seconds, repeatInterval: seconds, repeatCount: 0,
+      };
       request = timer;
     } else {
       const epoch = call.argument('epochMilliseconds') as number;
@@ -222,16 +226,24 @@ export default class FlutterLocalNotificationsPlugin implements FlutterPlugin, A
       if (match === null) {
         const seconds = Math.ceil((epoch - Date.now()) / 1000);
         if (seconds < 1) throw new Error('Scheduled date must be in the future');
-        const timer: reminderAgentManager.ReminderRequestTimer = { ...base, triggerTimeInSeconds: seconds };
+        const timer: reminderAgentManager.ReminderRequestTimer = {
+          reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_TIMER,
+          notificationId: id, title, content, ringDuration: 0,
+          slotType: notificationManager.SlotType.SERVICE_INFORMATION, wantAgent,
+          triggerTimeInSeconds: seconds,
+        };
         request = timer;
       } else {
         // Calendar reminders follow the device's timezone; they cannot retain another IANA timezone's DST rules.
         if (call.argument('timeZoneName') !== i18n.getTimeZone().getID()) throw new Error('Repeating calendar reminders require the device timezone');
-        const calendar: reminderAgentManager.ReminderRequestCalendar = { ...base,
+        const calendar: reminderAgentManager.ReminderRequestCalendar = {
           reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_CALENDAR,
+          notificationId: id, title, content, ringDuration: 0,
+          slotType: notificationManager.SlotType.SERVICE_INFORMATION, wantAgent,
           dateTime: { year: call.argument('year') as number, month: call.argument('month') as number,
             day: call.argument('day') as number, hour: call.argument('hour') as number,
-            minute: call.argument('minute') as number, second: call.argument('second') as number } };
+            minute: call.argument('minute') as number, second: call.argument('second') as number },
+        };
         if (match === 'time') calendar.daysOfWeek = [1,2,3,4,5,6,7];
         else if (match === 'dayOfWeekAndTime') calendar.daysOfWeek = [call.argument('weekday') as number];
         else if (match === 'dayOfMonthAndTime') { calendar.repeatMonths = [1,2,3,4,5,6,7,8,9,10,11,12]; calendar.repeatDays = [calendar.dateTime.day]; }
@@ -251,7 +263,7 @@ export default class FlutterLocalNotificationsPlugin implements FlutterPlugin, A
       if (this.context !== context || this.generation !== generation) throw new Error('Notification ability detached');
     } catch (error) {
       await reminderAgentManager.cancelReminder(reminder);
-      throw error;
+      throw new Error(String(error));
     }
     return null;
   }

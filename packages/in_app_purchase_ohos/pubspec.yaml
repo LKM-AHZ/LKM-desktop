@@ -14,5 +14,6 @@ flutter:
     implements: in_app_purchase
     platforms:
       ohos:
-        pluginClass: InAppPurchasePlugin
+        # Native IAP is gated off until AGC products and server-side receipt
+        # verification exist; only the Dart platform implementation registers.
         dartPluginClass: InAppPurchaseOhosPlatform

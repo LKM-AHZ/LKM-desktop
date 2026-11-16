@@ -19,8 +19,9 @@ export class TrackRecorder {
   private async prepare(path: string, track: MediaStreamTrack, width: number, height: number): Promise<void> {
     if (!path.endsWith('.mp4')) throw new Error('OHOS video recording requires an .mp4 path');
     try {
-      // EXCL avoids silently destroying an existing recording on startup failure.
-      this.file = fs.openSync(path, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.EXCL);
+      // Do not silently destroy an existing recording on startup failure.
+      if (fs.accessSync(path)) throw new Error('Recording path already exists');
+      this.file = fs.openSync(path, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC);
       this.recorder = await media.createAVRecorder();
       await this.recorder.prepare({
         videoSourceType: media.VideoSourceType.VIDEO_SOURCE_TYPE_SURFACE_YUV,

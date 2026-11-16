@@ -1,6 +1,6 @@
 # OH-Flutter Linux 本机构建记录
 
-更新日期：2026-11-15。构建宿主必须是本机 Linux x64；应用继续使用同一套 Flutter 业务代码与依赖配置。
+更新日期：2026-11-15。构建宿主必须是本机 Linux x64；应用继续使用同一套 Flutter 业务代码与依赖配置。环境准备与日常开发流程见 [开发教程](HARMONYOS_DEVELOPMENT.md)。
 
 ## 版本依据
 
@@ -243,6 +243,35 @@ for script in buildtools/verify-ohos-*.mjs; do node "$script" || exit 1; done
 CRC、ARM64/AOT、全部动态依赖及既有 N-API/FFI 导出检查通过；11 个动态库包含新增的真实 MPV/WebRTC。MPV 原始 97819184 字节 / SHA-256 `45febf6194b02561572b98659e5c13b672bf86503dd4835688a284326ba18811`；Hvigor 打包会 strip 成 28283864 字节 / SHA-256 `043002a382f119ef4238443c791a850c132523fa65228eba1b5e58d45ed479c8`。校验器使用相同 NDK 从已校验原文件确定性重现 strip 后逐字节哈希比较，不跳过差异。WebRTC 11091832 字节 / SHA-256 `39f42ab2d86bdafad47102b80e69f0f0adb49b66061a9f7931b6cd5d00510ad4`；这两个库来自固定社区工件，不声称本机重编译了其完整内核。HAP 中确认了最新 RTC 权限/纹理/ICE 保护、新插件、CAMERA/MICROPHONE/NFC_TAG/定位权限及 21 份附加许可证。
 
 用户确认暂无 AGC、华为内购及 Apple OAuth 外部配置：华为远程推送的客户端注册与服务端 PS256 v3 发送已实现并接入 compose/k8s，缺 AGC 服务账号与签名真机实发验收；华为内购仍缺商户、商品与服务端验单。当前 WebRTC 原生库没有媒体 FrameCryptor，LiveKit 独立 native 扩展等能力未实现；它们明确错误，不提供伪造成功。扫码仅后摄、快捷操作仅声明入口等限制详见清单。HDC 仍无设备，所有包未签名；实际通话、播放、NFC/相机/通知及 FIDO2 硬件交互仍需验收。debug 保持第三阶段历史产物，本轮只验证 release。
+
+### 2026-11-16 业务层补齐与上游合并回归修复
+
+上游合并后重新做了一次全量 HAP 构建，暴露三类合并期回归，已修复：
+
+1. **openmls OHOS hook 被上游覆盖**：`build.dart` 不再处理 `OS.ohos`，构建直接报
+   `Unsupported OS: ohos`。恢复 `hook/ohos.dart`（Linux 宿主按锁定 Rust 源码与 NDK
+   编译 ARM64 库），并在 web 分支之后、版本下载分支之前恢复 OHOS 分支。
+2. **ArkTS 严格模式错误**（11 条降为 0）：`mobile_scanner` 构造器参数属性改为显式字段；
+   通知插件的 `Record<string, Object>` 对象字面量、对象展开、非 Error 抛出改为 ArkTS
+   允许的写法；`flutter_webrtc` 的 `fs.OpenMode.EXCL` 改为存在性检查 + `CREATE|TRUNC`。
+3. **内购原生桩**：`in_app_purchase_ohos` 只有 Dart 实现，却声明了不存在的
+   `pluginClass`，Hvigor 报 `Cannot find module`。改为仅保留 `dartPluginClass`，
+   原生 IAP 仍按外部阻塞不接入。
+
+业务层同时补齐：Android/iOS 触摸判定扩展到 OHOS（帖子更多入口、消息滑动/文本选择/
+头像动画、视频控件、NFC 护照扫描入口）；User-Agent 设备信息增加 HarmonyOS 分支；
+宿主 `AppScope/app.json5` 版本同步为 `4.2.0` / `316`。
+
+验证：
+
+- 全量 `flutter test --no-pub`：**892 通过、0 失败、3 跳过**。
+- OHOS 定向回归 20 项通过；`flutter analyze --no-pub` 0 error（5 个既有 warning）。
+- `./buildtools/build-ohos.sh --release` 成功：143979232 字节，SHA-256
+  `cf3f3b74e350dc612b9d956366b52c32075a82290b7115807d5d5f50dfc86c24`；
+  `verify-ohos-hap.py --require-aot` 的 CRC、ARM64、AOT、动态依赖与导出检查通过。
+  产物仍未签名，无 HDC 设备，未做真机验收。
+
+开发环境与日常流程整理为 [开发教程](HARMONYOS_DEVELOPMENT.md)。
 
 ### 本地构建依赖和修复
 

@@ -51,6 +51,8 @@ import 'package:code_assets/code_assets.dart';
 import 'package:crypto/crypto.dart';
 import 'package:hooks/hooks.dart';
 
+import 'ohos.dart';
+
 /// Package name for asset registration.
 const _packageName = 'openmls';
 
@@ -189,6 +191,20 @@ void main(List<String> args) async {
     final targetOS = codeConfig.targetOS;
     final targetArch = codeConfig.targetArchitecture;
     final iosSdk = targetOS == OS.iOS ? codeConfig.iOS.targetSdk : null;
+
+    // OHOS has no released binary: build the vendored Rust sources with the NDK.
+    if (targetOS == OS.ohos) {
+      final library = await buildOhosLibrary(input, output);
+      output.assets.code.add(
+        CodeAsset(
+          package: _packageName,
+          name: _assetId,
+          linkMode: DynamicLoadingBundled(),
+          file: library,
+        ),
+      );
+      return;
+    }
 
     // Read version from rust/Cargo.toml
     final version = await _readVersion(packageRoot);

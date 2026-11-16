@@ -27,8 +27,14 @@ export class SelectedCamera {
   torchable: boolean = false;
   torch: boolean = false;
 
-  constructor(private scanCallback: AsyncCallback<scanBarcode.ScanResult[]>,
-    private frameCallback: AsyncCallback<customScan.ScanFrame>) {}
+  private scanCallback: AsyncCallback<scanBarcode.ScanResult[]>;
+  private frameCallback: AsyncCallback<customScan.ScanFrame>;
+
+  constructor(scanCallback: AsyncCallback<scanBarcode.ScanResult[]>,
+    frameCallback: AsyncCallback<customScan.ScanFrame>) {
+    this.scanCallback = scanCallback;
+    this.frameCallback = frameCallback;
+  }
 
   start(context: common.BaseContext, facing: number, surface: string, options: scanBarcode.ScanOptions,
     resolution: number[] | undefined, timeout: number, zoom: number, torch: boolean, autoZoom: boolean): Promise<void> {

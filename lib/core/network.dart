@@ -119,6 +119,10 @@ final userAgentProvider = FutureProvider<String>((ref) async {
   } else if (Platform.isLinux) {
     final deviceInfo = await DeviceInfoPlugin().linuxInfo;
     platformInfo = 'Linux; ${sanitizeForHeader(deviceInfo.prettyName)}';
+  } else if (Platform.operatingSystem == 'ohos') {
+    final deviceInfo = await DeviceInfoPlugin().ohosInfo;
+    platformInfo =
+        'HarmonyOS; ${sanitizeForHeader(deviceInfo.brand)} ${sanitizeForHeader(deviceInfo.productModel)}; ${sanitizeForHeader(deviceInfo.osFullName)}';
   } else {
     platformInfo = 'Unknown';
   }

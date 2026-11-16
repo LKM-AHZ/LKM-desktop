@@ -45,7 +45,11 @@ import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:super_context_menu/super_context_menu.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
-final kTextSelectable = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+final kTextSelectable =
+    !kIsWeb &&
+    (Platform.isAndroid ||
+        Platform.isIOS ||
+        Platform.operatingSystem == 'ohos');
 
 /// Body type for a message in every display style.
 ///
@@ -174,7 +178,11 @@ class MessageItem extends HookConsumerWidget {
         ? true
         : room.accountId == identity?.accountId; // Group: owner only
 
-    final isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+    final isMobile =
+        !kIsWeb &&
+        (Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.operatingSystem == 'ohos');
     final swipeEnabled = isMobile && onAction != null && !isSelectionMode;
 
     final currentLanguage = context.locale.toString();

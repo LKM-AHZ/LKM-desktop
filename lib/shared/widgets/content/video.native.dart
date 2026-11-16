@@ -221,7 +221,11 @@ class UniversalVideoState extends ConsumerState<UniversalVideo> {
       );
     }
 
-    final isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+    final isMobile =
+        !kIsWeb &&
+        (Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.operatingSystem == 'ohos');
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
 
