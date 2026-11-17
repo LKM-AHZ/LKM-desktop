@@ -13,14 +13,15 @@ import 'package:island/core/api/api_providers.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
 
-enum _RegisterMode { normal, local }
+enum _RegisterMode { normal, local, email }
 
-/// Username/password registration for LKM-service.
+/// The single account-creation flow for LKM-service.
 ///
-/// Two shapes exist server-side: `normal` (password plus a verified email or
-/// phone) and `local` (password only, for admission-gated deployments). Both
-/// answer with tokens or an admission-pending envelope, so the screen finishes
-/// through the same session owner the login flow uses.
+/// Three shapes exist server-side: `normal` (password plus a verified email or
+/// phone), `local` (password only, for admission-gated deployments) and
+/// `email` (passwordless, verified by email code). All answer with tokens or an
+/// admission-pending envelope, so the screen finishes through the same session
+/// owner the login flow uses.
 @RoutePage()
 class RegisterScreen extends HookConsumerWidget {
   const RegisterScreen({super.key});
@@ -34,6 +35,7 @@ class RegisterScreen extends HookConsumerWidget {
     final info = useState<String?>(null);
     final pending = useState<LkmRegistrationPending?>(null);
     final admission = useState<String?>(null);
+    final emailCodeSent = useState(false);
 
     final username = useTextEditingController();
     final password = useTextEditingController();
@@ -152,6 +154,32 @@ class RegisterScreen extends HookConsumerWidget {
       await finish(result);
     });
 
+    Future<void> requestEmailCode() => run(() async {
+      final address = email.text.trim();
+      if (address.isEmpty) {
+        error.value = 'lkmErrEmptyEmail'.tr();
+        return;
+      }
+      await ref.read(authApiProvider).requestRegisterCode(address);
+      emailCodeSent.value = true;
+      info.value = 'authFlow.codeSentTo'.tr(args: [address]);
+    });
+
+    Future<void> verifyEmail() => run(() async {
+      if (emailCode.text.trim().isEmpty) {
+        error.value = 'authFlow.errorEmptyCode'.tr();
+        return;
+      }
+      final result = await ref
+          .read(authApiProvider)
+          .registerWithEmail(
+            email: email.text.trim(),
+            code: emailCode.text.trim(),
+            applyReason: applyReason.text,
+          );
+      await finish(result);
+    });
+
     return AppScaffold(
       isNoBackground: false,
       appBar: AppBar(
@@ -183,7 +211,10 @@ class RegisterScreen extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            'authFlow.registerSubtitle'.tr(),
+                            (mode.value == _RegisterMode.email
+                                    ? 'lkmRegisterHint'
+                                    : 'authFlow.registerSubtitle')
+                                .tr(),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(height: 16),
@@ -197,34 +228,45 @@ class RegisterScreen extends HookConsumerWidget {
                                 value: _RegisterMode.local,
                                 label: Text('authFlow.modeLocal'.tr()),
                               ),
+                              ButtonSegment(
+                                value: _RegisterMode.email,
+                                label: Text('authFlow.modeEmailOnly'.tr()),
+                              ),
                             ],
                             selected: {mode.value},
                             showSelectedIcon: false,
                             onSelectionChanged: busy.value
                                 ? null
-                                : (selection) => mode.value = selection.first,
+                                : (selection) {
+                                    mode.value = selection.first;
+                                    emailCodeSent.value = false;
+                                    error.value = null;
+                                    info.value = null;
+                                  },
                           ),
                           const SizedBox(height: 16),
-                          TextField(
-                            controller: username,
-                            enabled: !busy.value,
-                            autocorrect: false,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'authFlow.username'.tr(),
+                          if (mode.value != _RegisterMode.email) ...[
+                            TextField(
+                              controller: username,
+                              enabled: !busy.value,
+                              autocorrect: false,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                labelText: 'authFlow.username'.tr(),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          TextField(
-                            controller: password,
-                            enabled: !busy.value,
-                            obscureText: true,
-                            autocorrect: false,
-                            enableSuggestions: false,
-                            decoration: InputDecoration(
-                              labelText: 'authFlow.password'.tr(),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: password,
+                              enabled: !busy.value,
+                              obscureText: true,
+                              autocorrect: false,
+                              enableSuggestions: false,
+                              decoration: InputDecoration(
+                                labelText: 'authFlow.password'.tr(),
+                              ),
                             ),
-                          ),
+                          ],
                           if (mode.value == _RegisterMode.normal) ...[
                             const SizedBox(height: 12),
                             TextField(
@@ -245,6 +287,28 @@ class RegisterScreen extends HookConsumerWidget {
                                 labelText: 'authFlow.phone'.tr(),
                               ),
                             ),
+                          ],
+                          if (mode.value == _RegisterMode.email) ...[
+                            TextField(
+                              controller: email,
+                              enabled: !busy.value,
+                              keyboardType: TextInputType.emailAddress,
+                              autocorrect: false,
+                              decoration: InputDecoration(
+                                labelText: 'authFlow.email'.tr(),
+                              ),
+                            ),
+                            if (emailCodeSent.value) ...[
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: emailCode,
+                                enabled: !busy.value,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'authFlow.emailCode'.tr(),
+                                ),
+                              ),
+                            ],
                           ],
                           const SizedBox(height: 12),
                           TextField(
@@ -278,9 +342,14 @@ class RegisterScreen extends HookConsumerWidget {
                           FilledButton(
                             onPressed: busy.value
                                 ? null
-                                : mode.value == _RegisterMode.normal
-                                ? requestNormal
-                                : registerLocal,
+                                : switch (mode.value) {
+                                    _RegisterMode.normal => requestNormal,
+                                    _RegisterMode.local => registerLocal,
+                                    _RegisterMode.email =>
+                                      emailCodeSent.value
+                                          ? verifyEmail
+                                          : requestEmailCode,
+                                  },
                             child: busy.value
                                 ? const SizedBox(
                                     width: 18,
@@ -290,12 +359,26 @@ class RegisterScreen extends HookConsumerWidget {
                                     ),
                                   )
                                 : Text(
-                                    (mode.value == _RegisterMode.normal
-                                            ? 'authFlow.sendCode'
-                                            : 'authFlow.createAccount')
-                                        .tr(),
+                                    (switch (mode.value) {
+                                      _RegisterMode.normal =>
+                                        'authFlow.sendCode',
+                                      _RegisterMode.local =>
+                                        'authFlow.createAccount',
+                                      _RegisterMode.email =>
+                                        emailCodeSent.value
+                                            ? 'authFlow.verify'
+                                            : 'authFlow.sendCode',
+                                    }).tr(),
                                   ),
                           ),
+                          if (mode.value == _RegisterMode.email &&
+                              emailCodeSent.value) ...[
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: busy.value ? null : requestEmailCode,
+                              child: Text('authFlow.resendCode'.tr()),
+                            ),
+                          ],
                           const SizedBox(height: 8),
                           TextButton(
                             onPressed: busy.value

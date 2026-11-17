@@ -435,10 +435,7 @@ class _UnauthorizedAccountScreen extends HookConsumerWidget {
                     child: InkWell(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       onTap: () {
-                        // Registration is the `register` segment of the LKM
-                        // login page; the old Solian create-account route no
-                        // longer has a backend.
-                        context.router.push(LoginRoute());
+                        context.router.push(const RegisterRoute());
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(16),

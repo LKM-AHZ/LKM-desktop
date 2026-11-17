@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:island/auth/create_account_modal.dart';
 import 'package:island/auth/login_modal.dart';
+import 'package:island/route.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
 const _kMaxWidth = 520.0;
@@ -17,7 +18,7 @@ Future<void> showAppOnboardingSheet(
     _OnboardingRoute(
       suggestAuth: suggestAuth,
       onLogin: () => _showLoginSheet(context),
-      onCreateAccount: () => _showCreateAccountSheet(context),
+      onCreateAccount: () => context.router.push(const RegisterRoute()),
     ),
   );
 }
@@ -28,15 +29,6 @@ void _showLoginSheet(BuildContext context) {
     isScrollControlled: true,
     useRootNavigator: true,
     builder: (context) => const LoginModal(),
-  );
-}
-
-void _showCreateAccountSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    useRootNavigator: true,
-    builder: (context) => const CreateAccountModal(),
   );
 }
 

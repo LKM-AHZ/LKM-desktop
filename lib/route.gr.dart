@@ -41,7 +41,6 @@ import 'package:island/community/my_follow_screen.dart' as _i92;
 import 'package:island/files/library_screen.dart' as _i93;
 import 'package:island/auth/authorize_screen.dart' as _i14;
 import 'package:island/auth/captcha.dart' as _i19;
-import 'package:island/auth/create_account.dart' as _i25;
 import 'package:island/auth/login.dart' as _i43;
 import 'package:island/chat/widgets/call_screen.dart' as _i18;
 import 'package:island/chat/widgets/chat_detail_screen.dart' as _i21;
@@ -1162,22 +1161,6 @@ class ContentDetailRouteArgs {
 
   @override
   int get hashCode => key.hashCode ^ id.hashCode;
-}
-
-/// generated route for
-/// [_i25.CreateAccountScreen]
-class CreateAccountRoute extends _i72.PageRouteInfo<void> {
-  const CreateAccountRoute({List<_i72.PageRouteInfo>? children})
-    : super(CreateAccountRoute.name, initialChildren: children);
-
-  static const String name = 'CreateAccountRoute';
-
-  static _i72.PageInfo page = _i72.PageInfo(
-    name,
-    builder: (data) {
-      return const _i25.CreateAccountScreen();
-    },
-  );
 }
 
 /// generated route for

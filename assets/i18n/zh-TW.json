@@ -5907,6 +5907,7 @@
     "registerSubtitle": "使用使用者名稱和密碼註冊 LKM 帳號。",
     "modeNormal": "使用者名稱 + 聯絡方式",
     "modeLocal": "本地帳號",
+    "modeEmailOnly": "僅電子郵件",
     "username": "使用者名稱",
     "password": "密碼",
     "email": "電子郵件",

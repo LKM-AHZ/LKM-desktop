@@ -550,10 +550,15 @@ class AuthApi {
   Future<LkmAuthResult> registerWithEmail({
     required String email,
     required String code,
+    String? applyReason,
   }) async {
     final data = await _client.post(
       '/auth/reg/email/verify',
-      query: {'email': email, 'code': code},
+      query: {
+        'email': email,
+        'code': code,
+        'apply_reason': ?_nullIfEmpty(applyReason),
+      },
     );
     return LkmAuthResult.fromJson(_asMap(data));
   }

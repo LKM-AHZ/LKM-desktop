@@ -10,11 +10,9 @@ import 'package:island/core/api/auth_api.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
 
-/// Entry mode of the login screen.
-///
-/// `register` is deliberately outside [LoginMethod]: registration is not a
-/// challenge (the server returns tokens straight from `/auth/reg/email/verify`).
-enum _LoginMode { password, code, passkey, register, magic }
+/// Entry mode of the login screen. Account creation lives in [RegisterScreen]
+/// and is linked from the bottom of the form.
+enum _LoginMode { password, code, passkey, magic }
 
 /// Login for LKM-service, driven by the server's challenge: the screen renders
 /// whatever factor the challenge names next, so a new factor (device trust,
@@ -180,7 +178,6 @@ class _LoginContentState extends ConsumerState<LoginContent> {
           (_LoginMode.password, 'lkmMethodPassword'),
           (_LoginMode.code, 'lkmMethodCode'),
           (_LoginMode.passkey, 'lkmMethodPasskey'),
-          (_LoginMode.register, 'lkmMethodRegister'),
           (_LoginMode.magic, 'authFlow.modeMagic'),
         ])
           ChoiceChip(
@@ -271,53 +268,6 @@ class _LoginContentState extends ConsumerState<LoginContent> {
             busy: state.busy,
             label: 'lkmContinue'.tr(),
             onPressed: () => controller.beginPasskey(_account.text),
-          ),
-        ];
-      case _LoginMode.register:
-        return [
-          _field(
-            controller: _email,
-            label: 'lkmEmailLabel'.tr(),
-            icon: Icons.alternate_email,
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _field(
-                  controller: _code,
-                  label: 'lkmCodeLabel'.tr(),
-                  icon: Icons.pin_outlined,
-                  onSubmitted: () => controller.verifyRegistration(
-                    email: _email.text,
-                    code: _code.text,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              OutlinedButton(
-                onPressed: state.busy
-                    ? null
-                    : () => controller.requestRegisterCode(_email.text),
-                child: Text('lkmSendCode'.tr()),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'lkmRegisterHint'.tr(),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _primaryButton(
-            busy: state.busy,
-            label: 'lkmRegisterAction'.tr(),
-            onPressed: () => controller.verifyRegistration(
-              email: _email.text,
-              code: _code.text,
-            ),
           ),
         ];
     }

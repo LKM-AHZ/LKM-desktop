@@ -34,7 +34,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: RegisterRoute.page, path: '/auth/register'),
     AutoRoute(page: OnboardingRoute.page, path: '/auth/onboarding'),
     AutoRoute(page: RecoveryRoute.page, path: '/auth/recovery'),
-    AutoRoute(page: CreateAccountRoute.page, path: '/auth/create-account'),
     AutoRoute(page: AuthorizeRoute.page, path: '/auth/authorize'),
 
     // Other standalone routes

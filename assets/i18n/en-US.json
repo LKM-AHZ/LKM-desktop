@@ -6091,6 +6091,7 @@
     "registerSubtitle": "Sign up for LKM-service with a username and password.",
     "modeNormal": "Username + contact",
     "modeLocal": "Local account",
+    "modeEmailOnly": "Email only",
     "username": "Username",
     "password": "Password",
     "email": "Email",

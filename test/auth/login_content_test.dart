@@ -131,7 +131,6 @@ void main() {
     expect(find.text('Sign in to Phientist'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Email code'), findsOneWidget);
-    expect(find.text('Register'), findsOneWidget);
     expect(find.text('Username or email'), findsOneWidget);
     expect(find.text('Continue'), findsOneWidget);
     // 还没建挑战：不该出现密码框。

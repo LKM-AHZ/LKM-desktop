@@ -344,29 +344,6 @@ void main() {
     );
   });
 
-  test('email registration signs the account in', () async {
-    final setup = await _setup((options) {
-      if (options.path.contains('/auth/me')) return _envelope(_me);
-      if (options.path.contains('/reg/email/verify'))
-        return _envelope(_complete);
-      return _envelope({'message': 'sent'});
-    });
-    final controller = setup.container.read(loginControllerProvider.notifier);
-
-    await controller.requestRegisterCode('alma@example.com');
-    expect(setup.container.read(loginControllerProvider).info, 'lkmCodeSentTo');
-
-    await controller.verifyRegistration(
-      email: 'alma@example.com',
-      code: '654321',
-    );
-
-    expect(
-      setup.container.read(loginControllerProvider).account?.username,
-      'alma',
-    );
-  });
-
   test('sign-out clears the stored pair', () async {
     final setup = await _setup((options) {
       if (options.path.contains('/auth/me')) return _envelope(_me);

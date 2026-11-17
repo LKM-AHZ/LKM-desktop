@@ -323,55 +323,6 @@ class LoginController extends Notifier<LoginState> {
     state = LoginState(method: state.method);
   }
 
-  Future<void> requestRegisterCode(String email) async {
-    if (email.trim().isEmpty) {
-      state = state.copyWith(error: _t('lkmErrEmptyEmail'));
-      return;
-    }
-    state = state.copyWith(busy: true, clearMessages: true);
-    try {
-      await _api.requestRegisterCode(email.trim());
-      state = state.copyWith(
-        busy: false,
-        codeSent: true,
-        info: _t('lkmCodeSentTo', [email.trim()]),
-      );
-    } catch (error) {
-      state = state.copyWith(busy: false, error: _describe(error));
-    }
-  }
-
-  Future<void> verifyRegistration({
-    required String email,
-    required String code,
-  }) async {
-    final session = ref.read(lkmApiSessionProvider);
-    final api = AuthApi(session.client);
-    if (email.trim().isEmpty || code.trim().isEmpty) {
-      state = state.copyWith(error: _t('lkmErrEmptyCode'));
-      return;
-    }
-    state = state.copyWith(busy: true, clearMessages: true);
-    try {
-      final result = await api.registerWithEmail(
-        email: email.trim(),
-        code: code.trim(),
-      );
-      if (result.tokens != null) {
-        await _finish(result.tokens!, session);
-      } else if (result.isPendingAdmission) {
-        state = state.copyWith(busy: false, info: _t('lkmAdmissionPending'));
-      } else {
-        state = state.copyWith(
-          busy: false,
-          info: _t('lkmRegistrationComplete'),
-        );
-      }
-    } catch (error) {
-      state = state.copyWith(busy: false, error: _describe(error));
-    }
-  }
-
   /// Browser-based GitHub login: opens the system browser, waits on the
   /// loopback callback, then exchanges the one-time code.
   Future<void> signInWithGithub() async {

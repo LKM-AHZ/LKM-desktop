@@ -6055,6 +6055,7 @@
     "registerSubtitle": "使用用户名和密码注册 LKM 账号。",
     "modeNormal": "用户名 + 联系方式",
     "modeLocal": "本地账号",
+    "modeEmailOnly": "仅邮箱",
     "username": "用户名",
     "password": "密码",
     "email": "邮箱",
