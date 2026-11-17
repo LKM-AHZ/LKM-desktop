@@ -2,9 +2,9 @@ import 'package:island/points/points_pod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import 'package:island/community/content_detail_pod.dart';
 import 'package:island/community/my_content_screen.dart'
@@ -13,14 +13,19 @@ import 'package:island/community/user_pod.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/content_api.dart';
+import 'package:island/core/api/points_api.dart';
 import 'package:island/core/api/projects_api.dart';
 import 'package:island/core/api/qa_api.dart';
 import 'package:island/core/api/users_api.dart';
+import 'package:island/core/services/responsive.dart';
+import 'package:island/core/theme.dart';
+import 'package:island/discovery/widgets/explore_card.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/hooks/material_hooks.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
 import 'package:island/shared/widgets/api_page_list.dart';
+import 'package:island/shared/widgets/sliver_floating_tab_bar.dart';
 
 /// The profile's post/column tabs narrow the unified content read by type.
 final _userContentProvider = FutureProvider.autoDispose
@@ -51,7 +56,7 @@ class UserProfileScreen extends HookConsumerWidget {
       isNoBackground: false,
       appBar: AppBar(
         leading: const AutoLeadingButton(),
-        title: Text('account'.tr()),
+        title: Text(profile.value?.displayName ?? 'account'.tr()),
       ),
       body: profile.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -95,86 +100,285 @@ class _ProfileBody extends HookConsumerWidget {
       }
     }
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-          child: Column(
+    final infoCard = _ProfileInfoCard(
+      profile: profile,
+      balance: balance,
+      entry: entry,
+      follow: follow,
+      showFollow: signedIn && !isSelf,
+      onToggleFollow: toggleFollow,
+    );
+
+    // Pulled from the old account page: the segmented indicator keeps the four
+    // content tabs readable without a divider line.
+    final tabBar = Padding(
+      padding: const EdgeInsets.only(top: SolSpace.sm, bottom: SolSpace.xs),
+      child: TabBar(
+        controller: controller,
+        padding: const EdgeInsets.symmetric(horizontal: SolSpace.md),
+        indicator: BoxDecoration(
+          color: theme.colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(SolRadius.lg),
+        ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerHeight: 0,
+        labelColor: theme.colorScheme.onSecondaryContainer,
+        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+        splashBorderRadius: BorderRadius.circular(SolRadius.lg),
+        labelStyle: theme.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        tabs: [
+          Tab(text: 'authFlow.tabPosts'.tr()),
+          Tab(text: 'authFlow.tabProjects'.tr()),
+          Tab(text: 'authFlow.tabQuestions'.tr()),
+          Tab(text: 'hub.tabColumns'.tr()),
+        ],
+      ),
+    );
+
+    final tabViews = <Widget>[
+      _ProfilePosts(userId: profile.userId),
+      _ProfileProjects(userId: profile.userId, isSelf: isSelf),
+      _ProfileQuestions(userId: profile.userId),
+      _ProfileColumns(userId: profile.userId),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useWide = isWideScreen(context) && constraints.maxWidth >= 900;
+
+        if (useWide) {
+          return Row(
+            spacing: SolSpace.sm,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _Avatar(
-                userId: profile.userId,
-                url: profile.avatar,
-                name: profile.displayName,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                profile.displayName,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Chip(
-                label: Text(profile.role),
-                visualDensity: VisualDensity.compact,
-              ),
-              if (balance != null)
-                Text('${'contribution.currentPoints'.tr()}: $balance')
-              else
-                Text('migration34.pointsUnknown'.tr()),
-              if (entry != null && entry.title.isNotEmpty)
-                Chip(
-                  label: Text(
-                    'contributionData.leaderboard.titles.${entry.title}'.tr(),
+              Flexible(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: SolSpace.md,
+                    top: kExploreCardGap,
+                  ),
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverFloatingTabBar(
+                        backgroundColor: theme.colorScheme.surface,
+                        child: tabBar,
+                      ),
+                    ],
+                    body: TabBarView(
+                      controller: controller,
+                      children: tabViews,
+                    ),
                   ),
                 ),
-              if (signedIn && !isSelf) ...[
-                const SizedBox(height: 16),
-                follow.isLoading
-                    ? const SizedBox(
-                        width: 120,
-                        child: LinearProgressIndicator(),
-                      )
-                    : follow.value == true
-                    ? OutlinedButton.icon(
-                        onPressed: toggleFollow,
-                        icon: const Icon(Icons.check),
-                        label: Text('following'.tr()),
-                      )
-                    : FilledButton.icon(
-                        onPressed: toggleFollow,
-                        icon: const Icon(Icons.person_add_alt),
-                        label: Text('follow'.tr()),
-                      ),
-              ],
+              ),
+              Flexible(
+                flex: 3,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: kExploreCardGap,
+                    horizontal: SolSpace.md,
+                  ),
+                  child: infoCard,
+                ),
+              ),
             ],
-          ),
-        ),
-        TabBar(
-          controller: controller,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          tabs: [
-            Tab(text: 'authFlow.tabPosts'.tr()),
-            Tab(text: 'authFlow.tabProjects'.tr()),
-            Tab(text: 'authFlow.tabQuestions'.tr()),
-            Tab(text: 'hub.tabColumns'.tr()),
+          );
+        }
+
+        return NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SolSpace.md,
+                  kExploreCardGap,
+                  SolSpace.md,
+                  0,
+                ),
+                child: infoCard,
+              ),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _ProfileTabBarHeaderDelegate(
+                child: tabBar,
+                backgroundColor: theme.colorScheme.surface,
+              ),
+            ),
           ],
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: controller,
-            children: [
-              _ProfilePosts(userId: profile.userId),
-              _ProfileProjects(userId: profile.userId, isSelf: isSelf),
-              _ProfileQuestions(userId: profile.userId),
-              _ProfileColumns(userId: profile.userId),
-            ],
-          ),
-        ),
-      ],
+          body: TabBarView(controller: controller, children: tabViews),
+        );
+      },
     );
   }
+}
+
+/// Profile card shared by the narrow and the wide layouts.
+class _ProfileInfoCard extends StatelessWidget {
+  const _ProfileInfoCard({
+    required this.profile,
+    required this.balance,
+    required this.entry,
+    required this.follow,
+    required this.showFollow,
+    required this.onToggleFollow,
+  });
+
+  final LkmUserProfile profile;
+  final int? balance;
+  final LkmPointsLeaderboardEntry? entry;
+  final AsyncValue<bool> follow;
+  final bool showFollow;
+  final VoidCallback onToggleFollow;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final entryTitle = entry?.title;
+
+    return ExploreCard(
+      child: Padding(
+        padding: const EdgeInsets.all(SolSpace.lg),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: SolSpace.md,
+          children: [
+            _Avatar(
+              userId: profile.userId,
+              url: profile.avatar,
+              name: profile.displayName,
+              radius: 32,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.displayName,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: SolSpace.xs),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SolSpace.sm,
+                      vertical: SolSpace.xxs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(SolRadius.chip),
+                    ),
+                    child: Text(
+                      '@${profile.userId}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: SolSpace.sm),
+                  Text(
+                    profile.role,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: SolSpace.xs),
+                  _ProfileInfoRow(
+                    icon: Symbols.stars,
+                    value: balance != null
+                        ? '${'contribution.currentPoints'.tr()}: $balance'
+                        : 'migration34.pointsUnknown'.tr(),
+                  ),
+                  if (entryTitle != null && entryTitle.isNotEmpty)
+                    _ProfileInfoRow(
+                      icon: Symbols.emoji_events,
+                      value: 'contributionData.leaderboard.titles.$entryTitle'
+                          .tr(),
+                    ),
+                ],
+              ),
+            ),
+            if (showFollow)
+              _FollowButton(follow: follow, onPressed: onToggleFollow),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FollowButton extends StatelessWidget {
+  const _FollowButton({required this.follow, required this.onPressed});
+
+  final AsyncValue<bool> follow;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    if (follow.isLoading) {
+      return const SizedBox(
+        width: 96,
+        height: 40,
+        child: Center(child: LinearProgressIndicator()),
+      );
+    }
+    return follow.value == true
+        ? OutlinedButton.icon(
+            onPressed: onPressed,
+            icon: const Icon(Symbols.check, size: 18),
+            label: Text('following'.tr()),
+          )
+        : FilledButton.icon(
+            onPressed: onPressed,
+            icon: const Icon(Symbols.person_add, size: 18),
+            label: Text('follow'.tr()),
+          );
+  }
+}
+
+class _ProfileInfoRow extends StatelessWidget {
+  const _ProfileInfoRow({required this.icon, required this.value});
+
+  final IconData icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: SolSpace.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+          const SizedBox(width: SolSpace.xs + SolSpace.xxs),
+          Expanded(
+            child: Text(
+              value,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContentCard extends StatelessWidget {
+  const _ContentCard({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ExploreCard(child: child);
 }
 
 class _ProfilePosts extends StatelessWidget {
@@ -185,13 +389,15 @@ class _ProfilePosts extends StatelessWidget {
     key: ValueKey(userId),
     provider: (page) =>
         _userContentProvider((userId: userId, type: 'discussion', page: page)),
-    itemBuilder: (context, item) => ListTile(
-      title: Text(item.title),
-      subtitle: Text(
-        [item.authorName, _formatDate(item.createdAt)].join(' · '),
+    itemBuilder: (context, item) => _ContentCard(
+      child: ListTile(
+        title: Text(item.title),
+        subtitle: Text(
+          [item.authorName, _formatDate(item.createdAt)].join(' · '),
+        ),
+        trailing: const Icon(Symbols.chevron_right),
+        onTap: () => context.router.push(ContentDetailRoute(id: item.id)),
       ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.router.push(ContentDetailRoute(id: item.id)),
     ),
   );
 }
@@ -214,6 +420,7 @@ class _ProfileProjects extends ConsumerWidget {
         if (isSelf) ref.invalidate(myApplicationsProvider);
       },
       child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         children: [
           ...projects.when(
             loading: () => [const _Loading()],
@@ -222,12 +429,17 @@ class _ProfileProjects extends ConsumerWidget {
                 ? [_Message(text: 'authFlow.empty'.tr())]
                 : [
                     for (final project in items)
-                      ListTile(
-                        title: Text(project.title),
-                        subtitle: Text(project.summary),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => context.router.push(
-                          ProjectDetailRoute(id: project.id),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _ContentCard(
+                          child: ListTile(
+                            title: Text(project.title),
+                            subtitle: Text(project.summary),
+                            trailing: const Icon(Symbols.chevron_right),
+                            onTap: () => context.router.push(
+                              ProjectDetailRoute(id: project.id),
+                            ),
+                          ),
                         ),
                       ),
                   ],
@@ -239,10 +451,15 @@ class _ProfileProjects extends ConsumerWidget {
               data: (items) => [
                 for (final application in items)
                   if (application.status != 'approved')
-                    ListTile(
-                      title: Text(application.title),
-                      subtitle: Text(
-                        '${application.status} · ${application.summary}',
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _ContentCard(
+                        child: ListTile(
+                          title: Text(application.title),
+                          subtitle: Text(
+                            '${application.status} · ${application.summary}',
+                          ),
+                        ),
                       ),
                     ),
               ],
@@ -260,13 +477,15 @@ class _ProfileQuestions extends StatelessWidget {
   Widget build(BuildContext context) => ApiPageList<QaQuestion>(
     key: ValueKey(userId),
     provider: (page) => myQuestionsProvider((authorId: userId, page: page)),
-    itemBuilder: (context, question) => ListTile(
-      title: Text(question.title),
-      subtitle: Text(
-        '${question.status} · ${question.answerCount} ${'authFlow.answers'.tr()}',
+    itemBuilder: (context, question) => _ContentCard(
+      child: ListTile(
+        title: Text(question.title),
+        subtitle: Text(
+          '${question.status} · ${question.answerCount} ${'authFlow.answers'.tr()}',
+        ),
+        trailing: const Icon(Symbols.chevron_right),
+        onTap: () => context.router.push(QaDetailRoute(id: question.id)),
       ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.router.push(QaDetailRoute(id: question.id)),
     ),
   );
 }
@@ -279,11 +498,13 @@ class _ProfileColumns extends StatelessWidget {
     key: ValueKey(userId),
     provider: (page) =>
         _userContentProvider((userId: userId, type: 'column_post', page: page)),
-    itemBuilder: (context, item) => ListTile(
-      title: Text(item.title),
-      subtitle: Text(item.columnTitle),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.router.push(ContentDetailRoute(id: item.id)),
+    itemBuilder: (context, item) => _ContentCard(
+      child: ListTile(
+        title: Text(item.title),
+        subtitle: Text(item.columnTitle),
+        trailing: const Icon(Symbols.chevron_right),
+        onTap: () => context.router.push(ContentDetailRoute(id: item.id)),
+      ),
     ),
   );
 }
@@ -318,11 +539,17 @@ String _formatDate(DateTime date) {
 }
 
 class _Avatar extends ConsumerWidget {
-  const _Avatar({required this.userId, required this.url, required this.name});
+  const _Avatar({
+    required this.userId,
+    required this.url,
+    required this.name,
+    required this.radius,
+  });
 
   final String? url;
   final String userId;
   final String name;
+  final double radius;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -330,7 +557,7 @@ class _Avatar extends ConsumerWidget {
     final initial = name.isEmpty ? '?' : name.characters.first;
     final image = userAvatarUrl(ref.watch(lkmServerUrlProvider), userId, url);
     return CircleAvatar(
-      radius: 48,
+      radius: radius,
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
       foregroundImage: image == null ? null : CachedNetworkImageProvider(image),
       child: Text(
@@ -340,6 +567,43 @@ class _Avatar extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// Pinned strip used by the narrow layout; the wide layout hands its tabs to
+/// [SliverFloatingTabBar] instead.
+class _ProfileTabBarHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final Color backgroundColor;
+
+  _ProfileTabBarHeaderDelegate({
+    required this.child,
+    required this.backgroundColor,
+  });
+
+  @override
+  double get minExtent => kFloatingTabBarHeight;
+
+  @override
+  double get maxExtent => kFloatingTabBarHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Material(
+      color: backgroundColor,
+      elevation: 0,
+      child: SizedBox(height: kFloatingTabBarHeight, child: child),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _ProfileTabBarHeaderDelegate oldDelegate) {
+    return child != oldDelegate.child ||
+        backgroundColor != oldDelegate.backgroundColor;
   }
 }
 
