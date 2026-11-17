@@ -28,8 +28,9 @@ class TreeholeSettingsSheet extends HookConsumerWidget {
         if (importing) {
           final files = await FilePicker.pickFiles();
           if (files.isEmpty) return;
-          if (await files.first.xFile.length() > 1024 * 1024)
+          if (await files.first.xFile.length() > 1024 * 1024) {
             throw const FormatException('Backup too large');
+          }
           final text = await files.first.xFile.readAsString();
           if (!context.mounted) return;
           final yes = await showDialog<bool>(

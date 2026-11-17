@@ -198,8 +198,9 @@ void main() {
         ref,
         page,
       ) async {
-        if (page == 2 && fail)
+        if (page == 2 && fail) {
           throw const ApiException(code: 5, message: 'Offline page');
+        }
         return ApiPage(
           items: [page == 1 ? 'First page' : 'Older content'],
           total: 2,

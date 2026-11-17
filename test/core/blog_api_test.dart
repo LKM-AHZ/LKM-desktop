@@ -48,7 +48,7 @@ void main() {
       final adapter = _Adapter((options) {
         if (options.uri.path == '/graphql/v1') {
           final query = (options.data as Map)['query'] as String;
-          if (query.contains('BlogSeriesDetail'))
+          if (query.contains('BlogSeriesDetail')) {
             return _json({
               'data': {
                 'blogSeriesDetail': {
@@ -68,6 +68,7 @@ void main() {
                 },
               },
             });
+          }
           return _json({
             'data': {
               'blogFileContent': {

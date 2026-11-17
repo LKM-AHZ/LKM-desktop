@@ -107,10 +107,12 @@ Future<String> waitForOAuthCode(HttpServer server) async {
         '</p></body></html>',
       );
       await request.response.close();
-      if (error != null && error.isNotEmpty)
+      if (error != null && error.isNotEmpty) {
         throw OAuthLoopbackException(error);
-      if (code == null || code.isEmpty)
+      }
+      if (code == null || code.isEmpty) {
         throw const OAuthLoopbackException('GitHub 回调缺少授权码');
+      }
       return code;
     }
     throw const OAuthLoopbackException('授权回调已关闭');

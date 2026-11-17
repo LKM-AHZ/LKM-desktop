@@ -53,8 +53,9 @@ class RegisterScreen extends HookConsumerWidget {
           builder: (_) => TotpSetupDialog(authResult: result),
         );
         if (!context.mounted) return;
-        if (ref.read(loginControllerProvider).signedIn)
+        if (ref.read(loginControllerProvider).signedIn) {
           Navigator.of(context).pop(true);
+        }
         return;
       }
       if (result.tokens != null) {

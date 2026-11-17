@@ -13,7 +13,6 @@ import 'package:island/community/content_detail_pod.dart';
 import 'package:island/community/notification_pod.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/content_api.dart';
-import 'package:island/core/api/files_api.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 

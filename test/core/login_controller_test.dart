@@ -127,8 +127,9 @@ void main() {
         _,
         next,
       ) {
-        if (next.error != null && !next.busy && !done.isCompleted)
+        if (next.error != null && !next.busy && !done.isCompleted) {
           done.complete();
+        }
       });
       addTearDown(listener.close);
       await done.future.timeout(const Duration(seconds: 5));
@@ -398,8 +399,9 @@ void main() {
             },
           });
         }
-        if (options.path.contains('/passkey/complete'))
+        if (options.path.contains('/passkey/complete')) {
           return _envelope(_complete);
+        }
         return _envelope({
           ..._challenge,
           'factors': [

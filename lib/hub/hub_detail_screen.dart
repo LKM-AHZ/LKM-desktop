@@ -636,7 +636,7 @@ class _TextBlock extends StatelessWidget {
 }
 
 class ApplyProjectDialog extends HookConsumerWidget {
-  const ApplyProjectDialog();
+  const ApplyProjectDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -296,7 +296,7 @@ class LibraryScreen extends HookConsumerWidget {
                             LibraryFileRoute(id: file.id),
                           ),
                         );
-                        if (grid.value)
+                        if (grid.value) {
                           return GridView.extent(
                             maxCrossAxisExtent: 400,
                             childAspectRatio: 2.8,
@@ -305,6 +305,7 @@ class LibraryScreen extends HookConsumerWidget {
                                 Card(child: tile(file)),
                             ],
                           );
+                        }
                         return ListView(
                           children: [
                             for (final file in result.items) tile(file),
@@ -455,10 +456,11 @@ class LibraryFileScreen extends HookConsumerWidget {
                               : value.mimeType == 'video/mp4'
                               ? 'mp4'
                               : null;
-                          if (extension == null)
+                          if (extension == null) {
                             throw StateError(
                               'libraryMore.previewUnsupported'.tr(),
                             );
+                          }
                           final bytes = await ref
                               .read(lkmApiSessionProvider)
                               .run(
@@ -472,8 +474,9 @@ class LibraryFileScreen extends HookConsumerWidget {
                           );
                           await output.writeAsBytes(bytes);
                           final result = await OpenFile.open(output.path);
-                          if (result.type != ResultType.done)
+                          if (result.type != ResultType.done) {
                             throw StateError(result.message);
+                          }
                         } catch (e) {
                           if (context.mounted) showSnackBar('$e');
                         } finally {

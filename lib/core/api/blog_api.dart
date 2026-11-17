@@ -65,8 +65,9 @@ class BlogApi {
       {'seriesId': id, 'filepath': path},
     );
     final raw = data['blogFileContent'];
-    if (raw is! Map || raw['content'] is! String)
+    if (raw is! Map || raw['content'] is! String) {
       throw const FormatException('File not found');
+    }
     return raw['content'] as String;
   }
 
@@ -75,8 +76,9 @@ class BlogApi {
       '/blog/series',
       body: {'title': title, 'repo_name': repoName},
     );
-    if (raw is! Map || raw['id'] is! String)
+    if (raw is! Map || raw['id'] is! String) {
       throw const FormatException('Invalid series response');
+    }
     return raw['id'] as String;
   }
 

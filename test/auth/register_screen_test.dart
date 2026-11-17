@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:island/auth/register_screen.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/api_session.dart';
 import 'package:island/core/config.dart';

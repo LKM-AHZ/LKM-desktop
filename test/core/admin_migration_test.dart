@@ -305,8 +305,9 @@ void main() {
       var verified = false;
       var writes = 0;
       final adapter = _Adapter((o) {
-        if (o.path == '/admin/admission/users')
+        if (o.path == '/admin/admission/users') {
           return _json(accepted ? [] : [_admission]);
+        }
         if (o.path == '/admin/auth/2fa') {
           expect(o.data, {'code': '123456'});
           verified = true;

@@ -98,8 +98,9 @@ class _EditorState extends ConsumerState<_Editor> {
         if (series.text.isNotEmpty &&
             path.text.isNotEmpty &&
             !busy &&
-            compose.contentController.text != savedContent)
+            compose.contentController.text != savedContent) {
           await run(save);
+        }
       } catch (e) {
         if (mounted) setState(() => error = '$e');
       }
@@ -138,22 +139,25 @@ class _EditorState extends ConsumerState<_Editor> {
     // Keep the draft even when path validation, conflict checks or the network fail.
     await store.save(current);
     BlogApi.validatePath(path.text);
-    if (series.text.trim().isEmpty)
+    if (series.text.trim().isEmpty) {
       throw StateError('seriesEditor.seriesRequired'.tr());
+    }
     // Do not overwrite an existing remote file when creating a new local draft.
     if (savedContent == null) {
       final detail = await ref
           .read(lkmApiSessionProvider)
           .run(() => api.detail(series.text));
-      if (detail.paths.contains(path.text))
+      if (detail.paths.contains(path.text)) {
         throw StateError('seriesEditor.openExisting'.tr());
+      }
     }
     if (savedContent != null) {
       final remote = await ref
           .read(lkmApiSessionProvider)
           .run(() => api.content(series.text, path.text));
-      if (remote != savedContent)
+      if (remote != savedContent) {
         throw StateError('seriesEditor.conflict'.tr());
+      }
     }
     await ref
         .read(lkmApiSessionProvider)
@@ -165,8 +169,9 @@ class _EditorState extends ConsumerState<_Editor> {
           ),
         );
     savedContent = current['content'] as String;
-    if (!paths.contains(current['path']))
+    if (!paths.contains(current['path'])) {
       paths = [...paths, current['path'] as String];
+    }
     await store.save({...current, 'baseContent': savedContent}, snapshot: true);
     if (mounted) setState(() {});
   }
@@ -224,8 +229,9 @@ class _EditorState extends ConsumerState<_Editor> {
     final bytes = await file.xFile.readAsBytes();
     if (bytes.isEmpty) return;
     final mime = lookupMimeType(file.name, headerBytes: bytes) ?? '';
-    if (!mime.startsWith('image/'))
+    if (!mime.startsWith('image/')) {
       throw const FormatException('Expected image');
+    }
     final files = ref.read(filesApiProvider);
     final uploaded = await ref
         .read(lkmApiSessionProvider)
@@ -350,10 +356,11 @@ class _EditorState extends ConsumerState<_Editor> {
                             compose.titleController.text,
                           ),
                         );
-                    if (mounted)
+                    if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('seriesEditor.published'.tr())),
                       );
+                    }
                   }),
             child: Text('seriesEditor.publish'.tr()),
           ),
@@ -394,8 +401,9 @@ class _EditorState extends ConsumerState<_Editor> {
                           final detail = await ref
                               .read(lkmApiSessionProvider)
                               .run(() => api.detail(series.text));
-                          if (detail.ownerId != widget.userId)
+                          if (detail.ownerId != widget.userId) {
                             throw StateError('seriesEditor.ownerOnly'.tr());
+                          }
                           setState(() => paths = detail.paths);
                         }),
                   child: Text('seriesEditor.load'.tr()),
@@ -405,8 +413,9 @@ class _EditorState extends ConsumerState<_Editor> {
                       ? null
                       : () => run(() async {
                           final title = compose.titleController.text.trim();
-                          if (title.isEmpty)
+                          if (title.isEmpty) {
                             throw StateError('seriesEditor.titleRequired'.tr());
+                          }
                           series.text = await ref
                               .read(lkmApiSessionProvider)
                               .run(

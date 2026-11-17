@@ -75,19 +75,22 @@ final adminDlqProvider = FutureProvider.autoDispose
     });
 
 final adminStatsProvider = FutureProvider.autoDispose<AdminStats>((ref) {
-  if (!ref.watch(adminSignedInProvider))
+  if (!ref.watch(adminSignedInProvider)) {
     throw StateError('Admin session required');
+  }
   return ref.watch(adminApiProvider).stats();
 });
 final adminTrendProvider = FutureProvider.autoDispose<List<AdminTrend>>((ref) {
-  if (!ref.watch(adminSignedInProvider))
+  if (!ref.watch(adminSignedInProvider)) {
     throw StateError('Admin session required');
+  }
   return ref.watch(adminApiProvider).trend();
 });
 final adminReviewSummaryProvider =
     FutureProvider.autoDispose<AdminReviewSummary>((ref) {
-      if (!ref.watch(adminSignedInProvider))
+      if (!ref.watch(adminSignedInProvider)) {
         throw StateError('Admin session required');
+      }
       return ref.watch(adminApiProvider).reviewSummary();
     });
 
@@ -127,7 +130,8 @@ final adminRecentReportsProvider =
     });
 final adminBotProvider = FutureProvider.autoDispose
     .family<AdminBotData, String>((ref, section) {
-      if (!ref.watch(adminSignedInProvider))
+      if (!ref.watch(adminSignedInProvider)) {
         throw StateError('Admin session required');
+      }
       return ref.watch(adminApiProvider).botData(section);
     });

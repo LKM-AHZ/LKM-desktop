@@ -136,14 +136,16 @@ class LoginController extends Notifier<LoginState> {
       final account = await session.run(() => AuthApi(session.client).me());
       if (!ref.mounted ||
           !identical(ref.read(lkmApiSessionProvider), session) ||
-          session.identityRevision != revision)
+          session.identityRevision != revision) {
         return;
+      }
       state = state.copyWith(account: account, busy: false);
     } catch (error) {
       if (!ref.mounted ||
           !identical(ref.read(lkmApiSessionProvider), session) ||
-          session.identityRevision != revision)
+          session.identityRevision != revision) {
         return;
+      }
       if (error is SessionExpiredException ||
           (error is ApiException && error.isUnauthenticated)) {
         await session.signOut(revoke: false);
@@ -565,8 +567,9 @@ class LoginController extends Notifier<LoginState> {
     final revision = session.identityRevision;
     final account = await AuthApi(session.client).me();
     _checkSession(session);
-    if (session.identityRevision != revision)
+    if (session.identityRevision != revision) {
       throw const SessionExpiredException();
+    }
     ref.invalidate(lkmMeProvider);
     state = LoginState(account: account);
   }

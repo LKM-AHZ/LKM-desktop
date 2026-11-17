@@ -31,16 +31,18 @@ Future<T?> runAdminAction<T>(
     if (code == null ||
         code.isEmpty ||
         !context.mounted ||
-        !identical(ref.read(adminApiProvider), api))
+        !identical(ref.read(adminApiProvider), api)) {
       return null;
+    }
     try {
       await api.verify2fa(code);
     } on ApiException catch (verifyError) {
       if (context.mounted) showSnackBar(verifyError.message);
       return null;
     }
-    if (!context.mounted || !identical(ref.read(adminApiProvider), api))
+    if (!context.mounted || !identical(ref.read(adminApiProvider), api)) {
       return null;
+    }
     return await action();
   }
 }

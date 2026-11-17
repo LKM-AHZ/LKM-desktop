@@ -68,8 +68,9 @@ final treeholeRandomLettersProvider =
         for (var page = 1; ; page++) {
           final rows = await api.letters(scope: scope, page: page, limit: 100);
           for (final letter in rows) {
-            if (!letter.isMine && letter.status == 'published')
+            if (!letter.isMine && letter.status == 'published') {
               pool[letter.id] = letter;
+            }
           }
           if (rows.length < 100) break;
         }

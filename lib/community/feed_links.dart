@@ -39,8 +39,9 @@ FeedRouteTarget? parseFeedRoute(String? url, {String? serverHost}) {
         !uri.hasAuthority ||
         !server.hasAuthority ||
         !['http', 'https'].contains(uri.scheme) ||
-        uri.origin != server.origin)
+        uri.origin != server.origin) {
       return null;
+    }
     raw = uri.path;
   }
   final path = raw.split('#').first.split('?').first;
@@ -57,8 +58,9 @@ FeedRouteTarget? parseFeedRoute(String? url, {String? serverHost}) {
 
   final contentId =
       idOf(const ['content', 'posts']) ?? idOf(const ['forum', 'post']);
-  if (contentId != null)
+  if (contentId != null) {
     return FeedRouteTarget(FeedRouteKind.content, contentId);
+  }
   final qaId = idOf(const ['qa']);
   if (qaId != null) return FeedRouteTarget(FeedRouteKind.qa, qaId);
   final projectId = idOf(const ['projects']);

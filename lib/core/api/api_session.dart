@@ -330,7 +330,7 @@ class ApiSession {
         (_) {
           if (identical(_refreshInFlight, future)) _refreshInFlight = null;
         },
-        onError: (Object _, StackTrace __) {
+        onError: (Object _, StackTrace _) {
           if (identical(_refreshInFlight, future)) _refreshInFlight = null;
         },
       ),

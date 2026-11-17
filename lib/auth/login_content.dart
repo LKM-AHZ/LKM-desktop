@@ -88,8 +88,9 @@ class _LoginContentState extends ConsumerState<LoginContent> {
                       barrierDismissible: false,
                       builder: (_) => TotpSetupDialog(authResult: state.setup),
                     );
-                    if (mounted && done != true)
+                    if (mounted && done != true) {
                       await ref.read(loginControllerProvider.notifier).cancel();
+                    }
                   },
                 ),
                 TextButton(

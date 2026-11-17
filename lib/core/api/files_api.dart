@@ -239,8 +239,9 @@ class FilesApi {
         ),
       }),
     );
-    if (data is! Map)
+    if (data is! Map) {
       throw const FormatException('Invalid file version response');
+    }
     return LkmFile.fromJson(Map<String, dynamic>.from(data));
   }
 

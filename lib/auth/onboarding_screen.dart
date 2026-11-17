@@ -55,8 +55,9 @@ class OnboardingScreen extends HookConsumerWidget {
             tags.value = (first['tags'] as List).whereType<String>().toSet();
           }
           final third = data?['3'];
-          if (third is Map && third['answer'] is int)
+          if (third is Map && third['answer'] is int) {
             answer.value = third['answer'] as int;
+          }
           final fourth = data?['4'];
           if (fourth is Map && fourth['tasks'] is List) {
             tasks.value = (fourth['tasks'] as List).whereType<String>().toSet();

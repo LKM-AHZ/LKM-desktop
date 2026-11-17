@@ -136,7 +136,7 @@ class AdminBotTab extends HookConsumerWidget {
               onRetry: () => ref.invalidate(adminBotProvider(section)),
             ),
             data: (data) {
-              if (!data.configured || !data.available)
+              if (!data.configured || !data.available) {
                 return Center(
                   child: Text(
                     (data.configured
@@ -145,7 +145,8 @@ class AdminBotTab extends HookConsumerWidget {
                         .tr(),
                   ),
                 );
-              if (section == 'overview')
+              }
+              if (section == 'overview') {
                 return ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
@@ -156,6 +157,7 @@ class AdminBotTab extends HookConsumerWidget {
                       ),
                   ],
                 );
+              }
               if (section == 'logs/history') {
                 final q = search.text.trim().toLowerCase();
                 final logs = data.items

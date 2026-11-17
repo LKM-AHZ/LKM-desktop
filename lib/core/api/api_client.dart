@@ -228,8 +228,9 @@ class ApiClient {
   Future<Uint8List> getBytes(String path) async {
     final response = await _send('GET', path, responseType: ResponseType.bytes);
     final bytes = response.data;
-    if (bytes is! List<int>)
+    if (bytes is! List<int>) {
       throw _shapeError('GET', path, 'Expected file bytes');
+    }
     final jsonError =
         response.headers.value('content-disposition') == null &&
         (response.headers.value('content-type') ?? '').contains(

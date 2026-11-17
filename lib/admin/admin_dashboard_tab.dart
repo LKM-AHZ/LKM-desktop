@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:island/admin/admin_pod.dart';
 import 'package:island/admin/admin_widgets.dart';
-import 'package:island/core/api/admin_api.dart';
 
 class AdminDashboardTab extends ConsumerWidget {
   const AdminDashboardTab({super.key, required this.onOpen});

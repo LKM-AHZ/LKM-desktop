@@ -74,8 +74,9 @@ class RecoveryScreen extends HookConsumerWidget {
     void takeOutcome(LkmRecoveryOutcome outcome) {
       if (!context.mounted) return;
       if (outcome.requires2fa) {
-        if (outcome.tempToken == null || outcome.txnId == null)
+        if (outcome.tempToken == null || outcome.txnId == null) {
           throw StateError('Missing recovery transaction');
+        }
         txnId.value = outcome.txnId;
         tempToken.value = outcome.tempToken;
         stage.value = 2;

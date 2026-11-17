@@ -128,11 +128,13 @@ class _QuestionDraft extends HookConsumerWidget {
       try {
         final files = await FilePicker.pickFiles(type: FileType.image);
         if (!context.mounted) return;
-        if (images.value.length + files.length > 6)
+        if (images.value.length + files.length > 6) {
           throw StateError('migration34.sixImages'.tr());
+        }
         for (final file in files) {
-          if (await file.xFile.length() > 20 * 1024 * 1024)
+          if (await file.xFile.length() > 20 * 1024 * 1024) {
             throw StateError('migration34.imageSize'.tr());
+          }
         }
         if (!context.mounted) return;
         images.value = [
@@ -163,13 +165,15 @@ class _QuestionDraft extends HookConsumerWidget {
               amount == null ||
               amount < 0 ||
               amount * people.value > 1000 ||
-              (urgent.value && (amount == 0 || days.value != 7)))
+              (urgent.value && (amount == 0 || days.value != 7))) {
             throw StateError('migration34.invalidBounty'.tr());
+          }
           final available = await session.run(
             () => PointsApi(session.client).balance(),
           );
-          if (amount * people.value > available.balance)
+          if (amount * people.value > available.balance) {
             throw StateError('migration34.balanceLow'.tr());
+          }
           final q = await session.run(
             () => ref
                 .read(qaApiProvider)

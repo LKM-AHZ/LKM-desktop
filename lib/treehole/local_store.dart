@@ -28,12 +28,14 @@ class TreeholeLocalStore {
   String export() => jsonEncode({'version': 1, ...read()});
   Future<void> import(String source) async {
     final data = jsonDecode(source);
-    if (data is! Map || data['version'] != 1)
+    if (data is! Map || data['version'] != 1) {
       throw const FormatException('Invalid backup');
+    }
     final result = <String, dynamic>{};
     if (data['theme'] != null) {
-      if (!['system', 'light', 'dark'].contains(data['theme']))
+      if (!['system', 'light', 'dark'].contains(data['theme'])) {
         throw const FormatException('Invalid theme');
+      }
       result['theme'] = data['theme'];
     }
     for (final k in ['contrast', 'mute', 'limit']) {
@@ -43,8 +45,9 @@ class TreeholeLocalStore {
       }
     }
     if (data['scale'] != null) {
-      if (data['scale'] is! num || data['scale'] < 0.8 || data['scale'] > 1.6)
+      if (data['scale'] is! num || data['scale'] < 0.8 || data['scale'] > 1.6) {
         throw const FormatException('Invalid font size');
+      }
       result['scale'] = data['scale'];
     }
     if (data['draft'] != null) {
@@ -59,19 +62,22 @@ class TreeholeLocalStore {
         'sealed',
       ]) {
         if (draft[k] != null &&
-            (draft[k] is! String || (draft[k] as String).length > 1000))
+            (draft[k] is! String || (draft[k] as String).length > 1000)) {
           throw const FormatException('Invalid draft field');
+        }
       }
       for (final k in ['moods', 'tags']) {
         if (draft[k] != null &&
             (draft[k] is! List ||
                 (draft[k] as List).length > 3 ||
-                (draft[k] as List).any((e) => e is! String)))
+                (draft[k] as List).any((e) => e is! String))) {
           throw const FormatException('Invalid draft tags');
+        }
       }
       if (draft['privacy'] != null &&
-          !['public', 'self', 'random'].contains(draft['privacy']))
+          !['public', 'self', 'random'].contains(draft['privacy'])) {
         throw const FormatException('Invalid privacy');
+      }
       if (draft['category'] != null &&
           ![
             'confess',
@@ -84,8 +90,9 @@ class TreeholeLocalStore {
             'heal',
             'fun',
             'insight',
-          ].contains(draft['category']))
+          ].contains(draft['category'])) {
         throw const FormatException('Invalid category');
+      }
       result['draft'] = {
         for (final k in [
           'content',
