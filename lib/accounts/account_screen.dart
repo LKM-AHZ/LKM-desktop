@@ -202,8 +202,8 @@ class _LkmAccountPage extends HookConsumerWidget {
           ListTile(
             leading: const Icon(Symbols.shield_person),
             trailing: const Icon(Symbols.chevron_right),
-            title: Text('authFlow.accountSecurity'.tr()),
-            onTap: () => context.router.push(const AccountSecurityRoute()),
+            title: Text('accountSettings'.tr()),
+            onTap: () => context.router.push(const AccountSettingsRoute()),
           ),
           ListTile(
             leading: const Icon(Symbols.settings),

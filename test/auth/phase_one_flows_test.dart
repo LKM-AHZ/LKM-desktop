@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/auth/account_security_screen.dart';
+import 'package:island/accounts/screens/me/account_settings.dart';
 import 'package:island/auth/login_content.dart';
 import 'package:island/auth/onboarding_screen.dart';
 import 'package:island/auth/recovery_screen.dart';
@@ -62,7 +62,7 @@ void main() {
     'mandatory setup shows recovery codes before adopting a session and confirming',
     (tester) async {
       // Keep all W1 pages in the persistent compile check.
-      expect(const AccountSecurityScreen(), isNotNull);
+      expect(const AccountSettingsScreen(), isNotNull);
       expect(const RegisterScreen(), isNotNull);
       expect(const RecoveryScreen(), isNotNull);
       expect(const OnboardingScreen(), isNotNull);

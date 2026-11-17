@@ -1,51 +1,41 @@
-import 'dart:io' show Platform;
-
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-import 'package:gap/gap.dart';
-
-import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:math';
 
-import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-import 'package:ndef/ndef.dart' as ndef;
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:island/core/services/nfc_scan_service.dart';
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:island/accounts/widgets/account/account_devices.dart';
-import 'package:island/accounts/widgets/account/account_authorized_apps.dart';
-import 'package:island/accounts/widgets/name_change_card_sheet.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:ndef/ndef.dart' as ndef;
+import 'package:passkeys/authenticator.dart';
+import 'package:passkeys/types.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:solar_network_sdk/solar_network_sdk.dart';
+import 'package:styled_widget/styled_widget.dart';
+
 import 'package:island/accounts/account_pod.dart';
-import 'package:island/accounts/screens/me/settings_auth_factors.dart';
-import 'package:island/accounts/screens/me/settings_connections.dart';
-import 'package:island/accounts/screens/me/settings_contacts.dart';
-import 'package:island/accounts/screens/me/settings_webdav.dart';
-import 'package:island/auth/captcha.dart';
-import 'package:solar_network_foundation/solar_network_foundation.dart';
-import 'package:island/chat/widgets/chat_groups_manager.dart';
-import 'package:island/core/database.dart';
+import 'package:island/auth/login_controller.dart';
+import 'package:island/auth/oauth_desktop.dart';
+import 'package:island/auth/totp_setup_dialog.dart';
+import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/auth_api.dart';
 import 'package:island/core/network.dart';
+import 'package:island/core/services/nfc_scan_service.dart';
 import 'package:island/core/theme.dart';
-import 'package:island/core/server_compatibility.dart';
-import 'package:island/posts/widgets/compose/post_watch_sheet.dart';
-import 'package:island/creators/screens/publishers_form.dart';
-import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/shared/widgets/alert.dart';
-import 'package:island/shared/widgets/app_scaffold.dart' hide PageBackButton;
+import 'package:island/shared/widgets/app_scaffold.dart';
 import 'package:island/shared/widgets/empty_state.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:island/shared/widgets/response.dart';
-import 'package:island/route.gr.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:styled_widget/styled_widget.dart';
-import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 part 'account_settings.g.dart';
 part 'account_settings.freezed.dart';
@@ -136,1896 +126,671 @@ Future<String> securityPreferencesMode(Ref ref) async {
   return (data['mode'] as String?) ?? 'default';
 }
 
-Widget _buildLeadingIcon(
-  BuildContext context,
-  IconData icon, {
-  Color? background,
-  Color? color,
-}) {
-  final colorScheme = Theme.of(context).colorScheme;
-  return Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      color: background ?? colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(SolRadius.md),
-    ),
-    child: Icon(
-      icon,
-      size: 20,
-      color: color ?? colorScheme.onSurfaceVariant,
-    ),
-  );
-}
-
-Widget _buildCountBadge(BuildContext context, int count) {
-  final colorScheme = Theme.of(context).colorScheme;
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-    decoration: BoxDecoration(
-      color: colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(SolRadius.pill),
-    ),
-    child: Text(
-      '$count',
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: colorScheme.onSurfaceVariant,
-      ),
-    ),
-  );
-}
-
+/// Account settings backed by `/auth/settings`, `/auth/2fa` and
+/// `/auth/passkey`: profile, bound contacts, TOTP and passkeys.
 @RoutePage()
 class AccountSettingsScreen extends HookConsumerWidget {
   const AccountSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future<void> requestAccountDeletion() async {
-      final confirm = await showConfirmAlert(
-        'accountDeletionHint'.tr(),
-        'accountDeletion'.tr(),
-        isDanger: true,
-      );
-      if (!confirm || !context.mounted) return;
+    final settings = useState<LkmAccountSettings?>(null);
+    final credentials = useState<List<LkmPasskeyCredential>>(const []);
+    final me = useState<LkmAccount?>(null);
+    final busy = useState(false);
+    final error = useState<String?>(null);
+
+    Future<void> load() async {
+      busy.value = true;
+      error.value = null;
       try {
-        showLoadingModal(context);
-        final client = ref.read(solarNetworkClientProvider);
-        await withSudoRetry(
+        final api = ref.read(authApiProvider);
+        final results = await Future.wait([
+          api.accountSettings(),
+          api.passkeyCredentials(),
+          api.me(),
+        ]);
+        if (!context.mounted) return;
+        settings.value = results[0] as LkmAccountSettings;
+        credentials.value = results[1] as List<LkmPasskeyCredential>;
+        me.value = results[2] as LkmAccount;
+      } catch (failure) {
+        if (context.mounted) error.value = _describe(failure);
+      } finally {
+        if (context.mounted) busy.value = false;
+      }
+    }
+
+    useEffect(() {
+      Future.microtask(load);
+      return null;
+    }, const []);
+
+    Future<void> run(Future<void> Function() action) async {
+      if (busy.value) return;
+      busy.value = true;
+      error.value = null;
+      try {
+        await action();
+      } catch (failure) {
+        if (context.mounted) error.value = _describe(failure);
+      } finally {
+        if (context.mounted) busy.value = false;
+      }
+    }
+
+    Future<void> saveProfile(String nickname) => run(() async {
+      final account = me.value;
+      if (account == null) return;
+      await ref
+          .read(authApiProvider)
+          .updateProfile(userId: account.id, nickname: nickname);
+      ref.invalidate(lkmMeProvider);
+      if (context.mounted) showSnackBar('authFlow.profileSaved'.tr());
+    });
+
+    Future<void> editNickname() async {
+      final value = await _askText(
+        context,
+        title: 'authFlow.nickname'.tr(),
+        label: 'authFlow.nickname'.tr(),
+        initial: me.value?.nickname ?? '',
+      );
+      if (value == null || value.isEmpty) return;
+      await saveProfile(value);
+    }
+
+    Future<void> uploadAvatar() => run(() async {
+      final account = me.value;
+      if (account == null) return;
+      final picked = await FilePicker.pickFiles(type: FileType.image);
+      if (picked.isEmpty) return;
+      final file = picked.first;
+      final bytes = await file.xFile.readAsBytes();
+      final api = ref.read(authApiProvider);
+      final key = await api.uploadAvatar(bytes: bytes, filename: file.name);
+      await api.updateProfile(userId: account.id, avatar: key);
+      ref.invalidate(lkmMeProvider);
+      if (context.mounted) showSnackBar('authFlow.avatarUpdated'.tr());
+    });
+
+    Future<void> bindContact({required bool email}) async {
+      final contact = await _askText(
+        context,
+        title: (email ? 'authFlow.bindEmail' : 'authFlow.bindPhone').tr(),
+        label: (email ? 'authFlow.email' : 'authFlow.phone').tr(),
+      );
+      if (contact == null || contact.trim().isEmpty) return;
+      await run(() async {
+        final api = ref.read(authApiProvider);
+        email
+            ? await api.requestBindEmail(contact)
+            : await api.requestBindPhone(contact);
+        if (!context.mounted) return;
+        final code = await _askText(
           context,
-          ref,
-          () => client.accounts.deleteCurrentAccount(),
-          onBeforePrompt: () => hideLoadingModal(context),
+          title: 'authFlow.verify'.tr(),
+          label: 'authFlow.codeSentTo'.tr(args: [contact]),
+          number: true,
         );
-        if (context.mounted) {
-          showSnackBar('accountDeletionSent'.tr());
-        }
-      } catch (err) {
-        showErrorAlert(err);
-      } finally {
-        if (context.mounted) hideLoadingModal(context);
-      }
+        if (code == null || code.trim().isEmpty) return;
+        email
+            ? await api.verifyBindEmail(email: contact, code: code)
+            : await api.verifyBindPhone(phone: contact, code: code);
+        await load();
+      });
     }
 
-    Future<void> requestResetPassword() async {
-      final confirm = await showConfirmAlert(
-        'accountPasswordChangeDescription'.tr(),
-        'accountPasswordChange'.tr(),
+    Future<void> bindGithub() => run(() async {
+      final bound = await runGithubBind(ref.read(authApiProvider));
+      if (!bound) {
+        error.value = 'authFlow.bindFailed'.tr();
+        return;
+      }
+      await load();
+    });
+
+    Future<void> unbind(String type) async {
+      String? code;
+      String? recovery;
+      if (settings.value?.has2fa == true) {
+        final values = await _askTwoFactor(context);
+        if (values == null) return;
+        code = values.$1;
+        recovery = values.$2;
+      }
+      await run(() async {
+        await ref
+            .read(authApiProvider)
+            .unbind(type, code: code, recoveryCode: recovery);
+        await load();
+      });
+    }
+
+    Future<void> toggleTotp(bool enable) => run(() async {
+      final api = ref.read(authApiProvider);
+      if (enable) {
+        final result = await showDialog<bool>(
+          context: context,
+          builder: (_) => const TotpSetupDialog(),
+        );
+        if (result == true) await load();
+        return;
+      }
+      final values = await _askTwoFactor(context);
+      if (values == null) return;
+      await api.disableTotp(code: values.$1, recoveryCode: values.$2);
+      await load();
+    });
+
+    Future<void> addPasskey() => run(() async {
+      final authenticator = PasskeyAuthenticator(debugMode: kDebugMode);
+      final options = await ref
+          .read(authApiProvider)
+          .beginPasskeyRegistration();
+      final pk = options.publicKey;
+      final rp = pk['rp'] is Map ? pk['rp'] as Map : const {};
+      final user = pk['user'] is Map ? pk['user'] as Map : const {};
+      final selection = pk['authenticatorSelection'] is Map
+          ? pk['authenticatorSelection'] as Map
+          : null;
+      final params = (pk['pubKeyCredParams'] as List? ?? const [])
+          .whereType<Map>();
+      final request = RegisterRequestType(
+        challenge: '${pk['challenge'] ?? ''}',
+        relyingParty: RelyingPartyType(
+          id: '${rp['id'] ?? ''}',
+          name: '${rp['name'] ?? ''}',
+        ),
+        user: UserType(
+          id: '${user['id'] ?? ''}',
+          name: '${user['name'] ?? ''}',
+          displayName: '${user['displayName'] ?? user['name'] ?? ''}',
+        ),
+        excludeCredentials: (pk['excludeCredentials'] as List? ?? const [])
+            .whereType<Map>()
+            .map(
+              (e) => CredentialType(
+                type: '${e['type'] ?? 'public-key'}',
+                id: '${e['id'] ?? ''}',
+                transports: const [],
+              ),
+            )
+            .toList(growable: false),
+        pubKeyCredParams: params
+            .map(
+              (e) => PubKeyCredParamType(
+                type: '${e['type'] ?? 'public-key'}',
+                alg: e['alg'] is int ? e['alg'] as int : -7,
+              ),
+            )
+            .toList(growable: false),
+        authSelectionType: selection == null
+            ? null
+            : AuthenticatorSelectionType(
+                authenticatorAttachment:
+                    selection['authenticatorAttachment'] as String?,
+                residentKey: '${selection['residentKey'] ?? 'preferred'}',
+                userVerification:
+                    '${selection['userVerification'] ?? 'preferred'}',
+                requireResidentKey: selection['requireResidentKey'] == true,
+              ),
+        timeout: pk['timeout'] is int ? pk['timeout'] as int : null,
+        attestation: 'none',
       );
-      if (!confirm || !context.mounted) return;
-      final captchaTk = await CaptchaScreen.show(context);
-      if (captchaTk == null) return;
-      try {
-        if (context.mounted) showLoadingModal(context);
-        final userInfo = ref.read(userInfoProvider);
-        // Note: Password reset is not yet in the typed API, using raw Dio
-        final dio = ref.read(apiClientProvider);
-        await dio.post(
-          '/stargate/accounts/recovery/password',
-          data: {'account': userInfo.value!.name, 'captcha_token': captchaTk},
-        );
-        if (context.mounted) {
-          showSnackBar('accountPasswordChangeSent'.tr());
-        }
-      } catch (err) {
-        showErrorAlert(err);
-      } finally {
-        if (context.mounted) hideLoadingModal(context);
-      }
-    }
-
-    final authFactors = ref.watch(authFactorsProvider);
-    final devicesCount = ref.watch(authDevicesProvider).whenOrNull(
-      data: (data) => data.totalCount ?? data.items.length,
-    );
-    final sessionsCount = ref.watch(authSessionsProvider()).whenOrNull(
-      data: (data) => data.totalCount,
-    );
-
-    // Group settings into categories for better organization
-    final profileSettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.person_edit),
-        title: Text('updateYourProfile').tr(),
-        subtitle: Text('updateYourProfileDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          context.router.push(const AccountUpdateProfileRoute());
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.badge),
-        title: Text('changeName').tr(),
-        subtitle: Text('changeNameDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            useSafeArea: true,
-            builder: (context) => const NameChangeCardSheet(),
-          );
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.dashboard_customize),
-        title: Text('editBoard').tr(),
-        subtitle: Text('editBoardDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          context.router.push(const AccountBoardEditRoute());
-        },
-      ),
-    ];
-
-    final securitySettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.devices),
-        title: Text('authDevicesTab').tr(),
-        subtitle: Text('authSessionsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (devicesCount != null) _buildCountBadge(context, devicesCount),
-            const Gap(8),
-            const Icon(Symbols.chevron_right),
-          ],
-        ),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const AccountSessionSheet(initialIndex: 0),
-          );
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.key),
-        title: Text('authSessionsTab').tr(),
-        subtitle: Text('authSessions').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (sessionsCount != null) _buildCountBadge(context, sessionsCount),
-            const Gap(8),
-            const Icon(Symbols.chevron_right),
-          ],
-        ),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const AccountSessionSheet(initialIndex: 1),
-          );
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.connected_tv),
-        title: Text('authorizedApps').tr(),
-        subtitle: Text('authorizedAppsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const AccountAuthorizedAppsSheet(),
-          );
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.lock),
-        title: Text('securityMode').tr(),
-        subtitle: ref.watch(securityPreferencesModeProvider).when(
-          data: (mode) => Text(
-            switch (mode) {
-              'lockdown' => 'securityModeLockdown'.tr(),
-              'lockoff' => 'securityModeLockoff'.tr(),
-              _ => 'securityModeDefault'.tr(),
+      final credential = await authenticator.register(request);
+      await ref
+          .read(authApiProvider)
+          .completePasskeyRegistration(
+            challengeId: options.challengeId,
+            rawId: credential.id,
+            response: {
+              'attestationObject': credential.attestationObject,
+              'clientDataJSON': credential.clientDataJSON,
             },
-          ).fontSize(12),
-          loading: () => const SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2),
+            deviceName: 'Desktop passkey',
+          );
+      await load();
+    });
+
+    Future<void> deletePasskey(LkmPasskeyCredential credential) =>
+        run(() async {
+          final api = ref.read(authApiProvider);
+          final session = ref.read(lkmApiSessionProvider);
+          // Let the server's trust window decide when to prompt, rather than
+          // collecting a fresh code for every deletion.
+          try {
+            await session.run(() => api.deletePasskey(credential.id));
+          } on ApiException catch (failure) {
+            if (failure.code != ApiCode.mfaRequired) rethrow;
+            if (!context.mounted) return;
+            if (settings.value?.has2fa != true) {
+              await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => const TotpSetupDialog(),
+              );
+              await load();
+              return;
+            }
+            final values = await _askTwoFactor(context);
+            if (values == null) return;
+            final stepped = await session.run(
+              () => api.stepUpTotp(code: values.$1, recoveryCode: values.$2),
+            );
+            if (stepped.hasTokens) {
+              await ref
+                  .read(loginControllerProvider.notifier)
+                  .adoptTokens(
+                    LkmAuthToken(
+                      userId: stepped.userId,
+                      accountLevel: stepped.accountLevel,
+                      accessToken: stepped.accessToken!,
+                      refreshToken: stepped.refreshToken ?? '',
+                    ),
+                    session: session,
+                  );
+            }
+            await session.run(() => api.deletePasskey(credential.id));
+          }
+          await load();
+        });
+
+    final theme = Theme.of(context);
+    final has2fa = settings.value?.has2fa ?? false;
+
+    return AppScaffold(
+      isNoBackground: false,
+      appBar: AppBar(
+        leading: const AutoLeadingButton(),
+        title: Text('accountSettings'.tr()),
+        actions: [
+          IconButton(
+            onPressed: busy.value ? null : load,
+            icon: const Icon(Icons.refresh),
           ),
-          error: (_, _) => Text('securityModeDefault'.tr()).fontSize(12),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () async {
-          final currentMode =
-              ref.read(securityPreferencesModeProvider).value ?? 'default';
-          if (!context.mounted) return;
-          final selected = await showModalBottomSheet<String>(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => SheetScaffold(
-              titleText: 'securityMode'.tr(),
-              heightFactor: 0.45,
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+        ],
+      ),
+      body: busy.value && settings.value == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: SolSpace.page),
+              child: Column(
+                spacing: SolSpace.xl,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (error.value != null)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SolSpace.page,
+                      ),
                       child: Text(
-                        'securityModeDescription'.tr(),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                        error.value!,
+                        style: TextStyle(color: theme.colorScheme.error),
                       ),
                     ),
-                    _SecurityModeOption(
-                      value: 'default',
-                      label: 'securityModeDefault'.tr(),
-                      description: 'securityModeDefaultDescription'.tr(),
-                      isSelected: currentMode == 'default',
-                    ),
-                    _SecurityModeOption(
-                      value: 'lockdown',
-                      label: 'securityModeLockdown'.tr(),
-                      description: 'securityModeLockdownDescription'.tr(),
-                      isSelected: currentMode == 'lockdown',
-                    ),
-                    _SecurityModeOption(
-                      value: 'lockoff',
-                      label: 'securityModeLockoff'.tr(),
-                      description: 'securityModeLockoffDescription'.tr(),
-                      isSelected: currentMode == 'lockoff',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-          if (selected == null || selected == currentMode || !context.mounted) {
-            return;
-          }
-          try {
-            showLoadingModal(context);
-            final client = ref.read(solarNetworkClientProvider);
-            await withSudoRetry(
-              context,
-              ref,
-              () => client.stargate.updateSecurityPreferences(mode: selected),
-              onBeforePrompt: () => hideLoadingModal(context),
-            );
-            ref.invalidate(securityPreferencesModeProvider);
-          } catch (err) {
-            showErrorAlert(err);
-          } finally {
-            if (context.mounted) {
-              hideLoadingModal(context);
-            }
-          }
-        },
-      ),
-      ExpansionTile(
-        leading: _buildLeadingIcon(context, Symbols.link),
-        title: Text('accountConnections').tr(),
-        subtitle: Text('accountConnectionsDescription').tr().fontSize(12),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        children: [
-          ref
-              .watch(accountConnectionsProvider)
-              .when(
-                data: (connections) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                  child: Column(
-                    spacing: 6,
+                  _SettingsSection(
+                    title: 'accountProfileTitle',
                     children: [
-                      for (final connection in connections)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(SolRadius.md),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 2,
-                            ),
-                            title: Text(
-                              getLocalizedProviderName(connection.provider),
-                            ).tr(),
-                            subtitle: connection.meta['email'] != null
-                                ? Text(connection.meta['email'])
-                                : Text(connection.providedIdentifier),
-                            leading: CircleAvatar(
-                              child: getProviderIcon(
-                                connection.provider,
-                                size: 16,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                            trailing: const Icon(Symbols.chevron_right),
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) =>
-                                    AccountConnectionSheet(connection: connection),
-                              ).then((value) {
-                                if (value == true) {
-                                  ref.invalidate(accountConnectionsProvider);
-                                }
-                              });
-                            },
-                          ),
+                      ListTile(
+                        minLeadingWidth: 44,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 2,
                         ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(SolRadius.md),
+                        leading: _buildLeadingIcon(
+                          context,
+                          Symbols.person_edit,
                         ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
-                          ),
-                          title: Text('accountConnectionAdd').tr(),
-                          leading: const Icon(Symbols.add),
-                          trailing: const Icon(Symbols.chevron_right),
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) =>
-                                  const AccountConnectionNewSheet(),
-                            ).then((value) {
-                              if (value == true) {
-                                ref.invalidate(accountConnectionsProvider);
-                              }
-                            });
-                          },
+                        title: Text('authFlow.nickname'.tr()),
+                        subtitle: Text(
+                          me.value?.nickname ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall,
                         ),
+                        trailing: const Icon(Symbols.chevron_right),
+                        onTap: busy.value ? null : editNickname,
+                      ),
+                      ListTile(
+                        minLeadingWidth: 44,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 2,
+                        ),
+                        leading: _buildLeadingIcon(context, Symbols.image),
+                        title: Text('authFlow.uploadAvatar'.tr()),
+                        trailing: const Icon(Symbols.chevron_right),
+                        onTap: busy.value ? null : uploadAvatar,
                       ),
                     ],
                   ),
-                ),
-                error: (err, _) => ResponseErrorWidget(
-                  error: err,
-                  onRetry: () => ref.invalidate(accountConnectionsProvider),
-                ),
-                loading: () => const ResponseLoadingWidget(),
-              ),
-        ],
-      ),
-      ExpansionTile(
-        leading: _buildLeadingIcon(context, Symbols.security),
-        title: Text('accountAuthFactor').tr(),
-        subtitle: Text('accountAuthFactorDescription').tr().fontSize(12),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        children: [
-          authFactors.when(
-            data: (factors) => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: Column(
-                spacing: 6,
-                children: [
-                  for (final factor in factors)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainer,
-                        borderRadius: BorderRadius.circular(SolRadius.md),
-                      ),
-                      child: ListTile(
+                  _SettingsSection(
+                    title: 'accountSecurityTitle',
+                    children: [
+                      SwitchListTile(
+                        secondary: _buildLeadingIcon(context, Symbols.security),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                          horizontal: 20,
                           vertical: 2,
                         ),
-                        title: Text(
-                          kFactorTypes[factor.type]!.$1,
-                          style: factor.enabledAt == null
-                              ? const TextStyle(decoration: TextDecoration.lineThrough)
-                              : null,
-                        ).tr(),
+                        value: has2fa,
+                        onChanged: busy.value ? null : toggleTotp,
+                        title: Text('authFlow.twoFactor'.tr()),
                         subtitle: Text(
-                          kFactorTypes[factor.type]!.$2,
-                          style: factor.enabledAt == null
-                              ? const TextStyle(decoration: TextDecoration.lineThrough)
-                              : null,
-                        ).tr(),
-                        leading: CircleAvatar(
-                          backgroundColor: factor.enabledAt == null
-                              ? Theme.of(context).colorScheme.secondaryContainer
-                              : Theme.of(context).colorScheme.primaryContainer,
-                          child: Icon(kFactorTypes[factor.type]!.$3),
+                          has2fa
+                              ? 'authFlow.enabled'.tr()
+                              : 'authFlow.disabled'.tr(),
+                          style: theme.textTheme.bodySmall,
                         ),
-                        trailing: const Icon(Symbols.chevron_right),
-                        isThreeLine: true,
-                        onTap: () {
-                          if (factor.type == 0) {
-                            requestResetPassword();
-                            return;
-                          }
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) => AuthFactorSheet(factor: factor),
-                          ).then((value) {
-                            if (value == true) {
-                              ref.invalidate(authFactorsProvider);
-                            }
-                          });
-                        },
                       ),
-                    ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(SolRadius.md),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 2,
+                      ExpansionTile(
+                        leading: _buildLeadingIcon(context, Symbols.key),
+                        title: Text('authFlow.sectionPasskeys'.tr()),
+                        subtitle: Text(
+                          credentials.value.isEmpty
+                              ? 'authFlow.passkeyEmpty'.tr()
+                              : '${credentials.value.length}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        tilePadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 2,
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                            child: Column(
+                              spacing: 6,
+                              children: [
+                                for (final credential in credentials.value)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surfaceContainer,
+                                      borderRadius: BorderRadius.circular(
+                                        SolRadius.md,
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 2,
+                                          ),
+                                      leading: const CircleAvatar(
+                                        child: Icon(Symbols.key, size: 16),
+                                      ),
+                                      title: Text(credential.deviceName),
+                                      subtitle: Text(
+                                        credential.createdAt == null
+                                            ? credential.credentialId
+                                            : '${credential.credentialId} · '
+                                                  '${_date(credential.createdAt!)}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      trailing: IconButton(
+                                        tooltip: 'authFlow.delete'.tr(),
+                                        onPressed: busy.value
+                                            ? null
+                                            : () => deletePasskey(credential),
+                                        icon: const Icon(Symbols.delete),
+                                      ),
+                                    ),
+                                  ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        theme.colorScheme.surfaceContainerHigh,
+                                    borderRadius: BorderRadius.circular(
+                                      SolRadius.md,
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 2,
+                                    ),
+                                    leading: const Icon(Symbols.add),
+                                    title: Text('authFlow.addPasskey'.tr()),
+                                    trailing: const Icon(Symbols.chevron_right),
+                                    onTap: busy.value ? null : addPasskey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      title: Text('authFactorNew').tr(),
-                      leading: const Icon(Symbols.add),
-                      trailing: const Icon(Symbols.chevron_right),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) => const AuthFactorNewSheet(),
-                        ).then((value) {
-                          if (value == true) {
-                            ref.invalidate(authFactorsProvider);
-                          }
-                        });
-                      },
-                    ),
+                    ],
+                  ),
+                  _SettingsSection(
+                    title: 'accountContactMethod',
+                    children: [
+                      _BindingRow(
+                        icon: Symbols.mail,
+                        label: 'authFlow.email'.tr(),
+                        value: settings.value?.email,
+                        busy: busy.value,
+                        onBind: () => bindContact(email: true),
+                        onUnbind: () => unbind('email'),
+                      ),
+                      _BindingRow(
+                        icon: Symbols.phone,
+                        label: 'authFlow.phone'.tr(),
+                        value: settings.value?.phone,
+                        busy: busy.value,
+                        onBind: () => bindContact(email: false),
+                        onUnbind: () => unbind('phone'),
+                      ),
+                      _BindingRow(
+                        icon: Symbols.code,
+                        label: 'GitHub',
+                        value: settings.value?.github,
+                        busy: busy.value,
+                        onBind: bindGithub,
+                        onUnbind: () => unbind('github'),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            error: (err, _) => ResponseErrorWidget(
-              error: err,
-              onRetry: () => ref.invalidate(authFactorsProvider),
-            ),
-            loading: () => const ResponseLoadingWidget(),
-          ),
-        ],
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.nfc),
-        title: Text('physicalPassports').tr(),
-        subtitle: Text('physicalPassportsEmptyDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          context.router.push(const PhysicalPassportRoute());
-        },
-      ),
-      ExpansionTile(
-        leading: _buildLeadingIcon(context, Symbols.contact_mail),
-        title: Text('accountContactMethod').tr(),
-        subtitle: Text('accountContactMethodDescription').tr().fontSize(12),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        children: [
-          ref
-              .watch(contactMethodsProvider)
-              .when(
-                data: (contacts) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                  child: Column(
-                    spacing: 6,
-                    children: [
-                      for (final contact in contacts)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(SolRadius.md),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 2,
-                            ),
-                            title: Text(
-                              contact.content,
-                              style: contact.verifiedAt == null
-                                  ? const TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                    )
-                                  : null,
-                            ),
-                            subtitle: Text(
-                              contact.type == 0
-                                  ? 'contactMethodTypeEmail'.tr()
-                                  : 'contactMethodTypePhone'.tr(),
-                              style: contact.verifiedAt == null
-                                  ? const TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                    )
-                                  : null,
-                            ),
-                            leading: CircleAvatar(
-                              backgroundColor: contact.verifiedAt == null
-                                  ? Theme.of(context).colorScheme.secondaryContainer
-                                  : Theme.of(context).colorScheme.primaryContainer,
-                              child: Icon(
-                                contact.type == 0 ? Symbols.mail : Symbols.phone,
-                              ),
-                            ),
-                            trailing: const Icon(Symbols.chevron_right),
-                            isThreeLine: false,
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) =>
-                                    ContactMethodSheet(contact: contact),
-                              ).then((value) {
-                                if (value == true) {
-                                  ref.invalidate(contactMethodsProvider);
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(SolRadius.md),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
-                          ),
-                          title: Text('contactMethodNew').tr(),
-                          leading: const Icon(Symbols.add),
-                          trailing: const Icon(Symbols.chevron_right),
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => const ContactMethodNewSheet(),
-                            ).then((value) {
-                              if (value == true) {
-                                ref.invalidate(contactMethodsProvider);
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                error: (err, _) => ResponseErrorWidget(
-                  error: err,
-                  onRetry: () => ref.invalidate(contactMethodsProvider),
-                ),
-                loading: () => const ResponseLoadingWidget(),
-              ),
-        ],
-      ),
-    ];
-
-    final publishingSettings = ref.watch(publishingSettingsProvider);
-    final publishers = ref.watch(publishersManagedProvider);
-    final fediverseAvailability = ref.watch(fediverseAvailabilityProvider);
-
-    final defaultPublisherSettings = [
-      ExpansionTile(
-        leading: _buildLeadingIcon(context, Symbols.edit),
-        title: Text('defaultPublisher').tr(),
-        subtitle: Text('defaultPublisherDescription').tr().fontSize(12),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        children: [
-          publishingSettings.when(
-            data: (settings) => publishers.when(
-              data: (publisherList) => fediverseAvailability.when(
-                data: (fediversePublishers) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                  child: Column(
-                    spacing: 6,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainer,
-                          borderRadius: BorderRadius.circular(SolRadius.md),
-                        ),
-                        child: _PublisherListTile(
-                          title: 'defaultPostingPublisher'.tr(),
-                          publisherId: settings.defaultPostingPublisherId,
-                          publishers: publisherList,
-                          onTap: () => _showPublisherPicker(
-                            context,
-                            ref,
-                            settings.defaultPostingPublisherId,
-                            publisherList,
-                            'posting',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainer,
-                          borderRadius: BorderRadius.circular(SolRadius.md),
-                        ),
-                        child: _PublisherListTile(
-                          title: 'defaultReplyPublisher'.tr(),
-                          publisherId: settings.defaultReplyPublisherId,
-                          publishers: publisherList,
-                          onTap: () => _showPublisherPicker(
-                            context,
-                            ref,
-                            settings.defaultReplyPublisherId,
-                            publisherList,
-                            'reply',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainer,
-                          borderRadius: BorderRadius.circular(SolRadius.md),
-                        ),
-                        child: _FediversePublisherListTile(
-                          title: 'defaultFediversePublisher'.tr(),
-                          publisherId: settings.defaultFediversePublisherId,
-                          fediversePublishers: fediversePublishers,
-                          onTap: () => _showFediversePublisherPicker(
-                            context,
-                            ref,
-                            settings.defaultFediversePublisherId,
-                            fediversePublishers,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                error: (err, _) => ResponseErrorWidget(
-                  error: err,
-                  onRetry: () => ref.invalidate(fediverseAvailabilityProvider),
-                ),
-                loading: () => const ResponseLoadingWidget(),
-              ),
-              error: (err, _) => ResponseErrorWidget(
-                error: err,
-                onRetry: () => ref.invalidate(publishersManagedProvider),
-              ),
-              loading: () => const ResponseLoadingWidget(),
-            ),
-            error: (err, _) => ResponseErrorWidget(
-              error: err,
-              onRetry: () => ref.invalidate(publishingSettingsProvider),
-            ),
-            loading: () => const ResponseLoadingWidget(),
-          ),
-        ],
-      ),
-    ];
-
-    final notificationPreferencesSettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.notifications),
-        title: Text('notificationPreferences').tr(),
-        subtitle: Text('notificationPreferencesDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const NotificationTopicsSheet(),
-          ).then((value) {
-            if (value == true) {
-              ref.invalidate(notificationPreferencesProvider);
-            }
-          });
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.cell_tower),
-        title: Text('notificationSubscriptions').tr(),
-        subtitle: Text(
-          'notificationSubscriptionsDescription',
-        ).tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const NotificationSubscriptionsSheet(),
-          ).then((value) {
-            if (value == true) {
-              ref.invalidate(notificationSubscriptionsProvider);
-            }
-          });
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.notifications_active),
-        title: Text('postWatchSettings').tr(),
-        subtitle: Text('postWatchSettingsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () => showPostWatchSheet(context),
-      ),
-    ];
-
-    final activitySettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.history),
-        title: Text('actionLogs').tr(),
-        subtitle: Text('actionLogsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          context.router.push(const ActionLogsRoute());
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.gavel),
-        title: Text('punishments').tr(),
-        subtitle: Text('punishmentsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          context.router.push(const PunishmentsRoute());
-        },
-      ),
-      if (serverFeatureEnabled(
-        ref.watch(serverCapabilitiesProvider).value,
-        'affiliations',
-      ))
-        ListTile(
-          minLeadingWidth: 44,
-          leading: _buildLeadingIcon(context, Symbols.auto_fix_high),
-          title: Text('affiliations').tr(),
-          subtitle: Text('affiliationsDescription').tr().fontSize(12),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-          trailing: const Icon(Symbols.chevron_right),
-          onTap: () {
-            context.router.push(const AffiliationRoute());
-          },
-        ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.report),
-        title: Text('tickets').tr(),
-        subtitle: Text('ticketsWebPortalDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.open_in_new),
-        onTap: () => launchUrlString(
-          'https://id.solian.app',
-          mode: LaunchMode.externalApplication,
-        ),
-      ),
-    ];
-
-    final dangerZoneSettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        title: Text(
-          'accountDeletion'.tr(),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.error,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text('accountDeletionDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        leading: _buildLeadingIcon(
-          context,
-          Symbols.delete_forever,
-          background: Theme.of(context).colorScheme.error.withValues(alpha: 0.15),
-          color: Theme.of(context).colorScheme.error,
-        ),
-        trailing: Icon(
-          Symbols.chevron_right,
-          color: Theme.of(context).colorScheme.error,
-        ),
-        onTap: requestAccountDeletion,
-      ),
-    ];
-
-    final integrationsSettings = [
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.group),
-        title: Text('settingsChatGroups').tr(),
-        subtitle: Text('settingsChatGroupsDesc').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () async {
-          final accountId = ref.read(userInfoProvider).value?.id;
-          if (accountId == null) return;
-
-          final client = ref.read(apiClientProvider);
-          final db = ref.read(databaseProvider);
-          final groups =
-              ref.read(chatGroupsProvider).value ?? const <SnChatGroup>[];
-
-          final changed = await showChatGroupsManagerSheet(
-            context,
-            client: client,
-            db: db,
-            accountId: accountId,
-            groups: groups,
-          );
-          if (changed) {
-            ref.invalidate(chatGroupsProvider);
-          }
-        },
-      ),
-      ListTile(
-        minLeadingWidth: 44,
-        leading: _buildLeadingIcon(context, Symbols.cloud_sync),
-        title: Text('storageSettings').tr(),
-        subtitle: Text('storageSettingsDescription').tr().fontSize(12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        trailing: const Icon(Symbols.chevron_right),
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => const StorageSettingsSheet(),
-          );
-        },
-      ),
-    ];
-
-    // Create a responsive layout based on screen width
-    Widget buildSettingsList() {
-      return Column(
-        spacing: SolSpace.xl,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _SettingsSection(
-            title: 'accountProfileTitle',
-            children: profileSettings,
-          ),
-          _SettingsSection(
-            title: 'accountPublishingTitle',
-            children: defaultPublisherSettings,
-          ),
-          _SettingsSection(
-            title: 'accountNotificationPreferencesTitle',
-            children: notificationPreferencesSettings,
-          ),
-          _SettingsSection(
-            title: 'accountActivityTitle',
-            children: activitySettings,
-          ),
-          _SettingsSection(
-            title: 'accountSecurityTitle',
-            children: securitySettings,
-          ),
-          _SettingsSection(
-            title: 'accountIntegrationsTitle',
-            children: integrationsSettings,
-          ),
-          _SettingsSection(
-            title: 'accountDangerZoneTitle',
-            isDanger: true,
-            children: dangerZoneSettings,
-          ),
-        ],
-      ).padding(horizontal: SolSpace.page);
-    }
-
-    return AppScaffold(
-      appBar: AppBar(
-        title: Text('accountSettings').tr(),
-        leading: const AutoLeadingButton(),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: SolSpace.page),
-        child: buildSettingsList(),
-      ),
     );
-  }
-
-  Future<void> _showPublisherPicker(
-    BuildContext context,
-    WidgetRef ref,
-    String? currentId,
-    List<SnPublisher> publishers,
-    String type,
-  ) async {
-    final selected = await showModalBottomSheet<String?>(
-      context: context,
-      builder: (context) => _PublisherPickerSheet(
-        publishers: publishers,
-        currentId: currentId,
-        type: type,
-      ),
-    );
-    if (selected == null) return;
-    if (context.mounted) showLoadingModal(context);
-
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.sphere.updatePublishingSettings(
-        defaultPostingPublisherId: type == 'posting' ? selected : null,
-        defaultReplyPublisherId: type == 'reply' ? selected : null,
-      );
-      ref.invalidate(publishingSettingsProvider);
-      if (context.mounted) {
-        showSnackBar('settingsSaved'.tr());
-      }
-    } catch (err) {
-      showErrorAlert(err);
-    } finally {
-      if (context.mounted) hideLoadingModal(context);
-    }
-  }
-
-  Future<void> _showFediversePublisherPicker(
-    BuildContext context,
-    WidgetRef ref,
-    String? currentId,
-    SnFediverseAvailabilityResponse fediversePublishers,
-  ) async {
-    final selected = await showModalBottomSheet<String?>(
-      context: context,
-      builder: (context) => _FediversePublisherPickerSheet(
-        publishers: fediversePublishers,
-        currentId: currentId,
-      ),
-    );
-    if (selected == null) return;
-    if (context.mounted) showLoadingModal(context);
-
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.sphere.updatePublishingSettings(
-        defaultFediversePublisherId: selected,
-      );
-      ref.invalidate(publishingSettingsProvider);
-      if (context.mounted) {
-        showSnackBar('settingsSaved'.tr());
-      }
-    } catch (err) {
-      showErrorAlert(err);
-    } finally {
-      if (context.mounted) hideLoadingModal(context);
-    }
   }
 }
 
-// Helper widget for displaying settings sections with titles
+/// Rounded group card, mirroring the upstream account settings section: a
+/// tinted title strip above a tight list of rows.
 class _SettingsSection extends StatelessWidget {
+  const _SettingsSection({required this.title, required this.children});
+
   final String title;
   final List<Widget> children;
-  final bool isDanger;
-
-  const _SettingsSection({
-    required this.title,
-    required this.children,
-    this.isDanger = false,
-  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      color: isDanger
-          ? colorScheme.errorContainer.withValues(alpha: 0.22)
-          : colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(SolRadius.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              SolSpace.xl,
-              SolSpace.lg,
-              SolSpace.xl,
-              SolSpace.sm,
-            ),
-            child: Text(
-              title.tr(),
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: isDanger ? colorScheme.error : colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ),
-          ...children,
-          const Gap(SolSpace.sm),
-        ],
-      ),
-    );
-  }
-}
-
-class _PublisherListTile extends StatelessWidget {
-  final String title;
-  final String? publisherId;
-  final List<SnPublisher> publishers;
-  final VoidCallback onTap;
-
-  const _PublisherListTile({
-    required this.title,
-    required this.publisherId,
-    required this.publishers,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final publisher = publisherId != null
-        ? publishers.where((p) => p.id == publisherId).firstOrNull
-        : null;
-
-    return ListTile(
-      minLeadingWidth: 48,
-      contentPadding: const EdgeInsets.only(
-        left: 16,
-        right: 17,
-        top: 8,
-        bottom: 4,
-      ),
-      leading: publisher != null
-          ? ProfilePictureWidget(
-              file: publisher.picture,
-              fallbackName: publisher.nick,
-            )
-          : const CircleAvatar(child: Icon(Symbols.close)),
-      title: Text(title),
-      subtitle: Text(
-        publisher != null ? '@${publisher.name}' : 'none'.tr(),
-      ).fontSize(12),
-      trailing: const Icon(Symbols.chevron_right),
-      onTap: onTap,
-    );
-  }
-}
-
-class _FediversePublisherListTile extends StatelessWidget {
-  final String title;
-  final String? publisherId;
-  final SnFediverseAvailabilityResponse fediversePublishers;
-  final VoidCallback onTap;
-
-  const _FediversePublisherListTile({
-    required this.title,
-    required this.publisherId,
-    required this.fediversePublishers,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final publisher = publisherId != null
-        ? fediversePublishers.publishers
-              .where((p) => p.publisherId == publisherId)
-              .firstOrNull
-        : null;
-
-    return ListTile(
-      minLeadingWidth: 48,
-      contentPadding: const EdgeInsets.only(
-        left: 16,
-        right: 17,
-        top: 2,
-        bottom: 8,
-      ),
-      leading: CircleAvatar(
-        backgroundImage: publisher?.avatarUrl != null
-            ? NetworkImage(publisher!.avatarUrl!)
-            : null,
-        child: publisher?.avatarUrl == null
-            ? const Icon(Symbols.language)
-            : null,
-      ),
-      title: Text(title),
-      subtitle: Text(
-        publisher != null ? publisher.fediverseHandle : 'none'.tr(),
-      ).fontSize(12),
-      trailing: const Icon(Symbols.chevron_right),
-      onTap: onTap,
-    );
-  }
-}
-
-class _PublisherPickerSheet extends StatelessWidget {
-  final List<SnPublisher> publishers;
-  final String? currentId;
-  final String type;
-
-  const _PublisherPickerSheet({
-    required this.publishers,
-    required this.currentId,
-    required this.type,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedColor = Theme.of(context).colorScheme.primary;
-    return SheetScaffold(
-      titleText: type == 'posting'
-          ? 'selectPostingPublisher'.tr()
-          : 'selectReplyPublisher'.tr(),
-      child: publishers.isEmpty
-          ? Center(child: Text('publishersEmpty').tr().fontSize(17).bold())
-          : ListView.builder(
-              itemCount: publishers.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return ListTile(
-                    leading: const Icon(Symbols.close),
-                    title: Text('none').tr(),
-                    selected: currentId == null,
-                    trailing: currentId == null
-                        ? Icon(Symbols.check, color: selectedColor)
-                        : null,
-                    onTap: () => Navigator.of(context).pop(null),
-                  );
-                }
-                final publisher = publishers[index - 1];
-                final isSelected = publisher.id == currentId;
-                return ListTile(
-                  leading: ProfilePictureWidget(
-                    file: publisher.picture,
-                    fallbackName: publisher.nick,
-                  ),
-                  title: Text(publisher.nick),
-                  subtitle: Text('@${publisher.name}'),
-                  selected: isSelected,
-                  trailing: isSelected
-                      ? Icon(Symbols.check, color: selectedColor)
-                      : null,
-                  onTap: () => Navigator.of(context).pop(publisher.id),
-                );
-              },
-            ),
-    );
-  }
-}
-
-class _FediversePublisherPickerSheet extends StatelessWidget {
-  final SnFediverseAvailabilityResponse publishers;
-  final String? currentId;
-
-  const _FediversePublisherPickerSheet({
-    required this.publishers,
-    required this.currentId,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedColor = Theme.of(context).colorScheme.primary;
-    return SheetScaffold(
-      titleText: 'selectFediversePublisher'.tr(),
-      child: publishers.publishers.isEmpty
-          ? Center(
-              child: Text('noFediversePublishers').tr().fontSize(17).bold(),
-            )
-          : ListView.builder(
-              itemCount: publishers.publishers.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return ListTile(
-                    leading: const Icon(Symbols.close),
-                    title: Text('none').tr(),
-                    selected: currentId == null,
-                    trailing: currentId == null
-                        ? Icon(Symbols.check, color: selectedColor)
-                        : null,
-                    onTap: () => Navigator.of(context).pop(null),
-                  );
-                }
-                final publisher = publishers.publishers[index - 1];
-                final isSelected = publisher.publisherId == currentId;
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: publisher.avatarUrl != null
-                        ? NetworkImage(publisher.avatarUrl!)
-                        : null,
-                    child: publisher.avatarUrl == null
-                        ? Text(avatarFallbackText(publisher.publisherName) ?? '?')
-                        : null,
-                  ),
-                  title: Text(publisher.publisherName),
-                  subtitle: Text(publisher.fediverseHandle),
-                  selected: isSelected,
-                  trailing: isSelected
-                      ? Icon(Symbols.check, color: selectedColor)
-                      : null,
-                  onTap: () => Navigator.of(context).pop(publisher.publisherId),
-                );
-              },
-            ),
-    );
-  }
-}
-
-class NotificationPreferenceSheet extends HookConsumerWidget {
-  final SnNotificationTopic topic;
-  final SnNotificationPreferenceLevel currentPreference;
-
-  const NotificationPreferenceSheet({
-    super.key,
-    required this.topic,
-    required this.currentPreference,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SheetScaffold(
-      titleText: topic.description,
-      heightFactor: 0.5,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Symbols.notifications),
-            title: Text('notificationPreferenceNormal').tr(),
-            subtitle: Text(
-              'notificationPreferenceNormalDesc',
-            ).tr().fontSize(12),
-            trailing: currentPreference == SnNotificationPreferenceLevel.normal
-                ? Icon(
-                    Symbols.check,
-                    color: Theme.of(context).colorScheme.primary,
-                  )
-                : null,
-            onTap: () => _setPreference(
-              context,
-              ref,
-              SnNotificationPreferenceLevel.normal,
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Symbols.notifications_off),
-            title: Text('notificationPreferenceSilent').tr(),
-            subtitle: Text(
-              'notificationPreferenceSilentDesc',
-            ).tr().fontSize(12),
-            trailing: currentPreference == SnNotificationPreferenceLevel.silent
-                ? Icon(
-                    Symbols.check,
-                    color: Theme.of(context).colorScheme.primary,
-                  )
-                : null,
-            onTap: () => _setPreference(
-              context,
-              ref,
-              SnNotificationPreferenceLevel.silent,
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Symbols.block),
-            title: Text('notificationPreferenceReject').tr(),
-            subtitle: Text(
-              'notificationPreferenceRejectDesc',
-            ).tr().fontSize(12),
-            trailing: currentPreference == SnNotificationPreferenceLevel.reject
-                ? Icon(
-                    Symbols.check,
-                    color: Theme.of(context).colorScheme.primary,
-                  )
-                : null,
-            onTap: () => _setPreference(
-              context,
-              ref,
-              SnNotificationPreferenceLevel.reject,
-            ),
-          ),
-          if (currentPreference != SnNotificationPreferenceLevel.normal)
-            ListTile(
-              leading: Icon(
-                Symbols.restore,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              title: Text('notificationResetToDefault').tr(),
-              onTap: () => _resetPreference(context, ref),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _setPreference(
-    BuildContext context,
-    WidgetRef ref,
-    SnNotificationPreferenceLevel preference,
-  ) async {
-    showLoadingModal(context);
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.notifications.setPreference(topic.topic, preference);
-      if (context.mounted) {
-        Navigator.pop(context, true);
-        showSnackBar('settingsSaved'.tr());
-      }
-    } catch (err) {
-      showErrorAlert(err);
-    } finally {
-      if (context.mounted) hideLoadingModal(context);
-    }
-  }
-
-  Future<void> _resetPreference(BuildContext context, WidgetRef ref) async {
-    final confirm = await showConfirmAlert(
-      'notificationResetHint'.tr(),
-      'notificationReset'.tr(),
-    );
-    if (!confirm || !context.mounted) return;
-
-    showLoadingModal(context);
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.notifications.deletePreference(topic.topic);
-      if (context.mounted) {
-        Navigator.pop(context, true);
-        showSnackBar('settingsSaved'.tr());
-      }
-    } catch (err) {
-      showErrorAlert(err);
-    } finally {
-      if (context.mounted) hideLoadingModal(context);
-    }
-  }
-}
-
-class NotificationTopicsSheet extends ConsumerWidget {
-  const NotificationTopicsSheet({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final topics = ref.read(notificationTopicsProvider);
-    final prefs = ref.watch(notificationPreferencesProvider);
-
-    return SheetScaffold(
-      titleText: 'notificationPreferences'.tr(),
-      heightFactor: 0.8,
-      actions: [
-        IconButton(
-          icon: const Icon(Symbols.add),
-          onPressed: () {
-            Navigator.pop(context);
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => const NotificationCustomTopicSheet(),
-            ).then((value) {
-              if (value == true) {
-                ref.invalidate(notificationPreferencesProvider);
-              }
-            });
-          },
-        ),
-      ],
-      child: prefs.when(
-        data: (preferenceMap) => ListView.builder(
-          itemCount: topics.length,
-          itemBuilder: (context, index) {
-            final topic = topics[index];
-            final currentPref =
-                preferenceMap[topic.topic] ??
-                SnNotificationPreferenceLevel.normal;
-            return ListTile(
-              minLeadingWidth: 48,
-              contentPadding: const EdgeInsets.only(
-                left: 16,
-                right: 17,
-                top: 2,
-                bottom: 4,
-              ),
-              title: Text(topic.description),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    topic.topic,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _getPreferenceLabel(currentPref),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: _getPreferenceColor(context, currentPref),
-                    ),
-                  ),
-                ],
-              ),
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(_getPreferenceIcon(currentPref), size: 16),
-              ).padding(top: 4),
-              trailing: const Icon(Symbols.chevron_right),
-              onTap: () {
-                Navigator.pop(context);
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => NotificationPreferenceSheet(
-                    topic: topic,
-                    currentPreference: currentPref,
-                  ),
-                ).then((value) {
-                  if (value == true) {
-                    ref.invalidate(notificationPreferencesProvider);
-                  }
-                });
-              },
-            );
-          },
-        ),
-        error: (err, _) => ResponseErrorWidget(
-          error: err,
-          onRetry: () => ref.invalidate(notificationPreferencesProvider),
-        ),
-        loading: () => const ResponseLoadingWidget(),
-      ),
-    );
-  }
-
-  String _getPreferenceLabel(SnNotificationPreferenceLevel level) {
-    switch (level) {
-      case SnNotificationPreferenceLevel.normal:
-        return 'notificationPreferenceNormal'.tr();
-      case SnNotificationPreferenceLevel.silent:
-        return 'notificationPreferenceSilent'.tr();
-      case SnNotificationPreferenceLevel.reject:
-        return 'notificationPreferenceReject'.tr();
-    }
-  }
-
-  Color _getPreferenceColor(
-    BuildContext context,
-    SnNotificationPreferenceLevel level,
-  ) {
-    switch (level) {
-      case SnNotificationPreferenceLevel.normal:
-        return Theme.of(context).colorScheme.primary;
-      case SnNotificationPreferenceLevel.silent:
-        return Theme.of(context).colorScheme.tertiary;
-      case SnNotificationPreferenceLevel.reject:
-        return Theme.of(context).colorScheme.error;
-    }
-  }
-
-  IconData _getPreferenceIcon(SnNotificationPreferenceLevel level) {
-    switch (level) {
-      case SnNotificationPreferenceLevel.normal:
-        return Symbols.notifications;
-      case SnNotificationPreferenceLevel.silent:
-        return Symbols.notifications_off;
-      case SnNotificationPreferenceLevel.reject:
-        return Symbols.block;
-    }
-  }
-}
-
-class NotificationCustomTopicSheet extends ConsumerStatefulWidget {
-  const NotificationCustomTopicSheet({super.key});
-
-  @override
-  ConsumerState<NotificationCustomTopicSheet> createState() =>
-      _NotificationCustomTopicSheetState();
-}
-
-class _NotificationCustomTopicSheetState
-    extends ConsumerState<NotificationCustomTopicSheet> {
-  final _topicController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _topicController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SheetScaffold(
-      titleText: 'notificationAddCustom'.tr(),
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SolSpace.page),
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        color: theme.colorScheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SolRadius.card),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _topicController,
-              decoration: InputDecoration(
-                labelText: 'notificationCustomTopic'.tr(),
-                hintText: 'notificationCustomTopicHint'.tr(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                SolSpace.xl,
+                SolSpace.lg,
+                SolSpace.xl,
+                SolSpace.sm,
+              ),
+              child: Text(
+                title.tr(),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.2,
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: 'notificationCustomDescription'.tr(),
-              ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _isLoading ? null : _submit,
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text('add'.tr()),
-            ),
+            ...children,
+            const SizedBox(height: SolSpace.sm),
           ],
         ),
       ),
     );
   }
-
-  Future<void> _submit() async {
-    final topic = _topicController.text.trim();
-    final description = _descriptionController.text.trim();
-
-    if (topic.isEmpty || description.isEmpty) {
-      showSnackBar('notificationCustomTopicError'.tr());
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.notifications.addCustomTopic(topic, description);
-      if (mounted) {
-        Navigator.pop(context, true);
-        showSnackBar('settingsSaved'.tr());
-      }
-    } catch (err) {
-      showErrorAlert(err);
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 }
 
-class NotificationSubscriptionsSheet extends ConsumerWidget {
-  const NotificationSubscriptionsSheet({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final subscriptions = ref.watch(notificationSubscriptionsProvider);
-
-    return SheetScaffold(
-      titleText: 'notificationSubscriptions'.tr(),
-      heightFactor: 0.8,
-      child: subscriptions.when(
-        data: (subs) => subs.isEmpty
-            ? EmptyState(
-                icon: Symbols.cell_tower,
-                title: 'notificationSubscriptionsEmpty'.tr(),
-                compact: true,
-              )
-            : ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: subs.length,
-                itemBuilder: (context, index) {
-                  final sub = subs[index];
-                  final presentation =
-                      _NotificationSubscriptionPresentation.forProvider(
-                        sub.provider,
-                      );
-                  return ListTile(
-                    minLeadingWidth: 48,
-                    contentPadding: const EdgeInsets.only(
-                      left: 16,
-                      right: 17,
-                      top: 2,
-                      bottom: 4,
-                    ),
-                    title: Text(presentation.label),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (sub.deviceName != null &&
-                            sub.deviceName!.isNotEmpty)
-                          Text(sub.deviceName!),
-                        const SizedBox(height: 2),
-                        Text(
-                          presentation.roleHint,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          sub.deviceId,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          sub.isActivated
-                              ? 'notificationSubscriptionActive'.tr()
-                              : 'notificationSubscriptionInactive'.tr(),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: sub.isActivated
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.outline,
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer,
-                      child: Icon(presentation.icon, size: 16),
-                    ).padding(top: 4),
-                    trailing: const Icon(Symbols.chevron_right),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) =>
-                            NotificationSubscriptionDetailSheet(
-                              subscription: sub,
-                            ),
-                      ).then((value) {
-                        if (value == true) {
-                          ref.invalidate(notificationSubscriptionsProvider);
-                        }
-                      });
-                    },
-                  );
-                },
-              ),
-        error: (err, _) => ResponseErrorWidget(
-          error: err,
-          onRetry: () => ref.invalidate(notificationSubscriptionsProvider),
-        ),
-        loading: () => const ResponseLoadingWidget(),
-      ),
-    );
-  }
+Widget _buildLeadingIcon(BuildContext context, IconData icon) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      color: colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(SolRadius.md),
+    ),
+    child: Icon(icon, size: 20, color: colorScheme.onSurfaceVariant),
+  );
 }
 
-class NotificationSubscriptionDetailSheet extends ConsumerWidget {
-  final SnNotificationPushSubscription subscription;
-
-  const NotificationSubscriptionDetailSheet({
-    super.key,
-    required this.subscription,
+class _BindingRow extends StatelessWidget {
+  const _BindingRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.busy,
+    required this.onBind,
+    required this.onUnbind,
   });
 
+  final IconData icon;
+  final String label;
+  final String? value;
+  final bool busy;
+  final VoidCallback? onBind;
+  final VoidCallback onUnbind;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final presentation = _NotificationSubscriptionPresentation.forProvider(
-      subscription.provider,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bound = value != null && value!.isNotEmpty;
+    return ListTile(
+      minLeadingWidth: 44,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+      leading: _buildLeadingIcon(context, icon),
+      title: Text(label),
+      subtitle: Text(
+        bound ? value! : 'authFlow.notBound'.tr(),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodySmall,
+      ),
+      trailing: bound
+          ? TextButton(
+              onPressed: busy ? null : onUnbind,
+              child: Text('authFlow.unbind'.tr()),
+            )
+          : onBind == null
+          ? null
+          : TextButton(
+              onPressed: busy ? null : onBind,
+              child: Text('authFlow.bind'.tr()),
+            ),
     );
+  }
+}
 
-    Future<void> unsubscribe() async {
-      final confirm = await showConfirmAlert(
-        'notificationSubscriptionDeleteHint'.tr(),
-        'notificationSubscriptionDelete'.tr(),
-        isDanger: true,
-      );
-      if (!confirm || !context.mounted) return;
-      try {
-        showLoadingModal(context);
-        final client = ref.read(solarNetworkClientProvider);
-        await client.notifications.deleteSubscription(subscription.id);
-        if (context.mounted) {
-          Navigator.pop(context, true);
-          showSnackBar('settingsSaved'.tr());
-        }
-      } catch (err) {
-        showErrorAlert(err);
-      } finally {
-        if (context.mounted) hideLoadingModal(context);
-      }
-    }
+Future<String?> _askText(
+  BuildContext context, {
+  required String title,
+  required String label,
+  bool number = false,
+  String? initial,
+}) {
+  final controller = TextEditingController(text: initial);
+  return showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: TextField(
+        controller: controller,
+        autofocus: true,
+        keyboardType: number ? TextInputType.number : TextInputType.text,
+        decoration: InputDecoration(labelText: label),
+        onSubmitted: (value) => Navigator.pop(context, value.trim()),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('cancel'.tr()),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, controller.text.trim()),
+          child: Text('confirm'.tr()),
+        ),
+      ],
+    ),
+  );
+}
 
-    return SheetScaffold(
-      titleText: 'notificationSubscriptionDetail'.tr(),
-      heightFactor: 0.5,
-      child: Column(
+Future<(String?, String?)?> _askTwoFactor(BuildContext context) async {
+  final controller = TextEditingController();
+  final result = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('authFlow.twoFactorVerify'.tr()),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  presentation.icon,
-                  size: 32,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  presentation.label,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                if (subscription.deviceName != null &&
-                    subscription.deviceName!.isNotEmpty) ...[
-                  Text(
-                    subscription.deviceName!,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 4),
-                ],
-                Text(
-                  presentation.roleHint,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subscription.deviceId,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      subscription.isActivated
-                          ? Symbols.check_circle
-                          : Symbols.cancel,
-                      size: 16,
-                      color: subscription.isActivated
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      subscription.isActivated
-                          ? 'notificationSubscriptionActive'.tr()
-                          : 'notificationSubscriptionInactive'.tr(),
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: subscription.isActivated
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          Text('authFlow.twoFactorHint'.tr()),
+          const SizedBox(height: 12),
+          TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: 'authFlow.totpOrRecovery'.tr(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: FilledButton.tonalIcon(
-              style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(SolRadius.control),
-                ),
-              ),
-              icon: const Icon(Symbols.delete),
-              label: Text('notificationSubscriptionDelete'.tr()),
-              onPressed: unsubscribe,
-            ),
+            onSubmitted: (value) => Navigator.pop(context, value.trim()),
           ),
         ],
       ),
-    );
-  }
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('cancel'.tr()),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, controller.text.trim()),
+          child: Text('confirm'.tr()),
+        ),
+      ],
+    ),
+  );
+  if (result == null || result.isEmpty) return null;
+  final digits = RegExp(r'^\d{6}$').hasMatch(result);
+  return digits ? (result, null) : (null, result);
 }
 
-class _NotificationSubscriptionPresentation {
-  final String label;
-  final String roleHint;
-  final IconData icon;
+String _describe(Object failure) {
+  if (failure is ApiException) return failure.message;
+  if (failure is ApiTransportException) return failure.message;
+  return '$failure';
+}
 
-  const _NotificationSubscriptionPresentation({
-    required this.label,
-    required this.roleHint,
-    required this.icon,
-  });
-
-  factory _NotificationSubscriptionPresentation.forProvider(
-    SnNotificationPushSubscriptionProvider provider,
-  ) {
-    return switch (provider) {
-      SnNotificationPushSubscriptionProvider.fcm =>
-        const _NotificationSubscriptionPresentation(
-          label: 'Firebase Cloud Messaging',
-          roleHint:
-              'Standard push notifications on Android and supported web flows.',
-          icon: Symbols.android,
-        ),
-      SnNotificationPushSubscriptionProvider.apple =>
-        const _NotificationSubscriptionPresentation(
-          label: 'Apple Push (APNs)',
-          roleHint:
-              'Standard alerts, badges, and message notifications on Apple devices.',
-          icon: Symbols.phone_iphone,
-        ),
-      SnNotificationPushSubscriptionProvider.sop =>
-        const _NotificationSubscriptionPresentation(
-          label: 'Solar Network Push (SOP)',
-          roleHint:
-              'Solar Network native stream-based delivery for this device session.',
-          icon: Symbols.cloud,
-        ),
-      SnNotificationPushSubscriptionProvider.unifiedPush =>
-        const _NotificationSubscriptionPresentation(
-          label: 'UnifiedPush',
-          roleHint: 'Self-hosted push endpoint registration.',
-          icon: Symbols.link,
-        ),
-      SnNotificationPushSubscriptionProvider.appk =>
-        const _NotificationSubscriptionPresentation(
-          label: 'Apple PushKit',
-          roleHint: 'VoIP push delivery for incoming calls on iPhone and iPad.',
-          icon: Symbols.call,
-        ),
-    };
-  }
+String _date(DateTime value) {
+  final local = value.toLocal();
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${local.year}-${two(local.month)}-${two(local.day)}';
 }
 
 @freezed
@@ -3381,50 +2146,4 @@ sealed class SnScanResult with _$SnScanResult {
 
   factory SnScanResult.fromJson(Map<String, dynamic> json) =>
       _$SnScanResultFromJson(json);
-}
-
-class _SecurityModeOption extends StatelessWidget {
-  final String value;
-  final String label;
-  final String description;
-  final bool isSelected;
-
-  const _SecurityModeOption({
-    required this.value,
-    required this.label,
-    required this.description,
-    required this.isSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected
-              ? scheme.primaryContainer.withValues(alpha: 0.35)
-              : scheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(SolRadius.md),
-        ),
-        child: ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SolRadius.md),
-          ),
-          leading: Icon(
-            isSelected
-                ? Symbols.radio_button_checked
-                : Symbols.radio_button_unchecked,
-            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
-          ),
-          title: Text(label),
-          subtitle: Text(description).fontSize(12),
-          onTap: () => Navigator.pop(context, value),
-        ),
-      ),
-    );
-  }
 }

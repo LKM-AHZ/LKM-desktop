@@ -51,7 +51,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: BoardDetailRoute.page, path: '/hub/boards/:id'),
     AutoRoute(page: UserProfileRoute.page, path: '/community/users/:id'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
-    AutoRoute(page: AccountSecurityRoute.page, path: '/settings/account'),
     AutoRoute(page: MyContentRoute.page, path: '/my/content'),
     AutoRoute(page: MyFollowRoute.page, path: '/my/following'),
     AutoRoute(page: SeriesEditorRoute.page, path: '/editor'),
