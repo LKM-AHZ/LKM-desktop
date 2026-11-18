@@ -21,7 +21,7 @@ import 'package:island/misc/dashboard/community_cards.dart';
 import 'package:island/misc/dashboard/dash.dart';
 import 'package:island/misc/dashboard/dashboard_layout.dart';
 import 'package:island/misc/legal_document.dart';
-import 'package:island/points/points_pod.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:island/route.gr.dart';
 
 class _Adapter implements HttpClientAdapter {
@@ -259,11 +259,11 @@ void main() {
 
   test('personal data clears and reloads on account invalidation', () async {
     final (c, session, a) = await _container();
-    final balance = c.listen(lkmPointsBalanceProvider, (_, _) {});
+    final balance = c.listen(pointsBalanceProvider, (_, _) {});
     final certs = c.listen(myCertificatesProvider, (_, _) {});
     addTearDown(balance.close);
     addTearDown(certs.close);
-    expect(await c.read(lkmPointsBalanceProvider.future), isNull);
+    expect(await c.read(pointsBalanceProvider.future), isNull);
     expect(await c.read(myCertificatesProvider.future), isEmpty);
     expect(a.requests, isEmpty);
     await session.adopt(
@@ -273,11 +273,11 @@ void main() {
       ),
     );
     c.invalidate(lkmMeProvider);
-    expect((await c.read(lkmPointsBalanceProvider.future))!.balance, 1729);
+    expect((await c.read(pointsBalanceProvider.future))!.balance, 1729);
     expect((await c.read(myCertificatesProvider.future)).single.passed, isTrue);
     await session.signOut(revoke: false);
     c.invalidate(lkmMeProvider);
-    expect(await c.read(lkmPointsBalanceProvider.future), isNull);
+    expect(await c.read(pointsBalanceProvider.future), isNull);
     expect(await c.read(myCertificatesProvider.future), isEmpty);
   });
 

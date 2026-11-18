@@ -1,1653 +1,376 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:gap/gap.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/badge.dart';
-import 'package:island/core/network.dart';
-import 'package:island/core/services/time.dart';
-import 'package:island/core/utils/text.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
+
+import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/points_api.dart';
+import 'package:island/route.gr.dart';
+import 'package:island/shared/hooks/material_hooks.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
-import 'package:island/shared/widgets/empty_state.dart';
-import 'package:island/shared/widgets/pagination_list.dart';
-import 'package:island/shared/widgets/response.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:solar_network_sdk/solar_network_sdk.dart';
-import 'package:styled_widget/styled_widget.dart';
 
-String _getAchievementTitle(String identifier, String defaultTitle) {
-  final key = 'achievementTitle${identifier.toCamelCase()}';
-  final translated = key.tr();
-  return translated == key ? defaultTitle : translated;
-}
+final pointsApiProvider = Provider<PointsApi>((ref) {
+  return PointsApi(ref.watch(lkmApiSessionProvider).client);
+});
 
-String _getAchievementSummary(String identifier, String defaultSummary) {
-  final key = 'achievementSummary${identifier.toCamelCase()}';
-  final translated = key.tr();
-  return translated == key ? defaultSummary : translated;
-}
+/// Balance of the signed-in user; null when signed out.
+final pointsBalanceProvider = FutureProvider.autoDispose<LkmPointsBalance?>((
+  ref,
+) async {
+  ref.watch(lkmMeProvider);
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) return null;
+  return session.run(() => ref.watch(pointsApiProvider).balance());
+});
 
-String _getQuestTitle(String identifier, String defaultTitle) {
-  final key = 'questTitle${identifier.toCamelCase()}';
-  final translated = key.tr();
-  return translated == key ? defaultTitle : translated;
-}
-
-String _getQuestSummary(String identifier, String defaultSummary) {
-  final key = 'questSummary${identifier.toCamelCase()}';
-  final translated = key.tr();
-  return translated == key ? defaultSummary : translated;
-}
-
-final achievementsProvider =
-    FutureProvider.autoDispose<List<SnAchievementState>>((ref) async {
-      final client = ref.watch(apiClientProvider);
-      final response = await client.get(
-        '/stargate/accounts/me/progression/achievements',
-      );
-      final data = response.data;
-      if (data is List) {
-        return data
-            .map(
-              (e) => SnAchievementState.fromJson(Map<String, dynamic>.from(e)),
-            )
-            .toList();
-      }
-      return [];
+final pointsLedgerProvider =
+    FutureProvider.autoDispose<ApiPage<LkmPointsLedgerEntry>>((ref) async {
+      final session = ref.watch(lkmApiSessionProvider);
+      if (!session.isSignedIn) return const ApiPage.empty();
+      return session.run(() => ref.watch(pointsApiProvider).ledger());
     });
 
-final achievementStatsProvider = FutureProvider.autoDispose<SnAchievementStats>(
-  (ref) async {
-    final client = ref.watch(apiClientProvider);
-    final response = await client.get(
-      '/stargate/accounts/me/progression/achievements/stats',
-    );
-    return SnAchievementStats.fromJson(
-      Map<String, dynamic>.from(response.data),
-    );
-  },
-);
+/// Leaderboard is public: it is fetched signed out too. [period] is
+/// `total` / `daily` / `weekly`; keeping it as a family gives per-period
+/// caching while the page stays mounted.
+final pointsLeaderboardProvider = FutureProvider.autoDispose
+    .family<ApiPage<LkmPointsLeaderboardEntry>, String>((ref, period) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(
+        () => ref.watch(pointsApiProvider).leaderboard(period: period),
+      );
+    });
 
-final questsProvider = FutureProvider.autoDispose<List<SnQuestState>>((
+final pointsAchievementsProvider =
+    FutureProvider.autoDispose<List<LkmPointsAchievement>>((ref) async {
+      final session = ref.watch(lkmApiSessionProvider);
+      if (!session.isSignedIn) return const [];
+      return session.run(() => ref.watch(pointsApiProvider).achievements());
+    });
+
+final pointsTasksProvider = FutureProvider.autoDispose<List<LkmPointsTask>>((
   ref,
 ) async {
-  final client = ref.watch(apiClientProvider);
-  final response = await client.get('/stargate/accounts/me/progression/quests');
-  final data = response.data;
-  if (data is List) {
-    return data
-        .map((e) => SnQuestState.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  return [];
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) return const [];
+  return session.run(() => ref.watch(pointsApiProvider).tasks());
 });
 
-final badgesProvider = FutureProvider.autoDispose<List<SnAccountBadge>>((
-  ref,
-) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.getMyBadges();
-});
+/// Exchange items are public but read-only: the service has no redemption
+/// endpoint, so the UI only lists them.
+final pointsExchangeProvider =
+    FutureProvider.autoDispose<List<LkmPointsExchangeItem>>((ref) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(() => ref.watch(pointsApiProvider).exchangeItems());
+    });
 
-final rewardGrantsNotifierProvider =
-    AsyncNotifierProvider.autoDispose<
-      RewardGrantsNotifier,
-      PaginationState<SnProgressRewardGrant>
-    >(RewardGrantsNotifier.new);
+/// Persisted reason codes → `contributionData.pointLogs.*` keys. Unknown
+/// codes fall back to the raw server value instead of leaking an i18n key.
+const Map<String, String> kPointsLogKeys = {
+  'checkin': 'checkin',
+  'post': 'post',
+  'comment': 'comment',
+  'competition': 'competition',
+  'file_approved': 'fileApproved',
+  'answer_accepted': 'answerAccepted',
+  'daily_task': 'dailyTask',
+  'like': 'like',
+  'qa_accept': 'qaAccept',
+  'transfer_out': 'transfer',
+  'transfer_in': 'transfer',
+};
 
-class RewardGrantsNotifier
-    extends AsyncNotifier<PaginationState<SnProgressRewardGrant>>
-    with AsyncPaginationController<SnProgressRewardGrant> {
-  static const int pageSize = 20;
-
-  @override
-  FutureOr<PaginationState<SnProgressRewardGrant>> build() async {
-    final items = await fetch();
-    return PaginationState(
-      items: items,
-      isLoading: false,
-      isReloading: false,
-      totalCount: totalCount,
-      hasMore: hasMore,
-      cursor: cursor,
-    );
-  }
-
-  @override
-  Future<List<SnProgressRewardGrant>> fetch() async {
-    final client = ref.read(apiClientProvider);
-    final response = await client.get(
-      '/stargate/accounts/me/progression/grants',
-      queryParameters: {'offset': fetchedCount.toString(), 'take': pageSize},
-    );
-    totalCount = int.parse(response.headers.value('X-Total') ?? '0');
-    return (response.data as List)
-        .map(
-          (e) => SnProgressRewardGrant.fromJson(Map<String, dynamic>.from(e)),
-        )
-        .toList();
-  }
-}
-
+/// Points hub aligned with the website's contribution page: achievements,
+/// ledger, leaderboard, exchange list and the daily check-in plus tasks.
 @RoutePage()
-class ProgressScreen extends ConsumerWidget {
+class ProgressScreen extends HookConsumerWidget {
+  /// Kept for the legacy `/account/me/progress` deep link; the merged page
+  /// shows every section in one scrollable tab bar.
   final int initialTab;
 
   const ProgressScreen({super.key, this.initialTab = 0});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final tabIndex = initialTab < 0
-        ? 0
-        : initialTab > 3
-        ? 3
-        : initialTab;
+    final controller = useMaterialTabController(initialLength: 5);
 
-    return DefaultTabController(
-      length: 4,
-      initialIndex: tabIndex,
-      child: AppScaffold(
-        appBar: AppBar(
-          title: Text('progress').tr(),
-          leading: const AutoLeadingButton(),
-          bottom: TabBar(
-            dividerColor: theme.colorScheme.outlineVariant,
-            indicatorColor: theme.colorScheme.primary,
-            indicatorWeight: 2,
-            labelColor: theme.appBarTheme.foregroundColor,
-            unselectedLabelColor: theme.appBarTheme.foregroundColor,
-            labelStyle: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+    void refreshAll() {
+      ref.invalidate(pointsBalanceProvider);
+      ref.invalidate(pointsLedgerProvider);
+      ref.invalidate(pointsAchievementsProvider);
+      ref.invalidate(pointsTasksProvider);
+      ref.invalidate(pointsExchangeProvider);
+      ref.invalidate(pointsLeaderboardProvider);
+    }
+
+    return AppScaffold(
+      isNoBackground: false,
+      appBar: AppBar(
+        leading: const AutoLeadingButton(),
+        title: Text('contribution.title'.tr()),
+        actions: [
+          IconButton(
+            tooltip: 'refresh'.tr(),
+            onPressed: refreshAll,
+            icon: const Icon(Symbols.refresh_rounded),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          const _BalanceHeader(),
+          TabBar(
+            controller: controller,
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             tabs: [
-              Tab(text: 'achievements'.tr()),
-              Tab(text: 'quests'.tr()),
-              Tab(text: 'rewards'.tr()),
-              Tab(text: 'badges'.tr()),
+              Tab(
+                icon: const Icon(Symbols.emoji_events),
+                text: 'contribution.tabAchievements'.tr(),
+              ),
+              Tab(
+                icon: const Icon(Symbols.paid),
+                text: 'contribution.tabPoints'.tr(),
+              ),
+              Tab(
+                icon: const Icon(Symbols.bar_chart),
+                text: 'contribution.tabLeaderboard'.tr(),
+              ),
+              Tab(
+                icon: const Icon(Symbols.card_giftcard),
+                text: 'contribution.tabExchange'.tr(),
+              ),
+              Tab(
+                icon: const Icon(Symbols.checklist),
+                text: 'contribution.tabTasks'.tr(),
+              ),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _AchievementsTab(),
-            _QuestsTab(),
-            _RewardsTab(),
-            _BadgesTab(),
-          ],
-        ),
+          Expanded(
+            child: TabBarView(
+              controller: controller,
+              children: const [
+                _AchievementsTab(),
+                _LedgerTab(),
+                _LeaderboardTab(),
+                _ExchangeTab(),
+                _TasksTab(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _BadgesTab extends ConsumerWidget {
+class _BalanceHeader extends ConsumerWidget {
+  const _BalanceHeader();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final badgesAsync = ref.watch(badgesProvider);
-
-    return badgesAsync.when(
-      data: (badges) {
-        if (badges.isEmpty) {
-          return EmptyState(icon: Symbols.stars, title: 'noBadges'.tr());
-        }
-
-        return CustomScrollView(
-          slivers: [
-            const SliverToBoxAdapter(child: _BadgeIntro()),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              sliver: SliverList.separated(
-                itemCount: badges.length,
-                separatorBuilder: (_, _) => const Gap(10),
-                itemBuilder: (context, index) {
-                  final badge = badges[index];
-                  return _BadgeCard(
-                    badge: badge,
-                    onActivate: () => _activateBadge(context, ref, badge.id),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => ResponseErrorWidget(
-        error: error,
-        onRetry: () => ref.invalidate(badgesProvider),
-      ),
-    );
-  }
-
-  Future<void> _activateBadge(
-    BuildContext context,
-    WidgetRef ref,
-    String badgeId,
-  ) async {
-    showLoadingModal(context);
-    try {
-      final client = ref.read(solarNetworkClientProvider);
-      await client.accounts.activateBadge(badgeId);
-      ref.invalidate(badgesProvider);
-    } catch (error) {
-      if (context.mounted) showErrorAlert(error);
-    } finally {
-      if (context.mounted) hideLoadingModal(context);
-    }
-  }
-}
-
-class _BadgeIntro extends StatelessWidget {
-  const _BadgeIntro();
-
-  @override
-  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    final balance = ref.watch(pointsBalanceProvider);
+    final me = balance.value;
+
+    LkmPointsLeaderboardEntry? myEntry;
+    if (signedIn && me != null) {
+      final board = ref.watch(pointsLeaderboardProvider('weekly')).value;
+      for (final entry in board?.items ?? const <LkmPointsLeaderboardEntry>[]) {
+        if (entry.userId == me.userId) {
+          myEntry = entry;
+          break;
+        }
+      }
+    }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-      child: Card(
-        margin: EdgeInsets.zero,
-        elevation: 0,
-        color: colors.surfaceContainerLow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: colors.outlineVariant),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 18, 14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Symbols.info,
-                size: 20,
-                color: colors.onSurfaceVariant,
-              ).padding(top: 2),
-              const Gap(12),
-              Expanded(
-                child: Text(
-                  'badgeInfoDescription'.tr(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                    height: 1.35,
-                  ),
-                ),
-              ),
-            ],
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: theme.colorScheme.primaryContainer,
+            child: const Icon(Symbols.paid),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BadgeCard extends ConsumerWidget {
-  final SnAccountBadge badge;
-  final VoidCallback onActivate;
-
-  const _BadgeCard({required this.badge, required this.onActivate});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isActive = badge.activatedAt != null;
-    final manifest = ref.watch(badgeManifestMapProvider);
-    final name = getBadgeName(badge, manifest: manifest).tr();
-    final description = getBadgeDescription(badge, manifest: manifest);
-    final badgeColor = getBadgeColor(badge, manifest: manifest);
-    final iconUrl = getBadgeIconUrl(badge, manifest: manifest);
-
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      color: colors.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colors.outlineVariant),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: isActive ? null : onActivate,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: colors.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Center(
-                  child: CachedBadgeIcon(
-                    iconUrl: iconUrl,
-                    color: isActive ? colors.primary : badgeColor,
-                    fallbackIcon:
-                        kBadgeTemplates[badge.type]?.icon ?? Symbols.stars,
-                    size: 24,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'contribution.currentPoints'.tr(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-              ),
-              const Gap(12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
                     Text(
-                      name,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      signedIn ? '${me?.balance ?? 0}' : '—',
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                    if (description != null && description.isNotEmpty) ...[
-                      const Gap(3),
-                      Text(
-                        description.trExists() ? description.tr() : description,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                          height: 1.25,
+                    if (signedIn && me != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'Lv.${me.level}',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (myEntry != null && myEntry.title.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'contributionData.leaderboard.titles.${myEntry.title}'
+                              .tr(),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                        ),
                       ),
                     ],
                   ],
                 ),
-              ),
-              const Gap(10),
-              _BadgeStatus(isActive: isActive, onActivate: onActivate),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BadgeStatus extends StatelessWidget {
-  final bool isActive;
-  final VoidCallback onActivate;
-
-  const _BadgeStatus({required this.isActive, required this.onActivate});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    if (isActive) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-        decoration: BoxDecoration(
-          color: colors.primary.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(Symbols.check, size: 17, color: colors.primary),
-      );
-    }
-
-    return FilledButton.tonal(
-      onPressed: onActivate,
-      style: FilledButton.styleFrom(
-        minimumSize: const Size(0, 36),
-        padding: const EdgeInsets.symmetric(horizontal: 11),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: Text('activate').tr(),
-    );
-  }
-}
-
-class _AchievementsTab extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<_AchievementsTab> createState() => _AchievementsTabState();
-}
-
-class _AchievementsTabState extends ConsumerState<_AchievementsTab> {
-  final _searchController = TextEditingController();
-  String _searchQuery = '';
-  List<SnAchievementState>? _searchResults;
-  bool _isSearching = false;
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _performSearch(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchQuery = '';
-        _searchResults = null;
-        _isSearching = false;
-      });
-      return;
-    }
-
-    setState(() {
-      _searchQuery = query;
-      _isSearching = true;
-    });
-
-    try {
-      final client = ref.read(apiClientProvider);
-      final response = await client.get(
-        '/stargate/accounts/me/progression/achievements',
-        queryParameters: {'query': query},
-      );
-      final data = response.data;
-      if (data is List && mounted) {
-        setState(() {
-          _searchResults = data
-              .map(
-                (e) =>
-                    SnAchievementState.fromJson(Map<String, dynamic>.from(e)),
-              )
-              .toList();
-          _isSearching = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isSearching = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final achievementsAsync = ref.watch(achievementsProvider);
-    final statsAsync = ref.watch(achievementStatsProvider);
-
-    return achievementsAsync.when(
-      data: (achievements) {
-        if (achievements.isEmpty) {
-          return EmptyState(
-            icon: Symbols.military_tech,
-            title: 'noAchievements'.tr(),
-          );
-        }
-
-        return CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: SearchBar(
-                  controller: _searchController,
-                  hintText: 'searchAchievements'.tr(),
-                  elevation: const WidgetStatePropertyAll(0),
-                  leading: const Icon(Symbols.search),
-                  padding: WidgetStatePropertyAll(
-                    EdgeInsets.symmetric(horizontal: 24),
-                  ),
-                  trailing: [
-                    if (_searchQuery.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Symbols.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _performSearch('');
-                        },
-                      ),
-                  ],
-                  onChanged: _performSearch,
-                ),
-              ),
+          if (!signedIn)
+            TextButton(
+              onPressed: () => context.router.push(LoginRoute()),
+              child: Text('login'.tr()),
             ),
-            SliverToBoxAdapter(
-              child: statsAsync.when(
-                data: (stats) => _AchievementStatsCard(stats: stats),
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
-            ),
-            if (_searchQuery.isNotEmpty)
-              if (_isSearching)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (_searchResults == null || _searchResults!.isEmpty)
-                SliverFillRemaining(
-                  child: EmptyState(
-                    icon: Symbols.search_off,
-                    title: 'noSearchResults'.tr(),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.only(top: 8),
-                  sliver: SliverList.separated(
-                    itemCount: _searchResults!.length,
-                    separatorBuilder: (context, index) => Divider(
-                      height: 1,
-                      thickness: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                    ),
-                    itemBuilder: (context, index) =>
-                        _AchievementCard(achievement: _searchResults![index]),
-                  ),
-                )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.only(top: 8),
-                sliver: SliverList.separated(
-                  itemCount: achievements.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    thickness: 1,
-                    indent: 16,
-                    endIndent: 16,
-                    color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                  ),
-                  itemBuilder: (context, index) =>
-                      _AchievementCard(achievement: achievements[index]),
-                ),
-              ),
-          ],
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => ResponseErrorWidget(
-        error: error,
-        onRetry: () => ref.invalidate(achievementsProvider),
+        ],
       ),
     );
   }
 }
 
-class _QuestsTab extends ConsumerWidget {
+class _AchievementsTab extends ConsumerWidget {
+  const _AchievementsTab();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questsAsync = ref.watch(questsProvider);
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    if (!signedIn) return const _LoginRequired();
 
-    return questsAsync.when(
-      data: (quests) {
-        if (quests.isEmpty) {
-          return EmptyState(icon: Symbols.assignment, title: 'noQuests'.tr());
-        }
-
-        final completedCount = quests.where((q) => q.isCompleted).length;
-
-        return CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _ProgressHeader(
-                completed: completedCount,
-                total: quests.length,
-              ),
-            ),
-            SliverPadding(
+    final achievements = ref.watch(pointsAchievementsProvider);
+    return _AsyncBody(
+      value: achievements,
+      onRetry: () => ref.invalidate(pointsAchievementsProvider),
+      builder: (items) => items.isEmpty
+          ? const _EmptyHint()
+          : GridView.builder(
               padding: const EdgeInsets.all(16),
-              sliver: SliverList.separated(
-                itemCount: quests.length,
-                separatorBuilder: (context, index) => const Gap(12),
-                itemBuilder: (context, index) =>
-                    _QuestCard(quest: quests[index]),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 220,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 0.82,
               ),
+              itemCount: items.length,
+              itemBuilder: (_, index) => _AchievementCard(item: items[index]),
             ),
-          ],
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => ResponseErrorWidget(
-        error: error,
-        onRetry: () => ref.invalidate(questsProvider),
-      ),
-    );
-  }
-}
-
-class _RewardsTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return PaginationList(
-      provider: rewardGrantsNotifierProvider,
-      notifier: rewardGrantsNotifierProvider.notifier,
-      isRefreshable: false,
-      isSliver: false,
-      padding: const EdgeInsets.all(16),
-      itemBuilder: (context, idx, grant) => _RewardGrantCard(grant: grant),
-      footerSkeletonChild: ListTile(
-        leading: Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        title: Container(
-          height: 16,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        subtitle: Container(
-          height: 12,
-          width: 120,
-          margin: const EdgeInsets.only(top: 8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProgressHeader extends StatelessWidget {
-  final int completed;
-  final int total;
-
-  const _ProgressHeader({required this.completed, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = total > 0 ? completed / total : 0.0;
-    final colors = Theme.of(context).colorScheme;
-
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      elevation: 0,
-      color: colors.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colors.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'completed'.tr(),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  '$completed / $total',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const Gap(12),
-            LinearProgressIndicator(
-              value: progress,
-              minHeight: 6,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AchievementStatsCard extends StatelessWidget {
-  final SnAchievementStats stats;
-
-  const _AchievementStatsCard({required this.stats});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'overallProgress'.tr(),
-                  style: theme.textTheme.titleMedium,
-                ),
-                Text(
-                  '${stats.completionPercentage}%',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const Gap(12),
-            LinearProgressIndicator(
-              value: stats.completionPercentage / 100,
-              minHeight: 6,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            const Gap(16),
-            Row(
-              children: [
-                Expanded(
-                  child: _StatItem(
-                    label: 'completed'.tr(),
-                    value: '${stats.completedCount}',
-                    total: '${stats.totalCount}',
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: theme.colorScheme.outlineVariant,
-                ),
-                Expanded(
-                  child: _StatItem(
-                    label: 'hidden'.tr(),
-                    value: '${stats.hiddenCompletedCount}',
-                    total: '${stats.hiddenTotalCount}',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final String label;
-  final String value;
-  final String total;
-
-  const _StatItem({
-    required this.label,
-    required this.value,
-    required this.total,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const Gap(4),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: value,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: ' / $total',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
 
 class _AchievementCard extends StatelessWidget {
-  final SnAchievementState achievement;
+  const _AchievementCard({required this.item});
 
-  const _AchievementCard({required this.achievement});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final reward = achievement.reward;
-
-    return InkWell(
-      onTap: () => _showAchievementDetails(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: achievement.isCompleted
-                    ? theme.colorScheme.primary.withOpacity(0.15)
-                    : theme.colorScheme.surfaceContainerHigh,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                _getAchievementIcon(achievement.icon),
-                size: 22,
-                color: achievement.isCompleted
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const Gap(16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          _getAchievementTitle(
-                            achievement.identifier,
-                            achievement.title,
-                          ),
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (achievement.seriesTotalSteps > 1) ...[
-                        const Gap(8),
-                        _buildLevelBadge(theme),
-                      ],
-                    ],
-                  ),
-                  const Gap(4),
-                  Text(
-                    _getAchievementSummary(
-                      achievement.identifier,
-                      achievement.summary,
-                    ),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (reward != null && _hasRewards(reward)) ...[
-                    const Gap(10),
-                    _RewardPreview(reward: reward),
-                  ],
-                ],
-              ),
-            ),
-            const Gap(12),
-            _buildTrailing(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLevelBadge(ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant.withOpacity(0.6),
-          width: 0.5,
-        ),
-      ),
-      child: Text(
-        '${'level'.tr()} ${achievement.seriesCompletedSteps}/${achievement.seriesTotalSteps}',
-        style: theme.textTheme.labelSmall?.copyWith(
-          fontSize: 10,
-          height: 1.1,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTrailing(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (achievement.isCompleted) {
-      return Icon(
-        Symbols.check_circle,
-        size: 20,
-        color: theme.colorScheme.primary,
-      );
-    }
-
-    return Text(
-      '${achievement.progressCount}/${achievement.targetCount}',
-      style: theme.textTheme.bodySmall?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: theme.colorScheme.onSurface,
-      ),
-    );
-  }
-
-  IconData _getAchievementIcon(String? icon) {
-    switch (icon) {
-      case 'ink':
-      case 'post':
-        return Symbols.edit;
-      case 'spark':
-      case 'reaction':
-        return Symbols.favorite;
-      case 'message-circle':
-      case 'chat':
-        return Symbols.chat_bubble;
-      case 'flag':
-      case 'publisher':
-        return Symbols.flag;
-      case 'globe':
-      case 'realm':
-        return Symbols.public;
-      case 'messages-square':
-        return Symbols.chat;
-      default:
-        return Symbols.military_tech;
-    }
-  }
-
-  void _showAchievementDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => _AchievementDetailSheet(achievement: achievement),
-    );
-  }
-}
-
-class _AchievementDetailSheet extends StatelessWidget {
-  final SnAchievementState achievement;
-
-  const _AchievementDetailSheet({required this.achievement});
+  final LkmPointsAchievement item;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final reward = achievement.reward;
-    final hasStages = achievement.seriesStages.isNotEmpty;
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final unlocked = item.unlocked;
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: achievement.isCompleted
-                      ? theme.colorScheme.primary.withOpacity(0.2)
-                      : theme.colorScheme.surfaceContainerHigh,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  _getAchievementIcon(achievement.icon),
-                  size: 32,
-                  color: achievement.isCompleted
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const Gap(16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getAchievementTitle(
-                        achievement.identifier,
-                        achievement.title,
-                      ),
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    if (achievement.seriesTitle != null &&
-                        achievement.seriesTotalSteps > 1)
-                      Text(
-                        '${achievement.seriesTitle} · ${achievement.seriesCompletedSteps}/${achievement.seriesTotalSteps}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    if (achievement.isCompleted)
-                      Text(
-                        'completedAt'.tr(
-                          args: [
-                            achievement.completedAt?.formatRelative(context) ??
-                                '-',
-                          ],
-                        ),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const Gap(16),
-          Text(
-            _getAchievementSummary(achievement.identifier, achievement.summary),
-          ),
-          if (hasStages && achievement.seriesStages.length > 1) ...[
-            const Gap(16),
-            Text('stages'.tr(), style: theme.textTheme.titleMedium),
-            const Gap(12),
-            _SeriesStagesList(stages: achievement.seriesStages),
-          ],
-          if (reward != null) ...[
-            const Gap(16),
-            Text('rewards'.tr(), style: theme.textTheme.titleMedium),
-            const Gap(12),
-            if (reward.experience > 0)
-              _RewardRow(
-                icon: Symbols.star,
-                label: 'experience',
-                value: '+${reward.experience} EXP',
-              ),
-            if (reward.sourcePoints > 0)
-              _RewardRow(
-                icon: Symbols.toll,
-                label: 'sourcePoints',
-                value: '+${reward.sourcePoints}',
-              ),
-            if (reward.badge != null)
-              _RewardRow(
-                icon: Symbols.military_tech,
-                label: 'badge',
-                value: reward.badge!.label ?? reward.badge!.type,
-              ),
-          ],
-          const Gap(24),
-        ],
-      ),
-    );
-  }
-
-  IconData _getAchievementIcon(String? icon) {
-    switch (icon) {
-      case 'ink':
-      case 'post':
-        return Symbols.edit;
-      case 'spark':
-      case 'reaction':
-        return Symbols.favorite;
-      case 'message-circle':
-      case 'chat':
-        return Symbols.chat_bubble;
-      case 'flag':
-      case 'publisher':
-        return Symbols.flag;
-      case 'globe':
-      case 'realm':
-        return Symbols.public;
-      case 'messages-square':
-        return Symbols.chat;
-      default:
-        return Symbols.military_tech;
-    }
-  }
-}
-
-class _QuestCard extends StatelessWidget {
-  final SnQuestState quest;
-
-  const _QuestCard({required this.quest});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final progress = quest.targetCount > 0
-        ? quest.progressCount / quest.targetCount
-        : 0.0;
-    final reward = quest.reward;
-
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _showQuestDetails(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: quest.isCompleted
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      _getQuestIcon(quest.icon),
-                      size: 24,
-                      color: quest.isCompleted
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const Gap(12),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _getQuestTitle(quest.identifier, quest.title),
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Gap(2),
-                              Text(
-                                _getQuestSummary(
-                                  quest.identifier,
-                                  quest.summary,
-                                ),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        _ScheduleBadge(schedule: quest.schedule),
-                      ],
-                    ),
-                  ),
-                  const Gap(8),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        quest.isCompleted
-                            ? Symbols.check_circle
-                            : Symbols.radio_button_unchecked,
-                        fill: quest.isCompleted ? 1 : 0,
-                        color: quest.isCompleted
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                      if (quest.seriesTotalSteps > 1) ...[
-                        const Gap(4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            '${quest.seriesCompletedSteps}/${quest.seriesTotalSteps}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!quest.isCompleted) ...[
-                    const Gap(12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 6,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                        const Gap(8),
-                        Text(
-                          '${quest.progressCount}/${quest.targetCount}',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ] else ...[
-                    const Gap(12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'completed'.tr(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ],
-                  if (!quest.isCompleted && quest.nextResetAt != null) ...[
-                    const Gap(4),
-                    Text(
-                      'nextReset'.tr(
-                        args: [quest.nextResetAt!.formatRelative(context)],
-                      ),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ],
-              ).padding(horizontal: 4),
-              if (reward != null && _hasRewards(reward)) ...[
-                const Gap(12),
-                _RewardPreview(reward: reward),
-              ],
-            ],
+    return Opacity(
+      opacity: unlocked ? 1 : 0.55,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
           ),
         ),
-      ),
-    );
-  }
-
-  IconData _getQuestIcon(String? icon) {
-    switch (icon) {
-      case 'calendar':
-        return Symbols.calendar_today;
-      default:
-        return Symbols.assignment;
-    }
-  }
-
-  void _showQuestDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => _QuestDetailSheet(quest: quest),
-    );
-  }
-}
-
-class _ScheduleBadge extends StatelessWidget {
-  final SnQuestScheduleConfig? schedule;
-
-  const _ScheduleBadge({this.schedule});
-
-  @override
-  Widget build(BuildContext context) {
-    if (schedule == null) return const SizedBox.shrink();
-
-    String label;
-    Color color;
-
-    switch (schedule!.repeatability) {
-      case 'daily':
-        label = 'daily'.tr();
-        color = Colors.green;
-        break;
-      case 'weekly':
-        label = 'weekly'.tr();
-        color = Colors.blue;
-        break;
-      case 'monthly':
-        label = 'monthly'.tr();
-        color = Colors.purple;
-        break;
-      default:
-        return const SizedBox.shrink();
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-class _QuestDetailSheet extends StatelessWidget {
-  final SnQuestState quest;
-
-  const _QuestDetailSheet({required this.quest});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final reward = quest.reward;
-    final hasStages = quest.seriesStages.isNotEmpty;
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: quest.isCompleted
-                      ? theme.colorScheme.primary.withOpacity(0.2)
-                      : theme.colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  _getQuestIcon(quest.icon),
-                  size: 32,
-                  color: quest.isCompleted
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const Gap(16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getQuestTitle(quest.identifier, quest.title),
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    if (quest.seriesTitle != null && quest.seriesTotalSteps > 1)
-                      Text(
-                        '${quest.seriesTitle} · ${quest.seriesCompletedSteps}/${quest.seriesTotalSteps}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    const Gap(4),
-                    _ScheduleBadge(schedule: quest.schedule),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const Gap(16),
-          Text(_getQuestSummary(quest.identifier, quest.summary)),
-          const Gap(16),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('progress'.tr()),
-                    const Gap(4),
-                    LinearProgressIndicator(
-                      value: quest.targetCount > 0
-                          ? quest.progressCount / quest.targetCount
-                          : 0,
-                      minHeight: 6,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    const Gap(4),
-                    Text('${quest.progressCount}/${quest.targetCount}'),
-                  ],
-                ),
-              ),
-              const Gap(24),
-              if (quest.isCompleted)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Symbols.check,
-                    color: theme.colorScheme.primary,
-                    size: 28,
-                  ),
-                ),
-            ],
-          ),
-          if (quest.nextResetAt != null && !quest.isCompleted) ...[
-            const Gap(8),
-            Text(
-              'nextReset'.tr(
-                args: [quest.nextResetAt!.formatRelative(context)],
-              ),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.secondary,
-              ),
-            ),
-          ],
-          if (hasStages && quest.seriesStages.length > 1) ...[
-            const Gap(16),
-            Text('stages'.tr(), style: theme.textTheme.titleMedium),
-            const Gap(12),
-            _SeriesStagesList(stages: quest.seriesStages),
-          ],
-          if (reward != null) ...[
-            const Gap(16),
-            const Divider(),
-            const Gap(16),
-            Text('rewards'.tr(), style: theme.textTheme.titleMedium),
-            const Gap(12),
-            if (reward.experience > 0)
-              _RewardRow(
-                icon: Symbols.star,
-                label: 'experience',
-                value: '+${reward.experience} EXP',
-              ),
-            if (reward.sourcePoints > 0)
-              _RewardRow(
-                icon: Symbols.toll,
-                label: 'sourcePoints',
-                value: '+${reward.sourcePoints}',
-              ),
-            if (reward.badge != null)
-              _RewardRow(
-                icon: Symbols.military_tech,
-                label: 'badge',
-                value: reward.badge!.label ?? reward.badge!.type,
-              ),
-          ],
-          const Gap(24),
-        ],
-      ),
-    );
-  }
-
-  IconData _getQuestIcon(String? icon) {
-    switch (icon) {
-      case 'calendar':
-        return Symbols.calendar_today;
-      default:
-        return Symbols.assignment;
-    }
-  }
-}
-
-class _RewardGrantCard extends StatelessWidget {
-  final SnProgressRewardGrant grant;
-
-  const _RewardGrantCard({required this.grant});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isAchievement = grant.definitionType == 'achievement';
-    final reward = grant.reward;
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: (isAchievement ? Colors.amber : Colors.blue)
-                        .withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isAchievement ? Symbols.military_tech : Symbols.assignment,
-                    color: isAchievement ? Colors.amber : Colors.blue,
-                  ),
-                ),
-                const Gap(12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        grant.definitionTitle,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Gap(2),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color:
-                                  (isAchievement ? Colors.amber : Colors.blue)
-                                      .withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              isAchievement
-                                  ? 'achievements'.tr()
-                                  : 'quests'.tr(),
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: isAchievement
-                                    ? Colors.amber.shade700
-                                    : Colors.blue.shade700,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const Gap(8),
-                          Text(
-                            grant.createdAt.formatRelative(context),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            CircleAvatar(
+              backgroundColor: unlocked
+                  ? theme.colorScheme.primaryContainer
+                  : theme.colorScheme.surfaceContainerHighest,
+              child: Icon(
+                _achievementIcon(item.icon),
+                color: unlocked
+                    ? theme.colorScheme.onPrimaryContainer
+                    : muted,
+              ),
             ),
-            if (reward != null && _hasRewards(reward)) ...[
-              const Gap(12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  if (reward.experience > 0)
-                    _RewardChip(
-                      icon: Symbols.star,
-                      label: '+${reward.experience} EXP',
-                    ),
-                  if (reward.sourcePoints > 0)
-                    _RewardChip(
-                      icon: Symbols.toll,
-                      label: '+${reward.sourcePoints}',
-                    ),
-                  if (reward.badge != null)
-                    _RewardChip(
-                      icon: Symbols.military_tech,
-                      label: reward.badge!.label ?? 'badge'.tr(),
-                    ),
-                ],
+            const SizedBox(height: 8),
+            Text(
+              item.nameKey.tr(),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Expanded(
+              child: Text(
+                item.descKey.tr(),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(color: muted),
+              ),
+            ),
+            if (!unlocked) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: item.progressRatio,
+                  minHeight: 4,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${item.progress}/${item.threshold}',
+                style: theme.textTheme.labelSmall?.copyWith(color: muted),
               ),
             ],
           ],
@@ -1657,157 +380,575 @@ class _RewardGrantCard extends StatelessWidget {
   }
 }
 
-class _RewardRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _RewardRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+class _LedgerTab extends ConsumerWidget {
+  const _LedgerTab();
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    if (!signedIn) return const _LoginRequired();
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: theme.colorScheme.primary),
-          const Gap(8),
-          Text(label.tr()),
-          const Spacer(),
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+    final ledger = ref.watch(pointsLedgerProvider);
+    return _AsyncBody(
+      value: ledger,
+      onRetry: () => ref.invalidate(pointsLedgerProvider),
+      builder: (page) => page.items.isEmpty
+          ? const _EmptyHint()
+          : ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: page.items.length,
+              separatorBuilder: (_, _) => const Divider(height: 1),
+              itemBuilder: (_, index) =>
+                  _LedgerRow(entry: page.items[index]),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
 
-class _RewardChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
+class _LedgerRow extends StatelessWidget {
+  const _LedgerRow({required this.entry});
 
-  const _RewardChip({required this.icon, required this.label});
+  final LkmPointsLedgerEntry entry;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final positive = entry.delta > 0;
+    final key = kPointsLogKeys[entry.reason];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: theme.colorScheme.primary),
-          const Gap(4),
-          Text(label, style: theme.textTheme.bodySmall),
-        ],
+    return ListTile(
+      title: Text(key == null ? entry.reason : 'contributionData.pointLogs.$key'.tr()),
+      subtitle: Text(_formatLedgerTime(entry.createdAt)),
+      trailing: Text(
+        '${positive ? '+' : ''}${entry.delta}',
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: positive ? Colors.green : theme.colorScheme.error,
+        ),
       ),
     );
   }
 }
 
-class _RewardPreview extends StatelessWidget {
-  final SnProgressRewardDefinition reward;
+const _periods = ['daily', 'weekly', 'total'];
 
-  const _RewardPreview({required this.reward});
+class _LeaderboardTab extends HookConsumerWidget {
+  const _LeaderboardTab();
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final period = useState('weekly');
+    final board = ref.watch(pointsLeaderboardProvider(period.value));
+
+    return Column(
       children: [
-        if (reward.experience > 0)
-          _RewardChip(icon: Symbols.star, label: '+${reward.experience} EXP'),
-        if (reward.sourcePoints > 0)
-          _RewardChip(icon: Symbols.toll, label: '+${reward.sourcePoints}'),
-        if (reward.badge != null)
-          _RewardChip(
-            icon: Symbols.military_tech,
-            label: reward.badge!.label ?? 'badge'.tr(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: SegmentedButton<String>(
+            segments: [
+              for (final p in _periods)
+                ButtonSegment(
+                  value: p,
+                  label: Text('contribution.period${_periodSuffix(p)}'.tr()),
+                ),
+            ],
+            selected: {period.value},
+            onSelectionChanged: (selection) => period.value = selection.first,
           ),
+        ),
+        Expanded(
+          child: _AsyncBody(
+            value: board,
+            onRetry: () =>
+                ref.invalidate(pointsLeaderboardProvider(period.value)),
+            builder: (page) => page.items.isEmpty
+                ? const _EmptyHint()
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: page.items.length,
+                    itemBuilder: (_, index) => _LeaderboardRow(
+                      entry: page.items[index],
+                      rank: index + 1,
+                    ),
+                  ),
+          ),
+        ),
       ],
     );
   }
+
+  static String _periodSuffix(String period) => switch (period) {
+    'daily' => 'Daily',
+    'weekly' => 'Weekly',
+    _ => 'Total',
+  };
 }
 
-bool _hasRewards(SnProgressRewardDefinition reward) {
-  return reward.experience > 0 ||
-      reward.sourcePoints > 0 ||
-      reward.badge != null;
-}
+class _LeaderboardRow extends StatelessWidget {
+  const _LeaderboardRow({required this.entry, required this.rank});
 
-class _SeriesStagesList extends StatelessWidget {
-  final List<SnSeriesStage> stages;
-
-  const _SeriesStagesList({required this.stages});
+  final LkmPointsLeaderboardEntry entry;
+  final int rank;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final medal = switch (rank) {
+      1 => '🥇',
+      2 => '🥈',
+      3 => '🥉',
+      _ => '$rank',
+    };
 
-    return Column(
-      children: stages.map((stage) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
+    return ListTile(
+      onTap: entry.userId.isEmpty
+          ? null
+          : () => context.router.push(UserProfileRoute(id: entry.userId)),
+      leading: SizedBox(
+        width: 40,
+        child: Center(
+          child: Text(medal, style: theme.textTheme.titleMedium),
+        ),
+      ),
+      title: Text(
+        entry.displayName,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: entry.title.isEmpty
+          ? null
+          : Text('contributionData.leaderboard.titles.${entry.title}'.tr()),
+      trailing: Text(
+        'contribution.pointsSuffix'.tr(
+          namedArgs: {'points': '${entry.balance}'},
+        ),
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _ExchangeTab extends ConsumerWidget {
+  const _ExchangeTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(pointsExchangeProvider);
+    return _AsyncBody(
+      value: items,
+      onRetry: () => ref.invalidate(pointsExchangeProvider),
+      builder: (list) => list.isEmpty
+          ? const _EmptyHint()
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: list.length,
+              itemBuilder: (_, index) => _ExchangeCard(item: list[index]),
+            ),
+    );
+  }
+}
+
+class _ExchangeCard extends StatelessWidget {
+  const _ExchangeCard({required this.item});
+
+  final LkmPointsExchangeItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Icon(
-                stage.isCompleted
-                    ? Symbols.check_circle
-                    : Symbols.radio_button_unchecked,
-                size: 20,
-                color: stage.isCompleted
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurfaceVariant,
+              Chip(
+                label: Text(
+                  item.isVirtual
+                      ? 'contribution.virtual'.tr()
+                      : 'contribution.physical'.tr(),
+                ),
+                visualDensity: VisualDensity.compact,
               ),
-              const Gap(12),
+              if (item.lowStock) ...[
+                const SizedBox(width: 8),
+                Text(
+                  'contribution.lowStock'.tr(
+                    namedArgs: {'stock': '${item.stock}'},
+                  ),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            item.nameKey.tr(),
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            item.descKey.tr(),
+            style: theme.textTheme.bodySmall?.copyWith(color: muted),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Text(
+                  'contribution.pointsCost'.tr(
+                    namedArgs: {'points': '${item.pointsCost}'},
+                  ),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              FilledButton.tonal(
+                onPressed: item.soldOut
+                    ? null
+                    : () => showInfoAlert(
+                        'contribution.exchangeUnavailable'.tr(),
+                        'contribution.title'.tr(),
+                      ),
+                child: Text(
+                  item.soldOut
+                      ? 'contribution.soldOut'.tr()
+                      : 'contribution.exchange'.tr(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TasksTab extends HookConsumerWidget {
+  const _TasksTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Hooks must run before any conditional return.
+    final busy = useState(false);
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    if (!signedIn) return const _LoginRequired();
+
+    final tasks = ref.watch(pointsTasksProvider);
+
+    return _AsyncBody(
+      value: tasks,
+      onRetry: () => ref.invalidate(pointsTasksProvider),
+      builder: (list) {
+        LkmPointsTask? checkinTask;
+        for (final task in list) {
+          if (task.category == 'checkin') {
+            checkinTask = task;
+            break;
+          }
+        }
+        final checkedIn = checkinTask?.completed ?? false;
+        final reward = checkinTask?.rewardPoints ?? 5;
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _CheckinCard(
+              checkedIn: checkedIn,
+              reward: reward,
+              busy: busy.value,
+              onCheckin: () async {
+                if (busy.value) return;
+                busy.value = true;
+                try {
+                  final session = ref.read(lkmApiSessionProvider);
+                  final result = await session.run(
+                    () => ref.read(pointsApiProvider).checkin(),
+                  );
+                  if (context.mounted) {
+                    showSnackBar(
+                      result.earned > 0
+                          ? 'contribution.checkinSuccess'.tr(
+                              namedArgs: {'points': '${result.earned}'},
+                            )
+                          : 'contribution.checkedIn'.tr(),
+                    );
+                  }
+                  ref.invalidate(pointsBalanceProvider);
+                  ref.invalidate(pointsLedgerProvider);
+                  ref.invalidate(pointsTasksProvider);
+                  ref.invalidate(pointsAchievementsProvider);
+                  ref.invalidate(pointsLeaderboardProvider);
+                } catch (failure) {
+                  if (context.mounted) showErrorAlert(failure);
+                } finally {
+                  busy.value = false;
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'contribution.dailyTasks'.tr(),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            for (final task in list) _TaskRow(task: task),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CheckinCard extends StatelessWidget {
+  const _CheckinCard({
+    required this.checkedIn,
+    required this.reward,
+    required this.busy,
+    required this.onCheckin,
+  });
+
+  final bool checkedIn;
+  final int reward;
+  final bool busy;
+  final VoidCallback onCheckin;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        children: [
+          const Text('📅', style: TextStyle(fontSize: 36)),
+          const SizedBox(height: 8),
+          Text(
+            'contribution.dailyCheckin'.tr(),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton(
+            onPressed: checkedIn || busy ? null : onCheckin,
+            child: Text(
+              checkedIn
+                  ? 'contribution.checkedIn'.tr()
+                  : 'contribution.checkinReward'.tr(
+                      namedArgs: {'points': '$reward'},
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TaskRow extends StatelessWidget {
+  const _TaskRow({required this.task});
+
+  final LkmPointsTask task;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: task.completed
+            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.35)
+            : theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            task.completed
+                ? Symbols.check_circle
+                : Symbols.radio_button_unchecked,
+            color: task.completed ? Colors.green : muted,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  task.titleKey.tr(),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    decoration: task.completed
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${task.descKey.tr()} · '
+                  '${'contribution.taskReward'.tr(namedArgs: {'points': '${task.rewardPoints}'})}',
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
+                const SizedBox(height: 6),
+                Row(
                   children: [
-                    Text(
-                      stage.title,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: stage.isCompleted
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: task.progressRatio,
+                          minHeight: 4,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
-                      '${stage.targetCount}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                      '${task.currentProgress}/${task.requirementCount}',
+                      style: theme.textTheme.labelSmall?.copyWith(color: muted),
                     ),
                   ],
                 ),
-              ),
-              if (stage.isCompleted && stage.completedAt != null)
-                Text(
-                  stage.completedAt!.formatRelative(context),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
-        );
-      }).toList(),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatLedgerTime(DateTime time) {
+  final local = time.toLocal();
+  String two(int value) => value.toString().padLeft(2, '0');
+  return '${local.year}-${two(local.month)}-${two(local.day)} '
+      '${two(local.hour)}:${two(local.minute)}';
+}
+
+/// Maps the server's Tabler icon names onto the bundled Material symbols.
+IconData _achievementIcon(String icon) => switch (icon) {
+  'tabler:star' => Symbols.star,
+  'tabler:pencil' => Symbols.edit,
+  'tabler:pencil-plus' => Symbols.note_add,
+  'tabler:star-filled' => Symbols.grade,
+  'tabler:writing' => Symbols.draw,
+  'tabler:heart-handshake' => Symbols.handshake,
+  'tabler:brain' => Symbols.psychology,
+  'tabler:file-check' => Symbols.task,
+  'tabler:calendar-check' => Symbols.event_available,
+  'tabler:calendar-star' => Symbols.event,
+  'tabler:rocket' => Symbols.rocket_launch,
+  'tabler:article' => Symbols.article,
+  _ => Symbols.emoji_events,
+};
+
+class _AsyncBody<T> extends StatelessWidget {
+  const _AsyncBody({
+    required this.value,
+    required this.builder,
+    this.onRetry,
+  });
+
+  final AsyncValue<T> value;
+  final Widget Function(T data) builder;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    if (value.hasError) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'contribution.loadFailed'.tr(),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 8),
+              TextButton(onPressed: onRetry, child: Text('refresh'.tr())),
+            ],
+          ],
+        ),
+      );
+    }
+    final data = value.value;
+    if (data == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return builder(data);
+  }
+}
+
+class _LoginRequired extends StatelessWidget {
+  const _LoginRequired();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('contribution.loginRequired'.tr()),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => context.router.push(LoginRoute()),
+              child: Text('login'.tr()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'contribution.empty'.tr(),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 }

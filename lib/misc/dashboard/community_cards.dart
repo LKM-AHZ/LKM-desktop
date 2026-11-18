@@ -9,7 +9,7 @@ import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/exam/exam_pod.dart';
 import 'package:island/hub/hub_pod.dart';
-import 'package:island/points/points_pod.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:island/route.gr.dart';
 
 class DashboardEntry {
@@ -162,13 +162,13 @@ class PersonalDashboardCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final balance = ref.watch(lkmPointsBalanceProvider);
+    final balance = ref.watch(pointsBalanceProvider);
     final certificates = ref.watch(myCertificatesProvider);
     return _DashboardSection(
       title: 'home.personal'.tr(),
       icon: Symbols.account_circle,
       onRefresh: () {
-        ref.invalidate(lkmPointsBalanceProvider);
+        ref.invalidate(pointsBalanceProvider);
         ref.invalidate(myCertificatesProvider);
       },
       onOpen: () => context.router.push(const MyContentRoute()),
@@ -176,7 +176,7 @@ class PersonalDashboardCard extends ConsumerWidget {
         children: [
           _DashboardValue(
             value: balance,
-            onRetry: () => ref.invalidate(lkmPointsBalanceProvider),
+            onRetry: () => ref.invalidate(pointsBalanceProvider),
             builder: (data) => ListTile(
               leading: const Icon(Symbols.paid),
               title: Text(data == null ? '—' : '${data.balance}'),
@@ -219,7 +219,7 @@ class DashboardLeaderboardCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = lkmPointsLeaderboardProvider('weekly');
+    final provider = pointsLeaderboardProvider('weekly');
     return _DashboardSection(
       title: 'home.leaderboard'.tr(),
       icon: Symbols.bar_chart,

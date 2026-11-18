@@ -13,7 +13,7 @@ import 'package:island/core/config.dart';
 import 'package:island/discovery/explore.dart';
 import 'package:island/misc/dashboard/dash.dart';
 import 'package:island/misc/dashboard/community_cards.dart';
-import 'package:island/points/points_pod.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/misc/tabs_screen.dart';
 import 'package:island/route.dart';
@@ -57,7 +57,7 @@ Future<void> _pumpApp(
       sharedPreferencesProvider.overrideWithValue(prefs),
       userInfoProvider.overrideWith(_SignedOutUserInfo.new),
       dashboardEntriesProvider.overrideWith((ref, kind) async => []),
-      lkmPointsLeaderboardProvider.overrideWith(
+      pointsLeaderboardProvider.overrideWith(
         (ref, period) async => const ApiPage.empty(),
       ),
     ],

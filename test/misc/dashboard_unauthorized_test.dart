@@ -7,7 +7,7 @@ import 'package:island/accounts/account_pod.dart';
 import 'package:island/core/config.dart';
 import 'package:island/misc/dashboard/dash.dart';
 import 'package:island/misc/dashboard/community_cards.dart';
-import 'package:island/points/points_pod.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,7 +68,7 @@ Future<void> _pump(
           sharedPreferencesProvider.overrideWith((ref) => prefs),
           userInfoProvider.overrideWith(_SignedOutUserInfo.new),
           dashboardEntriesProvider.overrideWith((ref, kind) async => []),
-          lkmPointsLeaderboardProvider.overrideWith(
+          pointsLeaderboardProvider.overrideWith(
             (ref, period) async => const ApiPage.empty(),
           ),
         ],

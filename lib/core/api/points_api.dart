@@ -10,15 +10,27 @@ int _asInt(Object? value) {
 bool _asBool(Object? value) => value == true;
 
 class LkmPointsBalance {
-  const LkmPointsBalance({required this.userId, required this.balance});
+  const LkmPointsBalance({
+    required this.userId,
+    required this.balance,
+    this.level = 1,
+    this.nextLevelPoints = 100,
+    this.levelProgress = 0,
+  });
 
   final String userId;
   final int balance;
+  final int level;
+  final int nextLevelPoints;
+  final int levelProgress;
 
   factory LkmPointsBalance.fromJson(Map<String, dynamic> json) =>
       LkmPointsBalance(
         userId: '${json['user_id'] ?? ''}',
         balance: _asInt(json['balance']),
+        level: _asInt(json['level']),
+        nextLevelPoints: _asInt(json['next_level_points']),
+        levelProgress: _asInt(json['level_progress']),
       );
 }
 

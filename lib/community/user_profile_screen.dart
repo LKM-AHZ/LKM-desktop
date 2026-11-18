@@ -1,4 +1,4 @@
-import 'package:island/points/points_pod.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -82,12 +82,12 @@ class _ProfileBody extends HookConsumerWidget {
     final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
     final me = ref.watch(lkmMeProvider).value;
     final isSelf = me != null && me.id == profile.userId;
-    final leaderboard = ref.watch(lkmPointsLeaderboardProvider('total')).value;
+    final leaderboard = ref.watch(pointsLeaderboardProvider('total')).value;
     final entry = leaderboard?.items
         .where((e) => e.userId == profile.userId)
         .firstOrNull;
     final balance = isSelf
-        ? ref.watch(lkmPointsBalanceProvider).value?.balance
+        ? ref.watch(pointsBalanceProvider).value?.balance
         : entry?.balance;
     final follow = ref.watch(followProvider(profile.userId));
     final followNotifier = ref.read(followProvider(profile.userId).notifier);
