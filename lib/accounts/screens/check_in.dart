@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:island/core/services/time.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/check_in.dart';
-import 'package:island/accounts/event_calendar.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/points_api.dart';
+import 'package:island/accounts/screens/progress.dart';
 import 'package:island/accounts/widgets/account/fortune_graph.dart';
-import 'package:island/auth/captcha.dart';
 import 'package:island/core/check_in_debug.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/utils/share_utils.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
@@ -141,97 +139,26 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
       return;
     }
     setState(() => _checkingInDays.add(target));
-    final client = ref.read(solarNetworkClientProvider);
+    final session = ref.read(lkmApiSessionProvider);
     try {
-      final result = await client.accounts.checkIn(backdated: day);
+      final raw = await session.run(
+        () => PointsApi(session.client).checkin(date: day),
+      );
+      final result = raw.result;
+      if (result == null) {
+        throw StateError('check-in returned no result');
+      }
       if (!mounted) return;
-      setState(() => _instantResults[target] = result);
+      setState(() => _instantResults[target] = snCheckInResultFromApi(result));
       _markFresh(target);
       ref.invalidate(checkInResultTodayProvider);
-      // Backdated draws leave the daily streak and the wallet untouched, so
-      // only a draw on its own day is worth refreshing the account for.
-      if (day == null) await ref.read(userInfoProvider.notifier).fetchUser();
-      if (result.fortuneReport == null) {
-        unawaited(_refreshReport(client, target));
-      }
-    } on DioException catch (error) {
-      if (error.response?.statusCode == 423 && mounted) {
-        final token = await Navigator.of(context, rootNavigator: true)
-            .push<String>(
-              MaterialPageRoute(
-                builder: (_) => const CaptchaScreen(),
-                fullscreenDialog: true,
-              ),
-            );
-        if (token != null) await _drawWithToken(token, day, target);
-      } else if (mounted) {
-        showErrorAlert(error);
-      }
+      ref.invalidate(pointsBalanceProvider);
+      ref.invalidate(checkInHistoryProvider((year: target.year, month: target.month)));
     } catch (error) {
       if (mounted) showErrorAlert(error);
     } finally {
       if (mounted) setState(() => _checkingInDays.remove(target));
     }
-  }
-
-  Future<void> _drawWithToken(
-    String token,
-    DateTime? day,
-    DateTime target,
-  ) async {
-    final result = await ref
-        .read(solarNetworkClientProvider)
-        .accounts
-        .checkIn(captchaToken: token, backdated: day);
-    if (!mounted) return;
-    setState(() => _instantResults[target] = result);
-    _markFresh(target);
-    ref.invalidate(checkInResultTodayProvider);
-    if (result.fortuneReport == null) {
-      unawaited(_refreshReport(ref.read(solarNetworkClientProvider), target));
-    }
-  }
-
-  /// The fortune report is generated server-side a moment after the draw; poll
-  /// the day it landed on until the report shows up.
-  Future<void> _refreshReport(dynamic client, DateTime day) async {
-    for (var attempt = 0; attempt < 45; attempt++) {
-      await Future<void>.delayed(const Duration(seconds: 2));
-      if (!mounted) return;
-      try {
-        final result = day == _day(DateTime.now())
-            ? await client.accounts.getCheckInResultToday()
-            : await _checkInResultOnDay(client, day);
-        if (result?.fortuneReport == null) continue;
-        if (!mounted) return;
-        setState(() => _instantResults[day] = result!);
-        ref.invalidate(checkInResultTodayProvider);
-        return;
-      } catch (_) {}
-    }
-  }
-
-  /// Looks a past day's draw up through the calendar, which is the only
-  /// endpoint that answers for a day other than today. Both sides are compared
-  /// as UTC days: the server files every entry at UTC midnight.
-  Future<SnCheckInResult?> _checkInResultOnDay(
-    dynamic client,
-    DateTime day,
-  ) async {
-    final entries = await client.accounts.getEventCalendar(
-      year: day.year,
-      month: day.month,
-    );
-    final wanted = DateTime.utc(day.year, day.month, day.day);
-    for (final entry in entries as List<SnEventCalendarEntry>) {
-      final entryDay = DateTime.utc(
-        entry.date.year,
-        entry.date.month,
-        entry.date.day,
-      );
-      if (entryDay == wanted) return entry.checkInResult;
-    }
-    return null;
   }
 
   @override
@@ -473,21 +400,10 @@ class _CheckInDatePageState extends ConsumerState<_CheckInDatePage> {
       month = DateTime(month.year, month.month + 1)
     ) {
       final entries = ref
-          .watch(
-            eventCalendarProvider(
-              EventCalendarQuery(
-                uname: 'me',
-                year: month.year,
-                month: month.month,
-              ),
-            ),
-          )
+          .watch(checkInHistoryProvider((year: month.year, month: month.month)))
           .asData
           ?.value;
-      for (final entry in entries ?? const <SnEventCalendarEntry>[]) {
-        final result = entry.checkInResult;
-        if (result != null) results[_day(entry.date)] = result;
-      }
+      if (entries != null) results.addAll(entries);
     }
     return results;
   }
@@ -1088,15 +1004,21 @@ class _CheckInContent extends ConsumerWidget {
                   child: FortuneGraphWidget(
                     noPadding: true,
                     events: debugResults == null
-                        ? ref.watch(
-                            eventCalendarProvider(
-                              EventCalendarQuery(
-                                uname: 'me',
-                                year: now.year,
-                                month: now.month,
+                        ? AsyncValue.data([
+                            for (final entry in ref
+                                .watch(checkInHistoryProvider((
+                                  year: now.year,
+                                  month: now.month,
+                                )))
+                                .asData
+                                ?.value
+                                ?.entries ??
+                                const <MapEntry<DateTime, SnCheckInResult>>[])
+                              SnEventCalendarEntry(
+                                date: entry.key,
+                                checkInResult: entry.value,
                               ),
-                            ),
-                          )
+                          ])
                         : AsyncValue.data([
                             for (final entry in debugResults!.entries)
                               SnEventCalendarEntry(

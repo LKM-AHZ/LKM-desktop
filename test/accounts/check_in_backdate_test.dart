@@ -3,33 +3,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:island/accounts/check_in.dart';
-import 'package:island/accounts/event_calendar.dart';
 import 'package:island/accounts/screens/check_in.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/api_session.dart';
 import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 DateTime _day(DateTime value) => DateTime(value.year, value.month, value.day);
 
-/// The client checks in for a past day through the same endpoint as today's
-/// draw, carrying `backdated` as the UTC midnight of the day picked.
-///
-/// The report is filled in so the sheet does not start polling for it, which
-/// would add requests the assertions would have to filter out.
-Map<String, dynamic> _resultJson(DateTime day, {DateTime? backdatedFrom}) => {
-  'id': 'backdated',
+Map<String, dynamic> _resultJson(DateTime day) => {
+  'id': 'checkin-${day.toIso8601String()}',
   'level': 3,
   'tips': const <Map<String, dynamic>>[],
-  'account_id': 'me',
-  'account': null,
   'created_at': DateTime.utc(day.year, day.month, day.day).toIso8601String(),
-  'updated_at': DateTime.utc(day.year, day.month, day.day).toIso8601String(),
-  'deleted_at': null,
-  'backdated_from': backdatedFrom?.toIso8601String(),
   'fortune_report': {
-    'version': 2,
+    'version': 1,
     'poem': 'Rain on the old eaves.',
     'summary': 'A steady day.',
     'summary_detail': null,
@@ -49,6 +38,20 @@ Map<String, dynamic> _resultJson(DateTime day, {DateTime? backdatedFrom}) => {
   },
 };
 
+Map<String, dynamic> _checkinEnvelope(DateTime day, {bool backdated = false}) =>
+    {
+      'code': 0,
+      'message': 'ok',
+      'data': {
+        'success': true,
+        'earned': 5,
+        'checkin_streak': 1,
+        'today_checked': false,
+        'backdated': backdated,
+        'result': _resultJson(day),
+      },
+    };
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -57,18 +60,16 @@ void main() {
     await EasyLocalization.ensureInitialized();
   });
 
-  testWidgets('a past day can be filled in, and the draw targets that day', (
-    tester,
-  ) async {
-    final yesterday = _day(DateTime.now().subtract(const Duration(days: 1)));
-    final requests = <RequestOptions>[];
-
-    final dio = Dio(BaseOptions(baseUrl: 'https://checkin.test'));
+  Future<void> pumpSheet(
+    WidgetTester tester, {
+    required List<RequestOptions> requests,
+  }) async {
+    final dio = Dio(BaseOptions(baseUrl: 'https://community.example'));
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           if (options.method != 'POST' ||
-              !options.path.endsWith('/accounts/me/check-in')) {
+              !options.path.endsWith('/points/checkin')) {
             handler.reject(
               DioException(
                 requestOptions: options,
@@ -78,11 +79,16 @@ void main() {
             return;
           }
           requests.add(options);
+          final raw = options.queryParameters['date'] as String?;
+          final day = raw == null ? _day(DateTime.now()) : DateTime.parse(raw);
           handler.resolve(
             Response(
               requestOptions: options,
               statusCode: 200,
-              data: _resultJson(yesterday, backdatedFrom: DateTime.now()),
+              data: _checkinEnvelope(
+                day,
+                backdated: options.queryParameters.containsKey('date'),
+              ),
             ),
           );
         },
@@ -90,6 +96,14 @@ void main() {
     );
 
     final prefs = await SharedPreferences.getInstance();
+    final session = ApiSession(
+      prefs: prefs,
+      serverUrl: 'https://community.example',
+      dio: dio,
+    );
+    await session.adopt(
+      const LkmTokenPair(accessToken: 'access', refreshToken: 'refresh'),
+    );
     await tester.binding.setSurfaceSize(const Size(420, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -98,14 +112,9 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWith((ref) => prefs),
-            solarNetworkClientProvider.overrideWithValue(
-              SolarNetworkClient.fromDio(dio),
-            ),
+            lkmApiSessionProvider.overrideWithValue(session),
             checkInResultTodayProvider.overrideWith((ref) async => null),
-            eventCalendarProvider.overrideWith(
-              (ref, EventCalendarQuery query) async =>
-                  const <SnEventCalendarEntry>[],
-            ),
+            checkInHistoryProvider.overrideWith((ref, range) async => const {}),
           ],
           child: EasyLocalization(
             supportedLocales: const [Locale('en', 'US')],
@@ -125,9 +134,15 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 200));
     });
     await tester.pumpAndSettle();
+  }
 
-    // Yesterday picked in the strip. The strip shows a handful of days at a
-    // time, so it has to be scrolled back before the tap can land.
+  testWidgets('a past day can be filled in, and the draw targets that day', (
+    tester,
+  ) async {
+    final yesterday = _day(DateTime.now().subtract(const Duration(days: 1)));
+    final requests = <RequestOptions>[];
+    await pumpSheet(tester, requests: requests);
+
     await tester.scrollUntilVisible(
       find.text('${yesterday.day}'),
       240,
@@ -142,8 +157,6 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Draw for this day'), findsOneWidget);
 
-    // The prompt sits below the rail, so it has to be scrolled into reach
-    // before the tap lands on it.
     await tester.ensureVisible(find.text('Draw for this day'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Draw for this day'));
@@ -152,91 +165,24 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(requests, hasLength(1));
     expect(
-      requests.single.queryParameters['backdated'],
-      DateTime.utc(
-        yesterday.year,
-        yesterday.month,
-        yesterday.day,
-      ).toIso8601String(),
+      requests.single.queryParameters['date'],
+      yesterday.toIso8601String().substring(0, 10),
     );
-    // The draw landed on the picked day; today is still undrawn.
     expect(find.byType(FortuneCard), findsOneWidget);
     expect(find.text('Draw for this day'), findsNothing);
     expect(find.text("Draw today's sign"), findsOneWidget);
   });
 
-  testWidgets('today keeps drawing without a backdated parameter', (
-    tester,
-  ) async {
+  testWidgets('today draws without a backdated date', (tester) async {
     final requests = <RequestOptions>[];
-    final dio = Dio(BaseOptions(baseUrl: 'https://checkin.test'));
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          if (options.method != 'POST' ||
-              !options.path.endsWith('/accounts/me/check-in')) {
-            // The draw refreshes the account afterwards; it is not what this
-            // test is about, so it gets an empty answer.
-            handler.resolve(
-              Response(requestOptions: options, statusCode: 200, data: {}),
-            );
-            return;
-          }
-          requests.add(options);
-          handler.resolve(
-            Response(
-              requestOptions: options,
-              statusCode: 200,
-              data: _resultJson(_day(DateTime.now())),
-            ),
-          );
-        },
-      ),
-    );
-
-    final prefs = await SharedPreferences.getInstance();
-    await tester.binding.setSurfaceSize(const Size(420, 900));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-
-    await tester.runAsync(() async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWith((ref) => prefs),
-            solarNetworkClientProvider.overrideWithValue(
-              SolarNetworkClient.fromDio(dio),
-            ),
-            checkInResultTodayProvider.overrideWith((ref) async => null),
-            eventCalendarProvider.overrideWith(
-              (ref, EventCalendarQuery query) async =>
-                  const <SnEventCalendarEntry>[],
-            ),
-          ],
-          child: EasyLocalization(
-            supportedLocales: const [Locale('en', 'US')],
-            path: 'assets/i18n',
-            saveLocale: false,
-            child: Builder(
-              builder: (context) => MaterialApp(
-                locale: const Locale('en', 'US'),
-                supportedLocales: const [Locale('en', 'US')],
-                localizationsDelegates: context.localizationDelegates,
-                home: const Scaffold(body: CheckInScreen()),
-              ),
-            ),
-          ),
-        ),
-      );
-      await Future<void>.delayed(const Duration(milliseconds: 200));
-    });
-    await tester.pumpAndSettle();
+    await pumpSheet(tester, requests: requests);
 
     await tester.tap(find.text("Draw today's sign"));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
     expect(requests, hasLength(1));
-    expect(requests.single.queryParameters.containsKey('backdated'), isFalse);
+    expect(requests.single.queryParameters.containsKey('date'), isFalse);
     expect(find.text("Draw today's sign"), findsNothing);
     expect(find.byType(FortuneCard), findsOneWidget);
   });

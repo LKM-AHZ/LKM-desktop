@@ -7,6 +7,8 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/screens/check_in.dart';
 import 'package:island/core/check_in_debug.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/points_api.dart';
 import 'package:island/core/network.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/route.gr.dart';
@@ -30,11 +32,76 @@ Future<void> showCheckInSheet(
   );
 }
 
+/// Service draw → the SDK-shaped result the check-in UI renders.
+SnCheckInResult snCheckInResultFromApi(LkmCheckInResult result) {
+  final report = result.fortuneReport;
+  return SnCheckInResult(
+    id: result.id,
+    level: result.level,
+    tips: [
+      for (final tip in result.tips)
+        SnFortuneTip(
+          isPositive: tip.isPositive,
+          title: tip.title,
+          content: tip.content,
+        ),
+    ],
+    fortuneReport: SnCheckInFortuneReport(
+      version: report.version,
+      poem: report.poem,
+      summary: report.summary,
+      summaryDetail: report.summaryDetail,
+      wish: report.wish,
+      love: report.love,
+      study: report.study,
+      career: report.career,
+      health: report.health,
+      lostItem: report.lostItem,
+      luckyColor: report.luckyColor,
+      luckyDirection: report.luckyDirection,
+      luckyTime: report.luckyTime,
+      luckyItem: report.luckyItem,
+      luckyAction: report.luckyAction,
+      avoidAction: report.avoidAction,
+      ritual: report.ritual,
+    ),
+    accountId: '',
+    account: null,
+    createdAt: result.createdAt,
+    updatedAt: result.createdAt,
+    deletedAt: null,
+  );
+}
+
 @riverpod
 Future<SnCheckInResult?> checkInResultToday(Ref ref) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.getCheckInResultToday();
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) return null;
+  final result = await session.run(
+    () => PointsApi(session.client).todayCheckin(),
+  );
+  return result == null ? null : snCheckInResultFromApi(result);
 }
+
+/// One month of past draws, keyed by local day.
+final checkInHistoryProvider = FutureProvider.autoDispose
+    .family<Map<DateTime, SnCheckInResult>, ({int year, int month})>((
+      ref,
+      range,
+    ) async {
+      final session = ref.watch(lkmApiSessionProvider);
+      if (!session.isSignedIn) return const {};
+      final items = await session.run(
+        () => PointsApi(
+          session.client,
+        ).checkinHistory(year: range.year, month: range.month),
+      );
+      return {
+        for (final item in items)
+          DateTime(item.date.year, item.date.month, item.date.day):
+              snCheckInResultFromApi(item.result),
+      };
+    });
 
 @riverpod
 Future<SnNotableDay?> nextNotableDay(Ref ref) async {

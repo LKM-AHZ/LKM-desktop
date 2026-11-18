@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/check_in.dart';
-import 'package:island/accounts/event_calendar.dart';
 import 'package:island/accounts/screens/check_in.dart';
 import 'package:island/core/check_in_debug.dart';
 import 'package:island/core/config.dart';
@@ -47,10 +46,7 @@ Future<void> _mount(
         overrides: [
           sharedPreferencesProvider.overrideWith((ref) => prefs),
           checkInResultTodayProvider.overrideWith((ref) async => todayResult),
-          eventCalendarProvider.overrideWith(
-            (ref, EventCalendarQuery query) async =>
-                const <SnEventCalendarEntry>[],
-          ),
+          checkInHistoryProvider.overrideWith((ref, range) async => const {}),
         ],
         child: EasyLocalization(
           supportedLocales: const [Locale('en', 'US')],

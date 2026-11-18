@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:island/accounts/check_in.dart';
-import 'package:island/accounts/event_calendar.dart';
 import 'package:island/accounts/screens/check_in.dart';
 import 'package:island/core/check_in_debug.dart';
 import 'package:island/core/config.dart';
@@ -85,12 +84,17 @@ Future<void> _pump(
           checkInResultTodayProvider.overrideWith(
             (ref) async => readTodayResult(),
           ),
-          eventCalendarProvider.overrideWith((
-            ref,
-            EventCalendarQuery query,
-          ) async {
+          checkInHistoryProvider.overrideWith((ref, range) async {
             onCalendarQuery?.call();
-            return calendar;
+            return {
+              for (final entry in calendar)
+                if (entry.checkInResult != null)
+                  DateTime(
+                    entry.date.year,
+                    entry.date.month,
+                    entry.date.day,
+                  ): entry.checkInResult!,
+            };
           }),
         ],
         child: EasyLocalization(
