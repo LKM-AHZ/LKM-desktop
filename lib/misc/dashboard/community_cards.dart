@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'package:island/community/content_detail_pod.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/exam/exam_pod.dart';

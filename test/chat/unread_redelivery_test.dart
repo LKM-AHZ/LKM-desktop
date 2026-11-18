@@ -225,23 +225,6 @@ Map<String, dynamic> _newMessageFrame(
   };
 }
 
-Map<String, dynamic> _notificationFrame(String id) {
-  final now = DateTime.utc(2026);
-  return {
-    'type': 'notifications.new',
-    'data': SnNotification(
-      id: id,
-      appId: 'app-1',
-      topic: 'posts.reply',
-      title: 'Reply',
-      subtitle: '',
-      body: 'hi',
-      createdAt: now,
-      viewedAt: null,
-      accountId: 'account-1',
-    ).toJson(),
-  };
-}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

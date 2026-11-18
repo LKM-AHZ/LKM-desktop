@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'package:island/community/content_detail_pod.dart';
 import 'package:island/community/user_pod.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/users_api.dart';

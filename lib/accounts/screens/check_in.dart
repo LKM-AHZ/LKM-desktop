@@ -1012,7 +1012,7 @@ class _CheckInContent extends ConsumerWidget {
                                 )))
                                 .asData
                                 ?.value
-                                ?.entries ??
+                                .entries ??
                                 const <MapEntry<DateTime, SnCheckInResult>>[])
                               SnEventCalendarEntry(
                                 date: entry.key,

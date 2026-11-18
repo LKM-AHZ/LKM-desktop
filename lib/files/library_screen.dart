@@ -1,17 +1,12 @@
 import 'package:island/files/categories.dart';
 import 'package:island/core/api/search_api.dart';
-import 'package:island/shared/widgets/content/markdown_remote_image.dart';
 import 'package:mime/mime.dart';
-import 'dart:io';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
@@ -341,30 +336,6 @@ class LibraryFileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FileDetailScreen(id: id);
-}
-
-class _Info extends StatelessWidget {
-  const _Info(this.label, this.value);
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
-          ),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
 }
 
 class _StatusChip extends StatelessWidget {

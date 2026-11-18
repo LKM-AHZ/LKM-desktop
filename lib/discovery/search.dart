@@ -7,7 +7,6 @@ import 'package:island/shared/widgets/app_scaffold.dart';
 import 'package:island/shared/widgets/page_app_bar.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:island/shared/hooks/material_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
@@ -21,12 +20,7 @@ import 'package:island/core/theme.dart';
 import 'package:island/discovery/search_navigation.dart';
 import 'package:island/discovery/widgets/explore_card.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
-import 'package:island/posts/pods/post_list.dart';
-import 'package:island/posts/widgets/compose/filters/post_filter.dart';
-import 'package:island/posts/widgets/compose/post_item.dart';
-import 'package:island/posts/widgets/compose/post_item_skeleton.dart';
 import 'package:island/posts/widgets/compose/post_shared.dart';
-import 'package:island/core/services/responsive.dart';
 import 'package:island/core/utils/text.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/realms/widgets/realm_list.dart';
@@ -34,9 +28,6 @@ import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/empty_state.dart';
 import 'package:island/shared/widgets/extended_refresh_indicator.dart';
-import 'package:island/shared/widgets/pagination_list.dart';
-import 'package:island_ui_foundation/island_ui_foundation.dart'
-    hide isWideScreen;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
@@ -58,9 +49,6 @@ final contentSearchProvider = FutureProvider.autoDispose
 
 /// Step between two floating result cards, matching the explore feed.
 const _kResultGap = kExploreCardGap;
-
-/// Extra gutter the wide result panes add on top of [explorePageGutter].
-const _kWidePaneInset = 12.0;
 
 /// The band this page's pill actually occupies, measured from the top of the
 /// viewport.
