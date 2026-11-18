@@ -3,10 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/content_api.dart';
 
-final contentApiProvider = Provider<ContentApi>((ref) {
-  return ContentApi(ref.watch(lkmApiSessionProvider).client);
-});
-
 /// One content body by id. A missing/unpublished row reads as null.
 final contentItemProvider = FutureProvider.autoDispose
     .family<LkmContentItem?, String>((ref, id) {

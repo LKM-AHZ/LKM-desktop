@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_session.dart';
+import 'package:island/core/api/content_api.dart';
 import 'package:island/core/api/files_api.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/services/udid.dart';
@@ -73,6 +74,11 @@ final lkmApiSessionProvider = Provider<ApiSession>((ref) {
 /// composer and the library screens.
 final filesApiProvider = Provider<FilesApi>((ref) {
   return FilesApi(ref.watch(lkmApiSessionProvider).client);
+});
+
+/// Forum content reads/writes (items, comments, likes, reports).
+final contentApiProvider = Provider<ContentApi>((ref) {
+  return ContentApi(ref.watch(lkmApiSessionProvider).client);
 });
 
 /// Outcome of probing a candidate server before the user commits to it.

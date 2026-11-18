@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/abuse_report_service.dart';
+import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/widgets/content/cloud_file_picker.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
@@ -32,33 +32,40 @@ class TicketCreateSheet extends HookConsumerWidget {
     final isSubmitting = useState<bool>(false);
     final attachments = useState<List<SnCloudFile>>([]);
     final resource = resourceIdentifier?.trim();
-    final resources = (resource == null || resource.isEmpty)
-        ? null
-        : <String?>[resource];
 
     Future<void> submitTicket() async {
       if (titleController.text.trim().isEmpty) {
         showErrorAlert('Title is required');
         return;
       }
+      final target = _parseReportTarget(resource);
+      if (target == null) {
+        showErrorAlert('Unsupported report target: $resource');
+        return;
+      }
 
       isSubmitting.value = true;
 
       try {
-        await ref
-            .read(ticketServiceProvider)
-            .createTicket(
-              title: titleController.text.trim(),
-              content: contentController.text.trim().isEmpty
-                  ? null
-                  : contentController.text.trim(),
-              type: selectedType.value.value,
-              priority: selectedPriority.value.value,
-              fileIds: attachments.value.isEmpty
-                  ? null
-                  : attachments.value.map((e) => e.id).toList(),
-              resources: resources,
-            );
+        final details = [
+          titleController.text.trim(),
+          if (contentController.text.trim().isNotEmpty)
+            contentController.text.trim(),
+          'type: ${selectedType.value.displayName}',
+          'priority: ${selectedPriority.value.displayName}',
+          if (attachments.value.isNotEmpty)
+            'attachments: ${attachments.value.map((e) => e.id).join(', ')}',
+        ].join('\n');
+        final session = ref.read(lkmApiSessionProvider);
+        await session.run(
+          () => ref.read(contentApiProvider).report(
+            targetType: target.$1,
+            targetId: target.$2,
+            reason: details.length > 200
+                ? details.substring(0, 200)
+                : details,
+          ),
+        );
 
         if (context.mounted) {
           Navigator.of(context).pop();
@@ -522,6 +529,23 @@ Color _priorityColor(ColorScheme colorScheme, TicketPriority priority) {
     default:
       return colorScheme.outline;
   }
+}
+
+/// Maps the legacy Solar resource identifier onto the report target the
+/// service accepts: `post:<id>` for content, `account/<id>` for a user.
+(String, String)? _parseReportTarget(String? raw) {
+  final value = raw?.trim();
+  if (value == null || value.isEmpty) return null;
+  if (value.startsWith('post:')) {
+    final id = value.substring(5).trim();
+    return id.isEmpty ? null : ('post', id);
+  }
+  const accountPrefix = 'account/';
+  if (value.startsWith(accountPrefix)) {
+    final id = value.substring(accountPrefix.length).trim();
+    return id.isEmpty ? null : ('user', id);
+  }
+  return null;
 }
 
 /// Backward compatibility alias
