@@ -847,7 +847,7 @@ class _PostDetailSheet extends StatelessWidget {
         FilledButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
-            context.router.push(PostDetailRoute(id: post.id));
+            context.router.push(ContentDetailRoute(id: post.id));
           },
           icon: const Icon(Symbols.open_in_full, size: 18),
           label: const Text('openFullPost').tr(),

@@ -375,7 +375,7 @@ class PublisherCollectionDetailSheet extends ConsumerWidget {
                     child: PostActionableItem(
                       onTap: () {
                         onDismiss();
-                        context.router.push(PostDetailRoute(id: post.id));
+                        context.router.push(ContentDetailRoute(id: post.id));
                       },
                       item: post,
                       isFullPost: false,

@@ -8,7 +8,6 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/posts/pods/post_list.dart';
 import 'package:island/posts/widgets/compose/post_featured.dart';
-import 'package:island/posts/screens/compose_blog.dart';
 import 'package:island/posts/compose.dart';
 import 'package:island/posts/widgets/compose/filters/post_subscription_filter.dart';
 import 'package:island/posts/screens/post_detail.dart';
@@ -277,7 +276,7 @@ class ExploreScreen extends HookConsumerWidget {
     // reads in the side pane next to the feed.
     void openPost(SnPost post) {
       if (post.type == 1 || post.type == 2) {
-        context.router.push(PostDetailRoute(id: post.id));
+        context.router.push(ContentDetailRoute(id: post.id));
         return;
       }
       detailPostId.value = post.id;
@@ -340,7 +339,7 @@ class ExploreScreen extends HookConsumerWidget {
             barTrailing: trailingActions,
             feed: feed,
             onOpenFullPage: (id) =>
-                context.router.push(PostDetailRoute(id: id)),
+                context.router.push(ContentDetailRoute(id: id)),
             // Reference posts and replies tapped inside the pane swap the
             // pane's own content; only the feed's first open picks between
             // the pane and a full-page article/blog route.
@@ -385,33 +384,6 @@ class ExploreScreen extends HookConsumerWidget {
                   if (id != null && parentContext.mounted) {
                     parentContext.router.push(ContentDetailRoute(id: id));
                   }
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.post_add_rounded),
-                title: Text('postCompose'.tr()),
-                onTap: () async {
-                  Navigator.of(sheetContext).pop();
-                  await PostComposeScreen.show(parentContext);
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.article),
-                title: Text('articleCompose'.tr()),
-                onTap: () async {
-                  Navigator.of(sheetContext).pop();
-                  await context.router.push(ArticleComposeRoute());
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.docs),
-                title: Text('linkBlog'.tr()),
-                onTap: () async {
-                  Navigator.of(sheetContext).pop();
-                  await BlogComposeDialog.show(parentContext);
                 },
               ),
               const Gap(16),
@@ -522,7 +494,7 @@ class ExploreScreen extends HookConsumerWidget {
                 title: Text('contribution.title'.tr()),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
-                  context.router.push(PointsRoute());
+                  context.router.push(ProgressRoute());
                 },
               ),
               ListTile(

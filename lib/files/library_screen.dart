@@ -11,7 +11,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/files_api.dart';
-import 'package:island/drive/files/file_detail.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
@@ -254,7 +253,7 @@ class LibraryScreen extends HookConsumerWidget {
                                   title: Text(hit.title),
                                   subtitle: Text(hit.excerpt),
                                   onTap: () => context.router.push(
-                                    LibraryFileRoute(id: hit.id),
+                                    FileDetailRoute(id: hit.id),
                                   ),
                                 ),
                             ],
@@ -275,7 +274,7 @@ class LibraryScreen extends HookConsumerWidget {
                           ),
                           trailing: _StatusChip(status: file.status),
                           onTap: () => context.router.push(
-                            LibraryFileRoute(id: file.id),
+                            FileDetailRoute(id: file.id),
                           ),
                         );
                         if (grid.value) {
@@ -323,19 +322,6 @@ class LibraryScreen extends HookConsumerWidget {
       ),
     );
   }
-}
-
-@RoutePage()
-/// Legacy route kept for deep links; the implementation lives in the file
-/// detail screen.
-@RoutePage()
-class LibraryFileScreen extends StatelessWidget {
-  const LibraryFileScreen({super.key, required this.id});
-
-  final String id;
-
-  @override
-  Widget build(BuildContext context) => FileDetailScreen(id: id);
 }
 
 class _StatusChip extends StatelessWidget {

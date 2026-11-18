@@ -66,7 +66,7 @@ class MyFollowScreen extends ConsumerWidget {
                             child: Text('authFlow.unfollow'.tr()),
                           ),
                           onTap: () => context.router.push(
-                            UserProfileRoute(id: user.userId),
+                            AccountProfileRoute(name: '', id: user.userId),
                           ),
                         ),
                     ],

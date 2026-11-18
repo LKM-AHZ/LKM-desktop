@@ -1224,7 +1224,7 @@ class CompactPostRow extends ConsumerWidget {
         if (onPostTap != null) {
           onPostTap!(post.id);
         } else {
-          context.router.push(PostDetailRoute(id: post.id));
+          context.router.push(ContentDetailRoute(id: post.id));
         }
       },
       child: Column(
@@ -1563,7 +1563,7 @@ class ReferencedPostWidget extends HookConsumerWidget {
         if (onPostTap != null) {
           onPostTap!(referencePost.id);
         } else {
-          context.router.push(PostDetailRoute(id: referencePost.id));
+          context.router.push(ContentDetailRoute(id: referencePost.id));
         }
       },
       child: content,

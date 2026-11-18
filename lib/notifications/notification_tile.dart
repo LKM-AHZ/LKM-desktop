@@ -207,7 +207,7 @@ class NotificationTile extends ConsumerWidget {
             FeedRouteKind.content => ContentDetailRoute(id: feedTarget.id),
             FeedRouteKind.qa => QaDetailRoute(id: feedTarget.id),
             FeedRouteKind.project => ProjectDetailRoute(id: feedTarget.id),
-            FeedRouteKind.file => LibraryFileRoute(id: feedTarget.id),
+            FeedRouteKind.file => FileDetailRoute(id: feedTarget.id),
             FeedRouteKind.treehole => const TreeholeRoute(),
           });
           return;

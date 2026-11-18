@@ -62,14 +62,20 @@ final profileUserIdByNameProvider = FutureProvider.autoDispose
 @RoutePage()
 class AccountProfileScreen extends HookConsumerWidget {
   final String name;
+  final String? id;
 
   const AccountProfileScreen({
     super.key,
     @PathParam('name') required this.name,
+    @QueryParam('id') this.id,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final explicitId = id;
+    if (explicitId != null && explicitId.isNotEmpty) {
+      return AccountProfileView(userId: explicitId);
+    }
     final userId = ref.watch(profileUserIdByNameProvider(name));
     return userId.when(
       loading: () => AppScaffold(

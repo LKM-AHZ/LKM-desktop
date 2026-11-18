@@ -503,7 +503,7 @@ class _LeaderboardRow extends StatelessWidget {
     return ListTile(
       onTap: entry.userId.isEmpty
           ? null
-          : () => context.router.push(UserProfileRoute(id: entry.userId)),
+          : () => context.router.push(AccountProfileRoute(name: '', id: entry.userId)),
       leading: SizedBox(
         width: 40,
         child: Center(

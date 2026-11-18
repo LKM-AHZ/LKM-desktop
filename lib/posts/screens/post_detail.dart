@@ -1161,7 +1161,7 @@ class _PostNeighborCard extends StatelessWidget {
         onTap: postItem == null
             ? null
             : () {
-                context.router.replace(PostDetailRoute(id: postItem.id));
+                context.router.replace(ContentDetailRoute(id: postItem.id));
               },
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -1427,7 +1427,7 @@ class _PostThreadSheetState extends ConsumerState<_PostThreadSheet> {
                     isTextSelectable: false,
                     padding: EdgeInsets.zero,
                     onPostTap: (id) =>
-                        context.router.push(PostDetailRoute(id: id)),
+                        context.router.push(ContentDetailRoute(id: id)),
                   ),
                   if (isCurrent)
                     Padding(
@@ -2107,7 +2107,7 @@ class _PostDetailLargeScreenLayout extends HookConsumerWidget {
                                               posts: preceding,
                                               onPostTap: (id) =>
                                                   context.router.push(
-                                                    PostDetailRoute(id: id),
+                                                    ContentDetailRoute(id: id),
                                                   ),
                                             ),
                                           PostHeader(
@@ -2255,7 +2255,7 @@ class _PostDetailLargeScreenLayout extends HookConsumerWidget {
                                               children: following,
                                               onPostTap: (id) =>
                                                   context.router.push(
-                                                    PostDetailRoute(id: id),
+                                                    ContentDetailRoute(id: id),
                                                   ),
                                             ).padding(top: 8, bottom: 8),
                                           if (post.realm != null)
@@ -2497,7 +2497,7 @@ class _ArticleDetailLayout extends HookConsumerWidget {
                 PostChainPrecedingSection(
                   posts: precedingChain,
                   onPostTap: (id) =>
-                      context.router.push(PostDetailRoute(id: id)),
+                      context.router.push(ContentDetailRoute(id: id)),
                 ),
               PostHeader(
                 item: post,
@@ -2543,7 +2543,7 @@ class _ArticleDetailLayout extends HookConsumerWidget {
                   head: post,
                   children: followingChain,
                   onPostTap: (id) =>
-                      context.router.push(PostDetailRoute(id: id)),
+                      context.router.push(ContentDetailRoute(id: id)),
                 ).padding(top: 12),
               if (post.publisherCollections.isNotEmpty)
                 Padding(
@@ -2939,7 +2939,7 @@ class _BlogPostDetailLayout extends HookConsumerWidget {
                                     PostChainPrecedingSection(
                                       posts: precedingChain,
                                       onPostTap: (id) => context.router.push(
-                                        PostDetailRoute(id: id),
+                                        ContentDetailRoute(id: id),
                                       ),
                                     ),
                                   PostHeader(
@@ -2967,7 +2967,7 @@ class _BlogPostDetailLayout extends HookConsumerWidget {
                                       head: post,
                                       children: followingChain,
                                       onPostTap: (id) => context.router.push(
-                                        PostDetailRoute(id: id),
+                                        ContentDetailRoute(id: id),
                                       ),
                                     ).padding(top: 8, bottom: 8),
                                   if (post.publisherCollections.isNotEmpty)
@@ -3267,7 +3267,7 @@ class PostDetailAttentionModal extends StatelessWidget {
         IconButton(
           onPressed: () {
             onDismiss();
-            context.router.push(PostDetailRoute(id: id));
+            context.router.push(ContentDetailRoute(id: id));
           },
           icon: const Icon(Symbols.open_in_new),
           tooltip: 'open'.tr(),
@@ -3796,8 +3796,9 @@ final contentCommentsProvider = AsyncNotifierProvider.autoDispose
 
 /// Native content detail: body over GraphQL, comments over GraphQL, posting
 /// over the REST write endpoint.
-class ContentDetailPane extends HookConsumerWidget {
-  const ContentDetailPane({super.key, required this.id});
+@RoutePage()
+class ContentDetailScreen extends HookConsumerWidget {
+  const ContentDetailScreen({super.key, @PathParam('id') required this.id});
 
   final String id;
 
@@ -3949,7 +3950,7 @@ class _DetailBody extends HookConsumerWidget {
                       onTap: item.authorId == null
                           ? null
                           : () => context.router.push(
-                              UserProfileRoute(id: item.authorId!),
+                              AccountProfileRoute(name: '', id: item.authorId!),
                             ),
                       child: Text(
                         item.authorName,
@@ -4274,7 +4275,7 @@ class _CommentTile extends StatelessWidget {
                   onTap: comment.authorId.isEmpty
                       ? null
                       : () => context.router.push(
-                          UserProfileRoute(id: comment.authorId),
+                          AccountProfileRoute(name: '', id: comment.authorId),
                         ),
                   child: Text(
                     comment.authorName,
@@ -4389,7 +4390,6 @@ class _ErrorView extends StatelessWidget {
 
 String _formatDate(DateTime date) => date.toIso8601String().substring(0, 10);
 
-@RoutePage()
 class PostDetailScreen extends HookConsumerWidget {
   final String id;
 

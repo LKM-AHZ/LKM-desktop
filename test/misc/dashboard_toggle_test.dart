@@ -482,7 +482,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     await _pumpApp(tester, const {});
-    _router.push(PostDetailRoute(id: 'abc'));
+    _router.push(ContentDetailRoute(id: 'abc'));
     await tester.pumpAndSettle();
 
     // No tab to switch to up here: the route is navigated, which pops back to

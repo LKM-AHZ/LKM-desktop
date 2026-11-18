@@ -47,7 +47,7 @@ final class CheckInResultTodayProvider
 }
 
 String _$checkInResultTodayHash() =>
-    r'a8ae63f1da538ce9e2e2aabcedd0958eced9975d';
+    r'afe4248fe4386e7d5d24087416c994d4266b067d';
 
 @ProviderFor(nextNotableDay)
 final nextNotableDayProvider = NextNotableDayProvider._();

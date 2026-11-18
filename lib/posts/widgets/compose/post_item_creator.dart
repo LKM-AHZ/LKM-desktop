@@ -132,7 +132,7 @@ class PostItemCreator extends HookConsumerWidget {
               return;
             }
             if (isOpenable) {
-              context.router.push(PostDetailRoute(id: item.id));
+              context.router.push(ContentDetailRoute(id: item.id));
             }
           },
           child: Column(

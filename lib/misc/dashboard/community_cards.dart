@@ -180,7 +180,7 @@ class PersonalDashboardCard extends ConsumerWidget {
               leading: const Icon(Symbols.paid),
               title: Text(data == null ? '—' : '${data.balance}'),
               subtitle: Text('contribution.currentPoints'.tr()),
-              onTap: () => context.router.push(const PointsRoute()),
+              onTap: () => context.router.push(ProgressRoute()),
             ),
           ),
           _DashboardValue(
@@ -223,7 +223,7 @@ class DashboardLeaderboardCard extends ConsumerWidget {
       title: 'home.leaderboard'.tr(),
       icon: Symbols.bar_chart,
       onRefresh: () => ref.invalidate(provider),
-      onOpen: () => context.router.push(const PointsRoute()),
+      onOpen: () => context.router.push(ProgressRoute()),
       child: _DashboardValue(
         value: ref.watch(provider),
         onRetry: () => ref.invalidate(provider),
@@ -241,7 +241,7 @@ class DashboardLeaderboardCard extends ConsumerWidget {
                       ),
                       trailing: Text('${user.balance}'),
                       onTap: () => context.router.push(
-                        UserProfileRoute(id: user.userId),
+                        AccountProfileRoute(name: '', id: user.userId),
                       ),
                     ),
                 ],

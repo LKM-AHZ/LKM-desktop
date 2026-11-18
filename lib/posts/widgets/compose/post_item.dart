@@ -522,7 +522,7 @@ class PostActionableItem extends HookConsumerWidget {
               return;
             }
             onOpen?.call();
-            context.router.push(PostDetailRoute(id: item.id));
+            context.router.push(ContentDetailRoute(id: item.id));
           },
         ),
       ),
@@ -960,7 +960,7 @@ class _ForwardedReferenceCard extends HookConsumerWidget {
                 if (onPostTap != null) {
                   onPostTap!(referencePost.id);
                 } else {
-                  context.router.push(PostDetailRoute(id: referencePost.id));
+                  context.router.push(ContentDetailRoute(id: referencePost.id));
                 }
               },
               child: Column(

@@ -39,7 +39,7 @@ class AppRouter extends RootStackRouter {
     // Other standalone routes
     AutoRoute(page: ContentDetailRoute.page, path: '/content/:id'),
     AutoRoute(page: TreeholeRoute.page, path: '/treehole'),
-    AutoRoute(page: PointsRoute.page, path: '/points'),
+    AutoRoute(page: ProgressRoute.page, path: '/points'),
     AutoRoute(page: ExamAttemptRoute.page, path: '/exam/attempt'),
     AutoRoute(page: ExamDetailRoute.page, path: '/exam/:id'),
     AutoRoute(page: ExamHallRoute.page, path: '/exam'),
@@ -49,7 +49,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ColumnDetailRoute.page, path: '/hub/columns/:id'),
     AutoRoute(page: ProjectDetailRoute.page, path: '/hub/projects/:id'),
     AutoRoute(page: BoardDetailRoute.page, path: '/hub/boards/:id'),
-    AutoRoute(page: UserProfileRoute.page, path: '/community/users/:id'),
     AutoRoute(page: SettingsRoute.page, path: '/settings'),
     AutoRoute(page: MyContentRoute.page, path: '/my/content'),
     AutoRoute(page: MyFollowRoute.page, path: '/my/following'),
@@ -67,7 +66,6 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: StarHopeRoute.page, path: '/starhope'),
     AutoRoute(page: LibraryRoute.page, path: '/library/files'),
-    AutoRoute(page: LibraryFileRoute.page, path: '/library/files/:id'),
     AutoRoute(page: AiConsoleRoute.page, path: '/thoughts/console'),
     AutoRoute(
       page: ChatRoomStorageRoute.page,
@@ -85,7 +83,6 @@ class AppRouter extends RootStackRouter {
       page: PostCategoryDetailRoute.page,
       path: '/posts/categories/:slug',
     ),
-    AutoRoute(page: PostDetailRoute.page, path: '/posts/:id'),
     AutoRoute(page: DraftBoxRoute.page, path: '/drafts'),
     AutoRoute(page: BookmarksRoute.page, path: '/bookmarks'),
     AutoRoute(page: PublisherProfileRoute.page, path: '/publishers/:name'),
@@ -119,13 +116,6 @@ class AppRouter extends RootStackRouter {
           page: DashboardRoute.page,
           path: '',
           initial: true,
-          maintainState: false,
-        ),
-
-        // Community tab (LKM-service timeline)
-        AutoRoute(
-          page: CommunityFeedRoute.page,
-          path: 'community',
           maintainState: false,
         ),
 
@@ -189,7 +179,6 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: StoreRoute.page, path: 'me/store'),
             AutoRoute(page: AccountSettingsRoute.page, path: 'me/settings'),
             AutoRoute(page: AccountQrRoute.page, path: 'me/qr'),
-            AutoRoute(page: ProgressRoute.page, path: 'me/progress'),
             AutoRoute(page: ActionLogsRoute.page, path: 'me/action-logs'),
             AutoRoute(
               page: PhysicalPassportRoute.page,

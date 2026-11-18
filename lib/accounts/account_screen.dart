@@ -153,7 +153,7 @@ class _LkmAccountPage extends HookConsumerWidget {
           _ProfileHeader(
             account: account,
             onAvatarTap: () =>
-                context.router.push(UserProfileRoute(id: account.id)),
+                context.router.push(AccountProfileRoute(name: '', id: account.id)),
           ),
           const Divider(height: 24),
           ListTile(
@@ -282,7 +282,7 @@ class _LkmAccountPage extends HookConsumerWidget {
                           title: Text(user.displayName),
                           trailing: const Icon(Symbols.chevron_right),
                           onTap: () => context.router.push(
-                            UserProfileRoute(id: user.userId),
+                            AccountProfileRoute(name: '', id: user.userId),
                           ),
                         ),
                     ],
