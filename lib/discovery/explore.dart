@@ -17,6 +17,8 @@ import 'package:island/posts/widgets/compose/post_shared.dart';
 import 'package:island/posts/widgets/publishers/publisher_card.dart';
 import 'package:island/posts/posts_pod.dart';
 import 'package:island/accounts/account_pod.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/timeline_api.dart';
 import 'package:island/core/services/responsive.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/realms/widgets/realm_card.dart';
@@ -31,6 +33,12 @@ import 'package:island/discovery/widgets/discovery_feedback_widget.dart';
 import 'package:island/discovery/widgets/explore_card.dart';
 import 'package:island/discovery/widgets/explore_config_sheet.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
+import 'package:island/community/compose_sheet.dart';
+import 'package:island/community/widgets/feed_item_card.dart';
+import 'package:island/discovery/search_navigation.dart';
+import 'package:island/notifications/notification.dart';
+import 'package:island/shared/widgets/attention_modal.dart';
+import 'package:island/shared/widgets/response.dart';
 import 'package:island/discovery/widgets/friend_presence_strip.dart';
 import 'package:island/discovery/widgets/friend_presence_widgets.dart';
 import 'package:island/discovery/widgets/subscribed_publishers_strip.dart';
@@ -40,6 +48,125 @@ import 'package:island/posts/widgets/compose/post_list.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/theme.dart';
+
+/// The timeline client for the configured server.
+///
+/// Kept separate from the session so tests can swap the transport while the
+/// notifier's cursor bookkeeping stays under test.
+final timelineApiProvider = Provider<TimelineApi>((ref) {
+  return TimelineApi(ref.watch(lkmApiSessionProvider).client);
+});
+
+class CommunityFeedState {
+  const CommunityFeedState({
+    required this.mode,
+    required this.items,
+    this.nextCursor,
+    this.loadingMore = false,
+    this.loadMoreError,
+  });
+
+  /// `follow` or `hot`.
+  final String mode;
+  final List<FeedItem> items;
+  final String? nextCursor;
+  final bool loadingMore;
+
+  /// Failure of a further-page request, kept beside the list so one bad page
+  /// does not blank out the entries already on screen.
+  final String? loadMoreError;
+
+  bool get hasMore => nextCursor != null;
+
+  CommunityFeedState copyWith({
+    List<FeedItem>? items,
+    String? nextCursor,
+    bool clearNextCursor = false,
+    bool? loadingMore,
+    String? loadMoreError,
+    bool clearLoadMoreError = false,
+  }) => CommunityFeedState(
+    mode: mode,
+    items: items ?? this.items,
+    nextCursor: clearNextCursor ? null : (nextCursor ?? this.nextCursor),
+    loadingMore: loadingMore ?? this.loadingMore,
+    loadMoreError: clearLoadMoreError
+        ? null
+        : (loadMoreError ?? this.loadMoreError),
+  );
+}
+
+/// Cursor-paginated timeline. The first page follows the session: follow when
+/// signed in, hot otherwise — the service returns an empty follow feed to
+/// anonymous callers.
+class CommunityFeedNotifier extends AsyncNotifier<CommunityFeedState> {
+  static const int pageSize = 20;
+
+  @override
+  Future<CommunityFeedState> build() {
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    return _firstPage(signedIn ? 'follow' : 'hot');
+  }
+
+  Future<FeedPage> _fetch({required String mode, String? cursor}) {
+    final session = ref.read(lkmApiSessionProvider);
+    final api = ref.read(timelineApiProvider);
+    return session.run(
+      () => api.timeline(mode: mode, cursor: cursor, limit: pageSize),
+    );
+  }
+
+  Future<CommunityFeedState> _firstPage(String mode) async {
+    final page = await _fetch(mode: mode);
+    return CommunityFeedState(
+      mode: mode,
+      items: page.items,
+      nextCursor: page.nextCursor,
+    );
+  }
+
+  Future<void> switchMode(String mode) async {
+    if (state.value?.mode == mode) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _firstPage(mode));
+  }
+
+  Future<void> refresh() async {
+    final mode = state.value?.mode ?? 'hot';
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _firstPage(mode));
+  }
+
+  Future<void> loadMore() async {
+    final current = state.value;
+    if (current == null || current.loadingMore || !current.hasMore) return;
+
+    state = AsyncData(
+      current.copyWith(loadingMore: true, clearLoadMoreError: true),
+    );
+    try {
+      final page = await _fetch(mode: current.mode, cursor: current.nextCursor);
+      state = AsyncData(
+        current.copyWith(
+          items: [...current.items, ...page.items],
+          nextCursor: page.nextCursor,
+          clearNextCursor: page.nextCursor == null,
+          loadingMore: false,
+        ),
+      );
+    } catch (error) {
+      state = AsyncData(
+        current.copyWith(loadingMore: false, loadMoreError: '$error'),
+      );
+    }
+  }
+}
+
+final communityFeedProvider =
+    AsyncNotifierProvider.autoDispose<
+      CommunityFeedNotifier,
+      CommunityFeedState
+    >(CommunityFeedNotifier.new);
 
 @RoutePage()
 class ExploreScreen extends HookConsumerWidget {
@@ -254,6 +381,23 @@ class ExploreScreen extends HookConsumerWidget {
               const Gap(40),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.forum),
+                title: Text('lkmComposeTitle'.tr()),
+                onTap: () async {
+                  Navigator.of(sheetContext).pop();
+                  final id = await showModalBottomSheet<String>(
+                    context: parentContext,
+                    isScrollControlled: true,
+                    useRootNavigator: true,
+                    builder: (_) => const LkmComposeSheet(),
+                  );
+                  if (id != null && parentContext.mounted) {
+                    parentContext.router.push(ContentDetailRoute(id: id));
+                  }
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                 leading: const Icon(Symbols.post_add_rounded),
                 title: Text('postCompose'.tr()),
                 onTap: () async {
@@ -335,6 +479,66 @@ class ExploreScreen extends HookConsumerWidget {
                   'explore'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.forest),
+                title: Text('treehole'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(TreeholeRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.emoji_events),
+                title: Text('contribution.title'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(PointsRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.widgets),
+                title: Text('hub.title'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(HubRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.trophy),
+                title: Text('exam.title'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(ExamHallRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.search),
+                title: Text('search'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  openUniversalSearch(context, tab: SearchTab.posts);
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.notifications),
+                title: Text('notifications'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  showAttentionModal(
+                    id: 'notifications',
+                    replaceIfExists: true,
+                    barrierDismissible: true,
+                    builder: (context, dismiss) =>
+                        NotificationModal(onDismiss: dismiss),
+                  );
+                },
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -445,23 +649,81 @@ class ExploreScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildActivityList(
-    BuildContext context,
-    WidgetRef ref, {
-    void Function(SnPost)? onOpenPost,
-  }) {
-    return PaginationWidget(
-      provider: activityListProvider,
-      notifier: activityListProvider.notifier,
-      isRefreshable: false,
-      isSliver: true,
-      footerSkeletonChild: const SizedBox(
-        height: 64,
-        child: Center(child: ConfuseSpinner(size: 40, speed: 6)),
+  /// The default timeline: the service's cross-source feed. Filtered modes
+  /// still use the post list below; the unfiltered view is the merged home
+  /// feed.
+  Widget _buildServiceFeed(BuildContext context, WidgetRef ref) {
+    final feed = ref.watch(communityFeedProvider);
+    final notifier = ref.read(communityFeedProvider.notifier);
+    final gutter = explorePageGutter(context);
+
+    return feed.when(
+      loading: () => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: ConfuseSpinner(
+            speed: 7,
+            size: 72,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant.withOpacity(0.65),
+          ),
+        ),
       ),
-      contentBuilder: (data, footer) =>
-          _ActivityListView(data: data, footer: footer, onOpenPost: onOpenPost),
+      error: (error, _) => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('$error', textAlign: TextAlign.center),
+              TextButton(
+                onPressed: notifier.refresh,
+                child: Text('retry'.tr()),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (state) => SliverPadding(
+        padding: gutter,
+        sliver: SliverList.separated(
+          itemCount: state.items.length + (state.hasMore ? 1 : 0),
+          separatorBuilder: (_, _) => const Gap(kExploreCardGap),
+          itemBuilder: (context, index) {
+            if (index >= state.items.length) {
+              return Center(
+                child: state.loadingMore
+                    ? const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : TextButton(
+                        onPressed: notifier.loadMore,
+                        child: Text('feedLoadMore'.tr()),
+                      ),
+              );
+            }
+            final item = state.items[index];
+            return FeedItemCard(
+              item: item,
+              onTap: () => _openFeedItem(context, item),
+            );
+          },
+        ),
+      ),
     );
+  }
+
+  void _openFeedItem(BuildContext context, FeedItem item) {
+    switch (item.itemType) {
+      case 'qa':
+        context.router.push(QaDetailRoute(id: item.id));
+      case 'project':
+        context.router.push(ProjectDetailRoute(id: item.id));
+      default:
+        context.router.push(ContentDetailRoute(id: item.id));
+    }
   }
 
   Widget _buildPostList(
@@ -532,10 +794,9 @@ class ExploreScreen extends HookConsumerWidget {
         isWide &&
         isExploreTab &&
         (ref.watch(featuredPostsProvider).value?.isNotEmpty == true);
-    final activityState = ref.watch(activityListProvider);
+    final activityState = ref.watch(communityFeedProvider);
     final isListInitialLoading =
-        (activityState.isLoading || activityState.value?.isLoading == true) &&
-        (activityState.value?.items.isEmpty ?? true);
+        activityState.isLoading && (activityState.value?.items.isEmpty ?? true);
 
     Future<void> refreshTimeline() async {
       // The publisher live list only exists while its quick pick is on screen
@@ -546,7 +807,7 @@ class ExploreScreen extends HookConsumerWidget {
         await ref.read(publishersSubscriptionsLiveProvider.notifier).refresh();
       }
       if (!usePostList) {
-        await ref.read(activityListProvider.notifier).refresh();
+        await ref.read(communityFeedProvider.notifier).refresh();
       }
     }
 
@@ -636,14 +897,7 @@ class ExploreScreen extends HookConsumerWidget {
                 ),
               )
             else
-              SliverPadding(
-                padding: gutter,
-                sliver: _buildActivityList(
-                  context,
-                  ref,
-                  onOpenPost: onOpenPost,
-                ),
-              ),
+              _buildServiceFeed(context, ref),
             // The tab shell floats the NavigationBar over the page, so reserve
             // its height or the last card stays underneath the bar.
             SliverGap(MediaQuery.paddingOf(context).bottom + kExploreCardGap),
@@ -1416,110 +1670,6 @@ class AccountDiscoveryCard extends ConsumerWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
       child: card,
-    );
-  }
-}
-
-class _ActivityListView extends HookConsumerWidget {
-  final List<SnTimelineEvent> data;
-  final Widget footer;
-  final void Function(SnPost)? onOpenPost;
-
-  const _ActivityListView({
-    required this.data,
-    required this.footer,
-    this.onOpenPost,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(activityListProvider.notifier);
-
-    return SuperSliverList.separated(
-      itemCount: data.length + 1,
-      // Cards own their boundary; the feed separates them with one gap instead
-      // of a horizontal rule.
-      separatorBuilder: (_, _) => const Gap(kExploreCardGap),
-      itemBuilder: (context, index) {
-        if (index == data.length) {
-          return footer;
-        }
-
-        final item = data[index];
-        if (item.data == null) {
-          return const SizedBox.shrink();
-        }
-        Widget itemWidget;
-
-        switch (item.type) {
-          case 'posts.new':
-          case 'posts.new.replies':
-            final postData = item.data!;
-            final postJson = postData is Map<String, dynamic>
-                ? postData
-                : (postData as Map).cast<String, dynamic>();
-            final post = SnPost.fromJson(postJson);
-
-            itemWidget = PostRowSurface(
-              child: PostActionableItem(
-                padding: const EdgeInsets.fromLTRB(
-                  SolSpace.lg,
-                  SolSpace.md + 2,
-                  SolSpace.lg,
-                  SolSpace.md,
-                ),
-                item: post,
-                onRefresh: () {
-                  notifier.refresh();
-                },
-                onUpdate: (updatedPost) {
-                  notifier.updateOne(
-                    index,
-                    item.copyWith(data: updatedPost.toJson()),
-                  );
-                },
-                onTap: onOpenPost != null ? () => onOpenPost!(post) : null,
-              ),
-            );
-            break;
-          case 'discovery':
-          case 'discovery.v2':
-            // Discovery sections carry their own card (they own a header plus
-            // a row of suggestion cards inside it).
-            itemWidget = _DiscoveryActivityItem(
-              data: item.data!,
-              eventType: item.type,
-              resourceIdentifier: item.resourceIdentifier,
-            );
-            break;
-          case 'presence.friend':
-            final rawData = asStringKeyedMap(item.data);
-            final activityJson = normalizePresenceActivityJson(
-              asStringKeyedMap(rawData['activity']),
-            );
-            final activity = SnPresenceActivity.fromJson(activityJson);
-            itemWidget = PostRowSurface(
-              child: FriendPresenceItem(activity: activity, rawData: rawData),
-            );
-            break;
-          case 'status.friend':
-            final statusJson = normalizeStatusJson(
-              asStringKeyedMap(asStringKeyedMap(item.data)['status']),
-            );
-            final status = SnAccountStatus.fromJson(statusJson);
-            itemWidget = PostRowSurface(
-              child: FriendStatusItem(
-                status: status,
-                createdAt: item.createdAt,
-              ),
-            );
-            break;
-          default:
-            itemWidget = const SizedBox.shrink();
-        }
-
-        return itemWidget;
-      },
     );
   }
 }
