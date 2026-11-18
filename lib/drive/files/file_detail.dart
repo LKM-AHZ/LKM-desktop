@@ -1,38 +1,42 @@
-import 'dart:ui';
+import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island_ui_foundation/island_ui_foundation.dart'
-    show DraggableOverlaySheet;
-import 'package:island/accounts/account_pod.dart';
-import 'package:island/accounts/widgets/account/account_name.dart';
-import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
-import 'package:island/core/services/responsive.dart';
-import 'package:island/drive/file_permissions.dart';
-import 'package:solar_network_foundation/solar_network_foundation.dart';
-import 'package:island/drive/widgets/cloud_files.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/files_api.dart';
 import 'package:island/posts/widgets/compose/post_item.dart';
 import 'package:island/route.gr.dart';
+import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
-import 'package:island/core/widgets/content/file_action_button.dart';
-import 'package:island/core/widgets/content/file_info_sheet.dart';
-import 'package:island/core/widgets/content/file_viewer_contents.dart';
+import 'package:island/shared/widgets/content/image.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mime/mime.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-final fileAuthorProvider = FutureProvider.family<SnAccount, String>((
+final fileDetailProvider = FutureProvider.autoDispose.family<LkmFile, String>((
   ref,
-  accountId,
-) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return client.accounts.getAccountById(accountId);
+  id,
+) {
+  final session = ref.watch(lkmApiSessionProvider);
+  return session.run(() => ref.watch(filesApiProvider).file(id));
 });
 
+final fileVersionsProvider = FutureProvider.autoDispose
+    .family<List<LkmFile>, String>((ref, id) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(() => ref.watch(filesApiProvider).versions(id));
+    });
+
+/// The file detail surface: library metadata, inline preview, downloads and
+/// version history, plus the source post when the file was opened from one.
 @RoutePage()
 class FileDetailScreen extends HookConsumerWidget {
   final String id;
@@ -48,544 +52,319 @@ class FileDetailScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final serverUrl = ref.watch(serverUrlProvider);
-    final isWide = isWideScreen(context);
-    final currentUser = ref.watch(userInfoProvider).value;
-    final fileAsync = ref.watch(driveFileInfoProvider(id));
-    final currentItem = fileAsync.asData?.value;
+    final file = ref.watch(fileDetailProvider(id));
+    final versions = ref.watch(fileVersionsProvider(id));
+    final busy = useState(false);
+    final session = ref.watch(lkmApiSessionProvider);
+    final headers = session.cachedAccessToken == null
+        ? null
+        : {'Authorization': 'Bearer ${session.cachedAccessToken}'};
 
-    // Animation controller for the drawer
-    final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 300),
-    );
-    final animation = useMemoized(
-      () => Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
-      ),
-      [animationController],
-    );
-
-    final showDrawer = useState(false);
-
-    // Listen to drawer state changes
-    useEffect(() {
-      void listener() {
-        if (!animationController.isAnimating) {
-          if (animationController.value == 0) {
-            showDrawer.value = false;
-          }
-        }
-      }
-
-      animationController.addListener(listener);
-      return () => animationController.removeListener(listener);
-    }, [animationController]);
-
-    if (fileAsync.hasError) {
-      return AppScaffold(
-        isNoBackground: true,
-        body: Center(child: Text(fileAsync.error.toString())),
-      );
-    }
-
-    if (fileAsync.isLoading || currentItem == null) {
-      return const AppScaffold(
-        isNoBackground: true,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    final file = currentItem;
-    final isMedia =
-        file.mimeType.startsWith('image') || file.mimeType.startsWith('video');
-    final showOwnerBar =
-        file.accountId.isNotEmpty && file.accountId != currentUser?.id;
-    final hasContextPanel = sourcePost != null || showOwnerBar;
-    final mediaQuery = MediaQuery.of(context);
-    final availableHeight =
-        mediaQuery.size.height -
-        mediaQuery.padding.top -
-        mediaQuery.padding.bottom -
-        kToolbarHeight;
-    final collapsedPanelHeight = hasContextPanel ? 24.0 : 0.0;
-    final minPanelHeight = collapsedPanelHeight;
-    final maxPanelHeight = hasContextPanel
-        ? (availableHeight * 0.45).clamp(180.0, 420.0)
-        : 0.0;
-    final midPanelHeight = hasContextPanel
-        ? (availableHeight * 0.24).clamp(140.0, 240.0)
-        : 0.0;
-    final expandedPanelHeight = hasContextPanel
-        ? (availableHeight * 0.34).clamp(200.0, 320.0)
-        : 0.0;
-    final snapPoints = hasContextPanel
-        ? (() {
-            final points = <double>{
-              collapsedPanelHeight,
-              midPanelHeight,
-              expandedPanelHeight,
-              maxPanelHeight,
-            }.toList();
-            points.sort();
-            return points;
-          })()
-        : <double>[];
-    final panelHeight = useState(hasContextPanel ? midPanelHeight : 0.0);
-
-    void showInfoSheet() {
-      if (isWide) {
-        // Show as animated right panel on wide screens
-        showDrawer.value = !showDrawer.value;
-        if (showDrawer.value) {
-          animationController.forward();
+    Future<void> download(LkmFile value) async {
+      busy.value = true;
+      try {
+        final api = ref.read(filesApiProvider);
+        final info = await session.run(() => api.downloadUrl(value.id));
+        if (info.isPresigned) {
+          await launchUrlString(info.url, mode: LaunchMode.externalApplication);
         } else {
-          animationController.reverse();
+          final bytes = await session.run(() => api.downloadBytes(value.id));
+          await FilePicker.saveFile(
+            fileName: value.originalName,
+            bytes: bytes,
+            mimeType: value.mimeType,
+          );
         }
-      } else {
-        // Show as bottom sheet on narrow screens
-        showModalBottomSheet(
-          useRootNavigator: true,
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => FileInfoSheet(item: file),
-        );
+        if (context.mounted) showSnackBar('library.downloadStarted'.tr());
+      } catch (error) {
+        if (context.mounted) showSnackBar('$error');
+      } finally {
+        if (context.mounted) busy.value = false;
       }
     }
 
-    return Stack(
-      children: [
-        _buildBackground(file, serverUrl),
-        AppScaffold(
-          isNoBackground: true,
-          appBar: AppBar(
-            elevation: 0,
-            toolbarHeight: isMedia ? 64 : kToolbarHeight,
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            flexibleSpace: isMedia
-                ? DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.55),
-                          Colors.black.withValues(alpha: 0.0),
-                        ],
-                      ),
-                    ),
-                  )
-                : null,
-            leading: Center(
-              child: MediaIconButton(
-                icon: Icons.close,
-                onPressed: () => Navigator.of(context).pop(),
-                tooltip: 'Close',
-              ),
-            ),
-            titleSpacing: 8,
-            title: _FileTitle(file: file, isMedia: isMedia),
-            actions: _buildAppBarActions(context, ref, file, showInfoSheet),
-          ),
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              return AnimatedBuilder(
-                animation: animation,
-                builder: (context, child) {
-                  return Stack(
-                    children: [
-                      // Main content area - resizes with animation
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: constraints.maxWidth - animation.value * 400,
-                        child: _buildMainContent(
-                          context,
-                          ref,
-                          serverUrl,
-                          file,
-                          showOwnerBar: showOwnerBar,
-                          panelHeight: panelHeight.value,
-                          collapsedPanelHeight: collapsedPanelHeight,
-                          minPanelHeight: minPanelHeight,
-                          maxPanelHeight: maxPanelHeight,
-                          snapPoints: snapPoints,
-                          onPanelHeightChanged: (value) =>
-                              panelHeight.value = value,
-                        ),
-                      ),
-                      // Animated drawer panel - overlays
-                      if (isWide)
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: 400,
-                          child: Transform.translate(
-                            offset: Offset((1 - animation.value) * 400, 0),
-                            child: SizedBox(
-                              width: 400,
-                              child: Material(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainer,
-                                elevation: 8,
-                                child: FileInfoSheet(
-                                  item: file,
-                                  onClose: showInfoSheet,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _buildAppBarActions(
-    BuildContext context,
-    WidgetRef ref,
-    SnCloudFile item,
-    VoidCallback showInfoSheet,
-  ) {
-    final actions = <Widget>[];
-
-    // Add content-specific actions
-    switch (item.mimeType.split('/').firstOrNull) {
-      case 'image':
-        if (!kIsWeb) {
-          actions.add(
-            Center(
-              child: MediaIconButton(
-                icon: Icons.save_alt,
-                tooltip: 'Save',
-                onPressed: () => ref
-                    .read(driveFileDownloaderProvider)
-                    .saveToGallery(
-                      item,
-                      useDownloadsFolder:
-                          HardwareKeyboard.instance.isShiftPressed,
-                    ),
-              ),
-            ),
-          );
+    Future<void> preview(LkmFile value) async {
+      busy.value = true;
+      try {
+        final extension = value.mimeType == 'application/pdf'
+            ? 'pdf'
+            : value.mimeType.startsWith('text/')
+            ? 'txt'
+            : value.mimeType == 'audio/mpeg'
+            ? 'mp3'
+            : value.mimeType == 'video/mp4'
+            ? 'mp4'
+            : null;
+        if (extension == null) {
+          throw StateError('libraryMore.previewUnsupported'.tr());
         }
-        break;
-      default:
-        if (!kIsWeb) {
-          actions.add(
-            Center(
-              child: MediaIconButton(
-                icon: Icons.save_alt,
-                tooltip: 'Download',
-                onPressed: () => ref
-                    .read(driveFileDownloaderProvider)
-                    .downloadWithProgress(
-                      item,
-                      useDownloadsFolder:
-                          HardwareKeyboard.instance.isShiftPressed,
-                    ),
-              ),
-            ),
-          );
+        final bytes = await session.run(
+          () => ref.read(filesApiProvider).downloadBytes(value.id),
+        );
+        final directory = await getTemporaryDirectory();
+        final output = File(
+          '${directory.path}/library-${DateTime.now().microsecondsSinceEpoch}.$extension',
+        );
+        await output.writeAsBytes(bytes);
+        final result = await OpenFile.open(output.path);
+        if (result.type != ResultType.done) {
+          throw StateError(result.message);
         }
-        break;
+      } catch (error) {
+        if (context.mounted) showSnackBar('$error');
+      } finally {
+        if (context.mounted) busy.value = false;
+      }
     }
 
-    actions.add(const Gap(6));
-    actions.add(
-      Center(
-        child: MediaIconButton(
-          icon: Icons.info_outline,
-          tooltip: 'Info',
-          onPressed: showInfoSheet,
-        ),
-      ),
-    );
-    actions.add(const Gap(10));
-
-    return actions;
-  }
-
-  Widget _buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    String serverUrl,
-    SnCloudFile item, {
-    double bottomInset = 0,
-  }) {
-    final uri = '$serverUrl/drive/files/${item.id}';
-
-    Widget content = switch (item.mimeType.split('/').firstOrNull) {
-      'image' => ImageFileContent(
-        item: item,
-        uri: uri,
-        bottomInset: bottomInset,
-      ),
-      'video' => VideoFileContent(
-        item: item,
-        uri: uri,
-        bottomInset: bottomInset,
-      ),
-      'audio' => AudioFileContent(item: item, uri: uri),
-      _ when item.mimeType.startsWith('text/') == true => TextFileContent(
-        uri: uri,
-      ),
-      _ => GenericFileContent(item: item),
-    };
-
-    if (heroTag != null && item.mimeType.startsWith('image') == true) {
-      content = Hero(tag: heroTag!, child: content);
+    Future<void> uploadVersion(LkmFile value) async {
+      busy.value = true;
+      try {
+        await _upload(ref, versionOf: value.id);
+        ref.invalidate(fileVersionsProvider(id));
+        ref.invalidate(fileDetailProvider(id));
+      } catch (error) {
+        if (context.mounted) showSnackBar('$error');
+      } finally {
+        if (context.mounted) busy.value = false;
+      }
     }
 
-    return content;
-  }
-
-  Widget _buildMainContent(
-    BuildContext context,
-    WidgetRef ref,
-    String serverUrl,
-    SnCloudFile item, {
-    required bool showOwnerBar,
-    required double panelHeight,
-    required double collapsedPanelHeight,
-    required double minPanelHeight,
-    required double maxPanelHeight,
-    required List<double> snapPoints,
-    required ValueChanged<double> onPanelHeightChanged,
-  }) {
-    final hasContextPanel = sourcePost != null || showOwnerBar;
-    // Sheet pads the body itself; media controls use the reduced height.
-    final content = _buildContent(
-      context,
-      ref,
-      serverUrl,
-      item,
-      bottomInset: 0,
-    );
-    if (!hasContextPanel) return content;
-
-    final theme = Theme.of(context);
-
-    return DraggableOverlaySheet(
-      body: content,
-      padBody: true,
-      minHeight: minPanelHeight,
-      initialHeight: panelHeight,
-      maxHeight: maxPanelHeight,
-      snapHeights: snapPoints,
-      backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.98),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      border: Border(
-        top: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.16),
-        ),
+    return AppScaffold(
+      isNoBackground: false,
+      appBar: AppBar(
+        leading: const AutoLeadingButton(),
+        title: Text('library.fileTitle'.tr()),
       ),
-      onHeightChanged: onPanelHeightChanged,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 640),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (sourcePost != null)
-                  PostItem(
-                    item: sourcePost!,
-                    padding: EdgeInsets.zero,
-                    isCompact: true,
-                    hideAttachments: true,
-                    isEmbedReply: false,
-                    isShowReference: false,
-                    isTextSelectable: false,
-                    isTranslatable: false,
-                  ),
-                if (sourcePost != null && showOwnerBar) const Gap(12),
-                if (showOwnerBar) _buildOwnerBar(context, ref, item.accountId),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackground(SnCloudFile item, String serverUrl) {
-    final uri = '$serverUrl/drive/files/${item.id}?thumbnail=true';
-    final isVideo = item.mimeType.startsWith('video') == true;
-    final isImage = item.mimeType.startsWith('image') == true;
-
-    if (isVideo || isImage) {
-      return ClipRect(
-        child: Stack(
-          fit: StackFit.expand,
+      body: file.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => _Message(text: '$error'),
+        data: (value) => ListView(
+          padding: const EdgeInsets.all(16),
           children: [
-            Positioned.fill(
-              child: isImage
-                  ? CloudImageWidget(
-                      file: item,
-                      fit: BoxFit.cover,
-                      noBlurhash: true,
-                    )
-                  : Image.network(
-                      uri,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(color: Colors.black),
-                    ),
-            ),
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-              child: Container(color: Colors.black.withValues(alpha: 0.45)),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(color: Colors.black);
-  }
-
-  Widget _buildOwnerBar(BuildContext context, WidgetRef ref, String accountId) {
-    final owner = ref.watch(fileAuthorProvider(accountId));
-    final theme = Theme.of(context);
-
-    return owner.when(
-      data: (account) => Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () =>
-              context.router.push(AccountProfileRoute(name: account.name)),
-          child: Ink(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.14),
+            if (sourcePost != null) ...[
+              PostItem(
+                item: sourcePost!,
+                padding: EdgeInsets.zero,
+                isCompact: true,
+                hideAttachments: true,
+                isEmbedReply: false,
+                isShowReference: false,
+                isTextSelectable: false,
+                isTranslatable: false,
               ),
-            ),
-            child: Row(
+              const Divider(height: 24),
+            ],
+            Row(
               children: [
-                ProfilePictureWidget(
-                  file: account.profile.picture,
-                  fallbackName: account.nick,
-                  radius: 16,
-                ),
-                const Gap(10),
+                Icon(_iconFor(value.mimeType), size: 40),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Original uploader',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const Gap(1),
-                      AccountName(
-                        account: account,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        hideOverlay: true,
-                      ),
-                    ],
+                  child: Text(
+                    value.originalName,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                _StatusChip(status: value.status),
               ],
             ),
-          ),
-        ),
-      ),
-      loading: () => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.14),
-          ),
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 32,
-              height: 32,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: theme.colorScheme.primary,
-              ),
+            const SizedBox(height: 12),
+            _Info('library.category'.tr(), value.categoryName),
+            _Info('library.size'.tr(), _size(value.size)),
+            _Info('library.uploader'.tr(), value.uploaderName),
+            _Info(
+              'library.downloads'.tr(),
+              '${value.downloadCount} / ${value.viewCount}',
             ),
-            const Gap(12),
-            Text('Loading uploader...', style: theme.textTheme.bodyMedium),
+            if (value.description.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(value.description),
+            ],
+            if (value.tags.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 6,
+                children: [
+                  for (final tag in value.tags) Chip(label: Text(tag)),
+                ],
+              ),
+            ],
+            if (value.reviewComment != null &&
+                value.reviewComment!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                '${'library.reviewComment'.tr()}: ${value.reviewComment}',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ],
+            const SizedBox(height: 20),
+            if (value.isApproved && value.mimeType.startsWith('image/'))
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: UniversalImage(
+                  uri: ref.read(filesApiProvider).previewUrl(value.id),
+                  httpHeaders: headers,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            if (value.isApproved && !value.mimeType.startsWith('image/'))
+              OutlinedButton.icon(
+                icon: const Icon(Icons.preview),
+                label: Text('libraryMore.preview'.tr()),
+                onPressed: busy.value ? null : () => preview(value),
+              ),
+            OutlinedButton.icon(
+              onPressed: busy.value ? null : () => uploadVersion(value),
+              icon: const Icon(Icons.upload_file),
+              label: Text('libraryMore.uploadVersion'.tr()),
+            ),
+            FilledButton.icon(
+              onPressed: busy.value || !value.isApproved
+                  ? null
+                  : () => download(value),
+              icon: const Icon(Icons.download),
+              label: Text('library.download'.tr()),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'library.versions'.tr(),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            versions.when(
+              loading: () => const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, _) => _Message(text: '$error'),
+              data: (items) => items.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text('library.noVersions'.tr()),
+                    )
+                  : Column(
+                      children: [
+                        for (final version in items)
+                          ListTile(
+                            onTap: () =>
+                                context.router.push(FileDetailRoute(id: version.id)),
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              'v${version.version} · ${version.originalName}',
+                            ),
+                            subtitle: Text(_size(version.size)),
+                            trailing: _StatusChip(status: version.status),
+                          ),
+                      ],
+                    ),
+            ),
           ],
         ),
       ),
-      error: (_, _) => const SizedBox.shrink(),
     );
   }
 }
 
-class _FileTitle extends StatelessWidget {
-  final SnCloudFile file;
-  final bool isMedia;
+class _Info extends StatelessWidget {
+  const _Info(this.label, this.value);
 
-  const _FileTitle({required this.file, required this.isMedia});
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
-    final name = file.name.isEmpty ? 'File Details' : file.name;
-    final meta = <String>[
-      if (file.mimeType.isNotEmpty) file.mimeType,
-      if (file.size > 0) formatFileSize(file.size),
-    ].join(' · ');
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isMedia ? 16 : 18,
-            fontWeight: FontWeight.w600,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 110,
+            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
           ),
-        ),
-        if (meta.isNotEmpty)
-          Text(
-            meta,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.72),
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-      ],
+          Expanded(child: Text(value)),
+        ],
+      ),
     );
   }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = switch (status) {
+      'approved' => Theme.of(context).colorScheme.primary,
+      'rejected' => Theme.of(context).colorScheme.error,
+      _ => Theme.of(context).colorScheme.tertiary,
+    };
+    return Chip(
+      label: Text(status),
+      labelStyle: TextStyle(color: color),
+      side: BorderSide(color: color),
+      visualDensity: VisualDensity.compact,
+    );
+  }
+}
+
+class _Message extends StatelessWidget {
+  const _Message({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(child: Text(text, textAlign: TextAlign.center)),
+    );
+  }
+}
+
+IconData _iconFor(String mime) {
+  if (mime.startsWith('image/')) return Symbols.image;
+  if (mime.startsWith('audio/')) return Symbols.audio_file;
+  if (mime.startsWith('video/')) return Symbols.video_file;
+  if (mime.contains('pdf')) return Symbols.picture_as_pdf;
+  if (mime.contains('zip') || mime.contains('tar')) return Symbols.folder_zip;
+  return Symbols.description;
+}
+
+String _size(int bytes) {
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+}
+
+Future<void> _upload(
+  WidgetRef ref, {
+  String categoryId = '',
+  String? versionOf,
+}) async {
+  final picked = await FilePicker.pickFile();
+  if (picked == null) return;
+  final bytes = await picked.xFile.readAsBytes();
+  final mime =
+      lookupMimeType(picked.name, headerBytes: bytes) ??
+      'application/octet-stream';
+  final api = ref.read(filesApiProvider);
+  await ref
+      .read(lkmApiSessionProvider)
+      .run(
+        () => versionOf == null
+            ? api.upload(
+                bytes: bytes,
+                originalName: picked.name,
+                mimeType: mime,
+                categoryId: categoryId,
+              )
+            : api.uploadVersion(
+                versionOf,
+                bytes: bytes,
+                originalName: picked.name,
+                mimeType: mime,
+              ),
+      );
 }

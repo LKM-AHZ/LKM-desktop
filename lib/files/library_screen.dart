@@ -16,6 +16,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/files_api.dart';
+import 'package:island/drive/files/file_detail.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
@@ -42,20 +43,6 @@ final libraryFilesProvider = FutureProvider.autoDispose
               mimePrefix: filter.mime,
             ),
       );
-    });
-
-final libraryFileProvider = FutureProvider.autoDispose.family<LkmFile, String>((
-  ref,
-  id,
-) {
-  final session = ref.watch(lkmApiSessionProvider);
-  return session.run(() => ref.watch(filesApiProvider).file(id));
-});
-
-final libraryVersionsProvider = FutureProvider.autoDispose
-    .family<List<LkmFile>, String>((ref, id) {
-      final session = ref.watch(lkmApiSessionProvider);
-      return session.run(() => ref.watch(filesApiProvider).versions(id));
     });
 
 /// The website's `/files` list: server-side visibility filtering, status tabs
@@ -344,209 +331,16 @@ class LibraryScreen extends HookConsumerWidget {
 }
 
 @RoutePage()
-class LibraryFileScreen extends HookConsumerWidget {
+/// Legacy route kept for deep links; the implementation lives in the file
+/// detail screen.
+@RoutePage()
+class LibraryFileScreen extends StatelessWidget {
   const LibraryFileScreen({super.key, required this.id});
 
   final String id;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final file = ref.watch(libraryFileProvider(id));
-    final versions = ref.watch(libraryVersionsProvider(id));
-    final busy = useState(false);
-
-    Future<void> download(LkmFile value) async {
-      busy.value = true;
-      try {
-        final api = ref.read(filesApiProvider);
-        final session = ref.read(lkmApiSessionProvider);
-        final info = await session.run(() => api.downloadUrl(value.id));
-        if (info.isPresigned) {
-          await launchUrlString(info.url, mode: LaunchMode.externalApplication);
-        } else {
-          final bytes = await session.run(() => api.downloadBytes(value.id));
-          await FilePicker.saveFile(
-            fileName: value.originalName,
-            bytes: bytes,
-            mimeType: value.mimeType,
-          );
-        }
-        if (context.mounted) showSnackBar('library.downloadStarted'.tr());
-      } catch (error) {
-        if (context.mounted) showSnackBar('$error');
-      } finally {
-        if (context.mounted) busy.value = false;
-      }
-    }
-
-    return AppScaffold(
-      isNoBackground: false,
-      appBar: AppBar(
-        leading: const AutoLeadingButton(),
-        title: Text('library.fileTitle'.tr()),
-      ),
-      body: file.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => _Message(text: '$error'),
-        data: (value) => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Row(
-              children: [
-                Icon(_iconFor(value.mimeType), size: 40),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    value.originalName,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                _StatusChip(status: value.status),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _Info('library.category'.tr(), value.categoryName),
-            _Info('library.size'.tr(), _size(value.size)),
-            _Info('library.uploader'.tr(), value.uploaderName),
-            _Info(
-              'library.downloads'.tr(),
-              '${value.downloadCount} / ${value.viewCount}',
-            ),
-            if (value.description.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(value.description),
-            ],
-            if (value.tags.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                children: [
-                  for (final tag in value.tags) Chip(label: Text(tag)),
-                ],
-              ),
-            ],
-            if (value.reviewComment != null &&
-                value.reviewComment!.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                '${'library.reviewComment'.tr()}: ${value.reviewComment}',
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ],
-            const SizedBox(height: 20),
-            if (value.isApproved && value.mimeType.startsWith('image/'))
-              MarkdownRemoteImage(
-                uri: Uri.parse(ref.read(filesApiProvider).previewUrl(value.id)),
-              ),
-            if (value.isApproved && !value.mimeType.startsWith('image/'))
-              OutlinedButton.icon(
-                icon: const Icon(Icons.preview),
-                label: Text('libraryMore.preview'.tr()),
-                onPressed: busy.value
-                    ? null
-                    : () async {
-                        busy.value = true;
-                        try {
-                          final extension = value.mimeType == 'application/pdf'
-                              ? 'pdf'
-                              : value.mimeType.startsWith('text/')
-                              ? 'txt'
-                              : value.mimeType == 'audio/mpeg'
-                              ? 'mp3'
-                              : value.mimeType == 'video/mp4'
-                              ? 'mp4'
-                              : null;
-                          if (extension == null) {
-                            throw StateError(
-                              'libraryMore.previewUnsupported'.tr(),
-                            );
-                          }
-                          final bytes = await ref
-                              .read(lkmApiSessionProvider)
-                              .run(
-                                () => ref
-                                    .read(filesApiProvider)
-                                    .downloadBytes(value.id),
-                              );
-                          final directory = await getTemporaryDirectory();
-                          final output = File(
-                            '${directory.path}/library-${DateTime.now().microsecondsSinceEpoch}.$extension',
-                          );
-                          await output.writeAsBytes(bytes);
-                          final result = await OpenFile.open(output.path);
-                          if (result.type != ResultType.done) {
-                            throw StateError(result.message);
-                          }
-                        } catch (e) {
-                          if (context.mounted) showSnackBar('$e');
-                        } finally {
-                          if (context.mounted) busy.value = false;
-                        }
-                      },
-              ),
-            OutlinedButton.icon(
-              onPressed: busy.value
-                  ? null
-                  : () async {
-                      busy.value = true;
-                      try {
-                        await _upload(ref, versionOf: value.id);
-                        ref.invalidate(libraryVersionsProvider(id));
-                        ref.invalidate(libraryFilesProvider);
-                      } catch (e) {
-                        if (context.mounted) showSnackBar('$e');
-                      } finally {
-                        if (context.mounted) busy.value = false;
-                      }
-                    },
-              icon: const Icon(Icons.upload_file),
-              label: Text('libraryMore.uploadVersion'.tr()),
-            ),
-            FilledButton.icon(
-              onPressed: busy.value || !value.isApproved
-                  ? null
-                  : () => download(value),
-              icon: const Icon(Icons.download),
-              label: Text('library.download'.tr()),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'library.versions'.tr(),
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            versions.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (error, _) => _Message(text: '$error'),
-              data: (items) => items.isEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text('library.noVersions'.tr()),
-                    )
-                  : Column(
-                      children: [
-                        for (final version in items)
-                          ListTile(
-                            onTap: () => context.router.push(
-                              LibraryFileRoute(id: version.id),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              'v${version.version} · ${version.originalName}',
-                            ),
-                            subtitle: Text(_size(version.size)),
-                            trailing: _StatusChip(status: version.status),
-                          ),
-                      ],
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => FileDetailScreen(id: id);
 }
 
 class _Info extends StatelessWidget {
