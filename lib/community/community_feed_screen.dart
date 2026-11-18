@@ -8,10 +8,10 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:island/community/compose_sheet.dart';
 import 'package:island/community/feed_links.dart';
 import 'package:island/community/feed_pod.dart';
-import 'package:island/community/search_sheet.dart';
 import 'package:island/community/widgets/feed_item_card.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/timeline_api.dart';
+import 'package:island/discovery/search_navigation.dart';
 import 'package:island/notifications/notification.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
@@ -92,10 +92,9 @@ class CommunityFeedScreen extends HookConsumerWidget {
                       ),
                       IconButton(
                         tooltip: 'search'.tr(),
-                        onPressed: () => showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (_) => const LkmSearchSheet(),
+                        onPressed: () => openUniversalSearch(
+                          context,
+                          tab: SearchTab.posts,
                         ),
                         icon: const Icon(Symbols.search),
                       ),

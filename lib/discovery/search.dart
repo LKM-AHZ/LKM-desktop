@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/shared/widgets/api_page_list.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
 import 'package:island/shared/widgets/page_app_bar.dart';
 import 'package:material_ui/material_ui.dart';
@@ -12,6 +13,9 @@ import 'package:gap/gap.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
 import 'package:island/accounts/widgets/account/account_picker.dart';
 import 'package:island/chat/widgets/chat_search_screen.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/search_api.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/discovery/search_navigation.dart';
@@ -38,6 +42,19 @@ import 'package:styled_widget/styled_widget.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 const kSearchPostListId = 'search';
+
+/// Service-side content/file search. One family entry keeps the page's page
+/// number and debounced query together.
+final contentSearchProvider = FutureProvider.autoDispose
+    .family<ApiPage<SearchHit>, ({String query, int page})>((ref, query) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(
+        () => SearchApi(session.client).search(
+          query.query,
+          page: query.page,
+        ),
+      );
+    });
 
 /// Step between two floating result cards, matching the explore feed.
 const _kResultGap = kExploreCardGap;
@@ -233,9 +250,7 @@ class UniversalSearchScreen extends HookConsumerWidget {
               ValueListenableBuilder<bool>(
                 valueListenable: filtersVisible,
                 builder: (context, visible, _) {
-                  final supported =
-                      activeTab.value == SearchTab.posts ||
-                      activeTab.value == SearchTab.messages;
+                  final supported = activeTab.value == SearchTab.messages;
                   return IconButton(
                     onPressed: supported
                         ? () => filtersVisible.value = !filtersVisible.value
@@ -389,184 +404,61 @@ class _PostsSearchTab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryTabController = useMaterialTabController(initialLength: 3);
-    final queryState = useState(const PostListQuery(includeReplies: false));
-
-    final noti = ref.read(
-      postListProvider(PostListQueryConfig(id: kSearchPostListId)).notifier,
-    );
-
-    void onSearchChanged(String query) {
-      queryState.value = queryState.value.copyWith(queryTerm: query);
-      noti.applyFilter(queryState.value);
-    }
-
-    Widget buildFilterPanel() {
-      return PostFilterWidget(
-        categoryTabController: categoryTabController,
-        initialQuery: queryState.value,
-        onQueryChanged: (newQuery) {
-          queryState.value = newQuery;
-          noti.applyFilter(newQuery);
-        },
-        hideSearch: true,
-      );
-    }
-
-    // Listen to debounced search query changes and update the list.
-    useEffect(() {
-      Future.microtask(() => onSearchChanged(searchQuery.value));
-      return null;
-    }, [searchQuery.value]);
-
-    Widget buildPostRow(SnPost post) {
-      return PostRowSurface(
-        child: PostActionableItem(
-          item: post,
-          padding: const EdgeInsets.fromLTRB(
-            SolSpace.lg,
-            SolSpace.md + 2,
-            SolSpace.lg,
-            SolSpace.md,
-          ),
-        ),
-      );
-    }
-
-    final filterSidebarContent = buildFilterPanel();
-
-    Widget buildMainContent({
-      double topGap = 0,
-      Widget? header,
-      EdgeInsetsGeometry? gutter,
-    }) {
-      return Consumer(
-        builder: (context, ref, child) {
-          final searchState = ref.watch(
-            postListProvider(PostListQueryConfig(id: kSearchPostListId)),
-          );
-          return ExtendedRefreshIndicator(
-            onRefresh: noti.refresh,
-            child: CustomScrollView(
-              slivers: [
-                // The pill's band, inside the scroll view so the rows travel
-                // under the capsule rather than stopping short of it.
-                if (topGap > 0) SliverGap(topGap),
-                if (header != null)
-                  SliverPadding(
-                    padding: gutter ?? EdgeInsets.zero,
-                    sliver: SliverToBoxAdapter(child: header),
-                  ),
-                PaginationList(
-                  provider: postListProvider(
-                    PostListQueryConfig(id: kSearchPostListId),
-                  ),
-                  notifier: postListProvider(
-                    PostListQueryConfig(id: kSearchPostListId),
-                  ).notifier,
-                  isSliver: true,
-                  isRefreshable: false,
-                  seperatorBuilder: (context, index, post) =>
-                      const SizedBox(height: _kResultGap),
-                  footerSkeletonChild: const PostItemSkeleton(
-                    maxWidth: double.infinity,
-                    showCard: false,
-                  ),
-                  itemBuilder: (context, index, post) => buildPostRow(post),
-                ),
-                if (searchState.value?.items.isEmpty == true &&
-                    searchQuery.value.isNotEmpty &&
-                    !searchState.isLoading)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: EmptyState(
-                      key: const Key('postSearchEmpty'),
-                      icon: Symbols.search_off,
-                      title: 'noResultsFound'.tr(),
-                      description: 'tryDifferentKeywords'.tr(),
-                    ),
-                  ),
-                SliverGap(MediaQuery.of(context).padding.bottom + _kResultGap),
-              ],
-            ),
-          );
-        },
-      );
-    }
-
-    if (isWideScreen(context)) {
-      // The rows keep the explore feed's own reading column and gutter, so a
-      // card sits on the same measure in either tab; the filter content is
-      // inset inside the sliding panel so it does not sit flush against its
-      // edge.
-      //
-      // The pill is the scaffold's app bar, so it floats over both panes
-      // rather than over the results alone: the sidebar spans the viewport
-      // from the very top and would otherwise paint behind the capsule, with
-      // its own first control cut by it. Both panes reserve the band the pill
-      // occupies; only the results add the card gap below it.
-      final band = _pillBand(context);
-      return ResponsiveSidebar(
-        showSidebar: filtersVisible,
-        sidebarWidth: 320,
-        // The pane paints no surface and no shadow of its own: it is a column
-        // of controls floating over the page, so the page background runs
-        // behind it and the panel never reads as a card laid over the results.
-        sidebarBackgroundColor: Colors.transparent,
-        sidebarElevation: 0,
-        sidebarContent: Padding(
-          padding: EdgeInsets.fromLTRB(
-            _kWidePaneInset,
-            band + _kWidePaneInset,
-            _kWidePaneInset,
-            _kWidePaneInset,
-          ),
-          child: filterSidebarContent,
-        ),
-        mainContent: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: kDiscoveryWideColumnWidth,
-            ),
-            child: Padding(
-              padding: explorePageGutter(context),
-              child: buildMainContent(topGap: band + _kResultGap),
+    final query = searchQuery.value.trim();
+    final band = _pillBand(context) + _kResultGap;
+    if (query.isEmpty) {
+      return CustomScrollView(
+        slivers: [
+          SliverGap(band),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyState(
+              icon: Symbols.search,
+              title: 'feedSearchHint'.tr(),
+              description: 'feedSearchEmpty'.tr(),
             ),
           ),
-        ),
+        ],
       );
     }
 
-    // Narrow: the filter panel is the list's first sliver instead of a fixed
-    // band above it. Pinned above the list it would stop the rows at the
-    // capsule; inside the scroll view they pass under the glass, and the panel
-    // scrolls away with them.
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: SolSpace.md),
-      child: buildMainContent(
-        topGap: _pillBand(context) + _kResultGap,
-        header: AnimatedSlide(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          offset: filtersVisible.value ? Offset.zero : const Offset(0, -0.08),
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 180),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              child: filtersVisible.value
-                  ? Padding(
-                      key: const ValueKey('filters-visible'),
-                      padding: const EdgeInsets.only(bottom: _kResultGap),
-                      child: buildFilterPanel(),
-                    )
-                  : const SizedBox(key: ValueKey('filters-hidden')),
+      padding: EdgeInsets.only(top: band),
+      child: ApiPageList<SearchHit>(
+        provider: (page) =>
+            contentSearchProvider((query: query, page: page)),
+        itemBuilder: (context, hit) {
+          final isFile = hit.contentType == 'library_file';
+          final meta = [
+            hit.contentType,
+            if (hit.authorName.isNotEmpty) hit.authorName,
+            if (hit.excerpt.isNotEmpty) hit.excerpt,
+          ].join(' · ');
+          return SearchResultCard(
+            child: ListTile(
+              leading: Icon(
+                isFile ? Symbols.folder_open : Symbols.article,
+                size: 22,
+              ),
+              title: Text(
+                hit.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                meta,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Symbols.chevron_right),
+              onTap: () => context.router.push(
+                isFile
+                    ? FileDetailRoute(id: hit.id)
+                    : ContentDetailRoute(id: hit.id),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
