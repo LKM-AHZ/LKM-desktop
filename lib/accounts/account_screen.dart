@@ -5,8 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import 'package:island/community/notification_pod.dart';
-import 'package:island/community/notifications_sheet.dart';
 import 'package:island/community/user_pod.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/auth_api.dart';
@@ -15,7 +13,9 @@ import 'package:island/core/config.dart';
 import 'package:island/core/debug_sheet.dart';
 import 'package:island/core/services/responsive.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
+import 'package:island/notifications/notification.dart';
 import 'package:island/route.gr.dart';
+import 'package:island/shared/widgets/attention_modal.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
 import 'package:island/shared/widgets/page_app_bar.dart';
 
@@ -94,7 +94,7 @@ class _LkmAccountPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final statusTop = MediaQuery.paddingOf(context).top;
-    final unread = ref.watch(lkmUnreadNotificationsProvider).value ?? 0;
+    final unread = ref.watch(notificationUnreadCountProvider).value ?? 0;
     final following = ref.watch(myFollowingProvider);
     final isDeveloperMode = ref.watch(developerModeProvider);
 
@@ -164,10 +164,12 @@ class _LkmAccountPage extends HookConsumerWidget {
             ),
             trailing: const Icon(Symbols.chevron_right),
             title: Text('notifications'.tr()),
-            onTap: () => showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              builder: (_) => const LkmNotificationsSheet(),
+            onTap: () => showAttentionModal(
+              id: 'notifications',
+              replaceIfExists: true,
+              barrierDismissible: true,
+              builder: (context, dismiss) =>
+                  NotificationModal(onDismiss: dismiss),
             ),
           ),
           ListTile(

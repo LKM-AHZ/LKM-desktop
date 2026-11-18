@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/account_screen.dart';
-import 'package:island/community/notification_pod.dart';
+import 'package:island/notifications/notification.dart';
 import 'package:island/community/user_pod.dart';
 import 'package:island/core/api/auth_api.dart';
 import 'package:island/core/config.dart';
@@ -11,6 +11,11 @@ import 'package:island/discovery/widgets/pill_app_bar.dart';
 import 'package:island/shared/widgets/page_app_bar.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class _ZeroUnreadCount extends NotificationUnreadCountNotifier {
+  @override
+  Future<int> build() async => 0;
+}
 
 const _account = LkmAccount(
   id: 'account-1',
@@ -60,7 +65,7 @@ void main() {
             sharedPreferencesProvider.overrideWith((ref) => prefs),
             developerModeProvider.overrideWithValue(false),
             lkmMeProvider.overrideWith((ref) async => _account),
-            lkmUnreadNotificationsProvider.overrideWith((ref) async => 0),
+            notificationUnreadCountProvider.overrideWith(_ZeroUnreadCount.new),
             myFollowingProvider.overrideWith((ref) async => const []),
           ],
           child: EasyLocalization(

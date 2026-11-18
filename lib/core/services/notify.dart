@@ -7,6 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/notification.dart';
+import 'package:solar_network_sdk/solar_network_sdk.dart';
 import 'notify.huawei.dart' as huawei_notify;
 
 // Conditional imports based on platform
@@ -40,6 +42,23 @@ StreamSubscription? setupNotificationListener(
   } else {
     return universal_notify.setupNotificationListener(context, ref);
   }
+}
+
+/// Routes one incoming notification to the platform bridge. Web has no
+/// system-notification channel, so it only shows the in-app toast.
+Future<void> handleIncomingNotification(
+  BuildContext context,
+  WidgetRef ref,
+  SnNotification notification,
+) {
+  if (kIsWeb) {
+    ref.read(notificationStateProvider.notifier).add(notification);
+    return Future.value();
+  }
+  if (Platform.isWindows) {
+    return windows_notify.handleIncomingNotification(context, ref, notification);
+  }
+  return universal_notify.handleIncomingNotification(context, ref, notification);
 }
 
 /// Show a local notification (fixed id = 0, replacing previous).

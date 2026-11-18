@@ -8,15 +8,15 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:island/community/compose_sheet.dart';
 import 'package:island/community/feed_links.dart';
 import 'package:island/community/feed_pod.dart';
-import 'package:island/community/notification_pod.dart';
-import 'package:island/community/notifications_sheet.dart';
 import 'package:island/community/search_sheet.dart';
 import 'package:island/community/widgets/feed_item_card.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/timeline_api.dart';
+import 'package:island/notifications/notification.dart';
 import 'package:island/route.gr.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
+import 'package:island/shared/widgets/attention_modal.dart';
 
 /// The community tab: LKM-service timeline with follow/hot modes.
 @RoutePage()
@@ -27,20 +27,10 @@ class CommunityFeedScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final feed = ref.watch(communityFeedProvider);
     final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
-    final unread = ref.watch(lkmUnreadNotificationsProvider).value ?? 0;
+    final unread = ref.watch(notificationUnreadCountProvider).value ?? 0;
     final state = feed.value;
     final mode = state?.mode ?? (signedIn ? 'follow' : 'hot');
     final notifier = ref.read(communityFeedProvider.notifier);
-
-    // A pushed notification moves the badge immediately; the inbox itself
-    // refreshes when opened.
-    ref.listen(lkmWsEventsProvider, (_, next) {
-      next.whenData((event) {
-        if (event.event == 'notification_created') {
-          ref.invalidate(lkmUnreadNotificationsProvider);
-        }
-      });
-    });
 
     return AppScaffold(
       isNoBackground: false,
@@ -111,10 +101,12 @@ class CommunityFeedScreen extends HookConsumerWidget {
                       ),
                       IconButton(
                         tooltip: 'notifications'.tr(),
-                        onPressed: () => showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (_) => const LkmNotificationsSheet(),
+                        onPressed: () => showAttentionModal(
+                          id: 'notifications',
+                          replaceIfExists: true,
+                          barrierDismissible: true,
+                          builder: (context, dismiss) =>
+                              NotificationModal(onDismiss: dismiss),
                         ),
                         icon: Badge.count(
                           count: unread,

@@ -50,80 +50,94 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
   }
 }
 
+/// Shows one incoming notification through the platform bridge: an in-app
+/// toast while resumed, a Windows system notification otherwise. Shared by
+/// the Solar WebSocket listener and the LKM push listener.
+Future<void> handleIncomingNotification(
+  BuildContext context,
+  WidgetRef ref,
+  SnNotification notification,
+) async {
+  final settings = ref.read(appSettingsProvider);
+  if (_appLifecycleState == AppLifecycleState.resumed) {
+    Logger.root.info(
+      '[Notification] Showing in-app notification: ${notification.title}',
+    );
+    if (settings.notifyWithHaptic) {
+      HapticFeedback.heavyImpact();
+    }
+    playNotificationSfx(ref);
+    ref.read(notificationStateProvider.notifier).add(notification);
+    return;
+  }
+
+  // App is in background, show Windows system notification
+  Logger.root.info(
+    '[Notification] Showing Windows system notification: ${notification.title}',
+  );
+
+  if (windowsNotification == null) return;
+
+  final serverUrl = ref.read(serverUrlProvider);
+  final pfp = notification.meta['pfp'] as String?;
+  final img = notification.meta['images'] as List<dynamic>?;
+  final actionUrl = notification.meta['action_uri'] as String?;
+
+  // Download and cache images
+  String? imagePath;
+  String? largeImagePath;
+
+  if (pfp != null) {
+    try {
+      final file = await DefaultCacheManager().getSingleFile(
+        '$serverUrl/drive/files/$pfp',
+      );
+      imagePath = file.path;
+    } catch (e) {
+      Logger.root.severe('Failed to download pfp image: $e');
+    }
+  }
+
+  if (img != null && img.isNotEmpty) {
+    try {
+      final file = await DefaultCacheManager().getSingleFile(
+        '$serverUrl/drive/files/${img.firstOrNull}',
+      );
+      largeImagePath = file.path;
+    } catch (e) {
+      Logger.root.severe('Failed to download large image: $e');
+    }
+  }
+
+  final notificationMessage = NotificationMessage.fromPluginTemplate(
+    notification.id, // unique id
+    notification.title,
+    [
+      notification.subtitle,
+      notification.body,
+    ].where((e) => e.isNotEmpty).join('\n'),
+    group: notification.topic,
+    image: imagePath,
+    largeImage: largeImagePath,
+    launch: actionUrl != null ? 'lkm://$actionUrl' : null,
+  );
+  await windowsNotification!.showNotificationPluginTemplate(
+    notificationMessage,
+  );
+}
+
 StreamSubscription<WebSocketPacket> setupNotificationListener(
   BuildContext context,
   WidgetRef ref,
 ) {
-  final settings = ref.watch(appSettingsProvider);
   final ws = ref.watch(websocketProvider);
   return ws.dataStream.listen((pkt) async {
     if (pkt.type == "notifications.new") {
-      final notification = SnNotification.fromJson(pkt.data!);
-      if (_appLifecycleState == AppLifecycleState.resumed) {
-        Logger.root.info(
-          '[Notification] Showing in-app notification: ${notification.title}',
-        );
-        if (settings.notifyWithHaptic) {
-          HapticFeedback.heavyImpact();
-        }
-        playNotificationSfx(ref);
-        ref.read(notificationStateProvider.notifier).add(notification);
-      } else {
-        // App is in background, show Windows system notification
-        Logger.root.info(
-          '[Notification] Showing Windows system notification: ${notification.title}',
-        );
-
-        if (windowsNotification != null) {
-          final serverUrl = ref.read(serverUrlProvider);
-          final pfp = notification.meta['pfp'] as String?;
-          final img = notification.meta['images'] as List<dynamic>?;
-          final actionUrl = notification.meta['action_uri'] as String?;
-
-          // Download and cache images
-          String? imagePath;
-          String? largeImagePath;
-
-          if (pfp != null) {
-            try {
-              final file = await DefaultCacheManager().getSingleFile(
-                '$serverUrl/drive/files/$pfp',
-              );
-              imagePath = file.path;
-            } catch (e) {
-              Logger.root.severe('Failed to download pfp image: $e');
-            }
-          }
-
-          if (img != null && img.isNotEmpty) {
-            try {
-              final file = await DefaultCacheManager().getSingleFile(
-                '$serverUrl/drive/files/${img.firstOrNull}',
-              );
-              largeImagePath = file.path;
-            } catch (e) {
-              Logger.root.severe('Failed to download large image: $e');
-            }
-          }
-
-          // Use Windows notification for Windows platform
-          final notificationMessage = NotificationMessage.fromPluginTemplate(
-            notification.id, // unique id
-            notification.title,
-            [
-              notification.subtitle,
-              notification.body,
-            ].where((e) => e.isNotEmpty).join('\n'),
-            group: notification.topic,
-            image: imagePath,
-            largeImage: largeImagePath,
-            launch: actionUrl != null ? 'lkm://$actionUrl' : null,
-          );
-          await windowsNotification!.showNotificationPluginTemplate(
-            notificationMessage,
-          );
-        }
-      }
+      await handleIncomingNotification(
+        context,
+        ref,
+        SnNotification.fromJson(pkt.data!),
+      );
     }
   });
 }

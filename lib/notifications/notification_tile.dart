@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'package:auto_route/auto_route.dart';
+import 'package:island/community/feed_links.dart';
+import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/services/time.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
+import 'package:island/notifications/notification.dart';
 import 'package:island/route.dart';
+import 'package:island/route.gr.dart';
 import 'package:island/core/services/deeplink_service.dart';
 import 'package:island_ui_foundation/island_ui_foundation.dart';
 import 'package:island/shared/widgets/content/markdown.dart';
@@ -48,6 +53,26 @@ class NotificationTile extends ConsumerWidget {
         return Symbols.shopping_bag;
       case 'posts.reactions.new':
         return Symbols.add_reaction;
+      case 'content_liked':
+        return Symbols.favorite_rounded;
+      case 'content_commented':
+        return Symbols.mode_comment_rounded;
+      case 'comment_replied':
+        return Symbols.reply_rounded;
+      case 'qa_answer_accepted':
+        return Symbols.check_circle_rounded;
+      case 'review_digest':
+        return Symbols.assignment_rounded;
+      case 'subscription_new_post':
+      case 'post_watch_activity':
+        return Symbols.post_add_rounded;
+      case 'project_invited':
+        return Symbols.group_add_rounded;
+      case 'project_join_approved':
+        return Symbols.check_circle_rounded;
+      case 'project_join_rejected':
+      case 'project_member_removed':
+        return Symbols.group_remove_rounded;
       default:
         return Symbols.notifications;
     }
@@ -165,8 +190,28 @@ class NotificationTile extends ConsumerWidget {
               ),
             ),
       onTap: () {
+        if (notification.meta['api_type'] != null) {
+          unawaited(
+            markNotificationsRead(ref, ids: [notification.id]),
+          );
+        }
         final rawUri = notification.meta['action_uri'] as String?;
         if (rawUri == null || rawUri.isEmpty) return;
+        final feedTarget = parseFeedRoute(
+          rawUri,
+          serverHost: ref.read(lkmServerUrlProvider),
+        );
+        if (feedTarget != null) {
+          dismissAttentionModal('notifications');
+          context.router.push(switch (feedTarget.kind) {
+            FeedRouteKind.content => ContentDetailRoute(id: feedTarget.id),
+            FeedRouteKind.qa => QaDetailRoute(id: feedTarget.id),
+            FeedRouteKind.project => ProjectDetailRoute(id: feedTarget.id),
+            FeedRouteKind.file => LibraryFileRoute(id: feedTarget.id),
+            FeedRouteKind.treehole => const TreeholeRoute(),
+          });
+          return;
+        }
         unawaited(handleActionUri(ref.read(routerProvider), rawUri));
         dismissAttentionModal('notifications');
       },

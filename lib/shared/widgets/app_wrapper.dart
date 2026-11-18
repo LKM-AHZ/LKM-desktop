@@ -118,6 +118,26 @@ class AppWrapper extends HookConsumerWidget {
     final lastHandledAcceptedRoomId = useRef<String?>(null);
     final shownChallengeIds = useRef(<String>{});
 
+    // LKM push channel: the merged notification UI consumes the service's
+    // `notification_created` frames just like the Solar WebSocket fed the old
+    // implementation. Both listeners stay alive during the migration.
+    ref.listen(realtimeEventsProvider, (_, next) {
+      next.whenData((event) {
+        if (event.event != 'notification_created') return;
+        final id = event.data['notification_id'];
+        if (id is! String || id.isEmpty) return;
+        final rawPayload = event.data['payload'];
+        final notification = snNotificationFromPayload(
+          id: id,
+          type: '${event.data['type'] ?? ''}',
+          payload: rawPayload is Map
+              ? Map<String, dynamic>.from(rawPayload)
+              : const <String, dynamic>{},
+        );
+        unawaited(handleIncomingNotification(context, ref, notification));
+      });
+    });
+
     void kickCallKitMicrophone(String reason) {
       if (kIsWeb || !Platform.isIOS) return;
       final callState = ref.read(callProvider);

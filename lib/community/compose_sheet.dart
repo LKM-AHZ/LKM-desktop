@@ -10,7 +10,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:mime/mime.dart';
 
 import 'package:island/community/content_detail_pod.dart';
-import 'package:island/community/notification_pod.dart';
+import 'package:island/notifications/notification.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/content_api.dart';
 import 'package:island/shared/widgets/alert.dart';
@@ -158,7 +158,7 @@ class LkmComposeSheet extends HookConsumerWidget {
     // The service announces a registered upload over the `upload` channel;
     // use it to refresh the placeholder immediately instead of waiting for
     // the next poll tick.
-    ref.listen(lkmWsEventsProvider, (_, next) {
+    ref.listen(realtimeEventsProvider, (_, next) {
       next.whenData((event) {
         if (event.event != 'upload_registered') return;
         final file = event.data['file'];

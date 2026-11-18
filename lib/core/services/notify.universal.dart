@@ -394,98 +394,115 @@ Future<void> showLocalNotificationFromFcm({
   );
 }
 
+/// Shows one incoming notification through the platform bridge: an in-app
+/// toast while resumed, a system notification otherwise. Shared by the Solar
+/// WebSocket listener and the LKM push listener so both backends behave
+/// identically.
+Future<void> handleIncomingNotification(
+  BuildContext context,
+  WidgetRef ref,
+  SnNotification notification,
+) async {
+  final settings = ref.read(appSettingsProvider);
+  if (_appLifecycleState == AppLifecycleState.resumed) {
+    Logger.root.info(
+      '[Notification] Showing in-app notification: ${notification.title}',
+    );
+    if (settings.notifyWithHaptic) {
+      HapticFeedback.heavyImpact();
+    }
+    playNotificationSfx(ref);
+    ref.read(notificationStateProvider.notifier).add(notification);
+    return;
+  }
+
+  // When the app is not focused, mirror WebSocket notifications to the
+  // system notification center. This includes iOS while its WebSocket is
+  // still connected; foreground notifications remain in-app above.
+  if (kIsWeb) {
+    Logger.root.info(
+      '[Notification] Skipping system notification for unsupported platform: ${notification.title}',
+    );
+    return;
+  }
+
+  Logger.root.info(
+    '[Notification] Showing system notification: ${notification.title}',
+  );
+
+  final serverUrl = ref.read(serverUrlProvider);
+  final threadId = _buildThreadIdentifier(notification);
+  final attachments = await _downloadDarwinAttachments(
+    serverUrl,
+    notification,
+  );
+
+  String? senderImagePath;
+  if (Platform.isIOS &&
+      notification.topic.startsWith('messages.') &&
+      notification.meta['pfp'] is String) {
+    try {
+      final file = await DefaultCacheManager().getSingleFile(
+        '$serverUrl/drive/files/${notification.meta['pfp']}',
+      );
+      senderImagePath = await _pathForDarwinAttachment(file);
+    } catch (error) {
+      Logger.root.warning(
+        '[Notification] Failed to download communication sender image: $error',
+      );
+    }
+  }
+
+  final DarwinNotificationDetails darwinNotificationDetails =
+      DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        sound: notification.topic.startsWith('messages.')
+            ? 'SfxMessage.caf'
+            : 'SfxNotification.caf',
+        threadIdentifier: threadId,
+        categoryIdentifier: notification.topic.startsWith('messages.')
+            ? 'CHAT_MESSAGE'
+            : null,
+        attachments: attachments,
+      );
+  final NotificationDetails notificationDetails = NotificationDetails(
+    android: androidNotificationDetails,
+    macOS: darwinNotificationDetails,
+  );
+  final shownAsCommunicationNotification =
+      Platform.isIOS && notification.topic.startsWith('messages.')
+      ? await _showIosCommunicationNotification(
+          notification: notification,
+          threadId: threadId,
+          attachments: attachments,
+          senderImagePath: senderImagePath,
+        )
+      : false;
+  if (!shownAsCommunicationNotification) {
+    await flutterLocalNotificationsPlugin.show(
+      id: notification.id.hashCode,
+      title: notification.title,
+      body: notification.body,
+      notificationDetails: notificationDetails,
+      payload: notification.meta['action_uri'] as String?,
+    );
+  }
+}
+
 StreamSubscription<WebSocketPacket> setupNotificationListener(
   BuildContext context,
   WidgetRef ref,
 ) {
-  final settings = ref.watch(appSettingsProvider);
   final ws = ref.watch(websocketProvider);
   return ws.dataStream.listen((pkt) async {
     if (pkt.type == "notifications.new") {
-      final notification = SnNotification.fromJson(pkt.data!);
-      if (_appLifecycleState == AppLifecycleState.resumed) {
-        Logger.root.info(
-          '[Notification] Showing in-app notification: ${notification.title}',
-        );
-        if (settings.notifyWithHaptic) {
-          HapticFeedback.heavyImpact();
-        }
-        playNotificationSfx(ref);
-        ref.read(notificationStateProvider.notifier).add(notification);
-      } else {
-        // When the app is not focused, mirror WebSocket notifications to the
-        // system notification center. This includes iOS while its WebSocket is
-        // still connected; foreground notifications remain in-app above.
-        if (!kIsWeb) {
-          Logger.root.info(
-            '[Notification] Showing system notification: ${notification.title}',
-          );
-
-          final serverUrl = ref.read(serverUrlProvider);
-          final threadId = _buildThreadIdentifier(notification);
-          final attachments = await _downloadDarwinAttachments(
-            serverUrl,
-            notification,
-          );
-
-          String? senderImagePath;
-          if (Platform.isIOS &&
-              notification.topic.startsWith('messages.') &&
-              notification.meta['pfp'] is String) {
-            try {
-              final file = await DefaultCacheManager().getSingleFile(
-                '$serverUrl/drive/files/${notification.meta['pfp']}',
-              );
-              senderImagePath = await _pathForDarwinAttachment(file);
-            } catch (error) {
-              Logger.root.warning(
-                '[Notification] Failed to download communication sender image: $error',
-              );
-            }
-          }
-
-          final DarwinNotificationDetails darwinNotificationDetails =
-              DarwinNotificationDetails(
-                presentAlert: true,
-                presentBadge: true,
-                presentSound: true,
-                sound: notification.topic.startsWith('messages.')
-                    ? 'SfxMessage.caf'
-                    : 'SfxNotification.caf',
-                threadIdentifier: threadId,
-                categoryIdentifier: notification.topic.startsWith('messages.')
-                    ? 'CHAT_MESSAGE'
-                    : null,
-                attachments: attachments,
-              );
-          final NotificationDetails notificationDetails = NotificationDetails(
-            android: androidNotificationDetails,
-            macOS: darwinNotificationDetails,
-          );
-          final shownAsCommunicationNotification =
-              Platform.isIOS && notification.topic.startsWith('messages.')
-              ? await _showIosCommunicationNotification(
-                  notification: notification,
-                  threadId: threadId,
-                  attachments: attachments,
-                  senderImagePath: senderImagePath,
-                )
-              : false;
-          if (!shownAsCommunicationNotification) {
-            await flutterLocalNotificationsPlugin.show(
-              id: notification.id.hashCode,
-              title: notification.title,
-              body: notification.body,
-              notificationDetails: notificationDetails,
-              payload: notification.meta['action_uri'] as String?,
-            );
-          }
-        } else {
-          Logger.root.info(
-            '[Notification] Skipping system notification for unsupported platform: ${notification.title}',
-          );
-        }
-      }
+      await handleIncomingNotification(
+        context,
+        ref,
+        SnNotification.fromJson(pkt.data!),
+      );
     }
   });
 }
