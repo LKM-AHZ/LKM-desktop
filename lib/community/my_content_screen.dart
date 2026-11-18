@@ -58,21 +58,6 @@ final myApplicationsProvider =
       return session.run(() => ref.watch(projectsApiProvider).myApplications());
     });
 
-final myFavoritesProvider = FutureProvider.autoDispose
-    .family<ApiPage<LkmSavedItem>, int>((ref, page) {
-      final session = ref.watch(lkmApiSessionProvider);
-      return session.run(
-        () => ref.watch(contentApiProvider).favorites(page: page),
-      );
-    });
-final myHistoryProvider = FutureProvider.autoDispose
-    .family<ApiPage<LkmSavedItem>, int>((ref, page) {
-      final session = ref.watch(lkmApiSessionProvider);
-      return session.run(
-        () => ref.watch(contentApiProvider).history(page: page),
-      );
-    });
-
 /// The website's `/my/*`: my questions, posts, projects, applications,
 /// favorites and reading history.
 @RoutePage()
@@ -82,7 +67,7 @@ class MyContentScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final me = ref.watch(lkmMeProvider);
-    final controller = useMaterialTabController(initialLength: 5);
+    final controller = useMaterialTabController(initialLength: 3);
 
     return AppScaffold(
       isNoBackground: false,
@@ -97,8 +82,6 @@ class MyContentScreen extends HookConsumerWidget {
             Tab(text: 'authFlow.tabQuestions'.tr()),
             Tab(text: 'authFlow.tabPosts'.tr()),
             Tab(text: 'authFlow.tabProjects'.tr()),
-            Tab(text: 'authFlow.tabFavorites'.tr()),
-            Tab(text: 'authFlow.tabHistory'.tr()),
           ],
         ),
       ),
@@ -116,8 +99,6 @@ class MyContentScreen extends HookConsumerWidget {
               _QuestionsTab(userId: account.id),
               _PostsTab(userId: account.id),
               _ProjectsTab(userId: account.id),
-              _FavoritesTab(),
-              _HistoryTab(),
             ],
           );
         },
@@ -215,31 +196,6 @@ class _ProjectsTab extends ConsumerWidget {
     );
   }
 }
-
-class _FavoritesTab extends StatelessWidget {
-  const _FavoritesTab();
-  @override
-  Widget build(BuildContext context) => ApiPageList<LkmSavedItem>(
-    provider: myFavoritesProvider.call,
-    itemBuilder: _savedItem,
-  );
-}
-
-class _HistoryTab extends StatelessWidget {
-  const _HistoryTab();
-  @override
-  Widget build(BuildContext context) => ApiPageList<LkmSavedItem>(
-    provider: myHistoryProvider.call,
-    itemBuilder: _savedItem,
-  );
-}
-
-Widget _savedItem(BuildContext context, LkmSavedItem item) => ListTile(
-  title: Text(item.title),
-  subtitle: Text(item.contentType),
-  trailing: const Icon(Icons.chevron_right),
-  onTap: () => context.router.push(ContentDetailRoute(id: item.contentId)),
-);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.text});

@@ -458,6 +458,14 @@ class ContentApi {
         parseItem: LkmSavedItem.fromJson,
       );
 
+  /// `GET /interaction/me/likes` — content the viewer liked.
+  Future<ApiPage<LkmSavedItem>> likes({int page = 1, int limit = 20}) =>
+      _client.getPage(
+        '/interaction/me/likes',
+        query: {'page': page, 'limit': limit},
+        parseItem: LkmSavedItem.fromJson,
+      );
+
   /// `GET /content/boards/me/following` — followed boards.
   Future<List<LkmFollowBoard>> followingBoards() => _client.getList(
     '/content/boards/me/following',

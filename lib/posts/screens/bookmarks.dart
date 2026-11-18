@@ -2,19 +2,40 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/content_api.dart';
 import 'package:island/core/services/time.dart';
-import 'package:island/posts/pods/bookmarks.dart';
-import 'package:island/posts/widgets/compose/post_interactions.dart';
-import 'package:island/posts/widgets/compose/post_item.dart';
-import 'package:island/posts/widgets/compose/post_item_skeleton.dart';
-import 'package:island/posts/widgets/compose/post_shared.dart';
+import 'package:island/route.gr.dart';
+import 'package:island/shared/widgets/api_page_list.dart';
 import 'package:island/shared/widgets/app_scaffold.dart';
-import 'package:island/shared/widgets/pagination_list.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:solar_network_sdk/solar_network_sdk.dart';
 
-const _maxWidth = 540.0;
+/// The viewer's saved content, reading history and liked content. All three
+/// read the same service-side summary shape, so one list widget serves them.
+final favoriteContentProvider = FutureProvider.autoDispose
+    .family<ApiPage<LkmSavedItem>, int>((ref, page) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(
+        () => ref.watch(contentApiProvider).favorites(page: page),
+      );
+    });
+
+final readingHistoryProvider = FutureProvider.autoDispose
+    .family<ApiPage<LkmSavedItem>, int>((ref, page) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(
+        () => ref.watch(contentApiProvider).history(page: page),
+      );
+    });
+
+final likedContentProvider = FutureProvider.autoDispose
+    .family<ApiPage<LkmSavedItem>, int>((ref, page) {
+      final session = ref.watch(lkmApiSessionProvider);
+      return session.run(
+        () => ref.watch(contentApiProvider).likes(page: page),
+      );
+    });
 
 @RoutePage()
 class BookmarksScreen extends HookConsumerWidget {
@@ -23,7 +44,7 @@ class BookmarksScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: AppScaffold(
         isNoBackground: false,
         appBar: AppBar(
@@ -36,117 +57,57 @@ class BookmarksScreen extends HookConsumerWidget {
             tabs: [
               Tab(
                 icon: const Icon(Symbols.bookmark, size: 18),
-                text: 'bookmarks'.tr(),
+                text: 'authFlow.tabFavorites'.tr(),
               ),
               Tab(
-                icon: const Icon(Symbols.add_reaction, size: 18),
+                icon: const Icon(Symbols.history, size: 18),
+                text: 'authFlow.tabHistory'.tr(),
+              ),
+              Tab(
+                icon: const Icon(Symbols.favorite, size: 18),
                 text: 'reactedPosts'.tr(),
               ),
             ],
           ),
         ),
-        body: const TabBarView(children: [_BookmarksTab(), _ReactedPostsTab()]),
+        body: TabBarView(
+          children: [
+            _SavedTab(provider: favoriteContentProvider),
+            _SavedTab(provider: readingHistoryProvider),
+            _SavedTab(provider: likedContentProvider),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _BookmarksTab extends HookConsumerWidget {
-  const _BookmarksTab();
+class _SavedTab extends StatelessWidget {
+  const _SavedTab({required this.provider});
+
+  final FutureProvider<ApiPage<LkmSavedItem>> Function(int) provider;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final provider = bookmarksProvider;
-
-    return PaginationList(
+  Widget build(BuildContext context) {
+    return ApiPageList<LkmSavedItem>(
       provider: provider,
-      notifier: provider.notifier,
-      padding: EdgeInsets.symmetric(vertical: 8),
-      footerSkeletonChild: const PostItemSkeleton(),
-      footerSkeletonMaxWidth: _maxWidth,
-      itemBuilder: (context, index, item) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _maxWidth),
-            child: PostRowSurface(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: PostActionableItem(
-                item: item,
-                isShowReference: false,
-                isEmbedOpenable: true,
-                onUpdate: (newPost) {
-                  if (!newPost.isBookmarked) {
-                    ref.read(provider.notifier).refresh();
-                  }
-                },
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ReactedPostsTab extends HookConsumerWidget {
-  const _ReactedPostsTab();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userInfoProvider);
-    final username = user.value?.name;
-
-    if (username == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final provider = userReactionsProvider(username);
-
-    return PaginationList(
-      provider: provider,
-      notifier: provider.notifier,
-      padding: EdgeInsets.symmetric(vertical: 8),
-      footerSkeletonChild: const PostItemSkeleton(),
-      footerSkeletonMaxWidth: _maxWidth,
-      itemBuilder: (context, index, item) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _maxWidth),
-            // A reacted post is one surface: the reaction header and the row it
-            // annotates share a single sheet, so only the outer chrome paints.
-            child: PostRowSurface(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                    child: Row(
-                      children: [
-                        buildReactionIcon(item.reaction.symbol, 24),
-                        const SizedBox(width: 8),
-                        Text(
-                          ReactInfo.getTranslationKey(item.reaction.symbol),
-                        ).tr(),
-                        const Spacer(),
-                        Text(
-                          item.reaction.createdAt.formatRelative(context),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  PostActionableItem(
-                    item: item.post,
-                    isShowReference: false,
-                    isEmbedOpenable: true,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      itemBuilder: (context, item) => ListTile(
+        leading: const Icon(Symbols.article),
+        title: Text(
+          item.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          [
+            item.contentType,
+            if (item.at != null) item.at!.formatRelative(context),
+          ].where((e) => e.isNotEmpty).join(' · '),
+        ),
+        trailing: const Icon(Symbols.chevron_right),
+        onTap: () =>
+            context.router.push(ContentDetailRoute(id: item.contentId)),
+      ),
     );
   }
 }

@@ -125,6 +125,10 @@ class _FakeContent implements ContentApi {
       const ApiPage.empty();
 
   @override
+  Future<ApiPage<LkmSavedItem>> likes({int page = 1, int limit = 20}) async =>
+      const ApiPage.empty();
+
+  @override
   Future<List<LkmFollowBoard>> followingBoards() async => const [];
 
   @override
