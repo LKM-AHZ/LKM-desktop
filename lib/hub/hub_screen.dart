@@ -8,7 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:island/community/compose_sheet.dart';
-import 'package:island/community/content_detail_pod.dart';
+import 'package:island/posts/screens/post_detail.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/columns_api.dart';

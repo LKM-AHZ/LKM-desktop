@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mime/mime.dart';
 
-import 'package:island/community/content_detail_pod.dart';
+import 'package:island/posts/screens/post_detail.dart';
 import 'package:island/notifications/notification.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/content_api.dart';
