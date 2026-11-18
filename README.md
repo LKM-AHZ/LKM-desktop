@@ -57,35 +57,40 @@
 
 #### 前置要求
 
+先运行引导脚本。它会检查 Flutter 工具链、执行 `flutter pub get`，并核对当前平台的构建依赖：
+
+```bash
+cd LKM-desktop
+./buildtools/setup-dev.sh             # 只检查并拉取依赖
+./buildtools/setup-dev.sh --install   # Linux：额外用 apt-get 安装缺失的系统包（非debian系需按照提示手动安装）
+```
+
+Windows/macOS 上 `--install` 不会改动系统，只打印需要手动执行的命令。脚本覆盖不到时按下面的清单手动安装：
+
 - 使用 [OH-Flutter SDK](https://atomgit.com/oh-flutter/flutter_flutter)，目标版本固定在 [.flutter-version](.flutter-version)。SDK 初始化与当前主机限制见[跨平台插件替换进度](docs/HARMONYOS_PLUGIN_REPLACEMENTS.md#sdk-切换状态)。
 - 鸿蒙 HAP 要求在 Linux 本机构建。已安装工具的终端可执行 `source buildtools/env-ohos.sh`；安装、三种模式的最小 HAP 验证及业务应用状态见 [Linux 本机构建记录](docs/HARMONYOS_LINUX_BUILD.md)。
-- Windows 开发需要安装 [NASM](https://www.nasm.us)（`webcrypto` 原生资源需要）：
-  ```powershell
-  winget install NASM.NASM
-  ```
+- 所有桌面平台都需要 Rust 工具链（[rustup](https://rustup.rs) + stable `cargo`/`rustc`）。`super_native_extensions` 通过 cargokit 在应用构建期编译 Rust；`openmls` 默认下载预编译库，只有鸿蒙或本地调试才自行编译。Windows 可用 `winget install Rustlang.Rustup`。
 - macOS 开发请保持 Rust `stable` 工具链为最新（`rustup update stable`）。当 `stable` 低于 1.98 时，从 Xcode 归档会报 `E0463: can't find crate for proc_macro_error_attr`——Xcode 的 `MACOSX_DEPLOYMENT_TARGET`（13.5）会使链接器生成旧版 rustc 无法读取的 chained-fixups proc-macro dylib。
-- Linux 开发需要安装额外依赖：
+- Linux 开发需要安装额外依赖（其中的 clang/cmake/ninja 是 Flutter Linux 桌面工具链的必需项）：
 
 ```bash
 sudo apt-get update -y
 sudo apt-get install -y \
-  ninja-build \
-  libgtk-3-dev \
-  libmpv-dev \
-  mpv \
-  libayatana-appindicator3-dev \
-  keybinder-3.0 \
-  libnotify-dev \
-  libgstreamer1.0-dev \
-  libgstreamer-plugins-base1.0-dev \
-  gstreamer-1.0
+  ninja-build cmake clang pkg-config \
+  libgtk-3-dev libmpv-dev mpv \
+  libayatana-appindicator3-dev libkeybinder-3.0-dev \
+  libnotify-dev libsecret-1-dev libcurl4-openssl-dev \
+  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-base
 ```
+
+不要用 `gstreamer-1.0` 或 `keybinder-3.0` 这两个虚拟包名：apt 会把它们解析到无关的 Qt5 包。
 
 #### 运行应用
 
 ```bash
-# 安装依赖
-flutter pub get
+# 安装依赖（首次或依赖变更后）
+./buildtools/setup-dev.sh --install
 
 # 以调试模式运行
 flutter run
@@ -100,12 +105,6 @@ flutter build <platform>
 
 ---
 
-## 服务端
-
-Solar Network 的后端服务位于：
-**[Solsynth/DysonNetwork](https://github.com/Solsynth/DysonNetwork)**
-
----
 
 ## 技术栈
 
@@ -134,15 +133,7 @@ Solar Network 的后端服务位于：
 - 明确说明您所做的任何修改
 - 向通过网络与服务交互的用户提供相应的源代码（包括提供 API）
 
-在适用情况下，必须保留归属于 LittleSheep、Solsynth 以及本仓库贡献者的原始作者身份和版权归属。
 
-请注意，AGPL-3.0 许可仅适用于软件源代码。某些资产、徽标、图标、品牌材料和商标可能单独授权，并不自动受相同条款约束。
-
-第三方部署、分支及衍生服务不得冒充或自称是 Solsynth 运营的官方 Solar Network 服务。
-未经 Solsynth 事先许可，不得将“Solar Network”、“Solian”名称、相关徽标及相关品牌标识用于推广、宣传或标识第三方部署。
-出于描述或兼容性目的，允许提及底层的 DysonNetwork 软件或 Island 项目。
-
-同时，如果你的分支项目的目的是第三方 Solar Network 客户端，请阅读并同意 [Solar Network 开发者协议](https://solsynth.dev/zh/legal/solar-network-dev/)
 
 参见：
 
