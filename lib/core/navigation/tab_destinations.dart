@@ -55,19 +55,8 @@ List<TabDestination> get allTabDestinations => [
     nativeSelectedSymbol: 'square.grid.2x2.fill',
   ),
   TabDestination(
-    id: 'community',
-    routeIndex: 1,
-    routePath: '/community',
-    label: 'community'.tr(),
-    navigationIcon: Symbols.dynamic_feed_rounded,
-    iconBuilder: (selected) =>
-        Icon(Symbols.dynamic_feed_rounded, fill: selected ? 1 : null),
-    nativeSymbol: 'list.bullet.rectangle',
-    nativeSelectedSymbol: 'list.bullet.rectangle.fill',
-  ),
-  TabDestination(
     id: 'explore',
-    routeIndex: 2,
+    routeIndex: 1,
     routePath: '/explore',
     label: 'explore'.tr(),
     navigationIcon: Symbols.explore_rounded,
@@ -78,7 +67,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'search',
-    routeIndex: 3,
+    routeIndex: 2,
     routePath: '/search',
     label: 'search'.tr(),
     navigationIcon: Symbols.search,
@@ -87,7 +76,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'chat',
-    routeIndex: 4,
+    routeIndex: 3,
     routePath: '/chat',
     label: 'chat'.tr(),
     navigationIcon: Symbols.forum_rounded,
@@ -106,7 +95,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'realms',
-    routeIndex: 5,
+    routeIndex: 4,
     routePath: '/realms',
     label: 'realms'.tr(),
     navigationIcon: Symbols.groups_3,
@@ -117,7 +106,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'account',
-    routeIndex: 6,
+    routeIndex: 5,
     routePath: '/account',
     label: 'account'.tr(),
     navigationIcon: Symbols.account_circle_rounded,
@@ -145,7 +134,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'wallet',
-    routeIndex: 7,
+    routeIndex: 6,
     routePath: '/wallet',
     label: 'wallet'.tr(),
     navigationIcon: Symbols.wallet,
@@ -155,7 +144,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'creators',
-    routeIndex: 8,
+    routeIndex: 7,
     routePath: '/creators',
     label: 'creatorHub'.tr(),
     navigationIcon: Symbols.design_services_rounded,
@@ -166,7 +155,7 @@ List<TabDestination> get allTabDestinations => [
   ),
   TabDestination(
     id: 'thoughts',
-    routeIndex: 9,
+    routeIndex: 8,
     routePath: '/thoughts',
     label: 'thoughts'.tr(),
     navigationIcon: Symbols.robot_2_rounded,

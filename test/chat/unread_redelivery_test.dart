@@ -8,6 +8,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/pods/chat_subscribe.dart';
 import 'package:island/chat/pods/chat_summary.dart';
+import 'package:island/core/api/api_client.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/api_session.dart';
+import 'package:island/core/api/lkm_ws.dart';
+import 'package:island/core/api/notification_api.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/database.dart';
@@ -540,23 +545,39 @@ void main() {
 
   group('NotificationUnreadCountNotifier re-delivery', () {
     late ProviderContainer container;
-    late _FakeWebSocketService ws;
+    late StreamController<LkmWsEvent> events;
     late ProviderSubscription<AsyncValue<int>> subscription;
+
+    void push(String id) {
+      events.add(
+        LkmWsEvent(
+          event: 'notification_created',
+          eventId: 'notification:$id',
+          version: 1,
+          data: {'event': 'notification_created', 'notification_id': id},
+        ),
+      );
+    }
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
-      ws = _FakeWebSocketService();
+      final session = ApiSession(
+        prefs: prefs,
+        serverUrl: 'https://community.example',
+      );
+      await session.adopt(
+        const LkmTokenPair(accessToken: 'access', refreshToken: 'refresh'),
+      );
+      events = StreamController<LkmWsEvent>.broadcast();
+      addTearDown(events.close);
       container = ProviderContainer(
         retry: (_, _) => null,
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
-          tokenProvider.overrideWithValue(null),
-          websocketProvider.overrideWithValue(ws),
-          userInfoProvider.overrideWith(_SignedOutUserInfo.new),
-          apiClientProvider.overrideWithValue(
-            Dio()..httpClientAdapter = _UnreadAdapter('0'),
-          ),
+          lkmApiSessionProvider.overrideWithValue(session),
+          notificationApiProvider.overrideWithValue(_FakeLkmNotifications()),
+          realtimeEventsProvider.overrideWith((ref) => events.stream),
         ],
       );
       subscription = container.listen(
@@ -572,16 +593,16 @@ void main() {
     });
 
     test('a repeated notification does not count twice', () async {
-      ws.push(_notificationFrame('n1'));
+      push('n1');
       await _settle(
         () => _unread(container.read(notificationUnreadCountProvider)) == 1,
       );
 
-      ws.push(_notificationFrame('n1'));
+      push('n1');
       await Future<void>.delayed(const Duration(milliseconds: 200));
       expect(_unread(container.read(notificationUnreadCountProvider)), 1);
 
-      ws.push(_notificationFrame('n2'));
+      push('n2');
       await _settle(
         () => _unread(container.read(notificationUnreadCountProvider)) == 2,
       );
@@ -604,4 +625,21 @@ Future<void> _settle(bool Function() until) async {
     await Future<void>.delayed(const Duration(milliseconds: 20));
   }
   fail('condition not reached');
+}
+
+
+class _FakeLkmNotifications implements NotificationApi {
+  @override
+  Future<ApiPage<LkmNotification>> list({
+    int page = 1,
+    int limit = 20,
+    bool unreadOnly = false,
+  }) async => const ApiPage.empty();
+
+  @override
+  Future<int> unreadCount() async => 0;
+
+  @override
+  Future<int> markRead({List<String> ids = const [], bool all = false}) async =>
+      0;
 }

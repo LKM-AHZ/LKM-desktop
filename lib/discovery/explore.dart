@@ -467,7 +467,7 @@ class ExploreScreen extends HookConsumerWidget {
       constraints: const BoxConstraints(maxWidth: 480),
       builder: (sheetContext) => SafeArea(
         top: false,
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -479,6 +479,42 @@ class ExploreScreen extends HookConsumerWidget {
                   'explore'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.category),
+                title: Text('categoriesAndTags'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(PostCategoriesListRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.shuffle),
+                title: Text('postShuffle'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(const PostShuffleRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.footprint),
+                title: Text('browseFootprints'.tr()),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(const BookmarksRoute());
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Symbols.drafts),
+                title: Text('draftBox').tr(),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.router.push(const DraftBoxRoute());
+                },
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -538,42 +574,6 @@ class ExploreScreen extends HookConsumerWidget {
                     builder: (context, dismiss) =>
                         NotificationModal(onDismiss: dismiss),
                   );
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.category),
-                title: Text('categoriesAndTags'.tr()),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  context.router.push(PostCategoriesListRoute());
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.shuffle),
-                title: Text('postShuffle'.tr()),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  context.router.push(const PostShuffleRoute());
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.footprint),
-                title: Text('browseFootprints'.tr()),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  context.router.push(const BookmarksRoute());
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.drafts),
-                title: Text('draftBox').tr(),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  context.router.push(const DraftBoxRoute());
                 },
               ),
             ],
