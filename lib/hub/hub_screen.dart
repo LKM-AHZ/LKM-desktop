@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'package:island/community/compose_sheet.dart';
+import 'package:island/posts/screens/compose_post.dart';
 import 'package:island/posts/screens/post_detail.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
@@ -709,7 +709,7 @@ class BoardDetailScreen extends HookConsumerWidget {
       final created = await showModalBottomSheet<String>(
         context: context,
         isScrollControlled: true,
-        builder: (_) => LkmComposeSheet(initialBoardId: id),
+        builder: (_) => ForumComposeSheet(initialBoardId: id),
       );
       if (created == null || !context.mounted) return;
       ref.invalidate(boardFeedProvider(id));

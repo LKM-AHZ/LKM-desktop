@@ -28,7 +28,6 @@ import 'package:island/discovery/widgets/discovery_feedback_widget.dart';
 import 'package:island/discovery/widgets/explore_card.dart';
 import 'package:island/discovery/widgets/explore_config_sheet.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
-import 'package:island/community/compose_sheet.dart';
 import 'package:island/community/widgets/feed_item_card.dart';
 import 'package:island/discovery/search_navigation.dart';
 import 'package:island/notifications/notification.dart';
@@ -381,7 +380,7 @@ class ExploreScreen extends HookConsumerWidget {
                     context: parentContext,
                     isScrollControlled: true,
                     useRootNavigator: true,
-                    builder: (_) => const LkmComposeSheet(),
+                    builder: (_) => const ForumComposeSheet(),
                   );
                   if (id != null && parentContext.mounted) {
                     parentContext.router.push(ContentDetailRoute(id: id));
