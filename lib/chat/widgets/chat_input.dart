@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:desktop_drop/desktop_drop.dart";
+import 'package:island/chat/backend/chat_backend.dart';
 import "package:easy_localization/easy_localization.dart";
 import "package:flutter/foundation.dart";
 import "package:material_ui/material_ui.dart";
@@ -22,7 +23,6 @@ import "package:island/posts/widgets/compose/compose_survey.dart";
 import "package:island/stickers/widgets/stickers/sticker_picker.dart";
 import "package:island/stickers/models/sticker.dart";
 import "package:island/core/config.dart";
-import "package:island/accounts/account_pod.dart";
 import "package:island/discovery/discovery_service.dart";
 import "package:island/chat/pods/chat_room.dart";
 import "package:island/core/services/responsive.dart";
@@ -1283,11 +1283,11 @@ class ChatInput extends HookConsumerWidget {
     final recordingTicker = useRef<Timer?>(null);
     final recordingStartedAt = useRef<DateTime?>(null);
     const maxVoiceRecordDuration = Duration(minutes: 5);
-    final userInfo = ref.watch(userInfoProvider);
+    final selfChatId = ref.watch(chatSelfIdProvider);
     final effectiveIdentity =
         roomIdentity.value ??
         (chatRoom.members ?? const <SnChatMember>[])
-            .where((member) => member.accountId == userInfo.value?.id)
+            .where((member) => member.accountId == selfChatId)
             .firstOrNull;
     final timeoutUntil = effectiveIdentity?.timeoutUntil;
     final hasActiveTimeout =
@@ -1572,7 +1572,7 @@ class ChatInput extends HookConsumerWidget {
 
     List<SnChatMember> getValidMembers(List<SnChatMember> members) {
       return members
-          .where((member) => member.accountId != userInfo.value?.id)
+          .where((member) => member.accountId != selfChatId)
           .toList();
     }
 

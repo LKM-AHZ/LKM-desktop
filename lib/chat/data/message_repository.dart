@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/data/message_cache.dart';
 import 'package:island/chat/e2ee_message_service.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/data/database.dart';
 import 'package:island/data/message.dart';
 import 'package:logging/logging.dart';
@@ -18,7 +18,7 @@ class MessageRepository {
   final String _roomId;
   final _logger = Logger('MessageRepository');
 
-  late final Dio _apiClient = _ref.read(apiClientProvider);
+  late final Dio _apiClient = _ref.read(chatApiProvider);
   late final AppDatabase _database = _ref.read(databaseProvider);
 
   final MessageCache _messageCache;

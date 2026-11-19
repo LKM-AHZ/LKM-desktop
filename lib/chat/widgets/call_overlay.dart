@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,13 +10,11 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/pods/call.dart';
 import 'package:island/chat/pods/call_participants.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/widgets/call_button.dart';
 import 'package:island/chat/widgets/call_chrome.dart';
 import 'package:island/chat/widgets/call_participant_tile.dart';
 import 'package:island/chat/widgets/call_screen.dart';
 import 'package:island/chat/widgets/call_window.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/main.dart';
@@ -356,7 +356,7 @@ class _CallOverlayPanelState extends ConsumerState<_CallOverlayPanel>
 
     final overlayState = ref.watch(_callOverlayStateProvider);
     final room = overlayState.room;
-    final userInfo = ref.watch(userInfoProvider).value!;
+    final selfChatId = ref.watch(chatSelfIdProvider);
 
     String chatRoomName;
     final r = callNotifier.chatRoom;
@@ -366,7 +366,7 @@ class _CallOverlayPanelState extends ConsumerState<_CallOverlayPanel>
       chatRoomName =
           r.name ??
           (r.members ?? [])
-              .where((element) => element.accountId != userInfo.id)
+              .where((element) => element.accountId != selfChatId)
               .map((element) => element.nick ?? element.account.nick)
               .firstOrNull ??
           'unnamed'.tr();
@@ -730,7 +730,7 @@ class CallControlsBar extends HookConsumerWidget {
     );
     if (!confirmed || !context.mounted) return;
 
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     try {
       showLoadingModal(context);
       await apiClient.delete('/messager/chat/realtime/${callNotifier.roomId}');

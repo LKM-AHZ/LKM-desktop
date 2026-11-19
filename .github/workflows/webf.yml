@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - "webf/**"
-      - "assets/webf/**"
       - "lib/mini_apps/**"
       - "lib/starhope/**"
       - "lib/data/drift_store.dart"
@@ -31,7 +30,6 @@ jobs:
       - run: pnpm --dir webf install --frozen-lockfile --ignore-scripts
       - run: pnpm --dir webf check
       - run: pnpm --dir webf test
-      - run: pnpm --dir webf check:asset
 
   browser:
     runs-on: ubuntu-latest
@@ -40,9 +38,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+          package_json_file: webf/package.json
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
       - run: flutter pub get
+      - run: pnpm --dir webf install --frozen-lockfile --ignore-scripts
+      - run: pnpm --dir webf build
       - run: node webf/test-browser.mjs

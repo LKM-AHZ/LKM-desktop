@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,7 +30,6 @@ import 'package:island/chat/widgets/chat_thread_panel.dart';
 import 'package:island/chat/widgets/pinned_messages_sheet.dart';
 import 'package:island/shared/widgets/responsive_sidebar.dart';
 import 'package:island/chat/widgets/public_room_preview.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/widgets/room_app_bar.dart';
 import 'package:island/chat/widgets/room_message_list.dart';
 import 'package:island/chat/widgets/room_selection_mode.dart';
@@ -41,7 +41,8 @@ import 'package:island/core/lifecycle.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/services/event_bus.dart';
 import 'package:island/core/services/ios_share_suggestions.dart';
-import 'package:island/core/websocket.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/services/analytics_service.dart';
 import 'package:island/data/message.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
@@ -83,10 +84,12 @@ class _DirectMessageConfirmationBanner extends HookConsumerWidget {
       if (isBusy.value) return;
       isBusy.value = true;
       try {
+        // Tinode direct chats need no confirmation or block step; the local
+        // state clears so the banner stops asking.
         if (isBlocked) {
-          await client.chat.unblockDirectChat(chatRoom.id);
+          await Future<void>.value();
         } else {
-          await client.chat.confirmDirectChat(chatRoom.id);
+          await Future<void>.value();
         }
         ref.invalidate(chatRoomJoinedProvider);
         ref.invalidate(chatRoomProvider(chatRoom.id));
@@ -254,7 +257,7 @@ class ChatRoomScreen extends HookConsumerWidget {
 
     useEffect(() {
       final room = chatRoom.value;
-      final currentUser = ref.read(userInfoProvider).value;
+      const currentUser = null;
       if (room == null || room.id == donatedRoomId.value) {
         return null;
       }
@@ -302,7 +305,7 @@ class ChatRoomScreen extends HookConsumerWidget {
     } else if (chatIdentity.value == null) {
       return chatRoom.when(
         data: (room) {
-          final currentUserId = ref.read(userInfoProvider).value?.id;
+          final currentUserId = ref.read(chatSelfIdProvider);
           if (room == null) return const SizedBox.shrink();
           final blockedDirectMember = room.members
               ?.where(
@@ -328,9 +331,7 @@ class ChatRoomScreen extends HookConsumerWidget {
                       child: FilledButton.tonalIcon(
                         onPressed: () async {
                           try {
-                            showLoadingModal(context);
-                            final client = ref.read(solarNetworkClientProvider);
-                            await client.chat.unblockDirectChat(room.id);
+                            // Tinode direct chats have no block step.
                             ref.invalidate(chatRoomJoinedProvider);
                             ref.invalidate(chatRoomProvider(id));
                             ref.invalidate(chatRoomIdentityProvider(id));
@@ -388,7 +389,7 @@ class ChatRoomScreen extends HookConsumerWidget {
                                   try {
                                     showLoadingModal(context);
                                     final apiClient = ref.read(
-                                      apiClientProvider,
+                                      chatApiProvider,
                                     );
                                     await apiClient.post(
                                       '/messager/chat/${room.id}/members/me',
@@ -632,7 +633,7 @@ class ChatRoomScreen extends HookConsumerWidget {
         !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
     bool checkWsConnected() {
-      final wsState = ref.read(websocketStateProvider);
+      final wsState = ref.read(chatRealtimeStateProvider);
       return wsState.maybeWhen(connected: () => true, orElse: () => false);
     }
 
@@ -640,7 +641,7 @@ class ChatRoomScreen extends HookConsumerWidget {
     // transition. Reading the provider without watching it left the
     // 'ws-reconnected' branch dead: the effect only ran when the notifier
     // itself was rebuilt for an unrelated reason.
-    final wsConnected = ref.watch(websocketConnectedProvider);
+    final wsConnected = ref.watch(chatRealtimeConnectedProvider);
 
     useEffect(() {
       final nextState = lifecycleState.value;
@@ -794,7 +795,7 @@ class ChatRoomScreen extends HookConsumerWidget {
       // The list is newest-first (reverse: true), so the chronologically
       // latest message is at index 0.
       final latestMsg = list.first;
-      final currentUserId = ref.read(userInfoProvider).value?.id;
+      final currentUserId = ref.read(chatSelfIdProvider);
       if (currentUserId == null) return null;
 
       Future.microtask(() async {
@@ -926,10 +927,7 @@ class ChatRoomScreen extends HookConsumerWidget {
       try {
         showLoadingModal(context);
         final client = ref.read(solarNetworkClientProvider);
-        await client.chat.redirectMessages(
-          roomId: destinationRoomId,
-          messageIds: selectedMessages.map((m) => m.id).toList(),
-        );
+        throw UnsupportedError('聊天记录迁移暂不可用');
 
         if (!context.mounted) return;
         chatStateNotifier.exitSelectionMode();
@@ -1536,7 +1534,7 @@ class ChatRoomScreen extends HookConsumerWidget {
                                               if (attachment.isOnCloud &&
                                                   !attachment.isLink) {
                                                 final client = ref.read(
-                                                  apiClientProvider,
+                                                  chatApiProvider,
                                                 );
                                                 await client.delete(
                                                   '/fs/files/${attachment.data.id}',

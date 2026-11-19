@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/pods/chat_room.dart';
 import 'package:island/chat/widgets/chat_room_list_tile.dart';
-import 'package:island/core/network.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -18,7 +18,7 @@ class ChatInvitesSheet extends HookConsumerWidget {
 
     Future<void> acceptInvite(SnChatMember invite) async {
       try {
-        final client = ref.read(apiClientProvider);
+        final client = ref.read(chatApiProvider);
         await client.post(
           '/messager/chat/invites/${invite.chatRoom!.id}/accept',
         );
@@ -31,7 +31,7 @@ class ChatInvitesSheet extends HookConsumerWidget {
 
     Future<void> declineInvite(SnChatMember invite) async {
       try {
-        final client = ref.read(apiClientProvider);
+        final client = ref.read(chatApiProvider);
         await client.post(
           '/messager/chat/invites/${invite.chatRoom!.id}/decline',
         );

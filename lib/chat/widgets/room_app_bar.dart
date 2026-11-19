@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/pods/chat_room.dart';
 import 'package:island/chat/pods/chat_summary.dart';
 import 'package:island/accounts/relationship_pod.dart';
 import 'package:island/accounts/utils/account_status_utils.dart';
 import 'package:island/chat/widgets/chat_member_list_tile.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/websocket.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/shared/widgets/empty_state.dart';
@@ -52,7 +52,7 @@ class OnlineMembersSheet extends HookConsumerWidget {
       error.value = null;
       members.value = const [];
 
-      final apiClient = ref.read(apiClientProvider);
+      final apiClient = ref.read(chatApiProvider);
       final found = <SnChatMember>[];
       try {
         var offset = 0;
@@ -171,10 +171,10 @@ class RoomAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userInfo = ref.watch(userInfoProvider);
+    final selfChatId = ref.watch(chatSelfIdProvider);
     final validMembers = getValidMembers(
       room.members ?? [],
-      userInfo.value?.id,
+      selfChatId,
     );
     final isDirect = room.type == 1;
     String title;
@@ -200,7 +200,7 @@ class RoomAppBar extends ConsumerWidget {
       room,
       validMembers,
       onlineStatus,
-      userInfo.value?.id,
+      selfChatId,
       weakInternetMode,
       statusLine: statusLine,
     );

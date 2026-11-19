@@ -25,6 +25,7 @@ import "package:island/core/database.dart";
 import "package:island/core/network.dart";
 import "package:island/core/services/event_bus.dart";
 import "package:island/core/lifecycle.dart";
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/websocket.dart';
 import "package:island/chat/e2ee_message_service.dart";
 import "package:island/e2ee/e2ee.dart";
@@ -689,7 +690,7 @@ class MessagesNotifier extends _$MessagesNotifier
   /// since MLS forward secrecy prevents self-decryption - plaintext is preserved from pending.
   @override
   FutureOr<List<LocalChatMessage>> build(String roomId) async {
-    _apiClient = ref.read(apiClientProvider);
+    _apiClient = ref.read(chatApiProvider);
     _database = ref.read(databaseProvider);
     _globalSyncNotifier = ref.read(chatSyncingProvider.notifier);
     _messageCache = MessageCache(maxSize: PaginationConfig.maxCacheSize);

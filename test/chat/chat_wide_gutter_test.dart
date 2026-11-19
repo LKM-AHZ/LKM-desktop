@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -144,7 +145,7 @@ void main() {
                   overrides: [
                     sharedPreferencesProvider.overrideWithValue(prefs),
                     databaseProvider.overrideWithValue(AppDatabase.web()),
-                    apiClientProvider.overrideWithValue(dio),
+                    chatApiProvider.overrideWithValue(dio),
                     chatRoomJoinedProvider.overrideWith(
                       () => _JoinedRooms([
                         _room('r1', 'Design crew'),

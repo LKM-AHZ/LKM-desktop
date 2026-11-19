@@ -1,18 +1,18 @@
 import "dart:async";
 import "dart:convert";
 import "package:flutter/foundation.dart";
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
 import "package:material_ui/material_ui.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:island/accounts/account_pod.dart";
 import "package:island/chat/messages_notifier.dart";
 import "package:island/chat/pods/chat_room.dart";
 import "package:island/chat/pods/chat_summary.dart";
 import "package:island/chat/widgets/message_indicators.dart";
 import "package:island/core/lifecycle.dart";
 import "package:island/core/database.dart";
-import "package:island/core/network.dart";
 import "package:island/core/services/event_bus.dart";
-import "package:island/core/websocket.dart";
 import "package:logging/logging.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 import 'package:solar_network_sdk/solar_network_sdk.dart';
@@ -51,7 +51,7 @@ class ChatReadSyncNotifier extends AsyncNotifier<void> {
   FutureOr<void> build() {
     _subscription?.cancel();
 
-    final ws = ref.read(websocketProvider);
+    final ws = ref.read(chatRealtimeProvider);
     _subscription = ws.dataStream.listen(_handlePacket);
 
     ref.onDispose(() {
@@ -75,7 +75,7 @@ class ChatReadSyncNotifier extends AsyncNotifier<void> {
       return;
     }
 
-    final currentUserId = ref.read(userInfoProvider).value?.id;
+    final currentUserId = ref.read(chatSelfIdProvider);
     if (accountId == currentUserId) {
       await ref.read(chatSummaryProvider.notifier).clearUnreadCount(roomId);
     }
@@ -117,7 +117,7 @@ class ChatReadSyncNotifier extends AsyncNotifier<void> {
 
     state = const AsyncLoading();
     try {
-      final client = ref.read(apiClientProvider);
+      final client = ref.read(chatApiProvider);
       await client.post('/messager/chat/read-all');
       ref.read(chatSummaryProvider.notifier).clearAllUnreadCounts();
       state = const AsyncData(null);
@@ -155,7 +155,7 @@ class ChatSubscribeNotifier extends _$ChatSubscribeNotifier {
           defaultTargetPlatform == TargetPlatform.linux);
 
   bool _isWebSocketConnected() => ref
-      .read(websocketStateProvider)
+      .read(chatRealtimeStateProvider)
       .maybeWhen(connected: () => true, orElse: () => false);
 
   bool _shouldKeepSubscriptionAlive() {
@@ -318,8 +318,8 @@ class ChatSubscribeNotifier extends _$ChatSubscribeNotifier {
     // Subscribe to messages. Capture the service's own send function, not the
     // notifier method: `onCancel`/`onResume` run inside Riverpod life-cycles
     // where any `ref.read` is forbidden, and `WebSocketStateNotifier.sendMessage`
-    // reads `websocketProvider` from its ref on every call.
-    _sendMessage = ref.read(websocketProvider).sendMessage;
+    // reads `chatRealtimeProvider` from its ref on every call.
+    _sendMessage = ref.read(chatRealtimeProvider).sendMessage;
     _sendSubscribe(reason: 'initial');
 
     // Send initial read receipt
@@ -378,7 +378,7 @@ class ChatSubscribeNotifier extends _$ChatSubscribeNotifier {
       }
     });
 
-    ref.listen(websocketConnectedProvider, (previous, next) {
+    ref.listen(chatRealtimeConnectedProvider, (previous, next) {
       if (isWebSocketReconnect(wasConnected: previous, isConnected: next)) {
         _sendSubscribe(reason: 'ws-reconnected');
       }

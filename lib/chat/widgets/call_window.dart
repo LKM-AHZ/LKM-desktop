@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:material_ui/material_ui.dart' hide GlobalMaterialLocalizations;
 import 'package:material_ui/material_ui.dart'
     as material_ui
@@ -13,7 +15,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/pods/call.dart';
 import 'package:island/chat/widgets/call_chrome.dart';
 import 'package:island/chat/widgets/call_content.dart';
@@ -21,7 +22,6 @@ import 'package:island/chat/widgets/call_invite_sheet.dart';
 import 'package:island/chat/widgets/call_overlay.dart'
     show CallControlsBar, hideCallOverlay;
 import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/main.dart' show globalOverlay;
 import 'package:island/shared/widgets/alert.dart';
@@ -222,7 +222,7 @@ class _CallWindowHome extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apiClient = ref.watch(apiClientProvider);
+    final apiClient = ref.watch(chatApiProvider);
     final callNotifier = ref.read(callProvider.notifier);
     final chatRoom = useState<SnChatRoom?>(null);
     final joinError = useState<String?>(null);
@@ -289,13 +289,13 @@ class _CallWindowHome extends HookConsumerWidget {
       return sub.close;
     }, []);
 
-    final userInfo = ref.watch(userInfoProvider).value;
+    final selfChatId = ref.watch(chatSelfIdProvider);
     final roomForTitle = chatRoom.value;
     final roomTitle =
         roomForTitle?.name ??
         args.roomName ??
         (roomForTitle?.members ?? [])
-            .where((m) => m.accountId != userInfo?.id)
+            .where((m) => m.accountId != selfChatId)
             .map((m) => m.nick ?? m.account.nick)
             .firstOrNull ??
         'Call';
@@ -399,13 +399,13 @@ class _CallBody extends HookConsumerWidget {
         ? formatDuration(callState.duration)
         : 'Connecting';
 
-    final userInfo = ref.watch(userInfoProvider).value;
+    final selfChatId = ref.watch(chatSelfIdProvider);
     final roomForTitle = chatRoom.value;
     final roomTitle =
         roomForTitle?.name ??
         args.roomName ??
         (roomForTitle?.members ?? [])
-            .where((m) => m.accountId != userInfo?.id)
+            .where((m) => m.accountId != selfChatId)
             .map((m) => m.nick ?? m.account.nick)
             .firstOrNull ??
         'Call';
@@ -511,8 +511,8 @@ class _CallBody extends HookConsumerWidget {
     SnChatRoom? room,
   ) async {
     if (room == null) return;
-    final apiClient = ref.read(apiClientProvider);
-    final currentUserId = ref.read(userInfoProvider).value?.id;
+    final apiClient = ref.read(chatApiProvider);
+    final currentUserId = ref.read(chatSelfIdProvider);
     final callNotifier = ref.read(callProvider.notifier);
     var members = room.members ?? const <SnChatMember>[];
 

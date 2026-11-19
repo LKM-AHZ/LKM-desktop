@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/relationship_pod.dart';
 import 'package:island/accounts/utils/account_status_utils.dart';
 import 'package:island/accounts/widgets/account/friends_overview.dart';
@@ -53,7 +53,7 @@ class ChatRoomListTile extends HookConsumerWidget {
     final lastMessageAt = summary.value?.lastMessage?.createdAt;
 
     final currentUserId = ref.watch(
-      userInfoProvider.select((user) => user.value?.id),
+      chatSelfIdProvider,
     );
     final validMembers = (room.members ?? <SnChatMember>[])
         .where((member) => member.accountId != currentUserId)

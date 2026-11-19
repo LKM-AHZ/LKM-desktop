@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:island/core/network.dart';
-import 'package:island/core/websocket.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 part 'chat_online_count.g.dart';
@@ -9,8 +9,8 @@ part 'chat_online_count.g.dart';
 class ChatOnlineCountNotifier extends _$ChatOnlineCountNotifier {
   @override
   Future<SnChatOnlineStatus> build(String chatroomId) async {
-    final apiClient = ref.watch(apiClientProvider);
-    final websocket = ref.watch(websocketProvider);
+    final apiClient = ref.watch(chatApiProvider);
+    final websocket = ref.watch(chatRealtimeProvider);
     final subscription = websocket.dataStream.listen((packet) {
       final data = packet.data;
       if ((packet.type == 'chat.presence.updated' ||

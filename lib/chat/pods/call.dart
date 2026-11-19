@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:island/core/network.dart';
 import 'package:island/chat/pods/call_controller.dart';
 
 import 'package:solar_network_sdk/solar_network_sdk.dart';
@@ -121,7 +121,7 @@ class CallNotifier extends _$CallNotifier {
 
   CallController _ensureController() {
     if (_controller != null) return _controller!;
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     _controller = CallController(apiClient: apiClient);
     _controller!.stateNotifier.addListener(_syncState);
     return _controller!;

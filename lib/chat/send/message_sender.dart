@@ -7,9 +7,9 @@ import 'package:island/chat/data/message_cache.dart';
 import 'package:island/chat/data/message_repository.dart';
 import 'package:island/chat/e2ee_message_service.dart';
 import 'package:island/chat/send/message_send_session.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/services/attachment_upload_manager.dart';
-import 'package:island/core/websocket.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/data/message.dart';
 import 'package:solar_network_foundation/solar_network_foundation.dart';
 import 'package:logging/logging.dart';
@@ -317,7 +317,7 @@ class MessageSender {
             : {'durationMs': request.voiceDurationMs},
       });
 
-      final apiClient = _ref.read(apiClientProvider);
+      final apiClient = _ref.read(chatApiProvider);
       final response = await apiClient.post(
         '/messager/chat/$_roomId/messages/voice',
         data: formData,
@@ -603,17 +603,9 @@ class MessageSender {
     SnChatMessage? threadingTo,
     List<Map<String, dynamic>>? embeds,
   }) {
-    if (attachments.isEmpty) return false;
-    if (_e2eeService?.isE2eeRoom == true) return false;
-    if (!_isWebSocketConnected) return false;
-    if (editingTo != null || replyingTo != null || forwardingTo != null) {
-      return false;
-    }
-    // Placeholder finalization only carries content/attachments; thread
-    // membership would be lost, so thread replies always use the direct path.
-    if (threadingTo != null) return false;
-    if (embeds != null && embeds.isNotEmpty) return false;
-    return true;
+    // ponytail: Tinode cannot edit a published message, so the two-step
+    // placeholder/finalize cycle has no server equivalent; send one message.
+    return false;
   }
 
   Future<
@@ -710,8 +702,8 @@ class MessageSender {
   }
 
   Future<SnChatMessage> _sendViaWebSocket(Map<String, dynamic> payload) async {
-    final ws = _ref.read(websocketProvider);
-    final wsState = _ref.read(websocketStateProvider.notifier);
+    final ws = _ref.read(chatRealtimeProvider);
+    final wsState = _ref.read(chatRealtimeStateProvider.notifier);
 
     final packet = WebSocketPacket(
       type: 'messages.send',
@@ -761,7 +753,7 @@ class MessageSender {
     String? content,
     List<String>? attachmentsId,
   }) async {
-    final ws = _ref.read(websocketProvider);
+    final ws = _ref.read(chatRealtimeProvider);
     final completer = Completer<SnChatMessage>();
     StreamSubscription? subscription;
 
@@ -847,7 +839,7 @@ class MessageSender {
   }
 
   bool get _isWebSocketConnected => _ref
-      .read(websocketStateProvider)
+      .read(chatRealtimeStateProvider)
       .maybeWhen(connected: () => true, orElse: () => false);
 
   Options? get _mlsOptions => null;
@@ -860,7 +852,7 @@ class MessageSender {
   /// Returns the created placeholder message with its ID.
   Future<SnChatMessage?> createPlaceholder(String kind) async {
     try {
-      final dio = _ref.read(apiClientProvider);
+      final dio = _ref.read(chatApiProvider);
       final response = await dio.post(
         '/messager/chat/$_roomId/messages/placeholder',
         data: {'kind': kind},
@@ -882,7 +874,7 @@ class MessageSender {
     String? content,
     List<String>? attachmentsId,
   }) {
-    final wsState = _ref.read(websocketStateProvider.notifier);
+    final wsState = _ref.read(chatRealtimeStateProvider.notifier);
 
     final packet = WebSocketPacket(
       type: 'messages.placeholder.finalize',

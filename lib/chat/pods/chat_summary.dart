@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:island/core/network.dart';
-import 'package:island/core/websocket.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/database.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/pods/chat_subscribe.dart';
 import 'package:island/core/utils/bounded_id_set.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
@@ -112,7 +112,7 @@ class ChatUnreadCountNotifier extends _$ChatUnreadCountNotifier {
     });
 
     try {
-      final client = ref.read(apiClientProvider);
+      final client = ref.read(chatApiProvider);
       final response = await client.get('/messager/chat/unread');
       return (response.data as num).toInt();
     } catch (_) {
@@ -121,7 +121,7 @@ class ChatUnreadCountNotifier extends _$ChatUnreadCountNotifier {
   }
 
   void _subscribeToWebSocket() {
-    final webSocketService = ref.read(websocketProvider);
+    final webSocketService = ref.read(chatRealtimeProvider);
     _subscription = webSocketService.dataStream.listen((packet) {
       final isArrivalPacket =
           packet.type == 'messages.new' || packet.type == 'messages.update';
@@ -150,7 +150,7 @@ class ChatUnreadCountNotifier extends _$ChatUnreadCountNotifier {
     // The notify setting lives on the member row, which is keyed by account.
     // Resolve the signed-in account first: reading it mid-load would see no
     // account and fall through to counting every message.
-    final accountId = (await ref.read(userInfoProvider.future))?.id;
+    final accountId = ref.read(chatSelfIdProvider);
     if (!ref.mounted) return;
     final member = accountId == null
         ? null
@@ -240,7 +240,7 @@ class ChatSummary extends _$ChatSummary {
 
   @override
   Future<Map<String, SnChatSummary>> build() async {
-    final client = ref.watch(apiClientProvider);
+    final client = ref.watch(chatApiProvider);
     final resp = await client.get('/messager/chat/summary');
 
     final Map<String, dynamic> data = resp.data;
@@ -256,7 +256,7 @@ class ChatSummary extends _$ChatSummary {
       );
     });
 
-    final ws = ref.watch(websocketProvider);
+    final ws = ref.watch(chatRealtimeProvider);
     final subscription = ws.dataStream.listen((WebSocketPacket pkt) {
       if (!pkt.type.startsWith('messages')) return;
       if (pkt.type == 'messages.new') {
@@ -394,7 +394,7 @@ class ChatSummary extends _$ChatSummary {
     String chatId,
     SnChatMessage message,
   ) async {
-    final accountId = (await ref.read(userInfoProvider.future))?.id;
+    final accountId = ref.read(chatSelfIdProvider);
     if (!ref.mounted) return;
     final member = accountId == null
         ? null
@@ -475,7 +475,7 @@ class ChatSummary extends _$ChatSummary {
     if (latestByRoom.isEmpty) return;
 
     final currentSubscribed = ref.read(currentSubscribedChatIdProvider);
-    final accountId = ref.read(userInfoProvider).value?.id;
+    final accountId = ref.read(chatSelfIdProvider);
     final db = ref.read(databaseProvider);
     final current = state.maybeWhen(
       data: (summaries) => summaries,

@@ -19,7 +19,7 @@ Web 容器使用 `sandbox="allow-scripts"` 的不透明源 iframe，校验消息
 - `main.ts`、`main.tsx`、`main.js`、`main.jsx` 中恰好一个：前端入口，支持 React、Vue 3 和原生 JS/TS。
 - 应用需要的源码、样式和测试。
 
-构建自动发现所有包含清单的一级子目录，生成 `assets/webf/<app-id>.html` 和应用目录清单。无需修改 Dart、路由、`pubspec.yaml`、构建脚本或 CI 的应用列表。普通 Flutter 构建使用已提交资源；新增内置应用仍需重新构建、发布对应的桌面或 Web 客户端。
+构建自动发现所有包含清单的一级子目录，生成 `assets/webf/<app-id>.html` 和应用目录清单。生成物不进 git，`flutter run` / `flutter build` 前必须先构建（`dev.sh` 与 `buildtools/setup-dev.sh` 会自动执行）。无需修改 Dart、路由、`pubspec.yaml`、构建脚本或 CI 的应用列表。新增内置应用仍需重新构建、发布对应的桌面或 Web 客户端。
 
 最小清单（`id` 必须等于目录名，格式为小写字母开头的字母、数字、短横线，最长 64 字符）：
 
@@ -103,11 +103,10 @@ pnpm --dir webf install --frozen-lockfile --ignore-scripts
 pnpm --dir webf check
 pnpm --dir webf test
 pnpm --dir webf build
-pnpm --dir webf check:asset
 flutter test --no-pub test/core/mini_app_manifest_test.dart test/core/mini_app_bridge_test.dart test/core/mini_apps_screen_test.dart
 ```
 
-每个小程序构建为单文件 IIFE，CSS 一并内联，不允许额外模块导入或未内联的资源文件。提交时一并更新生成的 HTML 和目录清单；CI 的 `check:asset` 验证源码与产物一致。StarHope 支持五种题型、练习即时判分、考试到期交卷和历史恢复；文本题采用忽略大小写的原文匹配，不含 AI 评分。
+每个小程序构建为单文件 IIFE，CSS 一并内联，不允许额外模块导入或未内联的资源文件。生成的 HTML 与目录清单不提交；`flutter run` / `flutter build` 前先执行 `pnpm --dir webf build`（CI 发布构建同样先构建）。StarHope 支持五种题型、练习即时判分、考试到期交卷和历史恢复；文本题采用忽略大小写的原文匹配，不含 AI 评分。
 
 真实引擎回归需要对应平台 WebF 动态库：设置 `WEBF_LIBRARY_PATH` 为库目录，Linux 同时把该目录加入 `LD_LIBRARY_PATH`，再运行：
 

@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/widgets/content/image_picker_editor.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,7 +8,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/pods/chat_room.dart';
-import 'package:island/core/network.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/realms/screens/realms.dart';
@@ -114,7 +114,7 @@ class EditChatScreen extends HookConsumerWidget {
 
       submitting.value = true;
       try {
-        final client = ref.watch(apiClientProvider);
+        final client = ref.watch(chatApiProvider);
         final resp = await client.request(
           id == null ? '/messager/chat' : '/messager/chat/$id',
           data: {

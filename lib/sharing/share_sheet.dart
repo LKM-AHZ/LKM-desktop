@@ -16,7 +16,7 @@ import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:island/posts/compose.dart';
 import 'package:island/core/link_preview.dart';
-import 'package:island/core/network.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
 import 'package:island/drive/widgets/cloud_files.dart';
@@ -271,7 +271,7 @@ class _ShareSheetState extends ConsumerState<ShareSheet> {
   Future<void> _shareToSpecificChat(SnChatRoom chatRoom) async {
     setState(() => _isLoading = true);
     try {
-      final apiClient = ref.read(solarNetworkClientProvider).dio;
+      final apiClient = ref.read(chatApiProvider);
 
       String content = _messageController.text.trim();
       List<String> attachmentIds = [];

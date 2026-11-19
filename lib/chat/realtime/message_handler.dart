@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/data/message_cache.dart';
 import 'package:island/chat/data/message_repository.dart';
 import 'package:island/chat/e2ee_message_service.dart';
 import 'package:island/chat/realtime/message_realtime_sink.dart';
 import 'package:island/chat/sync/message_sync_service.dart';
-import 'package:island/core/websocket.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
 import 'package:island/data/message.dart';
 import 'package:logging/logging.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
@@ -49,7 +49,7 @@ class RealtimeMessageHandler {
     _logger.info('Starting real-time message listener for room $_roomId');
 
     // Direct WebSocket listener
-    final ws = _ref.read(websocketProvider);
+    final ws = _ref.read(chatRealtimeProvider);
     _wsSubscription = ws.dataStream.listen(_handleWebSocketPacket);
   }
 
@@ -267,7 +267,7 @@ class RealtimeMessageHandler {
     final reactionsMade =
         madeSnapshot ?? _extractExistingReactionsMade(existing);
     final symbol = _extractReactionSymbol(remoteMessage);
-    final currentUserId = _ref.read(userInfoProvider).value?.id;
+    final currentUserId = _ref.read(chatSelfIdProvider);
     final reactionSenderAccountId = remoteMessage.sender.accountId;
     final isCurrentUserReaction =
         currentUserId != null && reactionSenderAccountId == currentUserId;

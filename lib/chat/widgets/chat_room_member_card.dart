@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -8,13 +10,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_popup_card/flutter_popup_card.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
 import 'package:island/accounts/widgets/account/activity_presence.dart';
 import 'package:island/accounts/widgets/account/badge.dart';
 import 'package:island/accounts/widgets/account/status.dart';
 import 'package:island/chat/pods/chat_room.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/services/time.dart';
 import 'package:island/core/services/timezone/native.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
@@ -30,7 +30,7 @@ typedef ChatRoomMemberLookup = ({String roomId, String accountId});
 
 final chatRoomMemberDetailsProvider = FutureProvider.autoDispose
     .family<SnChatMember?, ChatRoomMemberLookup>((ref, lookup) async {
-      final apiClient = ref.watch(apiClientProvider);
+      final apiClient = ref.watch(chatApiProvider);
       const take = 100;
       var offset = 0;
 
@@ -111,7 +111,7 @@ class ChatRoomMemberCard extends HookConsumerWidget {
       )),
     );
     final effectiveMember = remoteMemberAsync.value ?? member;
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final currentUserId = ref.watch(chatSelfIdProvider);
     final isSelf = currentUserId == effectiveMember.accountId;
     final isPendingInvite = effectiveMember.joinedAt == null;
     final activeTimeoutUntil = effectiveMember.timeoutUntil;
@@ -517,7 +517,7 @@ class _ChatRoomMemberActionSheet extends HookConsumerWidget {
     WidgetRef ref,
     Duration duration,
   ) async {
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     try {
       final timeoutUntil = DateTime.now()
           .add(duration)
@@ -546,7 +546,7 @@ class _ChatRoomMemberActionSheet extends HookConsumerWidget {
   }
 
   Future<void> _removeTimeout(BuildContext context, WidgetRef ref) async {
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     try {
       await apiClient.delete(
         '/messager/chat/$roomId/members/${member.accountId}/timeout',
@@ -570,7 +570,7 @@ class _ChatRoomMemberActionSheet extends HookConsumerWidget {
     );
     if (!confirmed) return;
 
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     try {
       await apiClient.delete(
         '/messager/chat/$roomId/members/${member.accountId}',

@@ -63,6 +63,9 @@ packages/solsynth_express/build/
 webf/node_modules/
 webf/coverage/
 
+# Generated mini app assets (pnpm --dir webf build)
+assets/webf/
+
 # Generated HarmonyOS files in vendored cross-platform plugins.
 /packages/*/ohos/build/
 /packages/*/ohos/oh_modules/

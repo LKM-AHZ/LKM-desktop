@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:island/core/network.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/discovery/models/autocomplete_response.dart';
 
 final autocompleteServiceProvider = Provider<AutocompleteService>((ref) {
-  final dio = ref.watch(apiClientProvider);
+  final dio = ref.watch(chatApiProvider);
   return AutocompleteService(dio);
 });
 

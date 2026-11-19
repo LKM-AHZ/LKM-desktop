@@ -261,21 +261,10 @@ class NativeCallBridge extends _$NativeCallBridge {
     final normalized = handle.trim();
     if (normalized.isEmpty) return null;
 
-    final parts = normalized.split('/');
-    final client = ref.read(solarNetworkClientProvider);
-    if (parts.length == 2 &&
-        parts[0].trim().isNotEmpty &&
-        parts[1].trim().isNotEmpty) {
-      final room = await client.chat.getRoomBySlug(
-        parts[0].trim(),
-        parts[1].trim(),
-      );
-      return room?.id;
-    }
-
-    final account = await client.accounts.getAccountByUsername(normalized);
-    final room = await client.chat.getDirectChat(account.id);
-    return room?.id;
+    // ponytail: call links resolve through the Solar slug/account API, which
+    // has no Tinode equivalent; calls stay unsupported until a media server
+    // and a topic-link mapping exist.
+    return null;
   }
 
   Future<void> _setAcceptedCall({

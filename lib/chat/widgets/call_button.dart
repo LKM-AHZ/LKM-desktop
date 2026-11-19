@@ -1,5 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -11,10 +13,8 @@ import 'package:island/chat/widgets/call_overlay.dart';
 import 'package:island/chat/widgets/call_window.dart';
 import 'package:island/chat/widgets/pending_join_sheet.dart';
 import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:island/core/utils/call_kit_utils.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
@@ -26,7 +26,7 @@ final activeCallParticipantCountProvider = FutureProvider.family<int, String>((
 ) async {
   if (roomId.isEmpty) return 0;
   try {
-    final apiClient = ref.watch(apiClientProvider);
+    final apiClient = ref.watch(chatApiProvider);
     final resp = await apiClient.get(
       '/messager/chat/realtime/$roomId/participants',
     );
@@ -48,7 +48,7 @@ final activeCallParticipantsProvider =
     FutureProvider.family<List<CallParticipant>, String>((ref, roomId) async {
       if (roomId.isEmpty) return const [];
       try {
-        final apiClient = ref.watch(apiClientProvider);
+        final apiClient = ref.watch(chatApiProvider);
         final resp = await apiClient.get(
           '/messager/chat/realtime/$roomId/participants',
         );
@@ -73,7 +73,7 @@ final activeCallParticipantsProvider =
 Future<SnRealtimeCall?> ongoingCall(Ref ref, String roomId) async {
   if (roomId.isEmpty) return null;
   try {
-    final apiClient = ref.watch(apiClientProvider);
+    final apiClient = ref.watch(chatApiProvider);
     final resp = await apiClient.get('/messager/chat/realtime/$roomId');
     return SnRealtimeCall.fromJson(resp.data);
   } catch (e) {
@@ -102,8 +102,8 @@ class AudioCallButton extends HookConsumerWidget {
     final callNotifier = ref.read(callProvider.notifier);
     final nativeBridge = ref.watch(nativeCallBridgeProvider);
     final isLoading = useState(false);
-    final apiClient = ref.watch(apiClientProvider);
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final apiClient = ref.watch(chatApiProvider);
+    final currentUserId = ref.watch(chatSelfIdProvider);
     final outgoingCallKitEnabled = ref.watch(
       appSettingsProvider.select((settings) => settings.outgoingCallKitEnabled),
     );

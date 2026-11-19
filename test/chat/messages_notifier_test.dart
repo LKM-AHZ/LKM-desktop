@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:island/chat/pods/chat_room.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -426,7 +427,7 @@ void main() {
           databaseProvider.overrideWithValue(database),
           sharedPreferencesProvider.overrideWithValue(preferences),
           tokenProvider.overrideWithValue(null),
-          apiClientProvider.overrideWithValue(
+          chatApiProvider.overrideWithValue(
             Dio()..httpClientAdapter = _EmptyResponseAdapter(),
           ),
           weakInternetModeProvider.overrideWithValue(false),
@@ -539,7 +540,7 @@ void main() {
           newestMessages: newest,
           olderMessages: older,
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         final notifier = container.read(messagesProvider('room-1').notifier);
         final load = notifier.loadInitial(forceRemoteRefresh: true);
@@ -577,7 +578,7 @@ void main() {
       // Hold the room's message fetch in flight so the load outlives the
       // room-scoped notifier.
       final blocking = _BlockingResponseAdapter();
-      container.read(apiClientProvider).httpClientAdapter = blocking;
+      container.read(chatApiProvider).httpClientAdapter = blocking;
 
       final notifier = container.read(messagesProvider('room-1').notifier);
       final load = notifier.loadInitial(forceRemoteRefresh: true);
@@ -716,7 +717,7 @@ void main() {
         final adapter = _MembersRepairAdapter(
           members: [member('room-1').toJson()],
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         final notifier = container.read(messagesProvider('room-1').notifier);
         await notifier.loadInitial(forceRemoteRefresh: true);
@@ -774,7 +775,7 @@ void main() {
         final adapter = _MembersRepairAdapter(
           members: [member('room-1').toJson()],
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         // Ensure messagesProvider('room-1') is initialized.
         await container.read(messagesProvider('room-1').future);
@@ -958,7 +959,7 @@ void main() {
         await notifier.loadInitial(forceRemoteRefresh: false);
 
         final blocking = _BlockingResponseAdapter();
-        container.read(apiClientProvider).httpClientAdapter = blocking;
+        container.read(chatApiProvider).httpClientAdapter = blocking;
         final load = notifier.loadInitial(forceRemoteRefresh: true);
         await pumpEventQueue();
 
@@ -1036,7 +1037,7 @@ void main() {
           ),
           totalCount: 5000,
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         await notifier.loadInitial(forceRemoteRefresh: true);
         for (var i = 0; i < 10; i++) {
@@ -1082,7 +1083,7 @@ void main() {
             ),
           ),
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         final notifier = container.read(messagesProvider('room-1').notifier);
         await notifier.loadInitial(forceRemoteRefresh: false);
@@ -1119,7 +1120,7 @@ void main() {
         ),
         totalCount: 500,
       );
-      container.read(apiClientProvider).httpClientAdapter = adapter;
+      container.read(chatApiProvider).httpClientAdapter = adapter;
 
       final notifier = container.read(messagesProvider('room-1').notifier);
       await notifier.loadInitial(forceRemoteRefresh: false);
@@ -1172,7 +1173,7 @@ void main() {
             ),
           ),
         );
-        container.read(apiClientProvider).httpClientAdapter = adapter;
+        container.read(chatApiProvider).httpClientAdapter = adapter;
 
         final notifier = container.read(messagesProvider('room-1').notifier);
         await notifier.loadInitial(forceRemoteRefresh: false);

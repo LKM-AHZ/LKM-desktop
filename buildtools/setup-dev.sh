@@ -157,4 +157,13 @@ case "$(uname -s)" in
     *) warn "Unknown platform: system dependencies not checked." ;;
 esac
 
+if command -v node >/dev/null 2>&1 && command -v pnpm >/dev/null 2>&1; then
+    log "Installing webf tools and building mini app assets"
+    pnpm --dir webf install --frozen-lockfile --ignore-scripts
+    pnpm --dir webf build
+else
+    warn "Node.js 24+ / pnpm not found; run before flutter run:"
+    warn "  pnpm --dir webf install --frozen-lockfile && pnpm --dir webf build"
+fi
+
 log "Done. Next: flutter run (or flutter build <platform>)"

@@ -89,7 +89,7 @@ sudo apt-get install -y \
 #### 运行应用
 
 ```bash
-# 安装依赖（首次或依赖变更后）
+# 安装依赖并构建内置小程序资源（首次或依赖变更后）
 ./buildtools/setup-dev.sh --install
 
 # 以调试模式运行
@@ -98,6 +98,8 @@ flutter run
 # 构建发布版本
 flutter build <platform>
 ```
+
+`assets/webf/` 是生成物、不进 git；修改 `webf/` 下源码后先执行 `pnpm --dir webf build` 再重新运行。
 
 更多构建选项请查看 [Flutter 官方文档](https://docs.flutter.dev)。
 

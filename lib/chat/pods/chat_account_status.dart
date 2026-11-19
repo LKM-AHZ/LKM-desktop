@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:collection/collection.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
-import 'package:island/core/network.dart';
 
 part 'chat_account_status.g.dart';
 
@@ -130,7 +130,7 @@ class ChatAccountStatus extends _$ChatAccountStatus {
 
   Future<SnChatAccountStatus?> _fetchStatus() async {
     try {
-      final client = ref.read(apiClientProvider);
+      final client = ref.read(chatApiProvider);
       final resp = await client.get('/messager/chat/accounts/me/status');
       return SnChatAccountStatus.fromJson(resp.data as Map<String, dynamic>);
     } catch (e) {

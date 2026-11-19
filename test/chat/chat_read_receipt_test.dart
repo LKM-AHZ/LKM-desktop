@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/pods/chat_room.dart';
@@ -94,10 +96,10 @@ void main() {
           databaseProvider.overrideWithValue(database),
           sharedPreferencesProvider.overrideWithValue(preferences),
           tokenProvider.overrideWithValue(null),
-          apiClientProvider.overrideWithValue(
+          chatApiProvider.overrideWithValue(
             Dio()..httpClientAdapter = _EmptyResponseAdapter(),
           ),
-          websocketProvider.overrideWithValue(ws),
+          chatRealtimeProvider.overrideWithValue(ws),
           chatRoomProvider('room-1').overrideWith(() => roomNotifier),
           chatRoomIdentityProvider(
             'room-1',

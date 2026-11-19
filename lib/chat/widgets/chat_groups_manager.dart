@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/core/database.dart';
 import 'package:island/core/services/event_bus.dart';
 import 'package:island/data/database.dart';
@@ -85,8 +85,7 @@ List<SnChatGroup> _normalizeChatGroups(List<SnChatGroup> groups) {
 
 final chatGroupsProvider = FutureProvider<List<SnChatGroup>>((ref) async {
   final db = ref.watch(databaseProvider);
-  final userInfo = ref.watch(userInfoProvider);
-  final accountId = userInfo.value?.id;
+  final accountId = ref.watch(chatSelfIdProvider);
   if (accountId == null) return const <SnChatGroup>[];
   return db.getChatGroups(accountId);
 });

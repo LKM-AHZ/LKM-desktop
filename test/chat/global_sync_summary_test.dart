@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:island/accounts/account_pod.dart';
@@ -206,13 +208,13 @@ void main() {
           databaseProvider.overrideWithValue(database),
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenProvider.overrideWithValue(null),
-          websocketProvider.overrideWithValue(ws),
+          chatRealtimeProvider.overrideWithValue(ws),
           userInfoProvider.overrideWith(
             member == null
                 ? _SignedOutUserInfo.new
                 : () => _SignedInUserInfo(member.account),
           ),
-          apiClientProvider.overrideWithValue(
+          chatApiProvider.overrideWithValue(
             Dio()..httpClientAdapter = _SyncAdapter(pages),
           ),
         ],

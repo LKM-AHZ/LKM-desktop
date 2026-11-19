@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/widgets/chat_room_member_card.dart';
 import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/services/time.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/shared/widgets/content/image.dart';
@@ -56,7 +56,7 @@ class ChatReactionListNotifier
 
   @override
   Future<List<SnChatReaction>> fetch() async {
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     final response = await apiClient.get(
       '/messager/chat/${arg.roomId}/messages/${arg.messageId}/reactions',
       queryParameters: {

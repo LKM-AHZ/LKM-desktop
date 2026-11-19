@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/data/message_cache.dart';
 import 'package:island/chat/data/message_repository.dart';
 import 'package:island/chat/e2ee_message_service.dart';
@@ -578,14 +578,14 @@ class ChatOutboxNotifier extends Notifier<Map<String, List<ChatOutboxEntry>>> {
   Future<void> _donateShareSuggestion(String roomId) async {
     try {
       final room = await ref.read(chatRoomProvider(roomId).future);
-      final account = await ref.read(userInfoProvider.future);
+      final selfId = ref.read(chatSelfIdProvider);
       if (room == null) return;
       await IosShareSuggestionsService.instance.donateChatRoom(
         room,
-        currentUserId: account?.id,
-        currentAccountName: account?.name,
-        currentAccountNick: account?.nick,
-        currentUser: account,
+        currentUserId: selfId,
+        currentAccountName: ref.read(chatSelfProfileProvider).name,
+        currentAccountNick: ref.read(chatSelfProfileProvider).name,
+        currentUser: null,
         serverUrl: ref.read(serverUrlProvider),
       );
     } catch (error, stackTrace) {

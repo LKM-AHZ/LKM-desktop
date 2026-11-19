@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
@@ -6,7 +8,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:island/shared/hooks/material_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/relationship_pod.dart';
 import 'package:island/accounts/utils/account_status_utils.dart';
 import 'package:island/accounts/widgets/account/account_picker.dart';
@@ -27,7 +28,6 @@ import 'package:island/chat/widgets/chat_room_widgets.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
 import 'package:island/core/lifecycle.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/services/event_bus.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
@@ -76,11 +76,11 @@ class _GroupedChatSections {
   final List<SnChatRoom> ungroupedRooms;
 }
 
-List<SnChatMember> _getValidMembers(SnChatRoom room, SnAccount? userInfo) {
+List<SnChatMember> _getValidMembers(SnChatRoom room, String? selfChatId) {
   var validMembers = room.members ?? <SnChatMember>[];
-  if (validMembers.isNotEmpty && userInfo != null) {
+  if (validMembers.isNotEmpty && selfChatId != null) {
     validMembers = validMembers
-        .where((e) => e.accountId != userInfo.id)
+        .where((e) => e.accountId != selfChatId)
         .toList();
   }
   return validMembers;
@@ -245,8 +245,8 @@ class _PinnedChatRoomTile extends HookConsumerWidget {
     final unreadCount = summary.value?.unreadCount ?? 0;
     final hasUnread = summary.value?.hasUnread ?? unreadCount > 0;
 
-    final userInfo = ref.watch(userInfoProvider);
-    final validMembers = _getValidMembers(room, userInfo.value);
+    final selfChatId = ref.watch(chatSelfIdProvider);
+    final validMembers = _getValidMembers(room, selfChatId);
 
     final friendsOverview = ref.watch(friendsOverviewProvider);
     final onlineFriends = useMemoized(
@@ -284,7 +284,7 @@ class _PinnedChatRoomTile extends HookConsumerWidget {
     );
 
     final db = ref.watch(databaseProvider);
-    final client = ref.watch(apiClientProvider);
+    final client = ref.watch(chatApiProvider);
 
     return _buildChatRoomContextMenu(
       context: context,
@@ -591,7 +591,7 @@ class ChatListBodyWidget extends HookConsumerWidget {
     final accountStatus = ref.watch(chatAccountStatusProvider);
     final selectedTabValue = selectedTab.value;
     final db = ref.watch(databaseProvider);
-    final client = ref.watch(apiClientProvider);
+    final client = ref.watch(chatApiProvider);
     final friendsOverview = ref.watch(friendsOverviewProvider);
 
     Widget buildRoomTile(SnChatRoom room) {
@@ -1262,7 +1262,7 @@ class ChatScreen extends HookConsumerWidget {
               if (result == null) return;
               if (!context.mounted) return;
 
-              final client = ref.read(apiClientProvider);
+              final client = ref.read(chatApiProvider);
               try {
                 await client.post(
                   '/messager/chat/direct',
@@ -1310,8 +1310,8 @@ class ChatFabWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userInfo = ref.watch(userInfoProvider);
-    if (userInfo.value == null) return const SizedBox.shrink();
+    final selfChatId = ref.watch(chatSelfIdProvider);
+    if (selfChatId == null) return const SizedBox.shrink();
 
     final chatInvites = ref.watch(chatroomInvitesProvider);
     return FloatingActionButton(
@@ -1531,8 +1531,8 @@ class ChatListWidget extends HookConsumerWidget {
     final lifecycleState = ref.watch(appLifecycleStateProvider);
     final previousLifecycleState = useRef<AppLifecycleState?>(null);
     final isResyncingAfterResume = useState(false);
-    final userInfo = ref.watch(userInfoProvider);
-    final accountId = userInfo.value?.id;
+    final selfChatId = ref.watch(chatSelfIdProvider);
+    final accountId = selfChatId;
     final chatGroups =
         ref.watch(chatGroupsProvider).value ?? const <SnChatGroup>[];
     // Drives the pill's glass the same way the explore and search pages do: a
@@ -1712,7 +1712,7 @@ class ChatListWidget extends HookConsumerWidget {
                 ],
               ),
             ),
-      body: userInfo.value == null
+      body: selfChatId == null
           ? const ResponseUnauthorizedWidget()
           : Column(
               children: [

@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/relationship_pod.dart';
 import 'package:island/accounts/widgets/account/account_picker.dart';
 import 'package:island/chat/e2ee_message_display.dart';
@@ -19,7 +20,6 @@ import 'package:island/chat/widgets/chat_room_widgets.dart';
 import 'package:island/chat/widgets/message_content.dart';
 import 'package:island/chat/widgets/message_sender_info.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/utils/mapping.dart';
 import 'package:island/core/widgets/content/cloud_file_collection.dart';
 import 'package:island/core/widgets/embeds/link.dart';
@@ -827,7 +827,7 @@ class SearchMessagesScreen extends HookConsumerWidget {
 
     final debounceTimer = useRef<Timer?>(null);
     final messagesNotifier = ref.read(messagesProvider(roomId).notifier);
-    final client = ref.read(apiClientProvider);
+    final client = ref.read(chatApiProvider);
 
     Future<void> performSearch(String query) async {
       final trimmedQuery = query.trim();
@@ -1153,7 +1153,7 @@ class ChatMessageSearchView extends HookConsumerWidget {
     final error = useState<Object?>(null);
     final request = useRef(0);
     final database = ref.read(databaseProvider);
-    final client = ref.read(apiClientProvider);
+    final client = ref.read(chatApiProvider);
 
     Future<void> search(String rawQuery) async {
       final query = rawQuery.trim();
@@ -1743,10 +1743,10 @@ class _SearchRoomHeader extends ConsumerWidget {
 
     var validMembers = room?.members ?? const <SnChatMember>[];
     if (validMembers.isNotEmpty) {
-      final userInfo = ref.watch(userInfoProvider);
-      if (userInfo.value != null) {
+      final selfChatId = ref.watch(chatSelfIdProvider);
+      if (selfChatId != null) {
         validMembers = validMembers
-            .where((e) => e.accountId != userInfo.value!.id)
+            .where((e) => e.accountId != selfChatId)
             .toList();
       }
     }

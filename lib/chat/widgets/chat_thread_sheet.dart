@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
-import 'package:island/core/network.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -45,7 +45,7 @@ class _ChatThreadSheetState extends ConsumerState<ChatThreadSheet> {
   }
 
   Future<ThreadReplyListResponse> _fetch() {
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     return apiClient
         .get<Map<String, dynamic>>(
           '/messager/chat/${widget.roomId}/messages/${widget.messageId}/thread',

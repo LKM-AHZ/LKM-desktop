@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,7 +13,6 @@ import 'package:island/chat/services/chat_attachment_upload.dart';
 import 'package:island/chat/widgets/chat_input.dart';
 import 'package:island/chat/widgets/chat_link_attachments.dart';
 import 'package:island/chat/widgets/message_item_wrapper.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/services/event_bus.dart';
 import 'package:island/data/message.dart';
 import 'package:island/shared/widgets/alert.dart';
@@ -84,7 +84,7 @@ class _ChatThreadPanelState extends ConsumerState<ChatThreadPanel> {
   }
 
   Future<ThreadReplyListResponse> _fetch() {
-    final apiClient = ref.read(apiClientProvider);
+    final apiClient = ref.read(chatApiProvider);
     return apiClient
         .get<Map<String, dynamic>>(
           '/messager/chat/${widget.roomId}/messages/${widget.root.id}/thread',

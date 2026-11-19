@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
@@ -22,7 +23,6 @@ import 'package:island/chat/widgets/message_sender_info.dart';
 import 'package:island/chat/widgets/online_avatar_badge.dart';
 import 'package:island/chat/widgets/sticky_avatar_box.dart';
 import 'package:island/chat/messages_notifier.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
 import 'package:island/accounts/widgets/account/account_pfc.dart';
 import 'package:island/core/utils/share_utils.dart';
@@ -1709,7 +1709,7 @@ class MessageItemDisplayBubble extends HookConsumerWidget {
     final remoteMessage = message.toRemoteMessage();
     final sender = remoteMessage.sender;
     final isRedirect = remoteMessage.meta['redirect'] is Map;
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final currentUserId = ref.watch(chatSelfIdProvider);
     final isMentioningCurrentUser =
         currentUserId != null &&
         remoteMessage.membersMentioned.contains(currentUserId);
@@ -2137,7 +2137,7 @@ class MessageItemDisplayIRC extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textColor = colorScheme.onSurface;
     final isRedirect = remoteMessage.meta['redirect'] is Map;
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final currentUserId = ref.watch(chatSelfIdProvider);
     final isMentioningCurrentUser =
         currentUserId != null &&
         remoteMessage.membersMentioned.contains(currentUserId);
@@ -2335,7 +2335,7 @@ class MessageItemDisplayDiscord extends HookConsumerWidget {
     final remoteMessage = message.toRemoteMessage();
     final sender = remoteMessage.sender;
     final isRedirect = remoteMessage.meta['redirect'] is Map;
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final currentUserId = ref.watch(chatSelfIdProvider);
     final isMentioningCurrentUser =
         currentUserId != null &&
         remoteMessage.membersMentioned.contains(currentUserId);

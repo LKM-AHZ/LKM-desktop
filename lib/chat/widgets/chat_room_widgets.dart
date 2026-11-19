@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/core/config.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/e2ee_message_display.dart';
 import 'package:island/chat/models/redirect_data.dart';
 import 'package:island/chat/pods/chat_outbox.dart';
@@ -137,7 +137,7 @@ class ChatRoomSubtitle extends HookConsumerWidget {
     final colorScheme = theme.colorScheme;
     final baseUrl = ref.watch(serverUrlProvider);
     final currentUserId = ref.watch(
-      userInfoProvider.select((user) => user.value?.id),
+      chatSelfIdProvider,
     );
 
     final mutedStyle = theme.textTheme.bodySmall?.copyWith(

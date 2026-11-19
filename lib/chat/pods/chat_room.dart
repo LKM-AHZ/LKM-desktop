@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,12 +9,11 @@ import 'package:island/data/database.dart';
 import 'package:island/data/message.dart';
 import 'package:island/core/audio.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/lifecycle.dart';
 import 'package:island/core/services/event_bus.dart';
-import 'package:island/core/websocket.dart';
-import 'package:island/accounts/account_pod.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/chat/pods/chat_foreground_rooms.dart';
 import 'package:island/chat/pods/chat_summary.dart';
 import 'package:island/e2ee/e2ee.dart';
@@ -317,7 +317,7 @@ class ChatGlobalSyncNotifier extends _$ChatGlobalSyncNotifier {
   @override
   Future<void> build() async {
     // Set up global WebSocket listener for real-time message handling
-    final ws = ref.watch(websocketProvider);
+    final ws = ref.watch(chatRealtimeProvider);
     _wsSubscription = ws.dataStream.listen(_handleWebSocketMessage);
 
     ref.onDispose(() {
@@ -331,7 +331,7 @@ class ChatGlobalSyncNotifier extends _$ChatGlobalSyncNotifier {
     if (['messages.read'].contains(pkt.type)) return;
 
     final db = ref.read(databaseProvider);
-    final currentUserId = ref.read(userInfoProvider).value?.id;
+    final currentUserId = ref.read(chatSelfIdProvider);
 
     // Handle typing events
     if (pkt.type == 'messages.typing' && pkt.data?['sender'] != null) {
@@ -562,7 +562,7 @@ class ChatGlobalSyncNotifier extends _$ChatGlobalSyncNotifier {
     String messageId,
   ) async {
     try {
-      final client = ref.read(apiClientProvider);
+      final client = ref.read(chatApiProvider);
       final resp = await client.get(
         '/messager/chat/$roomId/messages/$messageId',
       );
@@ -983,10 +983,10 @@ class ChatGlobalSyncNotifier extends _$ChatGlobalSyncNotifier {
     Future.microtask(syncing.begin);
 
     try {
-      final client = ref.read(apiClientProvider);
+      final client = ref.read(chatApiProvider);
       final db = ref.read(databaseProvider);
       final prefs = ref.read(sharedPreferencesProvider);
-      final currentUserId = ref.read(userInfoProvider).value?.id;
+      final currentUserId = ref.read(chatSelfIdProvider);
 
       final savedCursor = prefs.getInt(_chatSyncCursorStoreKey) ?? 0;
       final savedCursorMessageId = prefs.getString(
@@ -1297,7 +1297,7 @@ class ChatRoomJoinedNotifier extends _$ChatRoomJoinedNotifier {
   Stream<List<SnChatRoom>> build() async* {
     final db = ref.watch(databaseProvider);
     final prefs = ref.watch(sharedPreferencesProvider);
-    final userInfo = ref.watch(userInfoProvider);
+    final selfChatId = ref.watch(chatSelfIdProvider);
 
     Future<List<SnChatRoom>> loadLocalRooms() async {
       return db.getAllChatRoomsWithDetails();
@@ -1311,7 +1311,7 @@ class ChatRoomJoinedNotifier extends _$ChatRoomJoinedNotifier {
       final syncing = ref.read(chatSyncingProvider.notifier);
       syncing.begin();
       try {
-        final client = ref.read(apiClientProvider);
+        final client = ref.read(chatApiProvider);
         final savedCursor = prefs.getInt(_chatRoomSyncCursorStoreKey) ?? 0;
         final syncCursor = localRooms.isEmpty ? 0 : savedCursor;
 
@@ -1379,7 +1379,7 @@ class ChatRoomJoinedNotifier extends _$ChatRoomJoinedNotifier {
             await db.saveMembers(membersToSave);
           }
           await db.saveChatRooms(roomsById.values.toList(), override: true);
-          if (userInfo.value != null) {
+          if (selfChatId != null) {
             final groups = rawGroups
                 .whereType<Map>()
                 .map(
@@ -1387,11 +1387,11 @@ class ChatRoomJoinedNotifier extends _$ChatRoomJoinedNotifier {
                       SnChatGroup.fromJson(Map<String, dynamic>.from(group)),
                 )
                 .toList();
-            await db.saveChatGroups(userInfo.value!.id, groups);
+            await db.saveChatGroups(selfChatId, groups);
           }
         });
 
-        if (userInfo.value != null) {
+        if (selfChatId != null) {
           eventBus.fire(const ChatGroupsRefreshEvent());
         }
         if (!ref.mounted) return;
@@ -1457,7 +1457,7 @@ class ChatRoomNotifier extends _$ChatRoomNotifier {
         // Background sync
         Future(() async {
           try {
-            final client = ref.read(apiClientProvider);
+            final client = ref.read(chatApiProvider);
             final resp = await client.get('/messager/chat/$identifier');
             await _persistRoomEncryptionModeFromJson(
               db,
@@ -1476,7 +1476,7 @@ class ChatRoomNotifier extends _$ChatRoomNotifier {
 
     // Fallback to API
     try {
-      final client = ref.watch(apiClientProvider);
+      final client = ref.watch(chatApiProvider);
       final resp = await client.get('/messager/chat/$identifier');
       await _persistRoomEncryptionModeFromJson(
         db,
@@ -1500,35 +1500,33 @@ class ChatRoomIdentityNotifier extends _$ChatRoomIdentityNotifier {
   Future<SnChatMember?> build(String? identifier) async {
     if (identifier == null) return null;
     final db = ref.watch(databaseProvider);
-    final userInfo = ref.watch(userInfoProvider);
+    final selfChatId = ref.watch(chatSelfIdProvider);
 
     try {
       // Try to get from local database first
-      if (userInfo.value != null) {
+      if (selfChatId != null) {
         final localMember = await db.getMemberByRoomAndAccount(
           identifier,
-          userInfo.value!.id,
+          selfChatId,
         );
 
         if (localMember != null) {
           // Background sync
           Future(() async {
             try {
-              final client = ref.read(apiClientProvider);
+              final client = ref.read(chatApiProvider);
               final resp = await client.get(
                 '/messager/chat/$identifier/members/me',
               );
               final remoteMember = SnChatMember.fromJson(resp.data);
               await db.saveMember(remoteMember);
               // Update state with fresh data
-              if (userInfo.value != null) {
-                state = AsyncData(
-                  await db.getMemberByRoomAndAccount(
-                    identifier,
-                    userInfo.value!.id,
-                  ),
-                );
-              }
+              state = AsyncData(
+                await db.getMemberByRoomAndAccount(
+                  identifier,
+                  selfChatId,
+                ),
+              );
             } catch (_) {}
           }).ignore();
 
@@ -1541,7 +1539,7 @@ class ChatRoomIdentityNotifier extends _$ChatRoomIdentityNotifier {
 
     // Fallback to API
     try {
-      final client = ref.watch(apiClientProvider);
+      final client = ref.watch(chatApiProvider);
       final resp = await client.get('/messager/chat/$identifier/members/me');
       final member = SnChatMember.fromJson(resp.data);
       await db.saveMember(member);
@@ -1557,7 +1555,7 @@ class ChatRoomIdentityNotifier extends _$ChatRoomIdentityNotifier {
 
 @riverpod
 Future<List<SnChatMember>> chatroomInvites(Ref ref) async {
-  final client = ref.watch(apiClientProvider);
+  final client = ref.watch(chatApiProvider);
   final resp = await client.get('/messager/chat/invites');
   return resp.data
       .map((e) => SnChatMember.fromJson(e))

@@ -46,6 +46,7 @@ import 'package:island/activity/activity_rpc.dart';
 import 'package:island/core/audio.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/api/api_providers.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/websocket.dart';
 import 'package:island/auth/stargate_post_login.dart';
@@ -1580,7 +1581,7 @@ class AppWrapper extends HookConsumerWidget {
       }
 
       // Fetch the chat room
-      final apiClient = ref.read(apiClientProvider);
+      final apiClient = ref.read(chatApiProvider);
       final resp = await apiClient.get('/messager/chat/$roomId');
       final room = SnChatRoom.fromJson(resp.data);
       Logger.root.info(

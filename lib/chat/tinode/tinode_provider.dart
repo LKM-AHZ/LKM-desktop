@@ -29,11 +29,12 @@ final tinodeApiKeyProvider = Provider<String>((ref) => kTinodeApiKey);
 /// A connected Tinode client for the current LKM session, or null when the
 /// user is signed out or no API key was compiled in.
 ///
+/// Kept alive for the session: the chat backend shares one connection and
+/// re-creates it when the server address or token changes.
+///
 /// The session forwards the LKM access token to the auth bridge, which maps
 /// the LKM account to a Tinode uid on first login.
-final tinodeClientProvider = FutureProvider.autoDispose<TinodeClient?>((
-  ref,
-) async {
+final tinodeClientProvider = FutureProvider<TinodeClient?>((ref) async {
   final session = ref.watch(lkmApiSessionProvider);
   final serverUrl = ref.watch(lkmServerUrlProvider);
   final apiKey = ref.watch(tinodeApiKeyProvider);

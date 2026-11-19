@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -40,7 +41,7 @@ class ChatRoomJoinBar extends HookConsumerWidget {
     Future<void> joinRoom() async {
       showLoadingModal(context);
       try {
-        final apiClient = ref.read(apiClientProvider);
+        final apiClient = ref.read(chatApiProvider);
         await apiClient.post('/messager/chat/${room.id}/members/me');
         ref.invalidate(chatRoomIdentityProvider(room.id));
         ref.invalidate(chatRoomProvider(room.id));

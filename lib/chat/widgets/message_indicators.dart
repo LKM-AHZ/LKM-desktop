@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_backend.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
 import 'package:island/chat/pods/chat_room.dart';
 import 'package:island/chat/messages_notifier.dart';
@@ -132,7 +132,7 @@ class _ReadIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUserId = ref.read(userInfoProvider).value?.id;
+    final currentUserId = ref.read(chatSelfIdProvider);
     if (senderId == null ||
         currentUserId == null ||
         senderId == currentUserId) {

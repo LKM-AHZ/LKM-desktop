@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -396,7 +397,7 @@ class ChatDetailScreen extends HookConsumerWidget {
 
     void setNotifyLevel(int level) async {
       try {
-        final client = ref.watch(apiClientProvider);
+        final client = ref.watch(chatApiProvider);
         await client.patch(
           '/messager/chat/$id/members/me/notify',
           data: {'notify_level': level},
@@ -571,7 +572,7 @@ class ChatDetailScreen extends HookConsumerWidget {
                       value: currentRoom.isReadReceiptsPublic,
                       onChanged: (value) async {
                         try {
-                          final client = ref.read(apiClientProvider);
+                          final client = ref.read(chatApiProvider);
                           await client.patch(
                             '/messager/chat/$id',
                             data: {'is_read_receipts_public': value},
@@ -810,7 +811,7 @@ class _ChatRoomActionMenu extends HookConsumerWidget {
           );
           if (!confirmed) return;
           try {
-            final client = ref.read(apiClientProvider);
+            final client = ref.read(chatApiProvider);
             await client.post('/messager/chat/$id/mls/enable');
             ref.invalidate(chatRoomProvider(id));
             ref.invalidate(chatRoomJoinedProvider);
@@ -871,7 +872,7 @@ class _ChatRoomActionMenu extends HookConsumerWidget {
             isDanger: true,
           );
           if (!confirmed) return;
-          final client = ref.read(apiClientProvider);
+          final client = ref.read(chatApiProvider);
           await client.delete('/messager/chat/$id');
           ref.invalidate(chatRoomJoinedProvider);
           if (context.mounted) context.pop();
@@ -881,7 +882,7 @@ class _ChatRoomActionMenu extends HookConsumerWidget {
             'leaveChatRoom'.tr(),
           );
           if (!confirmed) return;
-          final client = ref.read(apiClientProvider);
+          final client = ref.read(chatApiProvider);
           await client.delete('/messager/chat/$id/members/me');
           ref.invalidate(chatRoomJoinedProvider);
           if (context.mounted) context.pop();
@@ -1107,7 +1108,7 @@ class ChatMemberListNotifier
   @override
   Future<List<SnChatMember>> fetch() async {
     final filter = currentFilter.normalized();
-    final apiClient = ref.watch(apiClientProvider);
+    final apiClient = ref.watch(chatApiProvider);
     final response = await apiClient.get(
       '/messager/chat/$arg/members',
       queryParameters: {
@@ -1165,7 +1166,7 @@ class _ChatMemberListSheet extends HookConsumerWidget {
       if (result == null) return;
 
       try {
-        final apiClient = ref.watch(apiClientProvider);
+        final apiClient = ref.watch(chatApiProvider);
         await apiClient.post(
           '/messager/chat/invites/$roomId',
           data: {'related_user_id': result.id, 'role': 0},
@@ -1389,7 +1390,7 @@ class _ChatIdentityEditorSheet extends HookConsumerWidget {
                   child: FilledButton.icon(
                     onPressed: () async {
                       try {
-                        final apiClient = ref.read(apiClientProvider);
+                        final apiClient = ref.read(chatApiProvider);
                         await apiClient.patch(
                           '/messager/chat/$roomId/members/me/profile',
                           data: {
@@ -1425,7 +1426,7 @@ class _ChatIdentityEditorSheet extends HookConsumerWidget {
                           );
                           if (confirm != true) return;
                           try {
-                            final apiClient = ref.read(apiClientProvider);
+                            final apiClient = ref.read(chatApiProvider);
                             await apiClient.delete(
                               '/messager/chat/$roomId/members/me/profile',
                             );
@@ -1470,7 +1471,7 @@ class _ChatBreakSheet extends HookConsumerWidget {
     Future<void> setChatBreak(DateTime until) async {
       isSettingBreak.value = true;
       try {
-        final client = ref.read(apiClientProvider);
+        final client = ref.read(chatApiProvider);
         await client.patch(
           '/messager/chat/$roomId/members/me/notify',
           data: {'break_until': until.toUtc().toIso8601String()},

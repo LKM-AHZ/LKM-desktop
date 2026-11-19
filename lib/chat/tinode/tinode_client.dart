@@ -286,17 +286,19 @@ class TinodeClient {
     );
   }
 
-  /// Fetches history; `before` is an exclusive upper seq bound.
+  /// Fetches history; `before` is an exclusive upper seq bound and `since` an
+  /// inclusive lower one.
   Future<List<TinodeMessage>> history(
     String topic, {
     int limit = 50,
     int? before,
+    int? since,
   }) async {
     final result = await _call({
       'get': {
         'topic': topic,
         'what': 'data',
-        'data': {'limit': limit, 'before': ?before},
+        'data': {'limit': limit, 'before': ?before, 'since': ?since},
       },
     }, collectData: true);
     final ctrl = result.ctrl;
@@ -304,6 +306,107 @@ class TinodeClient {
       throw TinodeException('history failed: ${ctrl.text}', code: ctrl.code);
     }
     return List.unmodifiable(result.data);
+  }
+
+  /// Reads topic metadata: `desc` carries `public`/`private`/`acs`, `sub`
+  /// carries the subscriber list.
+  Future<Map<String, dynamic>?> meta(
+    String topic,
+    String what,
+  ) async {
+    final result = await _call({
+      'get': {'topic': topic, 'what': what},
+    }, awaitMeta: true);
+    final ctrl = result.ctrl;
+    if (ctrl != null && ctrl.code >= 400) {
+      throw TinodeException('$what failed: ${ctrl.text}', code: ctrl.code);
+    }
+    return result.meta.isEmpty ? null : result.meta.first;
+  }
+
+  /// Subscriber rows of a topic (one map per member).
+  Future<List<Map<String, dynamic>>> subscribers(String topic) async {
+    final meta = await this.meta(topic, 'sub');
+    if (meta == null) return const [];
+    final raw = meta['sub'];
+    if (raw is! List) return const [];
+    return [
+      for (final item in raw.whereType<Map>())
+        Map<String, dynamic>.from(item),
+    ];
+  }
+
+  /// Updates topic description (`public`, `private`, `tags`).
+  Future<TinodeCtrl> setDesc(
+    String topic, {
+    Map<String, dynamic>? public,
+    Map<String, dynamic>? private,
+    List<String>? tags,
+  }) async {
+    final set = <String, dynamic>{
+      'public': ?public,
+      'private': ?private,
+      'tags': ?tags,
+    };
+    return _ok({
+      'set': {'topic': topic, 'desc': set},
+    }, 'set desc');
+  }
+
+  /// Adds or replaces one subscriber's mode (`JRWPAS` bits).
+  Future<TinodeCtrl> addSubscriber(
+    String topic,
+    String userId, {
+    String mode = 'JRWPAS',
+  }) async {
+    return _ok({
+      'set': {
+        'topic': topic,
+        'sub': {'user': userId, 'mode': mode},
+      },
+    }, 'add subscriber');
+  }
+
+  Future<TinodeCtrl> removeSubscriber(String topic, String userId) async {
+    return _ok({
+      'del': {
+        'topic': topic,
+        'sub': {'user': userId},
+      },
+    }, 'del subscriber');
+  }
+
+  /// Removes a topic (or leaves it, when [hard] is false, for non-owners).
+  Future<TinodeCtrl> deleteTopic(String topic, {bool hard = false}) async {
+    return _ok({
+      'del': {'topic': topic, 'what': 'topic', if (hard) 'hard': true},
+    }, 'del topic');
+  }
+
+  /// Marks one message deleted; Tinode turns the [seq] into a tombstone.
+  Future<TinodeCtrl> deleteMessage(String topic, int seq) async {
+    return _ok({
+      'del': {'topic': topic, 'what': 'msg', 'seq': seq},
+    }, 'del message');
+  }
+
+  /// "Key press" typing indicator. Fire-and-forget.
+  void typing(String topic) {
+    _send({
+      'note': {'topic': topic, 'what': 'kp'},
+    });
+  }
+
+  Future<TinodeCtrl> _ok(Map<String, dynamic> body, String label) async {
+    final result = await _call(body);
+    final ctrl = result.ctrl;
+    if (ctrl == null || ctrl.code >= 400) {
+      throw TinodeException(
+        '$label failed: ${ctrl?.text ?? 'no response'}',
+        code: ctrl?.code,
+      );
+    }
+    return ctrl;
   }
 
   /// Lists the topics this account is subscribed to.
@@ -319,6 +422,13 @@ class TinodeClient {
         })
           TinodeTopic.fromJson(Map<String, dynamic>.from(sub)),
     ];
+  }
+
+  /// Leaves a topic (or cancels a pending subscription request).
+  Future<TinodeCtrl> leave(String topic) async {
+    return _ok({
+      'leave': {'topic': topic},
+    }, 'leave topic');
   }
 
   /// Marks messages up to [seq] as read. Notes are fire-and-forget: the

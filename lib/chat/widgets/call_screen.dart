@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:island/chat/backend/chat_backend.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:material_ui/material_ui.dart' hide ConnectionState;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/chat/pods/call.dart';
 import 'package:island/chat/pods/chat_room.dart';
 import 'package:island/chat/pods/native_call_bridge.dart';
@@ -16,7 +17,6 @@ import 'package:island/chat/widgets/call_chrome.dart';
 import 'package:island/chat/widgets/call_content.dart';
 import 'package:island/chat/widgets/call_invite_sheet.dart';
 import 'package:island/chat/widgets/call_overlay.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/shared/widgets/alert.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -61,7 +61,7 @@ class CallScreen extends HookConsumerWidget {
     final ongoingCall = ref.watch(ongoingCallProvider(room.id));
     final roomState = ref.watch(chatRoomProvider(room.id));
     final callState = ref.watch(callProvider);
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final currentUserId = ref.watch(chatSelfIdProvider);
     ref.watch(callProvider.select((state) => state.participantSyncVersion));
     final callNotifier = ref.read(callProvider.notifier);
     void restoreCallOverlay() {
@@ -193,7 +193,7 @@ class CallScreen extends HookConsumerWidget {
       if (members.isEmpty) {
         showLoadingModal(context);
         try {
-          final apiClient = ref.read(apiClientProvider);
+          final apiClient = ref.read(chatApiProvider);
           final resp = await apiClient.get(
             '/messager/chat/${room.id}/members',
             queryParameters: {'take': '100', 'withStatus': 'true'},
@@ -229,7 +229,7 @@ class CallScreen extends HookConsumerWidget {
       if (target == null) return;
 
       try {
-        final apiClient = ref.read(apiClientProvider);
+        final apiClient = ref.read(chatApiProvider);
         await apiClient.post(
           '/messager/chat/realtime/${room.id}/invite/${target.accountId}',
         );

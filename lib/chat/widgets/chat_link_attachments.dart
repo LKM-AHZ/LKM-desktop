@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -140,7 +141,7 @@ class ChatLinkAttachment extends HookConsumerWidget {
                               }
 
                               try {
-                                final client = ref.read(apiClientProvider);
+                                final client = ref.read(chatApiProvider);
                                 final response = await client.get(
                                   '/fs/files/$fileId/info',
                                 );

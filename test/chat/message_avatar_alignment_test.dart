@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/chat/backend/chat_realtime.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -214,10 +216,10 @@ void main() {
                       databaseProvider.overrideWithValue(database),
                       sharedPreferencesProvider.overrideWithValue(preferences),
                       tokenProvider.overrideWithValue(null),
-                      apiClientProvider.overrideWithValue(
+                      chatApiProvider.overrideWithValue(
                         Dio()..httpClientAdapter = _EmptyResponseAdapter(),
                       ),
-                      websocketProvider.overrideWithValue(ws),
+                      chatRealtimeProvider.overrideWithValue(ws),
                       messagesProvider(
                         'room-1',
                       ).overrideWith(() => _FakeMessagesNotifier()),
@@ -333,10 +335,10 @@ void main() {
                       databaseProvider.overrideWithValue(database),
                       sharedPreferencesProvider.overrideWithValue(preferences),
                       tokenProvider.overrideWithValue(null),
-                      apiClientProvider.overrideWithValue(
+                      chatApiProvider.overrideWithValue(
                         Dio()..httpClientAdapter = _EmptyResponseAdapter(),
                       ),
-                      websocketProvider.overrideWithValue(ws),
+                      chatRealtimeProvider.overrideWithValue(ws),
                       messagesProvider(
                         'room-1',
                       ).overrideWith(() => _FakeMessagesNotifier()),
