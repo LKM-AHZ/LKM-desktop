@@ -13,7 +13,6 @@ import 'package:island/chat/pods/chat_summary.dart';
 import 'package:island/chat/widgets/chat_list_screen.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/core/theme.dart';
 import 'package:island/data/database.dart';
 import 'package:island/route.dart';

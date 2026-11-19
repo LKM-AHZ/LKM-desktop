@@ -76,7 +76,7 @@ class ChatBackend {
     for (final raw in rows.whereType<Map>()) {
       final sub = Map<String, dynamic>.from(raw);
       final topic = '${sub['topic'] ?? ''}';
-      if (topic.isEmpty) continue;
+      if (topic.isEmpty || topic == 'me') continue;
       _subs[topic] = sub;
       _maxSeq[topic] = _int(sub['seq']);
       _rememberSelf(sub, topic);
@@ -206,8 +206,22 @@ class ChatBackend {
   }) async {
     await _ensureClient();
     final client = _client;
-    final total = _maxSeq[topic] ?? _int(_subs[topic]?['seq']);
-    if (total <= 0 || offset >= total) {
+    if (!_subs.containsKey(topic)) await rooms();
+    final total = _maxSeq[topic];
+    if (total == null || total <= 0) {
+      // A topic opened by deep link before the subscription list was read:
+      // page backwards without a seq bound and report what we saw.
+      final raw = await client.history(topic, limit: offset + take);
+      final page = raw.reversed.skip(offset).take(take).toList();
+      return ChatMessagePage(
+        messages: [
+          for (final message in page) _toRemote(topic, message),
+        ],
+        totalCount: raw.length,
+        hasMore: raw.length >= offset + take,
+      );
+    }
+    if (offset >= total) {
       return ChatMessagePage(
         messages: const [],
         totalCount: total,
@@ -475,6 +489,14 @@ class ChatSelfProfile {
 final chatBackendProvider = Provider<ChatBackend>(ChatBackend.new);
 
 /// The signed-in Tinode uid, the identity chat rows compare against.
+/// Awaits the identity instead of reading whatever is cached, for callers that
+/// already run inside an async flow (a sync read sees `loading` in tests).
+Future<String?> resolveChatSelfId(Ref ref) async {
+  final uid = ref.read(tinodeClientProvider).value?.userId;
+  if (uid != null) return tinodeUid(uid);
+  return (await ref.read(userInfoProvider.future))?.id;
+}
+
 final chatSelfIdProvider = Provider<String?>((ref) {
   final client = ref.watch(tinodeClientProvider).value;
   final uid = client?.userId;

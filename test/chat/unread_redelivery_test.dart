@@ -18,7 +18,6 @@ import 'package:island/core/api/notification_api.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/websocket.dart';
 import 'package:island/notifications/notification.dart';
 import 'package:island/data/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';

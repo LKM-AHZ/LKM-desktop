@@ -8,7 +8,6 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:island/core/network.dart';
 import 'package:island/core/utils/call_kit_utils.dart';
 
 part 'native_call_bridge.g.dart';

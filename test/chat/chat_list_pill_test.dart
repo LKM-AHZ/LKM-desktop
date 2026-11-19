@@ -14,7 +14,6 @@ import 'package:island/chat/widgets/chat_list_screen.dart';
 import 'package:island/chat/widgets/chat_room_list_tile.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/data/database.dart';
 import 'package:island/discovery/widgets/pill_app_bar.dart';
 import 'package:island/discovery/widgets/explore_card.dart';

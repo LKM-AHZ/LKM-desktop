@@ -39,6 +39,7 @@ import 'package:island/thoughts/plugins/wallet_plugin.dart';
 import 'package:island/thoughts/plugins/web_tools_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:island/core/config.dart';
+import 'package:island/chat/backend/chat_api.dart';
 import 'package:island/core/network.dart';
 
 /// The client tool the model calls to load an on-demand plugin's tools.
@@ -95,7 +96,9 @@ final pluginHttpClientProvider = Provider<Dio>((ref) {
 /// their own token — the same client every screen in the app reads with.
 final pluginContextProvider = Provider<SnPluginContext>(
   (ref) => SnPluginContext(
-    api: ref.watch(apiClientProvider),
+    // chatApiProvider adds the `/messager/chat` adapter on top of the same
+    // client; non-chat calls pass through unchanged.
+    api: ref.watch(chatApiProvider),
     http: ref.watch(pluginHttpClientProvider),
   ),
 );

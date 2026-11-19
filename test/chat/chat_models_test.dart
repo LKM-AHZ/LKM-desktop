@@ -1,0 +1,70 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:island/chat/backend/chat_models.dart';
+import 'package:island/chat/tinode/tinode_client.dart';
+
+Map<String, dynamic> _member(String uid) => chatMemberJson(
+  {
+    'topic': 'grp1',
+    'user': uid,
+    'public': {'fn': 'bob'},
+  },
+  topic: 'grp1',
+);
+
+void main() {
+  test('a Tinode message becomes a Solar message with its sequence', () {
+    final json = chatMessageJson(
+      const TinodeMessage(
+        topic: 'grp1',
+        from: 'usrABC',
+        seq: 7,
+        ts: null,
+        content: {
+          'txt': 'hello',
+          ChatContentKeys.clientMessageId: 'c1',
+          ChatContentKeys.repliedMessageId: 'grp1:3',
+        },
+      ),
+      memberFor: _member,
+    );
+
+    expect(json['id'], 'grp1:7');
+    expect(json['room_sequence'], 7);
+    expect(json['chat_room_id'], 'grp1');
+    expect(json['content'], 'hello');
+    expect(json['client_message_id'], 'c1');
+    expect(json['replied_message_id'], 'grp1:3');
+    expect(json['sender_id'], 'usrABC');
+    expect(json['sender']['nick'], 'bob');
+  });
+
+  test('outgoing payload keeps the fields the event pipeline needs', () {
+    final content = chatContentFromPayload(
+      {
+        'type': 'messages.update',
+        'content': '',
+        'meta': {'message_id': 'grp1:4'},
+        'client_message_id': 'c2',
+      },
+      senderName: 'alice',
+    );
+
+    expect(content[ChatContentKeys.type], 'messages.update');
+    expect(content[ChatContentKeys.clientMessageId], 'c2');
+    expect(content[ChatContentKeys.meta], {'message_id': 'grp1:4'});
+    expect(content[ChatContentKeys.senderName], 'alice');
+  });
+
+  test('a direct topic maps to type 1, a group topic to type 0', () {
+    final direct = chatRoomJson({'topic': 'p2pABC', 'public': {}});
+    final group = chatRoomJson({
+      'topic': 'grpXYZ',
+      'public': {'fn': 'Team'},
+    });
+
+    expect(direct['type'], 1);
+    expect(direct['name'], isNull);
+    expect(group['type'], 0);
+    expect(group['name'], 'Team');
+  });
+}

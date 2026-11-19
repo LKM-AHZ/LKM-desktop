@@ -925,13 +925,9 @@ class ChatRoomScreen extends HookConsumerWidget {
       if (!shouldProceed || !context.mounted) return;
 
       try {
-        showLoadingModal(context);
-        final client = ref.read(solarNetworkClientProvider);
+        // ponytail: message migration needs a server-side move endpoint;
+        // Tinode has none, so the action reports it instead of half-working.
         throw UnsupportedError('聊天记录迁移暂不可用');
-
-        if (!context.mounted) return;
-        chatStateNotifier.exitSelectionMode();
-        showSnackBar('chatRedirectSuccess'.tr(args: [countPhrase]));
       } catch (err) {
         showErrorAlert(err);
       } finally {

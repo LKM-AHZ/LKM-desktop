@@ -9,7 +9,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/widgets/chat_search_screen.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
-import 'package:island/core/network.dart';
 import 'package:island/data/database.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';

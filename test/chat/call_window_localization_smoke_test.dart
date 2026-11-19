@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/widgets/call_window.dart';
 import 'package:island/core/config.dart';
-import 'package:island/core/network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _EmptyResponseAdapter implements HttpClientAdapter {

@@ -12,7 +12,6 @@ import 'package:island/chat/widgets/message_indicators.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
 import 'package:island/core/network.dart';
-import 'package:island/core/websocket.dart';
 import 'package:island/data/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';

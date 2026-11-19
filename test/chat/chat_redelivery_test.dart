@@ -12,7 +12,6 @@ import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/services/event_bus.dart';
-import 'package:island/core/websocket.dart';
 import 'package:island/data/database.dart';
 import 'package:island/data/message.dart';
 import 'package:shared_preferences/shared_preferences.dart';

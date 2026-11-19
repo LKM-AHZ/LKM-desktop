@@ -87,7 +87,7 @@ Map<String, dynamic> chatAccountJson({
       'level': 1,
       'leveling_progress': 0,
       // Avatars live in the LKM file store, not the Solar drive the picture
-      // widget resolves; show the initials fallback until a chat avatp path
+      // widget resolves; show the initials fallback until a chat avatar path
       // exists.
       'picture': null,
       'background': null,

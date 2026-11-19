@@ -5,9 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/tinode/tinode_provider.dart';
-import 'package:island/core/api/api_client.dart';
-import 'package:island/core/api/api_providers.dart';
-import 'package:island/core/config.dart';
+import 'package:island/core/network.dart';
 
 /// A Dio client whose only job is the old `/messager/chat/*` REST surface,
 /// answered from Tinode by [ChatBackend].

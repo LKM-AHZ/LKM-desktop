@@ -150,7 +150,7 @@ class ChatUnreadCountNotifier extends _$ChatUnreadCountNotifier {
     // The notify setting lives on the member row, which is keyed by account.
     // Resolve the signed-in account first: reading it mid-load would see no
     // account and fall through to counting every message.
-    final accountId = ref.read(chatSelfIdProvider);
+    final accountId = await resolveChatSelfId(ref);
     if (!ref.mounted) return;
     final member = accountId == null
         ? null
@@ -394,7 +394,7 @@ class ChatSummary extends _$ChatSummary {
     String chatId,
     SnChatMessage message,
   ) async {
-    final accountId = ref.read(chatSelfIdProvider);
+    final accountId = await resolveChatSelfId(ref);
     if (!ref.mounted) return;
     final member = accountId == null
         ? null
@@ -475,7 +475,7 @@ class ChatSummary extends _$ChatSummary {
     if (latestByRoom.isEmpty) return;
 
     final currentSubscribed = ref.read(currentSubscribedChatIdProvider);
-    final accountId = ref.read(chatSelfIdProvider);
+    final accountId = await resolveChatSelfId(ref);
     final db = ref.read(databaseProvider);
     final current = state.maybeWhen(
       data: (summaries) => summaries,

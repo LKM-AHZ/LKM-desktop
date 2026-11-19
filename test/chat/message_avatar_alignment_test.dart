@@ -15,7 +15,6 @@ import 'package:island/chat/widgets/room_message_list.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/database.dart';
 import 'package:island/core/network.dart';
-import 'package:island/core/websocket.dart';
 import 'package:island/data/database.dart';
 import 'package:island/data/message.dart';
 import 'package:island/drive/widgets/cloud_files.dart';

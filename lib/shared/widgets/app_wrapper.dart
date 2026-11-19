@@ -1180,19 +1180,18 @@ class AppWrapper extends HookConsumerWidget {
     final chatShare = parseChatRoomShareLink(uri.toString());
     if (chatShare != null) {
       try {
-        showLoadingModal(context);
-        final client = ref.read(solarNetworkClientProvider);
-        final room = await client.chat.getRoomBySlug(
-          chatShare.scope,
-          chatShare.slug,
-        );
-        if (!context.mounted) return;
-        hideLoadingModal(context);
-        if (room != null) {
+        // ponytail: Tinode topics have no slug namespace; a share link whose
+        // slug is the topic id still resolves, other links report not-found.
+        final topic = chatShare.slug;
+        final looksLikeTopic =
+            topic.startsWith('grp') ||
+            topic.startsWith('chn') ||
+            topic.startsWith('p2p');
+        if (looksLikeTopic) {
           // Navigate inside the existing tab shell — pushing from the root
           // context would stack a second TabsScreen and collide the shared
           // rootScaffoldKey.
-          context.router.navigatePath('/chat/${room.id}');
+          context.router.navigatePath('/chat/$topic');
         } else {
           showSnackBar('chatRoomNotFound'.tr());
         }

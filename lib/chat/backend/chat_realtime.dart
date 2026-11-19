@@ -257,6 +257,7 @@ class ChatRealtimeService extends SolarWebSocketService {
 final chatRealtimeProvider = Provider<SolarWebSocketService>((ref) {
   final service = ChatRealtimeService(ref);
   ref.onDispose(service.close);
+  unawaited(service.connect());
   return service;
 });
 
@@ -276,7 +277,9 @@ class ChatRealtimeStateNotifier extends Notifier<WebSocketState> {
       state = event;
     });
     ref.onDispose(() => _subscription?.cancel());
-    return const WebSocketState.disconnected();
+    return service.isConnected
+        ? const WebSocketState.connected()
+        : const WebSocketState.disconnected();
   }
 
   Future<void> connect() => ref.read(chatRealtimeProvider).connect();
