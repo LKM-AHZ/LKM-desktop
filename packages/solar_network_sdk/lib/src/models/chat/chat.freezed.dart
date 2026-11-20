@@ -29,16 +29,21 @@ $SnChatGroupCopyWith<SnChatGroup> get copyWith => _$SnChatGroupCopyWithImpl<SnCh
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other.roomIds, roomIds)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnChatGroup;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatGroup&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.order, _this.order) || other.order == _this.order)&&const DeepCollectionEquality().equals(other.roomIds, _this.roomIds)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,name,color,icon,order,const DeepCollectionEquality().hash(roomIds),createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnChatGroup;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.name,_this.color,_this.icon,_this.order,const DeepCollectionEquality().hash(_this.roomIds),_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnChatGroup(id: $id, accountId: $accountId, name: $name, color: $color, icon: $icon, order: $order, roomIds: $roomIds, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnChatGroup;
+  return 'SnChatGroup(id: ${_this.id}, accountId: ${_this.accountId}, name: ${_this.name}, color: ${_this.color}, icon: ${_this.icon}, order: ${_this.order}, roomIds: ${_this.roomIds}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -244,16 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other._roomIds, _roomIds)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other.roomIds, _roomIds)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,name,color,icon,order,const DeepCollectionEquality().hash(_roomIds),createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,name,color,icon,order,const DeepCollectionEquality().hash(_roomIds),createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnChatGroup(id: $id, accountId: $accountId, name: $name, color: $color, icon: $icon, order: $order, roomIds: $roomIds, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnChatGroup(id: $id, accountId: $accountId, name: $name, color: $color, icon: $icon, order: $order, roomIds: $roomIds, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -316,16 +323,21 @@ $SnChatRoomCopyWith<SnChatRoom> get copyWith => _$SnChatRoomCopyWithImpl<SnChatR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.type, type) || other.type == type)&&(identical(other.encryptionMode, encryptionMode) || other.encryptionMode == encryptionMode)&&(identical(other.mlsGroupId, mlsGroupId) || other.mlsGroupId == mlsGroupId)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isReadReceiptsPublic, isReadReceiptsPublic) || other.isReadReceiptsPublic == isReadReceiptsPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.members, members)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned));
+  final _this = this as SnChatRoom;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatRoom&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.encryptionMode, _this.encryptionMode) || other.encryptionMode == _this.encryptionMode)&&(identical(other.mlsGroupId, _this.mlsGroupId) || other.mlsGroupId == _this.mlsGroupId)&&(identical(other.isPublic, _this.isPublic) || other.isPublic == _this.isPublic)&&(identical(other.isCommunity, _this.isCommunity) || other.isCommunity == _this.isCommunity)&&(identical(other.isReadReceiptsPublic, _this.isReadReceiptsPublic) || other.isReadReceiptsPublic == _this.isReadReceiptsPublic)&&(identical(other.picture, _this.picture) || other.picture == _this.picture)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.realmId, _this.realmId) || other.realmId == _this.realmId)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.realm, _this.realm) || other.realm == _this.realm)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&const DeepCollectionEquality().equals(other.members, _this.members)&&(identical(other.isPinned, _this.isPinned) || other.isPinned == _this.isPinned));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,description,slug,type,encryptionMode,mlsGroupId,isPublic,isCommunity,isReadReceiptsPublic,picture,background,realmId,accountId,realm,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(members),isPinned]);
+int get hashCode {
+  final _this = this as SnChatRoom;
+  return Object.hashAll([runtimeType,_this.id,_this.name,_this.description,_this.slug,_this.type,_this.encryptionMode,_this.mlsGroupId,_this.isPublic,_this.isCommunity,_this.isReadReceiptsPublic,_this.picture,_this.background,_this.realmId,_this.accountId,_this.realm,_this.createdAt,_this.updatedAt,_this.deletedAt,const DeepCollectionEquality().hash(_this.members),_this.isPinned]);
+}
 
 @override
 String toString() {
-  return 'SnChatRoom(id: $id, name: $name, description: $description, slug: $slug, type: $type, encryptionMode: $encryptionMode, mlsGroupId: $mlsGroupId, isPublic: $isPublic, isCommunity: $isCommunity, isReadReceiptsPublic: $isReadReceiptsPublic, picture: $picture, background: $background, realmId: $realmId, accountId: $accountId, realm: $realm, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, members: $members, isPinned: $isPinned)';
+  final _this = this as SnChatRoom;
+  return 'SnChatRoom(id: ${_this.id}, name: ${_this.name}, description: ${_this.description}, slug: ${_this.slug}, type: ${_this.type}, encryptionMode: ${_this.encryptionMode}, mlsGroupId: ${_this.mlsGroupId}, isPublic: ${_this.isPublic}, isCommunity: ${_this.isCommunity}, isReadReceiptsPublic: ${_this.isReadReceiptsPublic}, picture: ${_this.picture}, background: ${_this.background}, realmId: ${_this.realmId}, accountId: ${_this.accountId}, realm: ${_this.realm}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, members: ${_this.members}, isPinned: ${_this.isPinned})';
 }
 
 
@@ -591,16 +603,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.type, type) || other.type == type)&&(identical(other.encryptionMode, encryptionMode) || other.encryptionMode == encryptionMode)&&(identical(other.mlsGroupId, mlsGroupId) || other.mlsGroupId == mlsGroupId)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isReadReceiptsPublic, isReadReceiptsPublic) || other.isReadReceiptsPublic == isReadReceiptsPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other._members, _members)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.type, type) || other.type == type)&&(identical(other.encryptionMode, encryptionMode) || other.encryptionMode == encryptionMode)&&(identical(other.mlsGroupId, mlsGroupId) || other.mlsGroupId == mlsGroupId)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isReadReceiptsPublic, isReadReceiptsPublic) || other.isReadReceiptsPublic == isReadReceiptsPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.members, _members)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,description,slug,type,encryptionMode,mlsGroupId,isPublic,isCommunity,isReadReceiptsPublic,picture,background,realmId,accountId,realm,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_members),isPinned]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,name,description,slug,type,encryptionMode,mlsGroupId,isPublic,isCommunity,isReadReceiptsPublic,picture,background,realmId,accountId,realm,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_members),isPinned]);
+}
 
 @override
 String toString() {
-  return 'SnChatRoom(id: $id, name: $name, description: $description, slug: $slug, type: $type, encryptionMode: $encryptionMode, mlsGroupId: $mlsGroupId, isPublic: $isPublic, isCommunity: $isCommunity, isReadReceiptsPublic: $isReadReceiptsPublic, picture: $picture, background: $background, realmId: $realmId, accountId: $accountId, realm: $realm, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, members: $members, isPinned: $isPinned)';
+    return 'SnChatRoom(id: $id, name: $name, description: $description, slug: $slug, type: $type, encryptionMode: $encryptionMode, mlsGroupId: $mlsGroupId, isPublic: $isPublic, isCommunity: $isCommunity, isReadReceiptsPublic: $isReadReceiptsPublic, picture: $picture, background: $background, realmId: $realmId, accountId: $accountId, realm: $realm, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, members: $members, isPinned: $isPinned)';
 }
 
 
@@ -710,16 +724,21 @@ $SnChatEncryptionMetaCopyWith<SnChatEncryptionMeta> get copyWith => _$SnChatEncr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatEncryptionMeta&&(identical(other.ciphertext, ciphertext) || other.ciphertext == ciphertext)&&(identical(other.header, header) || other.header == header)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.scheme, scheme) || other.scheme == scheme)&&(identical(other.epoch, epoch) || other.epoch == epoch));
+  final _this = this as SnChatEncryptionMeta;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatEncryptionMeta&&(identical(other.ciphertext, _this.ciphertext) || other.ciphertext == _this.ciphertext)&&(identical(other.header, _this.header) || other.header == _this.header)&&(identical(other.signature, _this.signature) || other.signature == _this.signature)&&(identical(other.scheme, _this.scheme) || other.scheme == _this.scheme)&&(identical(other.epoch, _this.epoch) || other.epoch == _this.epoch));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,ciphertext,header,signature,scheme,epoch);
+int get hashCode {
+  final _this = this as SnChatEncryptionMeta;
+  return Object.hash(runtimeType,_this.ciphertext,_this.header,_this.signature,_this.scheme,_this.epoch);
+}
 
 @override
 String toString() {
-  return 'SnChatEncryptionMeta(ciphertext: $ciphertext, header: $header, signature: $signature, scheme: $scheme, epoch: $epoch)';
+  final _this = this as SnChatEncryptionMeta;
+  return 'SnChatEncryptionMeta(ciphertext: ${_this.ciphertext}, header: ${_this.header}, signature: ${_this.signature}, scheme: ${_this.scheme}, epoch: ${_this.epoch})';
 }
 
 
@@ -911,16 +930,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatEncryptionMeta&&(identical(other.ciphertext, ciphertext) || other.ciphertext == ciphertext)&&(identical(other.header, header) || other.header == header)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.scheme, scheme) || other.scheme == scheme)&&(identical(other.epoch, epoch) || other.epoch == epoch));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatEncryptionMeta&&(identical(other.ciphertext, ciphertext) || other.ciphertext == ciphertext)&&(identical(other.header, header) || other.header == header)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.scheme, scheme) || other.scheme == scheme)&&(identical(other.epoch, epoch) || other.epoch == epoch));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,ciphertext,header,signature,scheme,epoch);
+int get hashCode {
+    return Object.hash(runtimeType,ciphertext,header,signature,scheme,epoch);
+}
 
 @override
 String toString() {
-  return 'SnChatEncryptionMeta(ciphertext: $ciphertext, header: $header, signature: $signature, scheme: $scheme, epoch: $epoch)';
+    return 'SnChatEncryptionMeta(ciphertext: $ciphertext, header: $header, signature: $signature, scheme: $scheme, epoch: $epoch)';
 }
 
 
@@ -982,16 +1003,21 @@ $SnChatMessageCopyWith<SnChatMessage> get copyWith => _$SnChatMessageCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMessage&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.content, content) || other.content == content)&&(identical(other.clientMessageId, clientMessageId) || other.clientMessageId == clientMessageId)&&(identical(other.nonce, nonce) || other.nonce == nonce)&&(identical(other.encryptionMeta, encryptionMeta) || other.encryptionMeta == encryptionMeta)&&const DeepCollectionEquality().equals(other.meta, meta)&&const DeepCollectionEquality().equals(other.membersMentioned, membersMentioned)&&(identical(other.editedAt, editedAt) || other.editedAt == editedAt)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.reactionsCount, reactionsCount)&&const DeepCollectionEquality().equals(other.reactionsMade, reactionsMade)&&(identical(other.isThreadRoot, isThreadRoot) || other.isThreadRoot == isThreadRoot)&&(identical(other.threadRepliesCount, threadRepliesCount) || other.threadRepliesCount == threadRepliesCount)&&const DeepCollectionEquality().equals(other.threadReplies, threadReplies)&&(identical(other.repliedMessageId, repliedMessageId) || other.repliedMessageId == repliedMessageId)&&(identical(other.threadId, threadId) || other.threadId == threadId)&&(identical(other.forwardedMessageId, forwardedMessageId) || other.forwardedMessageId == forwardedMessageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
+  final _this = this as SnChatMessage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMessage&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.clientMessageId, _this.clientMessageId) || other.clientMessageId == _this.clientMessageId)&&(identical(other.nonce, _this.nonce) || other.nonce == _this.nonce)&&(identical(other.encryptionMeta, _this.encryptionMeta) || other.encryptionMeta == _this.encryptionMeta)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&const DeepCollectionEquality().equals(other.membersMentioned, _this.membersMentioned)&&(identical(other.editedAt, _this.editedAt) || other.editedAt == _this.editedAt)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&const DeepCollectionEquality().equals(other.reactions, _this.reactions)&&const DeepCollectionEquality().equals(other.reactionsCount, _this.reactionsCount)&&const DeepCollectionEquality().equals(other.reactionsMade, _this.reactionsMade)&&(identical(other.isThreadRoot, _this.isThreadRoot) || other.isThreadRoot == _this.isThreadRoot)&&(identical(other.threadRepliesCount, _this.threadRepliesCount) || other.threadRepliesCount == _this.threadRepliesCount)&&const DeepCollectionEquality().equals(other.threadReplies, _this.threadReplies)&&(identical(other.repliedMessageId, _this.repliedMessageId) || other.repliedMessageId == _this.repliedMessageId)&&(identical(other.threadId, _this.threadId) || other.threadId == _this.threadId)&&(identical(other.forwardedMessageId, _this.forwardedMessageId) || other.forwardedMessageId == _this.forwardedMessageId)&&(identical(other.senderId, _this.senderId) || other.senderId == _this.senderId)&&(identical(other.sender, _this.sender) || other.sender == _this.sender)&&(identical(other.chatRoomId, _this.chatRoomId) || other.chatRoomId == _this.chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,type,content,clientMessageId,nonce,encryptionMeta,const DeepCollectionEquality().hash(meta),const DeepCollectionEquality().hash(membersMentioned),editedAt,const DeepCollectionEquality().hash(attachments),const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(reactionsCount),const DeepCollectionEquality().hash(reactionsMade),isThreadRoot,threadRepliesCount,const DeepCollectionEquality().hash(threadReplies),repliedMessageId,threadId,forwardedMessageId,senderId,sender,chatRoomId]);
+int get hashCode {
+  final _this = this as SnChatMessage;
+  return Object.hashAll([runtimeType,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.id,_this.type,_this.content,_this.clientMessageId,_this.nonce,_this.encryptionMeta,const DeepCollectionEquality().hash(_this.meta),const DeepCollectionEquality().hash(_this.membersMentioned),_this.editedAt,const DeepCollectionEquality().hash(_this.attachments),const DeepCollectionEquality().hash(_this.reactions),const DeepCollectionEquality().hash(_this.reactionsCount),const DeepCollectionEquality().hash(_this.reactionsMade),_this.isThreadRoot,_this.threadRepliesCount,const DeepCollectionEquality().hash(_this.threadReplies),_this.repliedMessageId,_this.threadId,_this.forwardedMessageId,_this.senderId,_this.sender,_this.chatRoomId]);
+}
 
 @override
 String toString() {
-  return 'SnChatMessage(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, type: $type, content: $content, clientMessageId: $clientMessageId, nonce: $nonce, encryptionMeta: $encryptionMeta, meta: $meta, membersMentioned: $membersMentioned, editedAt: $editedAt, attachments: $attachments, reactions: $reactions, reactionsCount: $reactionsCount, reactionsMade: $reactionsMade, isThreadRoot: $isThreadRoot, threadRepliesCount: $threadRepliesCount, threadReplies: $threadReplies, repliedMessageId: $repliedMessageId, threadId: $threadId, forwardedMessageId: $forwardedMessageId, senderId: $senderId, sender: $sender, chatRoomId: $chatRoomId)';
+  final _this = this as SnChatMessage;
+  return 'SnChatMessage(createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, id: ${_this.id}, type: ${_this.type}, content: ${_this.content}, clientMessageId: ${_this.clientMessageId}, nonce: ${_this.nonce}, encryptionMeta: ${_this.encryptionMeta}, meta: ${_this.meta}, membersMentioned: ${_this.membersMentioned}, editedAt: ${_this.editedAt}, attachments: ${_this.attachments}, reactions: ${_this.reactions}, reactionsCount: ${_this.reactionsCount}, reactionsMade: ${_this.reactionsMade}, isThreadRoot: ${_this.isThreadRoot}, threadRepliesCount: ${_this.threadRepliesCount}, threadReplies: ${_this.threadReplies}, repliedMessageId: ${_this.repliedMessageId}, threadId: ${_this.threadId}, forwardedMessageId: ${_this.forwardedMessageId}, senderId: ${_this.senderId}, sender: ${_this.sender}, chatRoomId: ${_this.chatRoomId})';
 }
 
 
@@ -1289,16 +1315,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMessage&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.content, content) || other.content == content)&&(identical(other.clientMessageId, clientMessageId) || other.clientMessageId == clientMessageId)&&(identical(other.nonce, nonce) || other.nonce == nonce)&&(identical(other.encryptionMeta, encryptionMeta) || other.encryptionMeta == encryptionMeta)&&const DeepCollectionEquality().equals(other._meta, _meta)&&const DeepCollectionEquality().equals(other._membersMentioned, _membersMentioned)&&(identical(other.editedAt, editedAt) || other.editedAt == editedAt)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&const DeepCollectionEquality().equals(other._reactions, _reactions)&&const DeepCollectionEquality().equals(other._reactionsCount, _reactionsCount)&&const DeepCollectionEquality().equals(other._reactionsMade, _reactionsMade)&&(identical(other.isThreadRoot, isThreadRoot) || other.isThreadRoot == isThreadRoot)&&(identical(other.threadRepliesCount, threadRepliesCount) || other.threadRepliesCount == threadRepliesCount)&&const DeepCollectionEquality().equals(other._threadReplies, _threadReplies)&&(identical(other.repliedMessageId, repliedMessageId) || other.repliedMessageId == repliedMessageId)&&(identical(other.threadId, threadId) || other.threadId == threadId)&&(identical(other.forwardedMessageId, forwardedMessageId) || other.forwardedMessageId == forwardedMessageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMessage&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.content, content) || other.content == content)&&(identical(other.clientMessageId, clientMessageId) || other.clientMessageId == clientMessageId)&&(identical(other.nonce, nonce) || other.nonce == nonce)&&(identical(other.encryptionMeta, encryptionMeta) || other.encryptionMeta == encryptionMeta)&&const DeepCollectionEquality().equals(other.meta, _meta)&&const DeepCollectionEquality().equals(other.membersMentioned, _membersMentioned)&&(identical(other.editedAt, editedAt) || other.editedAt == editedAt)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&const DeepCollectionEquality().equals(other.reactions, _reactions)&&const DeepCollectionEquality().equals(other.reactionsCount, _reactionsCount)&&const DeepCollectionEquality().equals(other.reactionsMade, _reactionsMade)&&(identical(other.isThreadRoot, isThreadRoot) || other.isThreadRoot == isThreadRoot)&&(identical(other.threadRepliesCount, threadRepliesCount) || other.threadRepliesCount == threadRepliesCount)&&const DeepCollectionEquality().equals(other.threadReplies, _threadReplies)&&(identical(other.repliedMessageId, repliedMessageId) || other.repliedMessageId == repliedMessageId)&&(identical(other.threadId, threadId) || other.threadId == threadId)&&(identical(other.forwardedMessageId, forwardedMessageId) || other.forwardedMessageId == forwardedMessageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,type,content,clientMessageId,nonce,encryptionMeta,const DeepCollectionEquality().hash(_meta),const DeepCollectionEquality().hash(_membersMentioned),editedAt,const DeepCollectionEquality().hash(_attachments),const DeepCollectionEquality().hash(_reactions),const DeepCollectionEquality().hash(_reactionsCount),const DeepCollectionEquality().hash(_reactionsMade),isThreadRoot,threadRepliesCount,const DeepCollectionEquality().hash(_threadReplies),repliedMessageId,threadId,forwardedMessageId,senderId,sender,chatRoomId]);
+int get hashCode {
+    return Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,type,content,clientMessageId,nonce,encryptionMeta,const DeepCollectionEquality().hash(_meta),const DeepCollectionEquality().hash(_membersMentioned),editedAt,const DeepCollectionEquality().hash(_attachments),const DeepCollectionEquality().hash(_reactions),const DeepCollectionEquality().hash(_reactionsCount),const DeepCollectionEquality().hash(_reactionsMade),isThreadRoot,threadRepliesCount,const DeepCollectionEquality().hash(_threadReplies),repliedMessageId,threadId,forwardedMessageId,senderId,sender,chatRoomId]);
+}
 
 @override
 String toString() {
-  return 'SnChatMessage(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, type: $type, content: $content, clientMessageId: $clientMessageId, nonce: $nonce, encryptionMeta: $encryptionMeta, meta: $meta, membersMentioned: $membersMentioned, editedAt: $editedAt, attachments: $attachments, reactions: $reactions, reactionsCount: $reactionsCount, reactionsMade: $reactionsMade, isThreadRoot: $isThreadRoot, threadRepliesCount: $threadRepliesCount, threadReplies: $threadReplies, repliedMessageId: $repliedMessageId, threadId: $threadId, forwardedMessageId: $forwardedMessageId, senderId: $senderId, sender: $sender, chatRoomId: $chatRoomId)';
+    return 'SnChatMessage(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, type: $type, content: $content, clientMessageId: $clientMessageId, nonce: $nonce, encryptionMeta: $encryptionMeta, meta: $meta, membersMentioned: $membersMentioned, editedAt: $editedAt, attachments: $attachments, reactions: $reactions, reactionsCount: $reactionsCount, reactionsMade: $reactionsMade, isThreadRoot: $isThreadRoot, threadRepliesCount: $threadRepliesCount, threadReplies: $threadReplies, repliedMessageId: $repliedMessageId, threadId: $threadId, forwardedMessageId: $forwardedMessageId, senderId: $senderId, sender: $sender, chatRoomId: $chatRoomId)';
 }
 
 
@@ -1398,16 +1426,21 @@ $SnChatReactionCopyWith<SnChatReaction> get copyWith => _$SnChatReactionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatReaction&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.symbol, symbol) || other.symbol == symbol)&&(identical(other.attitude, attitude) || other.attitude == attitude));
+  final _this = this as SnChatReaction;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatReaction&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.messageId, _this.messageId) || other.messageId == _this.messageId)&&(identical(other.senderId, _this.senderId) || other.senderId == _this.senderId)&&(identical(other.sender, _this.sender) || other.sender == _this.sender)&&(identical(other.symbol, _this.symbol) || other.symbol == _this.symbol)&&(identical(other.attitude, _this.attitude) || other.attitude == _this.attitude));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,createdAt,updatedAt,deletedAt,id,messageId,senderId,sender,symbol,attitude);
+int get hashCode {
+  final _this = this as SnChatReaction;
+  return Object.hash(runtimeType,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.id,_this.messageId,_this.senderId,_this.sender,_this.symbol,_this.attitude);
+}
 
 @override
 String toString() {
-  return 'SnChatReaction(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, messageId: $messageId, senderId: $senderId, sender: $sender, symbol: $symbol, attitude: $attitude)';
+  final _this = this as SnChatReaction;
+  return 'SnChatReaction(createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, id: ${_this.id}, messageId: ${_this.messageId}, senderId: ${_this.senderId}, sender: ${_this.sender}, symbol: ${_this.symbol}, attitude: ${_this.attitude})';
 }
 
 
@@ -1616,16 +1649,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatReaction&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.symbol, symbol) || other.symbol == symbol)&&(identical(other.attitude, attitude) || other.attitude == attitude));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatReaction&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.symbol, symbol) || other.symbol == symbol)&&(identical(other.attitude, attitude) || other.attitude == attitude));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,createdAt,updatedAt,deletedAt,id,messageId,senderId,sender,symbol,attitude);
+int get hashCode {
+    return Object.hash(runtimeType,createdAt,updatedAt,deletedAt,id,messageId,senderId,sender,symbol,attitude);
+}
 
 @override
 String toString() {
-  return 'SnChatReaction(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, messageId: $messageId, senderId: $senderId, sender: $sender, symbol: $symbol, attitude: $attitude)';
+    return 'SnChatReaction(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, messageId: $messageId, senderId: $senderId, sender: $sender, symbol: $symbol, attitude: $attitude)';
 }
 
 
@@ -1697,16 +1732,21 @@ $SnChatMessagePinCopyWith<SnChatMessagePin> get copyWith => _$SnChatMessagePinCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMessagePin&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.pinnedByMemberId, pinnedByMemberId) || other.pinnedByMemberId == pinnedByMemberId)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.message, message) || other.message == message)&&(identical(other.pinnedBy, pinnedBy) || other.pinnedBy == pinnedBy));
+  final _this = this as SnChatMessagePin;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMessagePin&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.messageId, _this.messageId) || other.messageId == _this.messageId)&&(identical(other.chatRoomId, _this.chatRoomId) || other.chatRoomId == _this.chatRoomId)&&(identical(other.pinnedByMemberId, _this.pinnedByMemberId) || other.pinnedByMemberId == _this.pinnedByMemberId)&&(identical(other.expiresAt, _this.expiresAt) || other.expiresAt == _this.expiresAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.pinnedBy, _this.pinnedBy) || other.pinnedBy == _this.pinnedBy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,messageId,chatRoomId,pinnedByMemberId,expiresAt,createdAt,updatedAt,message,pinnedBy);
+int get hashCode {
+  final _this = this as SnChatMessagePin;
+  return Object.hash(runtimeType,_this.id,_this.messageId,_this.chatRoomId,_this.pinnedByMemberId,_this.expiresAt,_this.createdAt,_this.updatedAt,_this.message,_this.pinnedBy);
+}
 
 @override
 String toString() {
-  return 'SnChatMessagePin(id: $id, messageId: $messageId, chatRoomId: $chatRoomId, pinnedByMemberId: $pinnedByMemberId, expiresAt: $expiresAt, createdAt: $createdAt, updatedAt: $updatedAt, message: $message, pinnedBy: $pinnedBy)';
+  final _this = this as SnChatMessagePin;
+  return 'SnChatMessagePin(id: ${_this.id}, messageId: ${_this.messageId}, chatRoomId: ${_this.chatRoomId}, pinnedByMemberId: ${_this.pinnedByMemberId}, expiresAt: ${_this.expiresAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, message: ${_this.message}, pinnedBy: ${_this.pinnedBy})';
 }
 
 
@@ -1930,16 +1970,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMessagePin&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.pinnedByMemberId, pinnedByMemberId) || other.pinnedByMemberId == pinnedByMemberId)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.message, message) || other.message == message)&&(identical(other.pinnedBy, pinnedBy) || other.pinnedBy == pinnedBy));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMessagePin&&(identical(other.id, id) || other.id == id)&&(identical(other.messageId, messageId) || other.messageId == messageId)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.pinnedByMemberId, pinnedByMemberId) || other.pinnedByMemberId == pinnedByMemberId)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.message, message) || other.message == message)&&(identical(other.pinnedBy, pinnedBy) || other.pinnedBy == pinnedBy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,messageId,chatRoomId,pinnedByMemberId,expiresAt,createdAt,updatedAt,message,pinnedBy);
+int get hashCode {
+    return Object.hash(runtimeType,id,messageId,chatRoomId,pinnedByMemberId,expiresAt,createdAt,updatedAt,message,pinnedBy);
+}
 
 @override
 String toString() {
-  return 'SnChatMessagePin(id: $id, messageId: $messageId, chatRoomId: $chatRoomId, pinnedByMemberId: $pinnedByMemberId, expiresAt: $expiresAt, createdAt: $createdAt, updatedAt: $updatedAt, message: $message, pinnedBy: $pinnedBy)';
+    return 'SnChatMessagePin(id: $id, messageId: $messageId, chatRoomId: $chatRoomId, pinnedByMemberId: $pinnedByMemberId, expiresAt: $expiresAt, createdAt: $createdAt, updatedAt: $updatedAt, message: $message, pinnedBy: $pinnedBy)';
 }
 
 
@@ -2026,16 +2068,21 @@ $SnChatMemberCopyWith<SnChatMember> get copyWith => _$SnChatMemberCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMember&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.chatRoom, chatRoom) || other.chatRoom == chatRoom)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.notify, notify) || other.notify == notify)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.leaveAt, leaveAt) || other.leaveAt == leaveAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.breakUntil, breakUntil) || other.breakUntil == breakUntil)&&(identical(other.timeoutUntil, timeoutUntil) || other.timeoutUntil == timeoutUntil)&&(identical(other.chatGroupId, chatGroupId) || other.chatGroupId == chatGroupId)&&(identical(other.chatGroup, chatGroup) || other.chatGroup == chatGroup)&&(identical(other.lastReadAt, lastReadAt) || other.lastReadAt == lastReadAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.realmNick, realmNick) || other.realmNick == realmNick)&&(identical(other.realmBio, realmBio) || other.realmBio == realmBio)&&(identical(other.realmExperience, realmExperience) || other.realmExperience == realmExperience)&&(identical(other.realmLevel, realmLevel) || other.realmLevel == realmLevel)&&(identical(other.realmLevelingProgress, realmLevelingProgress) || other.realmLevelingProgress == realmLevelingProgress)&&(identical(other.realmLabel, realmLabel) || other.realmLabel == realmLabel)&&(identical(other.lastTyped, lastTyped) || other.lastTyped == lastTyped));
+  final _this = this as SnChatMember;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatMember&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.chatRoomId, _this.chatRoomId) || other.chatRoomId == _this.chatRoomId)&&(identical(other.chatRoom, _this.chatRoom) || other.chatRoom == _this.chatRoom)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.nick, _this.nick) || other.nick == _this.nick)&&(identical(other.notify, _this.notify) || other.notify == _this.notify)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt)&&(identical(other.leaveAt, _this.leaveAt) || other.leaveAt == _this.leaveAt)&&(identical(other.confirmedAt, _this.confirmedAt) || other.confirmedAt == _this.confirmedAt)&&(identical(other.breakUntil, _this.breakUntil) || other.breakUntil == _this.breakUntil)&&(identical(other.timeoutUntil, _this.timeoutUntil) || other.timeoutUntil == _this.timeoutUntil)&&(identical(other.chatGroupId, _this.chatGroupId) || other.chatGroupId == _this.chatGroupId)&&(identical(other.chatGroup, _this.chatGroup) || other.chatGroup == _this.chatGroup)&&(identical(other.lastReadAt, _this.lastReadAt) || other.lastReadAt == _this.lastReadAt)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.realmNick, _this.realmNick) || other.realmNick == _this.realmNick)&&(identical(other.realmBio, _this.realmBio) || other.realmBio == _this.realmBio)&&(identical(other.realmExperience, _this.realmExperience) || other.realmExperience == _this.realmExperience)&&(identical(other.realmLevel, _this.realmLevel) || other.realmLevel == _this.realmLevel)&&(identical(other.realmLevelingProgress, _this.realmLevelingProgress) || other.realmLevelingProgress == _this.realmLevelingProgress)&&(identical(other.realmLabel, _this.realmLabel) || other.realmLabel == _this.realmLabel)&&(identical(other.lastTyped, _this.lastTyped) || other.lastTyped == _this.lastTyped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,chatRoomId,chatRoom,accountId,account,nick,notify,joinedAt,leaveAt,confirmedAt,breakUntil,timeoutUntil,chatGroupId,chatGroup,lastReadAt,status,realmNick,realmBio,realmExperience,realmLevel,realmLevelingProgress,realmLabel,lastTyped]);
+int get hashCode {
+  final _this = this as SnChatMember;
+  return Object.hashAll([runtimeType,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.id,_this.chatRoomId,_this.chatRoom,_this.accountId,_this.account,_this.nick,_this.notify,_this.joinedAt,_this.leaveAt,_this.confirmedAt,_this.breakUntil,_this.timeoutUntil,_this.chatGroupId,_this.chatGroup,_this.lastReadAt,_this.status,_this.realmNick,_this.realmBio,_this.realmExperience,_this.realmLevel,_this.realmLevelingProgress,_this.realmLabel,_this.lastTyped]);
+}
 
 @override
 String toString() {
-  return 'SnChatMember(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, chatRoomId: $chatRoomId, chatRoom: $chatRoom, accountId: $accountId, account: $account, nick: $nick, notify: $notify, joinedAt: $joinedAt, leaveAt: $leaveAt, confirmedAt: $confirmedAt, breakUntil: $breakUntil, timeoutUntil: $timeoutUntil, chatGroupId: $chatGroupId, chatGroup: $chatGroup, lastReadAt: $lastReadAt, status: $status, realmNick: $realmNick, realmBio: $realmBio, realmExperience: $realmExperience, realmLevel: $realmLevel, realmLevelingProgress: $realmLevelingProgress, realmLabel: $realmLabel, lastTyped: $lastTyped)';
+  final _this = this as SnChatMember;
+  return 'SnChatMember(createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, id: ${_this.id}, chatRoomId: ${_this.chatRoomId}, chatRoom: ${_this.chatRoom}, accountId: ${_this.accountId}, account: ${_this.account}, nick: ${_this.nick}, notify: ${_this.notify}, joinedAt: ${_this.joinedAt}, leaveAt: ${_this.leaveAt}, confirmedAt: ${_this.confirmedAt}, breakUntil: ${_this.breakUntil}, timeoutUntil: ${_this.timeoutUntil}, chatGroupId: ${_this.chatGroupId}, chatGroup: ${_this.chatGroup}, lastReadAt: ${_this.lastReadAt}, status: ${_this.status}, realmNick: ${_this.realmNick}, realmBio: ${_this.realmBio}, realmExperience: ${_this.realmExperience}, realmLevel: ${_this.realmLevel}, realmLevelingProgress: ${_this.realmLevelingProgress}, realmLabel: ${_this.realmLabel}, lastTyped: ${_this.lastTyped})';
 }
 
 
@@ -2326,16 +2373,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMember&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.chatRoom, chatRoom) || other.chatRoom == chatRoom)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.notify, notify) || other.notify == notify)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.leaveAt, leaveAt) || other.leaveAt == leaveAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.breakUntil, breakUntil) || other.breakUntil == breakUntil)&&(identical(other.timeoutUntil, timeoutUntil) || other.timeoutUntil == timeoutUntil)&&(identical(other.chatGroupId, chatGroupId) || other.chatGroupId == chatGroupId)&&(identical(other.chatGroup, chatGroup) || other.chatGroup == chatGroup)&&(identical(other.lastReadAt, lastReadAt) || other.lastReadAt == lastReadAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.realmNick, realmNick) || other.realmNick == realmNick)&&(identical(other.realmBio, realmBio) || other.realmBio == realmBio)&&(identical(other.realmExperience, realmExperience) || other.realmExperience == realmExperience)&&(identical(other.realmLevel, realmLevel) || other.realmLevel == realmLevel)&&(identical(other.realmLevelingProgress, realmLevelingProgress) || other.realmLevelingProgress == realmLevelingProgress)&&(identical(other.realmLabel, realmLabel) || other.realmLabel == realmLabel)&&(identical(other.lastTyped, lastTyped) || other.lastTyped == lastTyped));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatMember&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.id, id) || other.id == id)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.chatRoom, chatRoom) || other.chatRoom == chatRoom)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.notify, notify) || other.notify == notify)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.leaveAt, leaveAt) || other.leaveAt == leaveAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.breakUntil, breakUntil) || other.breakUntil == breakUntil)&&(identical(other.timeoutUntil, timeoutUntil) || other.timeoutUntil == timeoutUntil)&&(identical(other.chatGroupId, chatGroupId) || other.chatGroupId == chatGroupId)&&(identical(other.chatGroup, chatGroup) || other.chatGroup == chatGroup)&&(identical(other.lastReadAt, lastReadAt) || other.lastReadAt == lastReadAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.realmNick, realmNick) || other.realmNick == realmNick)&&(identical(other.realmBio, realmBio) || other.realmBio == realmBio)&&(identical(other.realmExperience, realmExperience) || other.realmExperience == realmExperience)&&(identical(other.realmLevel, realmLevel) || other.realmLevel == realmLevel)&&(identical(other.realmLevelingProgress, realmLevelingProgress) || other.realmLevelingProgress == realmLevelingProgress)&&(identical(other.realmLabel, realmLabel) || other.realmLabel == realmLabel)&&(identical(other.lastTyped, lastTyped) || other.lastTyped == lastTyped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,chatRoomId,chatRoom,accountId,account,nick,notify,joinedAt,leaveAt,confirmedAt,breakUntil,timeoutUntil,chatGroupId,chatGroup,lastReadAt,status,realmNick,realmBio,realmExperience,realmLevel,realmLevelingProgress,realmLabel,lastTyped]);
+int get hashCode {
+    return Object.hashAll([runtimeType,createdAt,updatedAt,deletedAt,id,chatRoomId,chatRoom,accountId,account,nick,notify,joinedAt,leaveAt,confirmedAt,breakUntil,timeoutUntil,chatGroupId,chatGroup,lastReadAt,status,realmNick,realmBio,realmExperience,realmLevel,realmLevelingProgress,realmLabel,lastTyped]);
+}
 
 @override
 String toString() {
-  return 'SnChatMember(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, chatRoomId: $chatRoomId, chatRoom: $chatRoom, accountId: $accountId, account: $account, nick: $nick, notify: $notify, joinedAt: $joinedAt, leaveAt: $leaveAt, confirmedAt: $confirmedAt, breakUntil: $breakUntil, timeoutUntil: $timeoutUntil, chatGroupId: $chatGroupId, chatGroup: $chatGroup, lastReadAt: $lastReadAt, status: $status, realmNick: $realmNick, realmBio: $realmBio, realmExperience: $realmExperience, realmLevel: $realmLevel, realmLevelingProgress: $realmLevelingProgress, realmLabel: $realmLabel, lastTyped: $lastTyped)';
+    return 'SnChatMember(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, id: $id, chatRoomId: $chatRoomId, chatRoom: $chatRoom, accountId: $accountId, account: $account, nick: $nick, notify: $notify, joinedAt: $joinedAt, leaveAt: $leaveAt, confirmedAt: $confirmedAt, breakUntil: $breakUntil, timeoutUntil: $timeoutUntil, chatGroupId: $chatGroupId, chatGroup: $chatGroup, lastReadAt: $lastReadAt, status: $status, realmNick: $realmNick, realmBio: $realmBio, realmExperience: $realmExperience, realmLevel: $realmLevel, realmLevelingProgress: $realmLevelingProgress, realmLabel: $realmLabel, lastTyped: $lastTyped)';
 }
 
 
@@ -2472,16 +2521,21 @@ $SnChatSummaryCopyWith<SnChatSummary> get copyWith => _$SnChatSummaryCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatSummary&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.hasUnread, hasUnread) || other.hasUnread == hasUnread)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage));
+  final _this = this as SnChatSummary;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatSummary&&(identical(other.unreadCount, _this.unreadCount) || other.unreadCount == _this.unreadCount)&&(identical(other.hasUnread, _this.hasUnread) || other.hasUnread == _this.hasUnread)&&(identical(other.lastMessage, _this.lastMessage) || other.lastMessage == _this.lastMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,unreadCount,hasUnread,lastMessage);
+int get hashCode {
+  final _this = this as SnChatSummary;
+  return Object.hash(runtimeType,_this.unreadCount,_this.hasUnread,_this.lastMessage);
+}
 
 @override
 String toString() {
-  return 'SnChatSummary(unreadCount: $unreadCount, hasUnread: $hasUnread, lastMessage: $lastMessage)';
+  final _this = this as SnChatSummary;
+  return 'SnChatSummary(unreadCount: ${_this.unreadCount}, hasUnread: ${_this.hasUnread}, lastMessage: ${_this.lastMessage})';
 }
 
 
@@ -2681,16 +2735,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatSummary&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.hasUnread, hasUnread) || other.hasUnread == hasUnread)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatSummary&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.hasUnread, hasUnread) || other.hasUnread == hasUnread)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,unreadCount,hasUnread,lastMessage);
+int get hashCode {
+    return Object.hash(runtimeType,unreadCount,hasUnread,lastMessage);
+}
 
 @override
 String toString() {
-  return 'SnChatSummary(unreadCount: $unreadCount, hasUnread: $hasUnread, lastMessage: $lastMessage)';
+    return 'SnChatSummary(unreadCount: $unreadCount, hasUnread: $hasUnread, lastMessage: $lastMessage)';
 }
 
 
@@ -2759,16 +2815,21 @@ $SnChatOnlineAccountCopyWith<SnChatOnlineAccount> get copyWith => _$SnChatOnline
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatOnlineAccount&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick));
+  final _this = this as SnChatOnlineAccount;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatOnlineAccount&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.nick, _this.nick) || other.nick == _this.nick));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,nick);
+int get hashCode {
+  final _this = this as SnChatOnlineAccount;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.nick);
+}
 
 @override
 String toString() {
-  return 'SnChatOnlineAccount(id: $id, name: $name, nick: $nick)';
+  final _this = this as SnChatOnlineAccount;
+  return 'SnChatOnlineAccount(id: ${_this.id}, name: ${_this.name}, nick: ${_this.nick})';
 }
 
 
@@ -2956,16 +3017,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatOnlineAccount&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatOnlineAccount&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,nick);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,nick);
+}
 
 @override
 String toString() {
-  return 'SnChatOnlineAccount(id: $id, name: $name, nick: $nick)';
+    return 'SnChatOnlineAccount(id: $id, name: $name, nick: $nick)';
 }
 
 
@@ -3022,16 +3085,21 @@ $SnChatOnlineStatusCopyWith<SnChatOnlineStatus> get copyWith => _$SnChatOnlineSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatOnlineStatus&&(identical(other.onlineCount, onlineCount) || other.onlineCount == onlineCount)&&(identical(other.directMessageStatus, directMessageStatus) || other.directMessageStatus == directMessageStatus)&&const DeepCollectionEquality().equals(other.onlineUserNames, onlineUserNames)&&const DeepCollectionEquality().equals(other.onlineAccounts, onlineAccounts));
+  final _this = this as SnChatOnlineStatus;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnChatOnlineStatus&&(identical(other.onlineCount, _this.onlineCount) || other.onlineCount == _this.onlineCount)&&(identical(other.directMessageStatus, _this.directMessageStatus) || other.directMessageStatus == _this.directMessageStatus)&&const DeepCollectionEquality().equals(other.onlineUserNames, _this.onlineUserNames)&&const DeepCollectionEquality().equals(other.onlineAccounts, _this.onlineAccounts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,onlineCount,directMessageStatus,const DeepCollectionEquality().hash(onlineUserNames),const DeepCollectionEquality().hash(onlineAccounts));
+int get hashCode {
+  final _this = this as SnChatOnlineStatus;
+  return Object.hash(runtimeType,_this.onlineCount,_this.directMessageStatus,const DeepCollectionEquality().hash(_this.onlineUserNames),const DeepCollectionEquality().hash(_this.onlineAccounts));
+}
 
 @override
 String toString() {
-  return 'SnChatOnlineStatus(onlineCount: $onlineCount, directMessageStatus: $directMessageStatus, onlineUserNames: $onlineUserNames, onlineAccounts: $onlineAccounts)';
+  final _this = this as SnChatOnlineStatus;
+  return 'SnChatOnlineStatus(onlineCount: ${_this.onlineCount}, directMessageStatus: ${_this.directMessageStatus}, onlineUserNames: ${_this.onlineUserNames}, onlineAccounts: ${_this.onlineAccounts})';
 }
 
 
@@ -3245,16 +3313,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatOnlineStatus&&(identical(other.onlineCount, onlineCount) || other.onlineCount == onlineCount)&&(identical(other.directMessageStatus, directMessageStatus) || other.directMessageStatus == directMessageStatus)&&const DeepCollectionEquality().equals(other._onlineUserNames, _onlineUserNames)&&const DeepCollectionEquality().equals(other._onlineAccounts, _onlineAccounts));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnChatOnlineStatus&&(identical(other.onlineCount, onlineCount) || other.onlineCount == onlineCount)&&(identical(other.directMessageStatus, directMessageStatus) || other.directMessageStatus == directMessageStatus)&&const DeepCollectionEquality().equals(other.onlineUserNames, _onlineUserNames)&&const DeepCollectionEquality().equals(other.onlineAccounts, _onlineAccounts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,onlineCount,directMessageStatus,const DeepCollectionEquality().hash(_onlineUserNames),const DeepCollectionEquality().hash(_onlineAccounts));
+int get hashCode {
+    return Object.hash(runtimeType,onlineCount,directMessageStatus,const DeepCollectionEquality().hash(_onlineUserNames),const DeepCollectionEquality().hash(_onlineAccounts));
+}
 
 @override
 String toString() {
-  return 'SnChatOnlineStatus(onlineCount: $onlineCount, directMessageStatus: $directMessageStatus, onlineUserNames: $onlineUserNames, onlineAccounts: $onlineAccounts)';
+    return 'SnChatOnlineStatus(onlineCount: $onlineCount, directMessageStatus: $directMessageStatus, onlineUserNames: $onlineUserNames, onlineAccounts: $onlineAccounts)';
 }
 
 
@@ -3324,16 +3394,21 @@ $MessageSyncResponseCopyWith<MessageSyncResponse> get copyWith => _$MessageSyncR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageSyncResponse&&const DeepCollectionEquality().equals(other.messages, messages)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.currentTimestamp, currentTimestamp) || other.currentTimestamp == currentTimestamp));
+  final _this = this as MessageSyncResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageSyncResponse&&const DeepCollectionEquality().equals(other.messages, _this.messages)&&(identical(other.totalCount, _this.totalCount) || other.totalCount == _this.totalCount)&&(identical(other.currentTimestamp, _this.currentTimestamp) || other.currentTimestamp == _this.currentTimestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(messages),totalCount,currentTimestamp);
+int get hashCode {
+  final _this = this as MessageSyncResponse;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.messages),_this.totalCount,_this.currentTimestamp);
+}
 
 @override
 String toString() {
-  return 'MessageSyncResponse(messages: $messages, totalCount: $totalCount, currentTimestamp: $currentTimestamp)';
+  final _this = this as MessageSyncResponse;
+  return 'MessageSyncResponse(messages: ${_this.messages}, totalCount: ${_this.totalCount}, currentTimestamp: ${_this.currentTimestamp})';
 }
 
 
@@ -3527,16 +3602,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageSyncResponse&&const DeepCollectionEquality().equals(other._messages, _messages)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.currentTimestamp, currentTimestamp) || other.currentTimestamp == currentTimestamp));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageSyncResponse&&const DeepCollectionEquality().equals(other.messages, _messages)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.currentTimestamp, currentTimestamp) || other.currentTimestamp == currentTimestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_messages),totalCount,currentTimestamp);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_messages),totalCount,currentTimestamp);
+}
 
 @override
 String toString() {
-  return 'MessageSyncResponse(messages: $messages, totalCount: $totalCount, currentTimestamp: $currentTimestamp)';
+    return 'MessageSyncResponse(messages: $messages, totalCount: $totalCount, currentTimestamp: $currentTimestamp)';
 }
 
 
@@ -3593,16 +3670,21 @@ $ChatRealtimeJoinResponseCopyWith<ChatRealtimeJoinResponse> get copyWith => _$Ch
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatRealtimeJoinResponse&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.endpoint, endpoint) || other.endpoint == endpoint)&&(identical(other.token, token) || other.token == token)&&(identical(other.callId, callId) || other.callId == callId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin)&&const DeepCollectionEquality().equals(other.participants, participants));
+  final _this = this as ChatRealtimeJoinResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatRealtimeJoinResponse&&(identical(other.provider, _this.provider) || other.provider == _this.provider)&&(identical(other.endpoint, _this.endpoint) || other.endpoint == _this.endpoint)&&(identical(other.token, _this.token) || other.token == _this.token)&&(identical(other.callId, _this.callId) || other.callId == _this.callId)&&(identical(other.roomName, _this.roomName) || other.roomName == _this.roomName)&&(identical(other.isAdmin, _this.isAdmin) || other.isAdmin == _this.isAdmin)&&const DeepCollectionEquality().equals(other.participants, _this.participants));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,provider,endpoint,token,callId,roomName,isAdmin,const DeepCollectionEquality().hash(participants));
+int get hashCode {
+  final _this = this as ChatRealtimeJoinResponse;
+  return Object.hash(runtimeType,_this.provider,_this.endpoint,_this.token,_this.callId,_this.roomName,_this.isAdmin,const DeepCollectionEquality().hash(_this.participants));
+}
 
 @override
 String toString() {
-  return 'ChatRealtimeJoinResponse(provider: $provider, endpoint: $endpoint, token: $token, callId: $callId, roomName: $roomName, isAdmin: $isAdmin, participants: $participants)';
+  final _this = this as ChatRealtimeJoinResponse;
+  return 'ChatRealtimeJoinResponse(provider: ${_this.provider}, endpoint: ${_this.endpoint}, token: ${_this.token}, callId: ${_this.callId}, roomName: ${_this.roomName}, isAdmin: ${_this.isAdmin}, participants: ${_this.participants})';
 }
 
 
@@ -3804,16 +3886,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatRealtimeJoinResponse&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.endpoint, endpoint) || other.endpoint == endpoint)&&(identical(other.token, token) || other.token == token)&&(identical(other.callId, callId) || other.callId == callId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin)&&const DeepCollectionEquality().equals(other._participants, _participants));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatRealtimeJoinResponse&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.endpoint, endpoint) || other.endpoint == endpoint)&&(identical(other.token, token) || other.token == token)&&(identical(other.callId, callId) || other.callId == callId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin)&&const DeepCollectionEquality().equals(other.participants, _participants));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,provider,endpoint,token,callId,roomName,isAdmin,const DeepCollectionEquality().hash(_participants));
+int get hashCode {
+    return Object.hash(runtimeType,provider,endpoint,token,callId,roomName,isAdmin,const DeepCollectionEquality().hash(_participants));
+}
 
 @override
 String toString() {
-  return 'ChatRealtimeJoinResponse(provider: $provider, endpoint: $endpoint, token: $token, callId: $callId, roomName: $roomName, isAdmin: $isAdmin, participants: $participants)';
+    return 'ChatRealtimeJoinResponse(provider: $provider, endpoint: $endpoint, token: $token, callId: $callId, roomName: $roomName, isAdmin: $isAdmin, participants: $participants)';
 }
 
 
@@ -3874,16 +3958,21 @@ $CallParticipantCopyWith<CallParticipant> get copyWith => _$CallParticipantCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CallParticipant&&(identical(other.identity, identity) || other.identity == identity)&&(identical(other.name, name) || other.name == name)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt));
+  final _this = this as CallParticipant;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CallParticipant&&(identical(other.identity, _this.identity) || other.identity == _this.identity)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identity,name,joinedAt);
+int get hashCode {
+  final _this = this as CallParticipant;
+  return Object.hash(runtimeType,_this.identity,_this.name,_this.joinedAt);
+}
 
 @override
 String toString() {
-  return 'CallParticipant(identity: $identity, name: $name, joinedAt: $joinedAt)';
+  final _this = this as CallParticipant;
+  return 'CallParticipant(identity: ${_this.identity}, name: ${_this.name}, joinedAt: ${_this.joinedAt})';
 }
 
 
@@ -4071,16 +4160,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CallParticipant&&(identical(other.identity, identity) || other.identity == identity)&&(identical(other.name, name) || other.name == name)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CallParticipant&&(identical(other.identity, identity) || other.identity == identity)&&(identical(other.name, name) || other.name == name)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identity,name,joinedAt);
+int get hashCode {
+    return Object.hash(runtimeType,identity,name,joinedAt);
+}
 
 @override
 String toString() {
-  return 'CallParticipant(identity: $identity, name: $name, joinedAt: $joinedAt)';
+    return 'CallParticipant(identity: $identity, name: $name, joinedAt: $joinedAt)';
 }
 
 
@@ -4137,16 +4228,21 @@ $SnRealtimeCallCopyWith<SnRealtimeCall> get copyWith => _$SnRealtimeCallCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealtimeCall&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.room, room) || other.room == room)&&const DeepCollectionEquality().equals(other.upstreamConfig, upstreamConfig)&&(identical(other.providerName, providerName) || other.providerName == providerName)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
+  final _this = this as SnRealtimeCall;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealtimeCall&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.endedAt, _this.endedAt) || other.endedAt == _this.endedAt)&&(identical(other.senderId, _this.senderId) || other.senderId == _this.senderId)&&(identical(other.sender, _this.sender) || other.sender == _this.sender)&&(identical(other.roomId, _this.roomId) || other.roomId == _this.roomId)&&(identical(other.room, _this.room) || other.room == _this.room)&&const DeepCollectionEquality().equals(other.upstreamConfig, _this.upstreamConfig)&&(identical(other.providerName, _this.providerName) || other.providerName == _this.providerName)&&(identical(other.sessionId, _this.sessionId) || other.sessionId == _this.sessionId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,updatedAt,deletedAt,endedAt,senderId,sender,roomId,room,const DeepCollectionEquality().hash(upstreamConfig),providerName,sessionId);
+int get hashCode {
+  final _this = this as SnRealtimeCall;
+  return Object.hash(runtimeType,_this.id,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.endedAt,_this.senderId,_this.sender,_this.roomId,_this.room,const DeepCollectionEquality().hash(_this.upstreamConfig),_this.providerName,_this.sessionId);
+}
 
 @override
 String toString() {
-  return 'SnRealtimeCall(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, endedAt: $endedAt, senderId: $senderId, sender: $sender, roomId: $roomId, room: $room, upstreamConfig: $upstreamConfig, providerName: $providerName, sessionId: $sessionId)';
+  final _this = this as SnRealtimeCall;
+  return 'SnRealtimeCall(id: ${_this.id}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, endedAt: ${_this.endedAt}, senderId: ${_this.senderId}, sender: ${_this.sender}, roomId: ${_this.roomId}, room: ${_this.room}, upstreamConfig: ${_this.upstreamConfig}, providerName: ${_this.providerName}, sessionId: ${_this.sessionId})';
 }
 
 
@@ -4376,16 +4472,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealtimeCall&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.room, room) || other.room == room)&&const DeepCollectionEquality().equals(other._upstreamConfig, _upstreamConfig)&&(identical(other.providerName, providerName) || other.providerName == providerName)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealtimeCall&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.room, room) || other.room == room)&&const DeepCollectionEquality().equals(other.upstreamConfig, _upstreamConfig)&&(identical(other.providerName, providerName) || other.providerName == providerName)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,updatedAt,deletedAt,endedAt,senderId,sender,roomId,room,const DeepCollectionEquality().hash(_upstreamConfig),providerName,sessionId);
+int get hashCode {
+    return Object.hash(runtimeType,id,createdAt,updatedAt,deletedAt,endedAt,senderId,sender,roomId,room,const DeepCollectionEquality().hash(_upstreamConfig),providerName,sessionId);
+}
 
 @override
 String toString() {
-  return 'SnRealtimeCall(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, endedAt: $endedAt, senderId: $senderId, sender: $sender, roomId: $roomId, room: $room, upstreamConfig: $upstreamConfig, providerName: $providerName, sessionId: $sessionId)';
+    return 'SnRealtimeCall(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, endedAt: $endedAt, senderId: $senderId, sender: $sender, roomId: $roomId, room: $room, upstreamConfig: $upstreamConfig, providerName: $providerName, sessionId: $sessionId)';
 }
 
 
@@ -4469,16 +4567,21 @@ $ThreadReplyNodeCopyWith<ThreadReplyNode> get copyWith => _$ThreadReplyNodeCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThreadReplyNode&&(identical(other.message, message) || other.message == message)&&(identical(other.depth, depth) || other.depth == depth));
+  final _this = this as ThreadReplyNode;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThreadReplyNode&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.depth, _this.depth) || other.depth == _this.depth));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,depth);
+int get hashCode {
+  final _this = this as ThreadReplyNode;
+  return Object.hash(runtimeType,_this.message,_this.depth);
+}
 
 @override
 String toString() {
-  return 'ThreadReplyNode(message: $message, depth: $depth)';
+  final _this = this as ThreadReplyNode;
+  return 'ThreadReplyNode(message: ${_this.message}, depth: ${_this.depth})';
 }
 
 
@@ -4673,16 +4776,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThreadReplyNode&&(identical(other.message, message) || other.message == message)&&(identical(other.depth, depth) || other.depth == depth));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThreadReplyNode&&(identical(other.message, message) || other.message == message)&&(identical(other.depth, depth) || other.depth == depth));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,depth);
+int get hashCode {
+    return Object.hash(runtimeType,message,depth);
+}
 
 @override
 String toString() {
-  return 'ThreadReplyNode(message: $message, depth: $depth)';
+    return 'ThreadReplyNode(message: $message, depth: $depth)';
 }
 
 
@@ -4747,16 +4852,21 @@ $ThreadReplyListResponseCopyWith<ThreadReplyListResponse> get copyWith => _$Thre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThreadReplyListResponse&&(identical(other.root, root) || other.root == root)&&const DeepCollectionEquality().equals(other.replies, replies));
+  final _this = this as ThreadReplyListResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThreadReplyListResponse&&(identical(other.root, _this.root) || other.root == _this.root)&&const DeepCollectionEquality().equals(other.replies, _this.replies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,root,const DeepCollectionEquality().hash(replies));
+int get hashCode {
+  final _this = this as ThreadReplyListResponse;
+  return Object.hash(runtimeType,_this.root,const DeepCollectionEquality().hash(_this.replies));
+}
 
 @override
 String toString() {
-  return 'ThreadReplyListResponse(root: $root, replies: $replies)';
+  final _this = this as ThreadReplyListResponse;
+  return 'ThreadReplyListResponse(root: ${_this.root}, replies: ${_this.replies})';
 }
 
 
@@ -4957,16 +5067,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThreadReplyListResponse&&(identical(other.root, root) || other.root == root)&&const DeepCollectionEquality().equals(other._replies, _replies));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThreadReplyListResponse&&(identical(other.root, root) || other.root == root)&&const DeepCollectionEquality().equals(other.replies, _replies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,root,const DeepCollectionEquality().hash(_replies));
+int get hashCode {
+    return Object.hash(runtimeType,root,const DeepCollectionEquality().hash(_replies));
+}
 
 @override
 String toString() {
-  return 'ThreadReplyListResponse(root: $root, replies: $replies)';
+    return 'ThreadReplyListResponse(root: $root, replies: $replies)';
 }
 
 

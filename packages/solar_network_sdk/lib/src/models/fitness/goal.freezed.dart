@@ -29,16 +29,21 @@ $SnFitnessGoalCopyWith<SnFitnessGoal> get copyWith => _$SnFitnessGoalCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFitnessGoal&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.currentRepetition, currentRepetition) || other.currentRepetition == currentRepetition)&&(identical(other.parentGoalId, parentGoalId) || other.parentGoalId == parentGoalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+  final _this = this as SnFitnessGoal;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFitnessGoal&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.goalType, _this.goalType) || other.goalType == _this.goalType)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.targetValue, _this.targetValue) || other.targetValue == _this.targetValue)&&(identical(other.currentValue, _this.currentValue) || other.currentValue == _this.currentValue)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.boundWorkoutType, _this.boundWorkoutType) || other.boundWorkoutType == _this.boundWorkoutType)&&(identical(other.boundMetricType, _this.boundMetricType) || other.boundMetricType == _this.boundMetricType)&&(identical(other.autoUpdateProgress, _this.autoUpdateProgress) || other.autoUpdateProgress == _this.autoUpdateProgress)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.repeatType, _this.repeatType) || other.repeatType == _this.repeatType)&&(identical(other.repeatInterval, _this.repeatInterval) || other.repeatInterval == _this.repeatInterval)&&(identical(other.repeatCount, _this.repeatCount) || other.repeatCount == _this.repeatCount)&&(identical(other.currentRepetition, _this.currentRepetition) || other.currentRepetition == _this.currentRepetition)&&(identical(other.parentGoalId, _this.parentGoalId) || other.parentGoalId == _this.parentGoalId)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,goalType,title,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,startDate,endDate,status,notes,createdAt,updatedAt,repeatType,repeatInterval,repeatCount,currentRepetition,parentGoalId,visibility]);
+int get hashCode {
+  final _this = this as SnFitnessGoal;
+  return Object.hashAll([runtimeType,_this.id,_this.accountId,_this.goalType,_this.title,_this.description,_this.targetValue,_this.currentValue,_this.unit,_this.boundWorkoutType,_this.boundMetricType,_this.autoUpdateProgress,_this.startDate,_this.endDate,_this.status,_this.notes,_this.createdAt,_this.updatedAt,_this.repeatType,_this.repeatInterval,_this.repeatCount,_this.currentRepetition,_this.parentGoalId,_this.visibility]);
+}
 
 @override
 String toString() {
-  return 'SnFitnessGoal(id: $id, accountId: $accountId, goalType: $goalType, title: $title, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, currentRepetition: $currentRepetition, parentGoalId: $parentGoalId, visibility: $visibility)';
+  final _this = this as SnFitnessGoal;
+  return 'SnFitnessGoal(id: ${_this.id}, accountId: ${_this.accountId}, goalType: ${_this.goalType}, title: ${_this.title}, description: ${_this.description}, targetValue: ${_this.targetValue}, currentValue: ${_this.currentValue}, unit: ${_this.unit}, boundWorkoutType: ${_this.boundWorkoutType}, boundMetricType: ${_this.boundMetricType}, autoUpdateProgress: ${_this.autoUpdateProgress}, startDate: ${_this.startDate}, endDate: ${_this.endDate}, status: ${_this.status}, notes: ${_this.notes}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, repeatType: ${_this.repeatType}, repeatInterval: ${_this.repeatInterval}, repeatCount: ${_this.repeatCount}, currentRepetition: ${_this.currentRepetition}, parentGoalId: ${_this.parentGoalId}, visibility: ${_this.visibility})';
 }
 
 
@@ -266,16 +271,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFitnessGoal&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.currentRepetition, currentRepetition) || other.currentRepetition == currentRepetition)&&(identical(other.parentGoalId, parentGoalId) || other.parentGoalId == parentGoalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFitnessGoal&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.currentRepetition, currentRepetition) || other.currentRepetition == currentRepetition)&&(identical(other.parentGoalId, parentGoalId) || other.parentGoalId == parentGoalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,goalType,title,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,startDate,endDate,status,notes,createdAt,updatedAt,repeatType,repeatInterval,repeatCount,currentRepetition,parentGoalId,visibility]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,accountId,goalType,title,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,startDate,endDate,status,notes,createdAt,updatedAt,repeatType,repeatInterval,repeatCount,currentRepetition,parentGoalId,visibility]);
+}
 
 @override
 String toString() {
-  return 'SnFitnessGoal(id: $id, accountId: $accountId, goalType: $goalType, title: $title, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, currentRepetition: $currentRepetition, parentGoalId: $parentGoalId, visibility: $visibility)';
+    return 'SnFitnessGoal(id: $id, accountId: $accountId, goalType: $goalType, title: $title, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, startDate: $startDate, endDate: $endDate, status: $status, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, currentRepetition: $currentRepetition, parentGoalId: $parentGoalId, visibility: $visibility)';
 }
 
 
@@ -352,16 +359,21 @@ $GoalStatsCopyWith<GoalStats> get copyWith => _$GoalStatsCopyWithImpl<GoalStats>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GoalStats&&(identical(other.activeCount, activeCount) || other.activeCount == activeCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount));
+  final _this = this as GoalStats;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GoalStats&&(identical(other.activeCount, _this.activeCount) || other.activeCount == _this.activeCount)&&(identical(other.completedCount, _this.completedCount) || other.completedCount == _this.completedCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,activeCount,completedCount);
+int get hashCode {
+  final _this = this as GoalStats;
+  return Object.hash(runtimeType,_this.activeCount,_this.completedCount);
+}
 
 @override
 String toString() {
-  return 'GoalStats(activeCount: $activeCount, completedCount: $completedCount)';
+  final _this = this as GoalStats;
+  return 'GoalStats(activeCount: ${_this.activeCount}, completedCount: ${_this.completedCount})';
 }
 
 
@@ -547,16 +559,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GoalStats&&(identical(other.activeCount, activeCount) || other.activeCount == activeCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GoalStats&&(identical(other.activeCount, activeCount) || other.activeCount == activeCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,activeCount,completedCount);
+int get hashCode {
+    return Object.hash(runtimeType,activeCount,completedCount);
+}
 
 @override
 String toString() {
-  return 'GoalStats(activeCount: $activeCount, completedCount: $completedCount)';
+    return 'GoalStats(activeCount: $activeCount, completedCount: $completedCount)';
 }
 
 
@@ -612,16 +626,21 @@ $CreateGoalRequestCopyWith<CreateGoalRequest> get copyWith => _$CreateGoalReques
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+  final _this = this as CreateGoalRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateGoalRequest&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.goalType, _this.goalType) || other.goalType == _this.goalType)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.targetValue, _this.targetValue) || other.targetValue == _this.targetValue)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.boundWorkoutType, _this.boundWorkoutType) || other.boundWorkoutType == _this.boundWorkoutType)&&(identical(other.boundMetricType, _this.boundMetricType) || other.boundMetricType == _this.boundMetricType)&&(identical(other.autoUpdateProgress, _this.autoUpdateProgress) || other.autoUpdateProgress == _this.autoUpdateProgress)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.repeatType, _this.repeatType) || other.repeatType == _this.repeatType)&&(identical(other.repeatInterval, _this.repeatInterval) || other.repeatInterval == _this.repeatInterval)&&(identical(other.repeatCount, _this.repeatCount) || other.repeatCount == _this.repeatCount)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,goalType,startDate,description,targetValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,repeatType,repeatInterval,repeatCount,visibility);
+int get hashCode {
+  final _this = this as CreateGoalRequest;
+  return Object.hash(runtimeType,_this.title,_this.goalType,_this.startDate,_this.description,_this.targetValue,_this.unit,_this.boundWorkoutType,_this.boundMetricType,_this.autoUpdateProgress,_this.endDate,_this.notes,_this.repeatType,_this.repeatInterval,_this.repeatCount,_this.visibility);
+}
 
 @override
 String toString() {
-  return 'CreateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, description: $description, targetValue: $targetValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, visibility: $visibility)';
+  final _this = this as CreateGoalRequest;
+  return 'CreateGoalRequest(title: ${_this.title}, goalType: ${_this.goalType}, startDate: ${_this.startDate}, description: ${_this.description}, targetValue: ${_this.targetValue}, unit: ${_this.unit}, boundWorkoutType: ${_this.boundWorkoutType}, boundMetricType: ${_this.boundMetricType}, autoUpdateProgress: ${_this.autoUpdateProgress}, endDate: ${_this.endDate}, notes: ${_this.notes}, repeatType: ${_this.repeatType}, repeatInterval: ${_this.repeatInterval}, repeatCount: ${_this.repeatCount}, visibility: ${_this.visibility})';
 }
 
 
@@ -833,16 +852,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.repeatType, repeatType) || other.repeatType == repeatType)&&(identical(other.repeatInterval, repeatInterval) || other.repeatInterval == repeatInterval)&&(identical(other.repeatCount, repeatCount) || other.repeatCount == repeatCount)&&(identical(other.visibility, visibility) || other.visibility == visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,goalType,startDate,description,targetValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,repeatType,repeatInterval,repeatCount,visibility);
+int get hashCode {
+    return Object.hash(runtimeType,title,goalType,startDate,description,targetValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,repeatType,repeatInterval,repeatCount,visibility);
+}
 
 @override
 String toString() {
-  return 'CreateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, description: $description, targetValue: $targetValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, visibility: $visibility)';
+    return 'CreateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, description: $description, targetValue: $targetValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, repeatType: $repeatType, repeatInterval: $repeatInterval, repeatCount: $repeatCount, visibility: $visibility)';
 }
 
 
@@ -911,16 +932,21 @@ $UpdateGoalRequestCopyWith<UpdateGoalRequest> get copyWith => _$UpdateGoalReques
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+  final _this = this as UpdateGoalRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateGoalRequest&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.goalType, _this.goalType) || other.goalType == _this.goalType)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.targetValue, _this.targetValue) || other.targetValue == _this.targetValue)&&(identical(other.currentValue, _this.currentValue) || other.currentValue == _this.currentValue)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.boundWorkoutType, _this.boundWorkoutType) || other.boundWorkoutType == _this.boundWorkoutType)&&(identical(other.boundMetricType, _this.boundMetricType) || other.boundMetricType == _this.boundMetricType)&&(identical(other.autoUpdateProgress, _this.autoUpdateProgress) || other.autoUpdateProgress == _this.autoUpdateProgress)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,goalType,startDate,status,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,visibility);
+int get hashCode {
+  final _this = this as UpdateGoalRequest;
+  return Object.hash(runtimeType,_this.title,_this.goalType,_this.startDate,_this.status,_this.description,_this.targetValue,_this.currentValue,_this.unit,_this.boundWorkoutType,_this.boundMetricType,_this.autoUpdateProgress,_this.endDate,_this.notes,_this.visibility);
+}
 
 @override
 String toString() {
-  return 'UpdateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, status: $status, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, visibility: $visibility)';
+  final _this = this as UpdateGoalRequest;
+  return 'UpdateGoalRequest(title: ${_this.title}, goalType: ${_this.goalType}, startDate: ${_this.startDate}, status: ${_this.status}, description: ${_this.description}, targetValue: ${_this.targetValue}, currentValue: ${_this.currentValue}, unit: ${_this.unit}, boundWorkoutType: ${_this.boundWorkoutType}, boundMetricType: ${_this.boundMetricType}, autoUpdateProgress: ${_this.autoUpdateProgress}, endDate: ${_this.endDate}, notes: ${_this.notes}, visibility: ${_this.visibility})';
 }
 
 
@@ -1130,16 +1156,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGoalRequest&&(identical(other.title, title) || other.title == title)&&(identical(other.goalType, goalType) || other.goalType == goalType)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.boundWorkoutType, boundWorkoutType) || other.boundWorkoutType == boundWorkoutType)&&(identical(other.boundMetricType, boundMetricType) || other.boundMetricType == boundMetricType)&&(identical(other.autoUpdateProgress, autoUpdateProgress) || other.autoUpdateProgress == autoUpdateProgress)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,goalType,startDate,status,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,visibility);
+int get hashCode {
+    return Object.hash(runtimeType,title,goalType,startDate,status,description,targetValue,currentValue,unit,boundWorkoutType,boundMetricType,autoUpdateProgress,endDate,notes,visibility);
+}
 
 @override
 String toString() {
-  return 'UpdateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, status: $status, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, visibility: $visibility)';
+    return 'UpdateGoalRequest(title: $title, goalType: $goalType, startDate: $startDate, status: $status, description: $description, targetValue: $targetValue, currentValue: $currentValue, unit: $unit, boundWorkoutType: $boundWorkoutType, boundMetricType: $boundMetricType, autoUpdateProgress: $autoUpdateProgress, endDate: $endDate, notes: $notes, visibility: $visibility)';
 }
 
 
@@ -1207,16 +1235,21 @@ $UpdateProgressRequestCopyWith<UpdateProgressRequest> get copyWith => _$UpdatePr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateProgressRequest&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue));
+  final _this = this as UpdateProgressRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateProgressRequest&&(identical(other.currentValue, _this.currentValue) || other.currentValue == _this.currentValue));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentValue);
+int get hashCode {
+  final _this = this as UpdateProgressRequest;
+  return Object.hash(runtimeType,_this.currentValue);
+}
 
 @override
 String toString() {
-  return 'UpdateProgressRequest(currentValue: $currentValue)';
+  final _this = this as UpdateProgressRequest;
+  return 'UpdateProgressRequest(currentValue: ${_this.currentValue})';
 }
 
 
@@ -1400,16 +1433,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateProgressRequest&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateProgressRequest&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentValue);
+int get hashCode {
+    return Object.hash(runtimeType,currentValue);
+}
 
 @override
 String toString() {
-  return 'UpdateProgressRequest(currentValue: $currentValue)';
+    return 'UpdateProgressRequest(currentValue: $currentValue)';
 }
 
 
@@ -1464,16 +1499,21 @@ $UpdateGoalStatusRequestCopyWith<UpdateGoalStatusRequest> get copyWith => _$Upda
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateGoalStatusRequest&&(identical(other.status, status) || other.status == status));
+  final _this = this as UpdateGoalStatusRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateGoalStatusRequest&&(identical(other.status, _this.status) || other.status == _this.status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode {
+  final _this = this as UpdateGoalStatusRequest;
+  return Object.hash(runtimeType,_this.status);
+}
 
 @override
 String toString() {
-  return 'UpdateGoalStatusRequest(status: $status)';
+  final _this = this as UpdateGoalStatusRequest;
+  return 'UpdateGoalStatusRequest(status: ${_this.status})';
 }
 
 
@@ -1657,16 +1697,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGoalStatusRequest&&(identical(other.status, status) || other.status == status));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGoalStatusRequest&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode {
+    return Object.hash(runtimeType,status);
+}
 
 @override
 String toString() {
-  return 'UpdateGoalStatusRequest(status: $status)';
+    return 'UpdateGoalStatusRequest(status: $status)';
 }
 
 

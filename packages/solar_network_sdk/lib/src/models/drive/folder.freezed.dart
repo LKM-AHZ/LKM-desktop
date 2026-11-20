@@ -29,16 +29,21 @@ $SnCloudFolderCopyWith<SnCloudFolder> get copyWith => _$SnCloudFolderCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFolder&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.parentFolderId, parentFolderId) || other.parentFolderId == parentFolderId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnCloudFolder;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFolder&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.parentFolderId, _this.parentFolderId) || other.parentFolderId == _this.parentFolderId)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,parentFolderId,accountId,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnCloudFolder;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.parentFolderId,_this.accountId,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnCloudFolder(id: $id, name: $name, parentFolderId: $parentFolderId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnCloudFolder;
+  return 'SnCloudFolder(id: ${_this.id}, name: ${_this.name}, parentFolderId: ${_this.parentFolderId}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -232,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFolder&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.parentFolderId, parentFolderId) || other.parentFolderId == parentFolderId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFolder&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.parentFolderId, parentFolderId) || other.parentFolderId == parentFolderId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,parentFolderId,accountId,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,parentFolderId,accountId,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnCloudFolder(id: $id, name: $name, parentFolderId: $parentFolderId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnCloudFolder(id: $id, name: $name, parentFolderId: $parentFolderId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

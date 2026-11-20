@@ -29,16 +29,21 @@ $SnWorkoutCopyWith<SnWorkout> get copyWith => _$SnWorkoutCopyWithImpl<SnWorkout>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWorkout&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.exercises, exercises));
+  final _this = this as SnWorkout;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWorkout&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.endTime, _this.endTime) || other.endTime == _this.endTime)&&(identical(other.caloriesBurned, _this.caloriesBurned) || other.caloriesBurned == _this.caloriesBurned)&&(identical(other.distance, _this.distance) || other.distance == _this.distance)&&(identical(other.distanceUnit, _this.distanceUnit) || other.distanceUnit == _this.distanceUnit)&&(identical(other.averageSpeed, _this.averageSpeed) || other.averageSpeed == _this.averageSpeed)&&(identical(other.averageHeartRate, _this.averageHeartRate) || other.averageHeartRate == _this.averageHeartRate)&&(identical(other.maxHeartRate, _this.maxHeartRate) || other.maxHeartRate == _this.maxHeartRate)&&(identical(other.elevationGain, _this.elevationGain) || other.elevationGain == _this.elevationGain)&&(identical(other.maxSpeed, _this.maxSpeed) || other.maxSpeed == _this.maxSpeed)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&const DeepCollectionEquality().equals(other.exercises, _this.exercises));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,name,description,type,startTime,endTime,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(meta),createdAt,updatedAt,const DeepCollectionEquality().hash(exercises)]);
+int get hashCode {
+  final _this = this as SnWorkout;
+  return Object.hashAll([runtimeType,_this.id,_this.accountId,_this.name,_this.description,_this.type,_this.startTime,_this.endTime,_this.caloriesBurned,_this.distance,_this.distanceUnit,_this.averageSpeed,_this.averageHeartRate,_this.maxHeartRate,_this.elevationGain,_this.maxSpeed,_this.notes,_this.visibility,const DeepCollectionEquality().hash(_this.meta),_this.createdAt,_this.updatedAt,const DeepCollectionEquality().hash(_this.exercises)]);
+}
 
 @override
 String toString() {
-  return 'SnWorkout(id: $id, accountId: $accountId, name: $name, description: $description, type: $type, startTime: $startTime, endTime: $endTime, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta, createdAt: $createdAt, updatedAt: $updatedAt, exercises: $exercises)';
+  final _this = this as SnWorkout;
+  return 'SnWorkout(id: ${_this.id}, accountId: ${_this.accountId}, name: ${_this.name}, description: ${_this.description}, type: ${_this.type}, startTime: ${_this.startTime}, endTime: ${_this.endTime}, caloriesBurned: ${_this.caloriesBurned}, distance: ${_this.distance}, distanceUnit: ${_this.distanceUnit}, averageSpeed: ${_this.averageSpeed}, averageHeartRate: ${_this.averageHeartRate}, maxHeartRate: ${_this.maxHeartRate}, elevationGain: ${_this.elevationGain}, maxSpeed: ${_this.maxSpeed}, notes: ${_this.notes}, visibility: ${_this.visibility}, meta: ${_this.meta}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, exercises: ${_this.exercises})';
 }
 
 
@@ -276,16 +281,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWorkout&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._exercises, _exercises));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWorkout&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.exercises, _exercises));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,name,description,type,startTime,endTime,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(_meta),createdAt,updatedAt,const DeepCollectionEquality().hash(_exercises)]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,accountId,name,description,type,startTime,endTime,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(_meta),createdAt,updatedAt,const DeepCollectionEquality().hash(_exercises)]);
+}
 
 @override
 String toString() {
-  return 'SnWorkout(id: $id, accountId: $accountId, name: $name, description: $description, type: $type, startTime: $startTime, endTime: $endTime, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta, createdAt: $createdAt, updatedAt: $updatedAt, exercises: $exercises)';
+    return 'SnWorkout(id: $id, accountId: $accountId, name: $name, description: $description, type: $type, startTime: $startTime, endTime: $endTime, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta, createdAt: $createdAt, updatedAt: $updatedAt, exercises: $exercises)';
 }
 
 
@@ -360,16 +367,21 @@ $SnWorkoutExerciseCopyWith<SnWorkoutExercise> get copyWith => _$SnWorkoutExercis
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWorkoutExercise&&(identical(other.id, id) || other.id == id)&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnWorkoutExercise;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWorkoutExercise&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.workoutId, _this.workoutId) || other.workoutId == _this.workoutId)&&(identical(other.exerciseName, _this.exerciseName) || other.exerciseName == _this.exerciseName)&&(identical(other.sets, _this.sets) || other.sets == _this.sets)&&(identical(other.reps, _this.reps) || other.reps == _this.reps)&&(identical(other.weight, _this.weight) || other.weight == _this.weight)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.orderIndex, _this.orderIndex) || other.orderIndex == _this.orderIndex)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,workoutId,exerciseName,sets,reps,weight,notes,orderIndex,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnWorkoutExercise;
+  return Object.hash(runtimeType,_this.id,_this.workoutId,_this.exerciseName,_this.sets,_this.reps,_this.weight,_this.notes,_this.orderIndex,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnWorkoutExercise(id: $id, workoutId: $workoutId, exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnWorkoutExercise;
+  return 'SnWorkoutExercise(id: ${_this.id}, workoutId: ${_this.workoutId}, exerciseName: ${_this.exerciseName}, sets: ${_this.sets}, reps: ${_this.reps}, weight: ${_this.weight}, notes: ${_this.notes}, orderIndex: ${_this.orderIndex}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -571,16 +583,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWorkoutExercise&&(identical(other.id, id) || other.id == id)&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWorkoutExercise&&(identical(other.id, id) || other.id == id)&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,workoutId,exerciseName,sets,reps,weight,notes,orderIndex,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,workoutId,exerciseName,sets,reps,weight,notes,orderIndex,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnWorkoutExercise(id: $id, workoutId: $workoutId, exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnWorkoutExercise(id: $id, workoutId: $workoutId, exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -644,16 +658,21 @@ $CreateWorkoutRequestCopyWith<CreateWorkoutRequest> get copyWith => _$CreateWork
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, meta));
+  final _this = this as CreateWorkoutRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkoutRequest&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.endTime, _this.endTime) || other.endTime == _this.endTime)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.externalId, _this.externalId) || other.externalId == _this.externalId)&&(identical(other.caloriesBurned, _this.caloriesBurned) || other.caloriesBurned == _this.caloriesBurned)&&(identical(other.distance, _this.distance) || other.distance == _this.distance)&&(identical(other.distanceUnit, _this.distanceUnit) || other.distanceUnit == _this.distanceUnit)&&(identical(other.averageSpeed, _this.averageSpeed) || other.averageSpeed == _this.averageSpeed)&&(identical(other.averageHeartRate, _this.averageHeartRate) || other.averageHeartRate == _this.averageHeartRate)&&(identical(other.maxHeartRate, _this.maxHeartRate) || other.maxHeartRate == _this.maxHeartRate)&&(identical(other.elevationGain, _this.elevationGain) || other.elevationGain == _this.elevationGain)&&(identical(other.maxSpeed, _this.maxSpeed) || other.maxSpeed == _this.maxSpeed)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&const DeepCollectionEquality().equals(other.meta, _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,startTime,endTime,description,externalId,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(meta));
+int get hashCode {
+  final _this = this as CreateWorkoutRequest;
+  return Object.hash(runtimeType,_this.name,_this.type,_this.startTime,_this.endTime,_this.description,_this.externalId,_this.caloriesBurned,_this.distance,_this.distanceUnit,_this.averageSpeed,_this.averageHeartRate,_this.maxHeartRate,_this.elevationGain,_this.maxSpeed,_this.notes,_this.visibility,const DeepCollectionEquality().hash(_this.meta));
+}
 
 @override
 String toString() {
-  return 'CreateWorkoutRequest(name: $name, type: $type, startTime: $startTime, endTime: $endTime, description: $description, externalId: $externalId, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta)';
+  final _this = this as CreateWorkoutRequest;
+  return 'CreateWorkoutRequest(name: ${_this.name}, type: ${_this.type}, startTime: ${_this.startTime}, endTime: ${_this.endTime}, description: ${_this.description}, externalId: ${_this.externalId}, caloriesBurned: ${_this.caloriesBurned}, distance: ${_this.distance}, distanceUnit: ${_this.distanceUnit}, averageSpeed: ${_this.averageSpeed}, averageHeartRate: ${_this.averageHeartRate}, maxHeartRate: ${_this.maxHeartRate}, elevationGain: ${_this.elevationGain}, maxSpeed: ${_this.maxSpeed}, notes: ${_this.notes}, visibility: ${_this.visibility}, meta: ${_this.meta})';
 }
 
 
@@ -877,16 +896,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other._meta, _meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.distance, distance) || other.distance == distance)&&(identical(other.distanceUnit, distanceUnit) || other.distanceUnit == distanceUnit)&&(identical(other.averageSpeed, averageSpeed) || other.averageSpeed == averageSpeed)&&(identical(other.averageHeartRate, averageHeartRate) || other.averageHeartRate == averageHeartRate)&&(identical(other.maxHeartRate, maxHeartRate) || other.maxHeartRate == maxHeartRate)&&(identical(other.elevationGain, elevationGain) || other.elevationGain == elevationGain)&&(identical(other.maxSpeed, maxSpeed) || other.maxSpeed == maxSpeed)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, _meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,startTime,endTime,description,externalId,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(_meta));
+int get hashCode {
+    return Object.hash(runtimeType,name,type,startTime,endTime,description,externalId,caloriesBurned,distance,distanceUnit,averageSpeed,averageHeartRate,maxHeartRate,elevationGain,maxSpeed,notes,visibility,const DeepCollectionEquality().hash(_meta));
+}
 
 @override
 String toString() {
-  return 'CreateWorkoutRequest(name: $name, type: $type, startTime: $startTime, endTime: $endTime, description: $description, externalId: $externalId, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta)';
+    return 'CreateWorkoutRequest(name: $name, type: $type, startTime: $startTime, endTime: $endTime, description: $description, externalId: $externalId, caloriesBurned: $caloriesBurned, distance: $distance, distanceUnit: $distanceUnit, averageSpeed: $averageSpeed, averageHeartRate: $averageHeartRate, maxHeartRate: $maxHeartRate, elevationGain: $elevationGain, maxSpeed: $maxSpeed, notes: $notes, visibility: $visibility, meta: $meta)';
 }
 
 
@@ -957,16 +978,21 @@ $UpdateWorkoutRequestCopyWith<UpdateWorkoutRequest> get copyWith => _$UpdateWork
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, meta));
+  final _this = this as UpdateWorkoutRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateWorkoutRequest&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.caloriesBurned, _this.caloriesBurned) || other.caloriesBurned == _this.caloriesBurned)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&const DeepCollectionEquality().equals(other.meta, _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,startTime,description,caloriesBurned,notes,visibility,const DeepCollectionEquality().hash(meta));
+int get hashCode {
+  final _this = this as UpdateWorkoutRequest;
+  return Object.hash(runtimeType,_this.name,_this.type,_this.startTime,_this.description,_this.caloriesBurned,_this.notes,_this.visibility,const DeepCollectionEquality().hash(_this.meta));
+}
 
 @override
 String toString() {
-  return 'UpdateWorkoutRequest(name: $name, type: $type, startTime: $startTime, description: $description, caloriesBurned: $caloriesBurned, notes: $notes, visibility: $visibility, meta: $meta)';
+  final _this = this as UpdateWorkoutRequest;
+  return 'UpdateWorkoutRequest(name: ${_this.name}, type: ${_this.type}, startTime: ${_this.startTime}, description: ${_this.description}, caloriesBurned: ${_this.caloriesBurned}, notes: ${_this.notes}, visibility: ${_this.visibility}, meta: ${_this.meta})';
 }
 
 
@@ -1172,16 +1198,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other._meta, _meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateWorkoutRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.caloriesBurned, caloriesBurned) || other.caloriesBurned == caloriesBurned)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&const DeepCollectionEquality().equals(other.meta, _meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,startTime,description,caloriesBurned,notes,visibility,const DeepCollectionEquality().hash(_meta));
+int get hashCode {
+    return Object.hash(runtimeType,name,type,startTime,description,caloriesBurned,notes,visibility,const DeepCollectionEquality().hash(_meta));
+}
 
 @override
 String toString() {
-  return 'UpdateWorkoutRequest(name: $name, type: $type, startTime: $startTime, description: $description, caloriesBurned: $caloriesBurned, notes: $notes, visibility: $visibility, meta: $meta)';
+    return 'UpdateWorkoutRequest(name: $name, type: $type, startTime: $startTime, description: $description, caloriesBurned: $caloriesBurned, notes: $notes, visibility: $visibility, meta: $meta)';
 }
 
 
@@ -1243,16 +1271,21 @@ $AddExerciseRequestCopyWith<AddExerciseRequest> get copyWith => _$AddExerciseReq
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex));
+  final _this = this as AddExerciseRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExerciseRequest&&(identical(other.exerciseName, _this.exerciseName) || other.exerciseName == _this.exerciseName)&&(identical(other.sets, _this.sets) || other.sets == _this.sets)&&(identical(other.reps, _this.reps) || other.reps == _this.reps)&&(identical(other.weight, _this.weight) || other.weight == _this.weight)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.orderIndex, _this.orderIndex) || other.orderIndex == _this.orderIndex));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exerciseName,sets,reps,weight,notes,orderIndex);
+int get hashCode {
+  final _this = this as AddExerciseRequest;
+  return Object.hash(runtimeType,_this.exerciseName,_this.sets,_this.reps,_this.weight,_this.notes,_this.orderIndex);
+}
 
 @override
 String toString() {
-  return 'AddExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex)';
+  final _this = this as AddExerciseRequest;
+  return 'AddExerciseRequest(exerciseName: ${_this.exerciseName}, sets: ${_this.sets}, reps: ${_this.reps}, weight: ${_this.weight}, notes: ${_this.notes}, orderIndex: ${_this.orderIndex})';
 }
 
 
@@ -1446,16 +1479,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exerciseName,sets,reps,weight,notes,orderIndex);
+int get hashCode {
+    return Object.hash(runtimeType,exerciseName,sets,reps,weight,notes,orderIndex);
+}
 
 @override
 String toString() {
-  return 'AddExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex)';
+    return 'AddExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, notes: $notes, orderIndex: $orderIndex)';
 }
 
 
@@ -1515,16 +1550,21 @@ $UpdateWorkoutExerciseRequestCopyWith<UpdateWorkoutExerciseRequest> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateWorkoutExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.notes, notes) || other.notes == notes));
+  final _this = this as UpdateWorkoutExerciseRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateWorkoutExerciseRequest&&(identical(other.exerciseName, _this.exerciseName) || other.exerciseName == _this.exerciseName)&&(identical(other.sets, _this.sets) || other.sets == _this.sets)&&(identical(other.reps, _this.reps) || other.reps == _this.reps)&&(identical(other.weight, _this.weight) || other.weight == _this.weight)&&(identical(other.orderIndex, _this.orderIndex) || other.orderIndex == _this.orderIndex)&&(identical(other.notes, _this.notes) || other.notes == _this.notes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exerciseName,sets,reps,weight,orderIndex,notes);
+int get hashCode {
+  final _this = this as UpdateWorkoutExerciseRequest;
+  return Object.hash(runtimeType,_this.exerciseName,_this.sets,_this.reps,_this.weight,_this.orderIndex,_this.notes);
+}
 
 @override
 String toString() {
-  return 'UpdateWorkoutExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, orderIndex: $orderIndex, notes: $notes)';
+  final _this = this as UpdateWorkoutExerciseRequest;
+  return 'UpdateWorkoutExerciseRequest(exerciseName: ${_this.exerciseName}, sets: ${_this.sets}, reps: ${_this.reps}, weight: ${_this.weight}, orderIndex: ${_this.orderIndex}, notes: ${_this.notes})';
 }
 
 
@@ -1718,16 +1758,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateWorkoutExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.notes, notes) || other.notes == notes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateWorkoutExerciseRequest&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.orderIndex, orderIndex) || other.orderIndex == orderIndex)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,exerciseName,sets,reps,weight,orderIndex,notes);
+int get hashCode {
+    return Object.hash(runtimeType,exerciseName,sets,reps,weight,orderIndex,notes);
+}
 
 @override
 String toString() {
-  return 'UpdateWorkoutExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, orderIndex: $orderIndex, notes: $notes)';
+    return 'UpdateWorkoutExerciseRequest(exerciseName: $exerciseName, sets: $sets, reps: $reps, weight: $weight, orderIndex: $orderIndex, notes: $notes)';
 }
 
 
@@ -1787,16 +1829,21 @@ $CreateWorkoutsBatchRequestCopyWith<CreateWorkoutsBatchRequest> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkoutsBatchRequest&&const DeepCollectionEquality().equals(other.workouts, workouts));
+  final _this = this as CreateWorkoutsBatchRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkoutsBatchRequest&&const DeepCollectionEquality().equals(other.workouts, _this.workouts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(workouts));
+int get hashCode {
+  final _this = this as CreateWorkoutsBatchRequest;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.workouts));
+}
 
 @override
 String toString() {
-  return 'CreateWorkoutsBatchRequest(workouts: $workouts)';
+  final _this = this as CreateWorkoutsBatchRequest;
+  return 'CreateWorkoutsBatchRequest(workouts: ${_this.workouts})';
 }
 
 
@@ -1986,16 +2033,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWorkoutsBatchRequest&&const DeepCollectionEquality().equals(other._workouts, _workouts));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWorkoutsBatchRequest&&const DeepCollectionEquality().equals(other.workouts, _workouts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_workouts));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_workouts));
+}
 
 @override
 String toString() {
-  return 'CreateWorkoutsBatchRequest(workouts: $workouts)';
+    return 'CreateWorkoutsBatchRequest(workouts: $workouts)';
 }
 
 

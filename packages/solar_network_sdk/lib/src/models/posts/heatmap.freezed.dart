@@ -29,16 +29,21 @@ $SnHeatmapCopyWith<SnHeatmap> get copyWith => _$SnHeatmapCopyWithImpl<SnHeatmap>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnHeatmap&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.periodStart, periodStart) || other.periodStart == periodStart)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&const DeepCollectionEquality().equals(other.items, items));
+  final _this = this as SnHeatmap;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnHeatmap&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.periodStart, _this.periodStart) || other.periodStart == _this.periodStart)&&(identical(other.periodEnd, _this.periodEnd) || other.periodEnd == _this.periodEnd)&&const DeepCollectionEquality().equals(other.items, _this.items));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,unit,periodStart,periodEnd,const DeepCollectionEquality().hash(items));
+int get hashCode {
+  final _this = this as SnHeatmap;
+  return Object.hash(runtimeType,_this.unit,_this.periodStart,_this.periodEnd,const DeepCollectionEquality().hash(_this.items));
+}
 
 @override
 String toString() {
-  return 'SnHeatmap(unit: $unit, periodStart: $periodStart, periodEnd: $periodEnd, items: $items)';
+  final _this = this as SnHeatmap;
+  return 'SnHeatmap(unit: ${_this.unit}, periodStart: ${_this.periodStart}, periodEnd: ${_this.periodEnd}, items: ${_this.items})';
 }
 
 
@@ -234,16 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnHeatmap&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.periodStart, periodStart) || other.periodStart == periodStart)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&const DeepCollectionEquality().equals(other._items, _items));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnHeatmap&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.periodStart, periodStart) || other.periodStart == periodStart)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&const DeepCollectionEquality().equals(other.items, _items));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,unit,periodStart,periodEnd,const DeepCollectionEquality().hash(_items));
+int get hashCode {
+    return Object.hash(runtimeType,unit,periodStart,periodEnd,const DeepCollectionEquality().hash(_items));
+}
 
 @override
 String toString() {
-  return 'SnHeatmap(unit: $unit, periodStart: $periodStart, periodEnd: $periodEnd, items: $items)';
+    return 'SnHeatmap(unit: $unit, periodStart: $periodStart, periodEnd: $periodEnd, items: $items)';
 }
 
 
@@ -301,16 +308,21 @@ $SnHeatmapItemCopyWith<SnHeatmapItem> get copyWith => _$SnHeatmapItemCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnHeatmapItem&&(identical(other.date, date) || other.date == date)&&(identical(other.count, count) || other.count == count));
+  final _this = this as SnHeatmapItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnHeatmapItem&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.count, _this.count) || other.count == _this.count));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,count);
+int get hashCode {
+  final _this = this as SnHeatmapItem;
+  return Object.hash(runtimeType,_this.date,_this.count);
+}
 
 @override
 String toString() {
-  return 'SnHeatmapItem(date: $date, count: $count)';
+  final _this = this as SnHeatmapItem;
+  return 'SnHeatmapItem(date: ${_this.date}, count: ${_this.count})';
 }
 
 
@@ -496,16 +508,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnHeatmapItem&&(identical(other.date, date) || other.date == date)&&(identical(other.count, count) || other.count == count));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnHeatmapItem&&(identical(other.date, date) || other.date == date)&&(identical(other.count, count) || other.count == count));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,count);
+int get hashCode {
+    return Object.hash(runtimeType,date,count);
+}
 
 @override
 String toString() {
-  return 'SnHeatmapItem(date: $date, count: $count)';
+    return 'SnHeatmapItem(date: $date, count: $count)';
 }
 
 

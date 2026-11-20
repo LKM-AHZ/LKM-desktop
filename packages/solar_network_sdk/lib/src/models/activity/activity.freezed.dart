@@ -29,16 +29,21 @@ $SnNotableDayCopyWith<SnNotableDay> get copyWith => _$SnNotableDayCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNotableDay&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&const DeepCollectionEquality().equals(other.holidays, holidays));
+  final _this = this as SnNotableDay;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNotableDay&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.localName, _this.localName) || other.localName == _this.localName)&&(identical(other.globalName, _this.globalName) || other.globalName == _this.globalName)&&(identical(other.countryCode, _this.countryCode) || other.countryCode == _this.countryCode)&&(identical(other.localizableKey, _this.localizableKey) || other.localizableKey == _this.localizableKey)&&const DeepCollectionEquality().equals(other.holidays, _this.holidays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,localName,globalName,countryCode,localizableKey,const DeepCollectionEquality().hash(holidays));
+int get hashCode {
+  final _this = this as SnNotableDay;
+  return Object.hash(runtimeType,_this.date,_this.localName,_this.globalName,_this.countryCode,_this.localizableKey,const DeepCollectionEquality().hash(_this.holidays));
+}
 
 @override
 String toString() {
-  return 'SnNotableDay(date: $date, localName: $localName, globalName: $globalName, countryCode: $countryCode, localizableKey: $localizableKey, holidays: $holidays)';
+  final _this = this as SnNotableDay;
+  return 'SnNotableDay(date: ${_this.date}, localName: ${_this.localName}, globalName: ${_this.globalName}, countryCode: ${_this.countryCode}, localizableKey: ${_this.localizableKey}, holidays: ${_this.holidays})';
 }
 
 
@@ -238,16 +243,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNotableDay&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&const DeepCollectionEquality().equals(other._holidays, _holidays));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNotableDay&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&const DeepCollectionEquality().equals(other.holidays, _holidays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,localName,globalName,countryCode,localizableKey,const DeepCollectionEquality().hash(_holidays));
+int get hashCode {
+    return Object.hash(runtimeType,date,localName,globalName,countryCode,localizableKey,const DeepCollectionEquality().hash(_holidays));
+}
 
 @override
 String toString() {
-  return 'SnNotableDay(date: $date, localName: $localName, globalName: $globalName, countryCode: $countryCode, localizableKey: $localizableKey, holidays: $holidays)';
+    return 'SnNotableDay(date: $date, localName: $localName, globalName: $globalName, countryCode: $countryCode, localizableKey: $localizableKey, holidays: $holidays)';
 }
 
 
@@ -307,16 +314,21 @@ $SnNotableDayDetailCopyWith<SnNotableDayDetail> get copyWith => _$SnNotableDayDe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNotableDayDetail&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.occurrenceKey, occurrenceKey) || other.occurrenceKey == occurrenceKey)&&const DeepCollectionEquality().equals(other.holidays, holidays)&&const DeepCollectionEquality().equals(other.tags, tags));
+  final _this = this as SnNotableDayDetail;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNotableDayDetail&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.localName, _this.localName) || other.localName == _this.localName)&&(identical(other.globalName, _this.globalName) || other.globalName == _this.globalName)&&(identical(other.localizableKey, _this.localizableKey) || other.localizableKey == _this.localizableKey)&&(identical(other.countryCode, _this.countryCode) || other.countryCode == _this.countryCode)&&(identical(other.description, _this.description) || other.description == _this.description)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.occurrenceKey, _this.occurrenceKey) || other.occurrenceKey == _this.occurrenceKey)&&const DeepCollectionEquality().equals(other.holidays, _this.holidays)&&const DeepCollectionEquality().equals(other.tags, _this.tags));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,localName,globalName,localizableKey,countryCode,description,const DeepCollectionEquality().hash(meta),occurrenceKey,const DeepCollectionEquality().hash(holidays),const DeepCollectionEquality().hash(tags));
+int get hashCode {
+  final _this = this as SnNotableDayDetail;
+  return Object.hash(runtimeType,_this.date,_this.localName,_this.globalName,_this.localizableKey,_this.countryCode,_this.description,const DeepCollectionEquality().hash(_this.meta),_this.occurrenceKey,const DeepCollectionEquality().hash(_this.holidays),const DeepCollectionEquality().hash(_this.tags));
+}
 
 @override
 String toString() {
-  return 'SnNotableDayDetail(date: $date, localName: $localName, globalName: $globalName, localizableKey: $localizableKey, countryCode: $countryCode, description: $description, meta: $meta, occurrenceKey: $occurrenceKey, holidays: $holidays, tags: $tags)';
+  final _this = this as SnNotableDayDetail;
+  return 'SnNotableDayDetail(date: ${_this.date}, localName: ${_this.localName}, globalName: ${_this.globalName}, localizableKey: ${_this.localizableKey}, countryCode: ${_this.countryCode}, description: ${_this.description}, meta: ${_this.meta}, occurrenceKey: ${_this.occurrenceKey}, holidays: ${_this.holidays}, tags: ${_this.tags})';
 }
 
 
@@ -542,16 +554,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNotableDayDetail&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.occurrenceKey, occurrenceKey) || other.occurrenceKey == occurrenceKey)&&const DeepCollectionEquality().equals(other._holidays, _holidays)&&const DeepCollectionEquality().equals(other._tags, _tags));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNotableDayDetail&&(identical(other.date, date) || other.date == date)&&(identical(other.localName, localName) || other.localName == localName)&&(identical(other.globalName, globalName) || other.globalName == globalName)&&(identical(other.localizableKey, localizableKey) || other.localizableKey == localizableKey)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.occurrenceKey, occurrenceKey) || other.occurrenceKey == occurrenceKey)&&const DeepCollectionEquality().equals(other.holidays, _holidays)&&const DeepCollectionEquality().equals(other.tags, _tags));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,localName,globalName,localizableKey,countryCode,description,const DeepCollectionEquality().hash(_meta),occurrenceKey,const DeepCollectionEquality().hash(_holidays),const DeepCollectionEquality().hash(_tags));
+int get hashCode {
+    return Object.hash(runtimeType,date,localName,globalName,localizableKey,countryCode,description,const DeepCollectionEquality().hash(_meta),occurrenceKey,const DeepCollectionEquality().hash(_holidays),const DeepCollectionEquality().hash(_tags));
+}
 
 @override
 String toString() {
-  return 'SnNotableDayDetail(date: $date, localName: $localName, globalName: $globalName, localizableKey: $localizableKey, countryCode: $countryCode, description: $description, meta: $meta, occurrenceKey: $occurrenceKey, holidays: $holidays, tags: $tags)';
+    return 'SnNotableDayDetail(date: $date, localName: $localName, globalName: $globalName, localizableKey: $localizableKey, countryCode: $countryCode, description: $description, meta: $meta, occurrenceKey: $occurrenceKey, holidays: $holidays, tags: $tags)';
 }
 
 
@@ -615,16 +629,21 @@ $SnTimelineEventCopyWith<SnTimelineEvent> get copyWith => _$SnTimelineEventCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTimelineEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnTimelineEvent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTimelineEvent&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.resourceIdentifier, _this.resourceIdentifier) || other.resourceIdentifier == _this.resourceIdentifier)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,resourceIdentifier,const DeepCollectionEquality().hash(data),createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnTimelineEvent;
+  return Object.hash(runtimeType,_this.id,_this.type,_this.resourceIdentifier,const DeepCollectionEquality().hash(_this.data),_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnTimelineEvent(id: $id, type: $type, resourceIdentifier: $resourceIdentifier, data: $data, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnTimelineEvent;
+  return 'SnTimelineEvent(id: ${_this.id}, type: ${_this.type}, resourceIdentifier: ${_this.resourceIdentifier}, data: ${_this.data}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -820,16 +839,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTimelineEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTimelineEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,resourceIdentifier,const DeepCollectionEquality().hash(data),createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,type,resourceIdentifier,const DeepCollectionEquality().hash(data),createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnTimelineEvent(id: $id, type: $type, resourceIdentifier: $resourceIdentifier, data: $data, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnTimelineEvent(id: $id, type: $type, resourceIdentifier: $resourceIdentifier, data: $data, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -877,7 +898,9 @@ as DateTime?,
 /// @nodoc
 mixin _$SnCheckInResult {
 
- String get id; int get level; List<SnFortuneTip> get tips; SnCheckInFortuneReport? get fortuneReport; String get accountId; SnAccount? get account; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt; DateTime? get backdatedFrom;
+ String get id; int get level; List<SnFortuneTip> get tips; SnCheckInFortuneReport? get fortuneReport; String get accountId; SnAccount? get account; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt;/// When a past day was filled in after the fact; null for a draw made on
+/// its own day. `createdAt` is the day the sign belongs to either way.
+ DateTime? get backdatedFrom;
 /// Create a copy of SnCheckInResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -890,16 +913,21 @@ $SnCheckInResultCopyWith<SnCheckInResult> get copyWith => _$SnCheckInResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCheckInResult&&(identical(other.id, id) || other.id == id)&&(identical(other.level, level) || other.level == level)&&const DeepCollectionEquality().equals(other.tips, tips)&&(identical(other.fortuneReport, fortuneReport) || other.fortuneReport == fortuneReport)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.backdatedFrom, backdatedFrom) || other.backdatedFrom == backdatedFrom));
+  final _this = this as SnCheckInResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCheckInResult&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.level, _this.level) || other.level == _this.level)&&const DeepCollectionEquality().equals(other.tips, _this.tips)&&(identical(other.fortuneReport, _this.fortuneReport) || other.fortuneReport == _this.fortuneReport)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.backdatedFrom, _this.backdatedFrom) || other.backdatedFrom == _this.backdatedFrom));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,level,const DeepCollectionEquality().hash(tips),fortuneReport,accountId,account,createdAt,updatedAt,deletedAt,backdatedFrom);
+int get hashCode {
+  final _this = this as SnCheckInResult;
+  return Object.hash(runtimeType,_this.id,_this.level,const DeepCollectionEquality().hash(_this.tips),_this.fortuneReport,_this.accountId,_this.account,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.backdatedFrom);
+}
 
 @override
 String toString() {
-  return 'SnCheckInResult(id: $id, level: $level, tips: $tips, fortuneReport: $fortuneReport, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, backdatedFrom: $backdatedFrom)';
+  final _this = this as SnCheckInResult;
+  return 'SnCheckInResult(id: ${_this.id}, level: ${_this.level}, tips: ${_this.tips}, fortuneReport: ${_this.fortuneReport}, accountId: ${_this.accountId}, account: ${_this.account}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, backdatedFrom: ${_this.backdatedFrom})';
 }
 
 
@@ -1116,6 +1144,8 @@ class _SnCheckInResult implements SnCheckInResult {
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 @override final  DateTime? deletedAt;
+/// When a past day was filled in after the fact; null for a draw made on
+/// its own day. `createdAt` is the day the sign belongs to either way.
 @override final  DateTime? backdatedFrom;
 
 /// Create a copy of SnCheckInResult
@@ -1131,16 +1161,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCheckInResult&&(identical(other.id, id) || other.id == id)&&(identical(other.level, level) || other.level == level)&&const DeepCollectionEquality().equals(other._tips, _tips)&&(identical(other.fortuneReport, fortuneReport) || other.fortuneReport == fortuneReport)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.backdatedFrom, backdatedFrom) || other.backdatedFrom == backdatedFrom));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCheckInResult&&(identical(other.id, id) || other.id == id)&&(identical(other.level, level) || other.level == level)&&const DeepCollectionEquality().equals(other.tips, _tips)&&(identical(other.fortuneReport, fortuneReport) || other.fortuneReport == fortuneReport)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.backdatedFrom, backdatedFrom) || other.backdatedFrom == backdatedFrom));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,level,const DeepCollectionEquality().hash(_tips),fortuneReport,accountId,account,createdAt,updatedAt,deletedAt,backdatedFrom);
+int get hashCode {
+    return Object.hash(runtimeType,id,level,const DeepCollectionEquality().hash(_tips),fortuneReport,accountId,account,createdAt,updatedAt,deletedAt,backdatedFrom);
+}
 
 @override
 String toString() {
-  return 'SnCheckInResult(id: $id, level: $level, tips: $tips, fortuneReport: $fortuneReport, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, backdatedFrom: $backdatedFrom)';
+    return 'SnCheckInResult(id: $id, level: $level, tips: $tips, fortuneReport: $fortuneReport, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, backdatedFrom: $backdatedFrom)';
 }
 
 
@@ -1228,16 +1260,21 @@ $SnCheckInFortuneReportCopyWith<SnCheckInFortuneReport> get copyWith => _$SnChec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCheckInFortuneReport&&(identical(other.version, version) || other.version == version)&&(identical(other.poem, poem) || other.poem == poem)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.summaryDetail, summaryDetail) || other.summaryDetail == summaryDetail)&&(identical(other.wish, wish) || other.wish == wish)&&(identical(other.love, love) || other.love == love)&&(identical(other.study, study) || other.study == study)&&(identical(other.career, career) || other.career == career)&&(identical(other.health, health) || other.health == health)&&(identical(other.lostItem, lostItem) || other.lostItem == lostItem)&&(identical(other.luckyColor, luckyColor) || other.luckyColor == luckyColor)&&(identical(other.luckyDirection, luckyDirection) || other.luckyDirection == luckyDirection)&&(identical(other.luckyTime, luckyTime) || other.luckyTime == luckyTime)&&(identical(other.luckyItem, luckyItem) || other.luckyItem == luckyItem)&&(identical(other.luckyAction, luckyAction) || other.luckyAction == luckyAction)&&(identical(other.avoidAction, avoidAction) || other.avoidAction == avoidAction)&&(identical(other.ritual, ritual) || other.ritual == ritual));
+  final _this = this as SnCheckInFortuneReport;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCheckInFortuneReport&&(identical(other.version, _this.version) || other.version == _this.version)&&(identical(other.poem, _this.poem) || other.poem == _this.poem)&&(identical(other.summary, _this.summary) || other.summary == _this.summary)&&(identical(other.summaryDetail, _this.summaryDetail) || other.summaryDetail == _this.summaryDetail)&&(identical(other.wish, _this.wish) || other.wish == _this.wish)&&(identical(other.love, _this.love) || other.love == _this.love)&&(identical(other.study, _this.study) || other.study == _this.study)&&(identical(other.career, _this.career) || other.career == _this.career)&&(identical(other.health, _this.health) || other.health == _this.health)&&(identical(other.lostItem, _this.lostItem) || other.lostItem == _this.lostItem)&&(identical(other.luckyColor, _this.luckyColor) || other.luckyColor == _this.luckyColor)&&(identical(other.luckyDirection, _this.luckyDirection) || other.luckyDirection == _this.luckyDirection)&&(identical(other.luckyTime, _this.luckyTime) || other.luckyTime == _this.luckyTime)&&(identical(other.luckyItem, _this.luckyItem) || other.luckyItem == _this.luckyItem)&&(identical(other.luckyAction, _this.luckyAction) || other.luckyAction == _this.luckyAction)&&(identical(other.avoidAction, _this.avoidAction) || other.avoidAction == _this.avoidAction)&&(identical(other.ritual, _this.ritual) || other.ritual == _this.ritual));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,version,poem,summary,summaryDetail,wish,love,study,career,health,lostItem,luckyColor,luckyDirection,luckyTime,luckyItem,luckyAction,avoidAction,ritual);
+int get hashCode {
+  final _this = this as SnCheckInFortuneReport;
+  return Object.hash(runtimeType,_this.version,_this.poem,_this.summary,_this.summaryDetail,_this.wish,_this.love,_this.study,_this.career,_this.health,_this.lostItem,_this.luckyColor,_this.luckyDirection,_this.luckyTime,_this.luckyItem,_this.luckyAction,_this.avoidAction,_this.ritual);
+}
 
 @override
 String toString() {
-  return 'SnCheckInFortuneReport(version: $version, poem: $poem, summary: $summary, summaryDetail: $summaryDetail, wish: $wish, love: $love, study: $study, career: $career, health: $health, lostItem: $lostItem, luckyColor: $luckyColor, luckyDirection: $luckyDirection, luckyTime: $luckyTime, luckyItem: $luckyItem, luckyAction: $luckyAction, avoidAction: $avoidAction, ritual: $ritual)';
+  final _this = this as SnCheckInFortuneReport;
+  return 'SnCheckInFortuneReport(version: ${_this.version}, poem: ${_this.poem}, summary: ${_this.summary}, summaryDetail: ${_this.summaryDetail}, wish: ${_this.wish}, love: ${_this.love}, study: ${_this.study}, career: ${_this.career}, health: ${_this.health}, lostItem: ${_this.lostItem}, luckyColor: ${_this.luckyColor}, luckyDirection: ${_this.luckyDirection}, luckyTime: ${_this.luckyTime}, luckyItem: ${_this.luckyItem}, luckyAction: ${_this.luckyAction}, avoidAction: ${_this.avoidAction}, ritual: ${_this.ritual})';
 }
 
 
@@ -1453,16 +1490,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCheckInFortuneReport&&(identical(other.version, version) || other.version == version)&&(identical(other.poem, poem) || other.poem == poem)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.summaryDetail, summaryDetail) || other.summaryDetail == summaryDetail)&&(identical(other.wish, wish) || other.wish == wish)&&(identical(other.love, love) || other.love == love)&&(identical(other.study, study) || other.study == study)&&(identical(other.career, career) || other.career == career)&&(identical(other.health, health) || other.health == health)&&(identical(other.lostItem, lostItem) || other.lostItem == lostItem)&&(identical(other.luckyColor, luckyColor) || other.luckyColor == luckyColor)&&(identical(other.luckyDirection, luckyDirection) || other.luckyDirection == luckyDirection)&&(identical(other.luckyTime, luckyTime) || other.luckyTime == luckyTime)&&(identical(other.luckyItem, luckyItem) || other.luckyItem == luckyItem)&&(identical(other.luckyAction, luckyAction) || other.luckyAction == luckyAction)&&(identical(other.avoidAction, avoidAction) || other.avoidAction == avoidAction)&&(identical(other.ritual, ritual) || other.ritual == ritual));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCheckInFortuneReport&&(identical(other.version, version) || other.version == version)&&(identical(other.poem, poem) || other.poem == poem)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.summaryDetail, summaryDetail) || other.summaryDetail == summaryDetail)&&(identical(other.wish, wish) || other.wish == wish)&&(identical(other.love, love) || other.love == love)&&(identical(other.study, study) || other.study == study)&&(identical(other.career, career) || other.career == career)&&(identical(other.health, health) || other.health == health)&&(identical(other.lostItem, lostItem) || other.lostItem == lostItem)&&(identical(other.luckyColor, luckyColor) || other.luckyColor == luckyColor)&&(identical(other.luckyDirection, luckyDirection) || other.luckyDirection == luckyDirection)&&(identical(other.luckyTime, luckyTime) || other.luckyTime == luckyTime)&&(identical(other.luckyItem, luckyItem) || other.luckyItem == luckyItem)&&(identical(other.luckyAction, luckyAction) || other.luckyAction == luckyAction)&&(identical(other.avoidAction, avoidAction) || other.avoidAction == avoidAction)&&(identical(other.ritual, ritual) || other.ritual == ritual));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,version,poem,summary,summaryDetail,wish,love,study,career,health,lostItem,luckyColor,luckyDirection,luckyTime,luckyItem,luckyAction,avoidAction,ritual);
+int get hashCode {
+    return Object.hash(runtimeType,version,poem,summary,summaryDetail,wish,love,study,career,health,lostItem,luckyColor,luckyDirection,luckyTime,luckyItem,luckyAction,avoidAction,ritual);
+}
 
 @override
 String toString() {
-  return 'SnCheckInFortuneReport(version: $version, poem: $poem, summary: $summary, summaryDetail: $summaryDetail, wish: $wish, love: $love, study: $study, career: $career, health: $health, lostItem: $lostItem, luckyColor: $luckyColor, luckyDirection: $luckyDirection, luckyTime: $luckyTime, luckyItem: $luckyItem, luckyAction: $luckyAction, avoidAction: $avoidAction, ritual: $ritual)';
+    return 'SnCheckInFortuneReport(version: $version, poem: $poem, summary: $summary, summaryDetail: $summaryDetail, wish: $wish, love: $love, study: $study, career: $career, health: $health, lostItem: $lostItem, luckyColor: $luckyColor, luckyDirection: $luckyDirection, luckyTime: $luckyTime, luckyItem: $luckyItem, luckyAction: $luckyAction, avoidAction: $avoidAction, ritual: $ritual)';
 }
 
 
@@ -1533,16 +1572,21 @@ $SnFortuneTipCopyWith<SnFortuneTip> get copyWith => _$SnFortuneTipCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFortuneTip&&(identical(other.isPositive, isPositive) || other.isPositive == isPositive)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content));
+  final _this = this as SnFortuneTip;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFortuneTip&&(identical(other.isPositive, _this.isPositive) || other.isPositive == _this.isPositive)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.content, _this.content) || other.content == _this.content));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,isPositive,title,content);
+int get hashCode {
+  final _this = this as SnFortuneTip;
+  return Object.hash(runtimeType,_this.isPositive,_this.title,_this.content);
+}
 
 @override
 String toString() {
-  return 'SnFortuneTip(isPositive: $isPositive, title: $title, content: $content)';
+  final _this = this as SnFortuneTip;
+  return 'SnFortuneTip(isPositive: ${_this.isPositive}, title: ${_this.title}, content: ${_this.content})';
 }
 
 
@@ -1730,16 +1774,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFortuneTip&&(identical(other.isPositive, isPositive) || other.isPositive == isPositive)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFortuneTip&&(identical(other.isPositive, isPositive) || other.isPositive == isPositive)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,isPositive,title,content);
+int get hashCode {
+    return Object.hash(runtimeType,isPositive,title,content);
+}
 
 @override
 String toString() {
-  return 'SnFortuneTip(isPositive: $isPositive, title: $title, content: $content)';
+    return 'SnFortuneTip(isPositive: $isPositive, title: $title, content: $content)';
 }
 
 
@@ -1796,16 +1842,21 @@ $SnRecurrencePatternCopyWith<SnRecurrencePattern> get copyWith => _$SnRecurrence
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRecurrencePattern&&(identical(other.frequency, frequency) || other.frequency == frequency)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.occurrences, occurrences) || other.occurrences == occurrences)&&const DeepCollectionEquality().equals(other.daysOfWeek, daysOfWeek)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.monthOfYear, monthOfYear) || other.monthOfYear == monthOfYear));
+  final _this = this as SnRecurrencePattern;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRecurrencePattern&&(identical(other.frequency, _this.frequency) || other.frequency == _this.frequency)&&(identical(other.interval, _this.interval) || other.interval == _this.interval)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.occurrences, _this.occurrences) || other.occurrences == _this.occurrences)&&const DeepCollectionEquality().equals(other.daysOfWeek, _this.daysOfWeek)&&(identical(other.dayOfMonth, _this.dayOfMonth) || other.dayOfMonth == _this.dayOfMonth)&&(identical(other.monthOfYear, _this.monthOfYear) || other.monthOfYear == _this.monthOfYear));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,frequency,interval,endDate,occurrences,const DeepCollectionEquality().hash(daysOfWeek),dayOfMonth,monthOfYear);
+int get hashCode {
+  final _this = this as SnRecurrencePattern;
+  return Object.hash(runtimeType,_this.frequency,_this.interval,_this.endDate,_this.occurrences,const DeepCollectionEquality().hash(_this.daysOfWeek),_this.dayOfMonth,_this.monthOfYear);
+}
 
 @override
 String toString() {
-  return 'SnRecurrencePattern(frequency: $frequency, interval: $interval, endDate: $endDate, occurrences: $occurrences, daysOfWeek: $daysOfWeek, dayOfMonth: $dayOfMonth, monthOfYear: $monthOfYear)';
+  final _this = this as SnRecurrencePattern;
+  return 'SnRecurrencePattern(frequency: ${_this.frequency}, interval: ${_this.interval}, endDate: ${_this.endDate}, occurrences: ${_this.occurrences}, daysOfWeek: ${_this.daysOfWeek}, dayOfMonth: ${_this.dayOfMonth}, monthOfYear: ${_this.monthOfYear})';
 }
 
 
@@ -2009,16 +2060,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRecurrencePattern&&(identical(other.frequency, frequency) || other.frequency == frequency)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.occurrences, occurrences) || other.occurrences == occurrences)&&const DeepCollectionEquality().equals(other._daysOfWeek, _daysOfWeek)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.monthOfYear, monthOfYear) || other.monthOfYear == monthOfYear));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRecurrencePattern&&(identical(other.frequency, frequency) || other.frequency == frequency)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.occurrences, occurrences) || other.occurrences == occurrences)&&const DeepCollectionEquality().equals(other.daysOfWeek, _daysOfWeek)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.monthOfYear, monthOfYear) || other.monthOfYear == monthOfYear));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,frequency,interval,endDate,occurrences,const DeepCollectionEquality().hash(_daysOfWeek),dayOfMonth,monthOfYear);
+int get hashCode {
+    return Object.hash(runtimeType,frequency,interval,endDate,occurrences,const DeepCollectionEquality().hash(_daysOfWeek),dayOfMonth,monthOfYear);
+}
 
 @override
 String toString() {
-  return 'SnRecurrencePattern(frequency: $frequency, interval: $interval, endDate: $endDate, occurrences: $occurrences, daysOfWeek: $daysOfWeek, dayOfMonth: $dayOfMonth, monthOfYear: $monthOfYear)';
+    return 'SnRecurrencePattern(frequency: $frequency, interval: $interval, endDate: $endDate, occurrences: $occurrences, daysOfWeek: $daysOfWeek, dayOfMonth: $dayOfMonth, monthOfYear: $monthOfYear)';
 }
 
 
@@ -2079,16 +2132,21 @@ $SnUserCalendarEventCopyWith<SnUserCalendarEvent> get copyWith => _$SnUserCalend
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnUserCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.recurrence, recurrence) || other.recurrence == recurrence)&&const DeepCollectionEquality().equals(other.tags, tags)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnUserCalendarEvent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnUserCalendarEvent&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.endTime, _this.endTime) || other.endTime == _this.endTime)&&(identical(other.isAllDay, _this.isAllDay) || other.isAllDay == _this.isAllDay)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&(identical(other.recurrence, _this.recurrence) || other.recurrence == _this.recurrence)&&const DeepCollectionEquality().equals(other.tags, _this.tags)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,location,startTime,endTime,isAllDay,visibility,recurrence,const DeepCollectionEquality().hash(tags),const DeepCollectionEquality().hash(meta),icon,background,accountId,account,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnUserCalendarEvent;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.description,_this.location,_this.startTime,_this.endTime,_this.isAllDay,_this.visibility,_this.recurrence,const DeepCollectionEquality().hash(_this.tags),const DeepCollectionEquality().hash(_this.meta),_this.icon,_this.background,_this.accountId,_this.account,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnUserCalendarEvent(id: $id, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, visibility: $visibility, recurrence: $recurrence, tags: $tags, meta: $meta, icon: $icon, background: $background, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnUserCalendarEvent;
+  return 'SnUserCalendarEvent(id: ${_this.id}, title: ${_this.title}, description: ${_this.description}, location: ${_this.location}, startTime: ${_this.startTime}, endTime: ${_this.endTime}, isAllDay: ${_this.isAllDay}, visibility: ${_this.visibility}, recurrence: ${_this.recurrence}, tags: ${_this.tags}, meta: ${_this.meta}, icon: ${_this.icon}, background: ${_this.background}, accountId: ${_this.accountId}, account: ${_this.account}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -2368,16 +2426,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnUserCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.recurrence, recurrence) || other.recurrence == recurrence)&&const DeepCollectionEquality().equals(other._tags, _tags)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnUserCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.recurrence, recurrence) || other.recurrence == recurrence)&&const DeepCollectionEquality().equals(other.tags, _tags)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,location,startTime,endTime,isAllDay,visibility,recurrence,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_meta),icon,background,accountId,account,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,description,location,startTime,endTime,isAllDay,visibility,recurrence,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_meta),icon,background,accountId,account,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnUserCalendarEvent(id: $id, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, visibility: $visibility, recurrence: $recurrence, tags: $tags, meta: $meta, icon: $icon, background: $background, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnUserCalendarEvent(id: $id, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, visibility: $visibility, recurrence: $recurrence, tags: $tags, meta: $meta, icon: $icon, background: $background, accountId: $accountId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -2497,16 +2557,21 @@ $SnMergedCalendarEventCopyWith<SnMergedCalendarEvent> get copyWith => _$SnMerged
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnMergedCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&const DeepCollectionEquality().equals(other.meta, meta));
+  final _this = this as SnMergedCalendarEvent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnMergedCalendarEvent&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.endTime, _this.endTime) || other.endTime == _this.endTime)&&(identical(other.isAllDay, _this.isAllDay) || other.isAllDay == _this.isAllDay)&&const DeepCollectionEquality().equals(other.meta, _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,title,description,location,startTime,endTime,isAllDay,const DeepCollectionEquality().hash(meta));
+int get hashCode {
+  final _this = this as SnMergedCalendarEvent;
+  return Object.hash(runtimeType,_this.id,_this.type,_this.title,_this.description,_this.location,_this.startTime,_this.endTime,_this.isAllDay,const DeepCollectionEquality().hash(_this.meta));
+}
 
 @override
 String toString() {
-  return 'SnMergedCalendarEvent(id: $id, type: $type, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, meta: $meta)';
+  final _this = this as SnMergedCalendarEvent;
+  return 'SnMergedCalendarEvent(id: ${_this.id}, type: ${_this.type}, title: ${_this.title}, description: ${_this.description}, location: ${_this.location}, startTime: ${_this.startTime}, endTime: ${_this.endTime}, isAllDay: ${_this.isAllDay}, meta: ${_this.meta})';
 }
 
 
@@ -2714,16 +2779,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnMergedCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&const DeepCollectionEquality().equals(other._meta, _meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnMergedCalendarEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&const DeepCollectionEquality().equals(other.meta, _meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,title,description,location,startTime,endTime,isAllDay,const DeepCollectionEquality().hash(_meta));
+int get hashCode {
+    return Object.hash(runtimeType,id,type,title,description,location,startTime,endTime,isAllDay,const DeepCollectionEquality().hash(_meta));
+}
 
 @override
 String toString() {
-  return 'SnMergedCalendarEvent(id: $id, type: $type, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, meta: $meta)';
+    return 'SnMergedCalendarEvent(id: $id, type: $type, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, meta: $meta)';
 }
 
 
@@ -2786,16 +2853,21 @@ $SnEventCalendarEntryCopyWith<SnEventCalendarEntry> get copyWith => _$SnEventCal
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnEventCalendarEntry&&(identical(other.date, date) || other.date == date)&&(identical(other.checkInResult, checkInResult) || other.checkInResult == checkInResult)&&const DeepCollectionEquality().equals(other.statuses, statuses)&&const DeepCollectionEquality().equals(other.userEvents, userEvents)&&const DeepCollectionEquality().equals(other.notableDays, notableDays)&&const DeepCollectionEquality().equals(other.mergedEvents, mergedEvents));
+  final _this = this as SnEventCalendarEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnEventCalendarEntry&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.checkInResult, _this.checkInResult) || other.checkInResult == _this.checkInResult)&&const DeepCollectionEquality().equals(other.statuses, _this.statuses)&&const DeepCollectionEquality().equals(other.userEvents, _this.userEvents)&&const DeepCollectionEquality().equals(other.notableDays, _this.notableDays)&&const DeepCollectionEquality().equals(other.mergedEvents, _this.mergedEvents));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,checkInResult,const DeepCollectionEquality().hash(statuses),const DeepCollectionEquality().hash(userEvents),const DeepCollectionEquality().hash(notableDays),const DeepCollectionEquality().hash(mergedEvents));
+int get hashCode {
+  final _this = this as SnEventCalendarEntry;
+  return Object.hash(runtimeType,_this.date,_this.checkInResult,const DeepCollectionEquality().hash(_this.statuses),const DeepCollectionEquality().hash(_this.userEvents),const DeepCollectionEquality().hash(_this.notableDays),const DeepCollectionEquality().hash(_this.mergedEvents));
+}
 
 @override
 String toString() {
-  return 'SnEventCalendarEntry(date: $date, checkInResult: $checkInResult, statuses: $statuses, userEvents: $userEvents, notableDays: $notableDays, mergedEvents: $mergedEvents)';
+  final _this = this as SnEventCalendarEntry;
+  return 'SnEventCalendarEntry(date: ${_this.date}, checkInResult: ${_this.checkInResult}, statuses: ${_this.statuses}, userEvents: ${_this.userEvents}, notableDays: ${_this.notableDays}, mergedEvents: ${_this.mergedEvents})';
 }
 
 
@@ -3027,16 +3099,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnEventCalendarEntry&&(identical(other.date, date) || other.date == date)&&(identical(other.checkInResult, checkInResult) || other.checkInResult == checkInResult)&&const DeepCollectionEquality().equals(other._statuses, _statuses)&&const DeepCollectionEquality().equals(other._userEvents, _userEvents)&&const DeepCollectionEquality().equals(other._notableDays, _notableDays)&&const DeepCollectionEquality().equals(other._mergedEvents, _mergedEvents));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnEventCalendarEntry&&(identical(other.date, date) || other.date == date)&&(identical(other.checkInResult, checkInResult) || other.checkInResult == checkInResult)&&const DeepCollectionEquality().equals(other.statuses, _statuses)&&const DeepCollectionEquality().equals(other.userEvents, _userEvents)&&const DeepCollectionEquality().equals(other.notableDays, _notableDays)&&const DeepCollectionEquality().equals(other.mergedEvents, _mergedEvents));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,checkInResult,const DeepCollectionEquality().hash(_statuses),const DeepCollectionEquality().hash(_userEvents),const DeepCollectionEquality().hash(_notableDays),const DeepCollectionEquality().hash(_mergedEvents));
+int get hashCode {
+    return Object.hash(runtimeType,date,checkInResult,const DeepCollectionEquality().hash(_statuses),const DeepCollectionEquality().hash(_userEvents),const DeepCollectionEquality().hash(_notableDays),const DeepCollectionEquality().hash(_mergedEvents));
+}
 
 @override
 String toString() {
-  return 'SnEventCalendarEntry(date: $date, checkInResult: $checkInResult, statuses: $statuses, userEvents: $userEvents, notableDays: $notableDays, mergedEvents: $mergedEvents)';
+    return 'SnEventCalendarEntry(date: $date, checkInResult: $checkInResult, statuses: $statuses, userEvents: $userEvents, notableDays: $notableDays, mergedEvents: $mergedEvents)';
 }
 
 
@@ -3108,16 +3182,21 @@ $SnPresenceTagCopyWith<SnPresenceTag> get copyWith => _$SnPresenceTagCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPresenceTag&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name));
+  final _this = this as SnPresenceTag;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPresenceTag&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.name, _this.name) || other.name == _this.name));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,slug,name);
+int get hashCode {
+  final _this = this as SnPresenceTag;
+  return Object.hash(runtimeType,_this.slug,_this.name);
+}
 
 @override
 String toString() {
-  return 'SnPresenceTag(slug: $slug, name: $name)';
+  final _this = this as SnPresenceTag;
+  return 'SnPresenceTag(slug: ${_this.slug}, name: ${_this.name})';
 }
 
 
@@ -3303,16 +3382,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPresenceTag&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPresenceTag&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,slug,name);
+int get hashCode {
+    return Object.hash(runtimeType,slug,name);
+}
 
 @override
 String toString() {
-  return 'SnPresenceTag(slug: $slug, name: $name)';
+    return 'SnPresenceTag(slug: $slug, name: $name)';
 }
 
 
@@ -3368,16 +3449,21 @@ $SnPresenceActivityCopyWith<SnPresenceActivity> get copyWith => _$SnPresenceActi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPresenceActivity&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.manualId, manualId) || other.manualId == manualId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.titleUrl, titleUrl) || other.titleUrl == titleUrl)&&(identical(other.subtitleUrl, subtitleUrl) || other.subtitleUrl == subtitleUrl)&&(identical(other.smallImage, smallImage) || other.smallImage == smallImage)&&(identical(other.largeImage, largeImage) || other.largeImage == largeImage)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.leaseMinutes, leaseMinutes) || other.leaseMinutes == leaseMinutes)&&(identical(other.leaseExpiresAt, leaseExpiresAt) || other.leaseExpiresAt == leaseExpiresAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.catalogId, catalogId) || other.catalogId == catalogId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnPresenceActivity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPresenceActivity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.manualId, _this.manualId) || other.manualId == _this.manualId)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.subtitle, _this.subtitle) || other.subtitle == _this.subtitle)&&(identical(other.caption, _this.caption) || other.caption == _this.caption)&&(identical(other.titleUrl, _this.titleUrl) || other.titleUrl == _this.titleUrl)&&(identical(other.subtitleUrl, _this.subtitleUrl) || other.subtitleUrl == _this.subtitleUrl)&&(identical(other.smallImage, _this.smallImage) || other.smallImage == _this.smallImage)&&(identical(other.largeImage, _this.largeImage) || other.largeImage == _this.largeImage)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.leaseMinutes, _this.leaseMinutes) || other.leaseMinutes == _this.leaseMinutes)&&(identical(other.leaseExpiresAt, _this.leaseExpiresAt) || other.leaseExpiresAt == _this.leaseExpiresAt)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&const DeepCollectionEquality().equals(other.tags, _this.tags)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&(identical(other.startedAt, _this.startedAt) || other.startedAt == _this.startedAt)&&(identical(other.endedAt, _this.endedAt) || other.endedAt == _this.endedAt)&&(identical(other.catalogId, _this.catalogId) || other.catalogId == _this.catalogId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,type,manualId,title,subtitle,caption,titleUrl,subtitleUrl,smallImage,largeImage,const DeepCollectionEquality().hash(meta),leaseMinutes,leaseExpiresAt,accountId,account,const DeepCollectionEquality().hash(tags),visibility,startedAt,endedAt,catalogId,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+  final _this = this as SnPresenceActivity;
+  return Object.hashAll([runtimeType,_this.id,_this.type,_this.manualId,_this.title,_this.subtitle,_this.caption,_this.titleUrl,_this.subtitleUrl,_this.smallImage,_this.largeImage,const DeepCollectionEquality().hash(_this.meta),_this.leaseMinutes,_this.leaseExpiresAt,_this.accountId,_this.account,const DeepCollectionEquality().hash(_this.tags),_this.visibility,_this.startedAt,_this.endedAt,_this.catalogId,_this.createdAt,_this.updatedAt,_this.deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnPresenceActivity(id: $id, type: $type, manualId: $manualId, title: $title, subtitle: $subtitle, caption: $caption, titleUrl: $titleUrl, subtitleUrl: $subtitleUrl, smallImage: $smallImage, largeImage: $largeImage, meta: $meta, leaseMinutes: $leaseMinutes, leaseExpiresAt: $leaseExpiresAt, accountId: $accountId, account: $account, tags: $tags, visibility: $visibility, startedAt: $startedAt, endedAt: $endedAt, catalogId: $catalogId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnPresenceActivity;
+  return 'SnPresenceActivity(id: ${_this.id}, type: ${_this.type}, manualId: ${_this.manualId}, title: ${_this.title}, subtitle: ${_this.subtitle}, caption: ${_this.caption}, titleUrl: ${_this.titleUrl}, subtitleUrl: ${_this.subtitleUrl}, smallImage: ${_this.smallImage}, largeImage: ${_this.largeImage}, meta: ${_this.meta}, leaseMinutes: ${_this.leaseMinutes}, leaseExpiresAt: ${_this.leaseExpiresAt}, accountId: ${_this.accountId}, account: ${_this.account}, tags: ${_this.tags}, visibility: ${_this.visibility}, startedAt: ${_this.startedAt}, endedAt: ${_this.endedAt}, catalogId: ${_this.catalogId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -3631,16 +3717,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPresenceActivity&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.manualId, manualId) || other.manualId == manualId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.titleUrl, titleUrl) || other.titleUrl == titleUrl)&&(identical(other.subtitleUrl, subtitleUrl) || other.subtitleUrl == subtitleUrl)&&(identical(other.smallImage, smallImage) || other.smallImage == smallImage)&&(identical(other.largeImage, largeImage) || other.largeImage == largeImage)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.leaseMinutes, leaseMinutes) || other.leaseMinutes == leaseMinutes)&&(identical(other.leaseExpiresAt, leaseExpiresAt) || other.leaseExpiresAt == leaseExpiresAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.catalogId, catalogId) || other.catalogId == catalogId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPresenceActivity&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.manualId, manualId) || other.manualId == manualId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.titleUrl, titleUrl) || other.titleUrl == titleUrl)&&(identical(other.subtitleUrl, subtitleUrl) || other.subtitleUrl == subtitleUrl)&&(identical(other.smallImage, smallImage) || other.smallImage == smallImage)&&(identical(other.largeImage, largeImage) || other.largeImage == largeImage)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.leaseMinutes, leaseMinutes) || other.leaseMinutes == leaseMinutes)&&(identical(other.leaseExpiresAt, leaseExpiresAt) || other.leaseExpiresAt == leaseExpiresAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&const DeepCollectionEquality().equals(other.tags, _tags)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.catalogId, catalogId) || other.catalogId == catalogId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,type,manualId,title,subtitle,caption,titleUrl,subtitleUrl,smallImage,largeImage,const DeepCollectionEquality().hash(_meta),leaseMinutes,leaseExpiresAt,accountId,account,const DeepCollectionEquality().hash(_tags),visibility,startedAt,endedAt,catalogId,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,type,manualId,title,subtitle,caption,titleUrl,subtitleUrl,smallImage,largeImage,const DeepCollectionEquality().hash(_meta),leaseMinutes,leaseExpiresAt,accountId,account,const DeepCollectionEquality().hash(_tags),visibility,startedAt,endedAt,catalogId,createdAt,updatedAt,deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnPresenceActivity(id: $id, type: $type, manualId: $manualId, title: $title, subtitle: $subtitle, caption: $caption, titleUrl: $titleUrl, subtitleUrl: $subtitleUrl, smallImage: $smallImage, largeImage: $largeImage, meta: $meta, leaseMinutes: $leaseMinutes, leaseExpiresAt: $leaseExpiresAt, accountId: $accountId, account: $account, tags: $tags, visibility: $visibility, startedAt: $startedAt, endedAt: $endedAt, catalogId: $catalogId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnPresenceActivity(id: $id, type: $type, manualId: $manualId, title: $title, subtitle: $subtitle, caption: $caption, titleUrl: $titleUrl, subtitleUrl: $subtitleUrl, smallImage: $smallImage, largeImage: $largeImage, meta: $meta, leaseMinutes: $leaseMinutes, leaseExpiresAt: $leaseExpiresAt, accountId: $accountId, account: $account, tags: $tags, visibility: $visibility, startedAt: $startedAt, endedAt: $endedAt, catalogId: $catalogId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -3729,16 +3817,21 @@ $SnAccountTimelineItemCopyWith<SnAccountTimelineItem> get copyWith => _$SnAccoun
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountTimelineItem&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.activity, activity) || other.activity == activity)&&(identical(other.status, status) || other.status == status));
+  final _this = this as SnAccountTimelineItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountTimelineItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.eventType, _this.eventType) || other.eventType == _this.eventType)&&(identical(other.activity, _this.activity) || other.activity == _this.activity)&&(identical(other.status, _this.status) || other.status == _this.status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,eventType,activity,status);
+int get hashCode {
+  final _this = this as SnAccountTimelineItem;
+  return Object.hash(runtimeType,_this.id,_this.createdAt,_this.eventType,_this.activity,_this.status);
+}
 
 @override
 String toString() {
-  return 'SnAccountTimelineItem(id: $id, createdAt: $createdAt, eventType: $eventType, activity: $activity, status: $status)';
+  final _this = this as SnAccountTimelineItem;
+  return 'SnAccountTimelineItem(id: ${_this.id}, createdAt: ${_this.createdAt}, eventType: ${_this.eventType}, activity: ${_this.activity}, status: ${_this.status})';
 }
 
 
@@ -3954,16 +4047,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountTimelineItem&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.activity, activity) || other.activity == activity)&&(identical(other.status, status) || other.status == status));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountTimelineItem&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.activity, activity) || other.activity == activity)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,eventType,activity,status);
+int get hashCode {
+    return Object.hash(runtimeType,id,createdAt,eventType,activity,status);
+}
 
 @override
 String toString() {
-  return 'SnAccountTimelineItem(id: $id, createdAt: $createdAt, eventType: $eventType, activity: $activity, status: $status)';
+    return 'SnAccountTimelineItem(id: $id, createdAt: $createdAt, eventType: $eventType, activity: $activity, status: $status)';
 }
 
 
@@ -4046,16 +4141,21 @@ $SnEventCountdownItemCopyWith<SnEventCountdownItem> get copyWith => _$SnEventCou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnEventCountdownItem&&(identical(other.eventId, eventId) || other.eventId == eventId)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.daysRemaining, daysRemaining) || other.daysRemaining == daysRemaining)&&(identical(other.hoursRemaining, hoursRemaining) || other.hoursRemaining == hoursRemaining)&&(identical(other.isOngoing, isOngoing) || other.isOngoing == isOngoing)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon));
+  final _this = this as SnEventCountdownItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnEventCountdownItem&&(identical(other.eventId, _this.eventId) || other.eventId == _this.eventId)&&(identical(other.eventType, _this.eventType) || other.eventType == _this.eventType)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.endTime, _this.endTime) || other.endTime == _this.endTime)&&(identical(other.isAllDay, _this.isAllDay) || other.isAllDay == _this.isAllDay)&&(identical(other.daysRemaining, _this.daysRemaining) || other.daysRemaining == _this.daysRemaining)&&(identical(other.hoursRemaining, _this.hoursRemaining) || other.hoursRemaining == _this.hoursRemaining)&&(identical(other.isOngoing, _this.isOngoing) || other.isOngoing == _this.isOngoing)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.icon, _this.icon) || other.icon == _this.icon));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,eventId,eventType,title,description,location,startTime,endTime,isAllDay,daysRemaining,hoursRemaining,isOngoing,const DeepCollectionEquality().hash(meta),accountId,background,icon);
+int get hashCode {
+  final _this = this as SnEventCountdownItem;
+  return Object.hash(runtimeType,_this.eventId,_this.eventType,_this.title,_this.description,_this.location,_this.startTime,_this.endTime,_this.isAllDay,_this.daysRemaining,_this.hoursRemaining,_this.isOngoing,const DeepCollectionEquality().hash(_this.meta),_this.accountId,_this.background,_this.icon);
+}
 
 @override
 String toString() {
-  return 'SnEventCountdownItem(eventId: $eventId, eventType: $eventType, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, daysRemaining: $daysRemaining, hoursRemaining: $hoursRemaining, isOngoing: $isOngoing, meta: $meta, accountId: $accountId, background: $background, icon: $icon)';
+  final _this = this as SnEventCountdownItem;
+  return 'SnEventCountdownItem(eventId: ${_this.eventId}, eventType: ${_this.eventType}, title: ${_this.title}, description: ${_this.description}, location: ${_this.location}, startTime: ${_this.startTime}, endTime: ${_this.endTime}, isAllDay: ${_this.isAllDay}, daysRemaining: ${_this.daysRemaining}, hoursRemaining: ${_this.hoursRemaining}, isOngoing: ${_this.isOngoing}, meta: ${_this.meta}, accountId: ${_this.accountId}, background: ${_this.background}, icon: ${_this.icon})';
 }
 
 
@@ -4299,16 +4399,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnEventCountdownItem&&(identical(other.eventId, eventId) || other.eventId == eventId)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.daysRemaining, daysRemaining) || other.daysRemaining == daysRemaining)&&(identical(other.hoursRemaining, hoursRemaining) || other.hoursRemaining == hoursRemaining)&&(identical(other.isOngoing, isOngoing) || other.isOngoing == isOngoing)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnEventCountdownItem&&(identical(other.eventId, eventId) || other.eventId == eventId)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.isAllDay, isAllDay) || other.isAllDay == isAllDay)&&(identical(other.daysRemaining, daysRemaining) || other.daysRemaining == daysRemaining)&&(identical(other.hoursRemaining, hoursRemaining) || other.hoursRemaining == hoursRemaining)&&(identical(other.isOngoing, isOngoing) || other.isOngoing == isOngoing)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,eventId,eventType,title,description,location,startTime,endTime,isAllDay,daysRemaining,hoursRemaining,isOngoing,const DeepCollectionEquality().hash(_meta),accountId,background,icon);
+int get hashCode {
+    return Object.hash(runtimeType,eventId,eventType,title,description,location,startTime,endTime,isAllDay,daysRemaining,hoursRemaining,isOngoing,const DeepCollectionEquality().hash(_meta),accountId,background,icon);
+}
 
 @override
 String toString() {
-  return 'SnEventCountdownItem(eventId: $eventId, eventType: $eventType, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, daysRemaining: $daysRemaining, hoursRemaining: $hoursRemaining, isOngoing: $isOngoing, meta: $meta, accountId: $accountId, background: $background, icon: $icon)';
+    return 'SnEventCountdownItem(eventId: $eventId, eventType: $eventType, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, isAllDay: $isAllDay, daysRemaining: $daysRemaining, hoursRemaining: $hoursRemaining, isOngoing: $isOngoing, meta: $meta, accountId: $accountId, background: $background, icon: $icon)';
 }
 
 

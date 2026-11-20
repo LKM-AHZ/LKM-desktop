@@ -29,16 +29,21 @@ $UniversalFileCopyWith<UniversalFile> get copyWith => _$UniversalFileCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UniversalFile&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.type, type) || other.type == type)&&(identical(other.isLink, isLink) || other.isLink == isLink)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+  final _this = this as UniversalFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UniversalFile&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.isLink, _this.isLink) || other.isLink == _this.isLink)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),type,isLink,displayName);
+int get hashCode {
+  final _this = this as UniversalFile;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.data),_this.type,_this.isLink,_this.displayName);
+}
 
 @override
 String toString() {
-  return 'UniversalFile(data: $data, type: $type, isLink: $isLink, displayName: $displayName)';
+  final _this = this as UniversalFile;
+  return 'UniversalFile(data: ${_this.data}, type: ${_this.type}, isLink: ${_this.isLink}, displayName: ${_this.displayName})';
 }
 
 
@@ -228,16 +233,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UniversalFile&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.type, type) || other.type == type)&&(identical(other.isLink, isLink) || other.isLink == isLink)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UniversalFile&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.type, type) || other.type == type)&&(identical(other.isLink, isLink) || other.isLink == isLink)&&(identical(other.displayName, displayName) || other.displayName == displayName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),type,isLink,displayName);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(data),type,isLink,displayName);
+}
 
 @override
 String toString() {
-  return 'UniversalFile(data: $data, type: $type, isLink: $isLink, displayName: $displayName)';
+    return 'UniversalFile(data: $data, type: $type, isLink: $isLink, displayName: $displayName)';
 }
 
 
@@ -295,16 +302,21 @@ $SnFileReplicaCopyWith<SnFileReplica> get copyWith => _$SnFileReplicaCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFileReplica&&(identical(other.id, id) || other.id == id)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.poolId, poolId) || other.poolId == poolId)&&(identical(other.pool, pool) || other.pool == pool)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnFileReplica;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFileReplica&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.objectId, _this.objectId) || other.objectId == _this.objectId)&&(identical(other.poolId, _this.poolId) || other.poolId == _this.poolId)&&(identical(other.pool, _this.pool) || other.pool == _this.pool)&&(identical(other.storageId, _this.storageId) || other.storageId == _this.storageId)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.isPrimary, _this.isPrimary) || other.isPrimary == _this.isPrimary)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,objectId,poolId,pool,storageId,status,isPrimary,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnFileReplica;
+  return Object.hash(runtimeType,_this.id,_this.objectId,_this.poolId,_this.pool,_this.storageId,_this.status,_this.isPrimary,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFileReplica(id: $id, objectId: $objectId, poolId: $poolId, pool: $pool, storageId: $storageId, status: $status, isPrimary: $isPrimary, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnFileReplica;
+  return 'SnFileReplica(id: ${_this.id}, objectId: ${_this.objectId}, poolId: ${_this.poolId}, pool: ${_this.pool}, storageId: ${_this.storageId}, status: ${_this.status}, isPrimary: ${_this.isPrimary}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -518,16 +530,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFileReplica&&(identical(other.id, id) || other.id == id)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.poolId, poolId) || other.poolId == poolId)&&(identical(other.pool, pool) || other.pool == pool)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFileReplica&&(identical(other.id, id) || other.id == id)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.poolId, poolId) || other.poolId == poolId)&&(identical(other.pool, pool) || other.pool == pool)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,objectId,poolId,pool,storageId,status,isPrimary,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,objectId,poolId,pool,storageId,status,isPrimary,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFileReplica(id: $id, objectId: $objectId, poolId: $poolId, pool: $pool, storageId: $storageId, status: $status, isPrimary: $isPrimary, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnFileReplica(id: $id, objectId: $objectId, poolId: $poolId, pool: $pool, storageId: $storageId, status: $status, isPrimary: $isPrimary, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -603,16 +617,21 @@ $SnCloudFileObjectCopyWith<SnCloudFileObject> get copyWith => _$SnCloudFileObjec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFileObject&&(identical(other.id, id) || other.id == id)&&(identical(other.size, size) || other.size == size)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&const DeepCollectionEquality().equals(other.fileReplicas, fileReplicas)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnCloudFileObject;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFileObject&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.size, _this.size) || other.size == _this.size)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.hash, _this.hash) || other.hash == _this.hash)&&(identical(other.hasCompression, _this.hasCompression) || other.hasCompression == _this.hasCompression)&&(identical(other.hasThumbnail, _this.hasThumbnail) || other.hasThumbnail == _this.hasThumbnail)&&const DeepCollectionEquality().equals(other.fileReplicas, _this.fileReplicas)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,size,const DeepCollectionEquality().hash(meta),mimeType,hash,hasCompression,hasThumbnail,const DeepCollectionEquality().hash(fileReplicas),createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnCloudFileObject;
+  return Object.hash(runtimeType,_this.id,_this.size,const DeepCollectionEquality().hash(_this.meta),_this.mimeType,_this.hash,_this.hasCompression,_this.hasThumbnail,const DeepCollectionEquality().hash(_this.fileReplicas),_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnCloudFileObject(id: $id, size: $size, meta: $meta, mimeType: $mimeType, hash: $hash, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, fileReplicas: $fileReplicas, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnCloudFileObject;
+  return 'SnCloudFileObject(id: ${_this.id}, size: ${_this.size}, meta: ${_this.meta}, mimeType: ${_this.mimeType}, hash: ${_this.hash}, hasCompression: ${_this.hasCompression}, hasThumbnail: ${_this.hasThumbnail}, fileReplicas: ${_this.fileReplicas}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -830,16 +849,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFileObject&&(identical(other.id, id) || other.id == id)&&(identical(other.size, size) || other.size == size)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&const DeepCollectionEquality().equals(other._fileReplicas, _fileReplicas)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFileObject&&(identical(other.id, id) || other.id == id)&&(identical(other.size, size) || other.size == size)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&const DeepCollectionEquality().equals(other.fileReplicas, _fileReplicas)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,size,const DeepCollectionEquality().hash(_meta),mimeType,hash,hasCompression,hasThumbnail,const DeepCollectionEquality().hash(_fileReplicas),createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,size,const DeepCollectionEquality().hash(_meta),mimeType,hash,hasCompression,hasThumbnail,const DeepCollectionEquality().hash(_fileReplicas),createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnCloudFileObject(id: $id, size: $size, meta: $meta, mimeType: $mimeType, hash: $hash, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, fileReplicas: $fileReplicas, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnCloudFileObject(id: $id, size: $size, meta: $meta, mimeType: $mimeType, hash: $hash, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, fileReplicas: $fileReplicas, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -891,7 +912,7 @@ as DateTime?,
 /// @nodoc
 mixin _$SnCloudFile {
 
- String get id; String get accountId; String? get description; bool get indexed; bool get isFolder; bool get isMarkedRecycle; String get name; SnCloudFileObject? get object; String? get objectId; String? get parentId; String get resourceIdentifier; String? get storageId; String? get storageUrl; String get mimeType; String? get applicationType; String? get usage; List<int> get sensitiveMarks; Map<String, dynamic> get fileMeta; Map<String, dynamic> get userMeta; List<SnCloudFile> get children;@JsonKey(name: 'children_count') int get childrenCount;@JsonKey(name: 'permission_status') SnFilePermissionStatus? get permissionStatus; DateTime? get uploadedAt; DateTime? get expiredAt; DateTime get updatedAt; DateTime get createdAt; DateTime? get deletedAt;
+ String get id; String get accountId; String? get description; bool get indexed; bool get isFolder; bool get isMarkedRecycle; String get name; SnCloudFileObject? get object; String? get objectId; String? get parentId; String get resourceIdentifier; String? get storageId;@JsonKey(fromJson: _nonBlankUrl) String? get storageUrl; String get mimeType; String? get applicationType; String? get usage; List<int> get sensitiveMarks; Map<String, dynamic> get fileMeta; Map<String, dynamic> get userMeta; List<SnCloudFile> get children;@JsonKey(name: 'children_count') int get childrenCount;@JsonKey(name: 'permission_status') SnFilePermissionStatus? get permissionStatus; DateTime? get uploadedAt; DateTime? get expiredAt; DateTime get updatedAt; DateTime get createdAt; DateTime? get deletedAt;
 /// Create a copy of SnCloudFile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -904,16 +925,21 @@ $SnCloudFileCopyWith<SnCloudFile> get copyWith => _$SnCloudFileCopyWithImpl<SnCl
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFile&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.description, description) || other.description == description)&&(identical(other.indexed, indexed) || other.indexed == indexed)&&(identical(other.isFolder, isFolder) || other.isFolder == isFolder)&&(identical(other.isMarkedRecycle, isMarkedRecycle) || other.isMarkedRecycle == isMarkedRecycle)&&(identical(other.name, name) || other.name == name)&&(identical(other.object, object) || other.object == object)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType)&&(identical(other.usage, usage) || other.usage == usage)&&const DeepCollectionEquality().equals(other.sensitiveMarks, sensitiveMarks)&&const DeepCollectionEquality().equals(other.fileMeta, fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, userMeta)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.childrenCount, childrenCount) || other.childrenCount == childrenCount)&&(identical(other.permissionStatus, permissionStatus) || other.permissionStatus == permissionStatus)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnCloudFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFile&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.indexed, _this.indexed) || other.indexed == _this.indexed)&&(identical(other.isFolder, _this.isFolder) || other.isFolder == _this.isFolder)&&(identical(other.isMarkedRecycle, _this.isMarkedRecycle) || other.isMarkedRecycle == _this.isMarkedRecycle)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.object, _this.object) || other.object == _this.object)&&(identical(other.objectId, _this.objectId) || other.objectId == _this.objectId)&&(identical(other.parentId, _this.parentId) || other.parentId == _this.parentId)&&(identical(other.resourceIdentifier, _this.resourceIdentifier) || other.resourceIdentifier == _this.resourceIdentifier)&&(identical(other.storageId, _this.storageId) || other.storageId == _this.storageId)&&(identical(other.storageUrl, _this.storageUrl) || other.storageUrl == _this.storageUrl)&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.applicationType, _this.applicationType) || other.applicationType == _this.applicationType)&&(identical(other.usage, _this.usage) || other.usage == _this.usage)&&const DeepCollectionEquality().equals(other.sensitiveMarks, _this.sensitiveMarks)&&const DeepCollectionEquality().equals(other.fileMeta, _this.fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, _this.userMeta)&&const DeepCollectionEquality().equals(other.children, _this.children)&&(identical(other.childrenCount, _this.childrenCount) || other.childrenCount == _this.childrenCount)&&(identical(other.permissionStatus, _this.permissionStatus) || other.permissionStatus == _this.permissionStatus)&&(identical(other.uploadedAt, _this.uploadedAt) || other.uploadedAt == _this.uploadedAt)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,description,indexed,isFolder,isMarkedRecycle,name,object,objectId,parentId,resourceIdentifier,storageId,storageUrl,mimeType,applicationType,usage,const DeepCollectionEquality().hash(sensitiveMarks),const DeepCollectionEquality().hash(fileMeta),const DeepCollectionEquality().hash(userMeta),const DeepCollectionEquality().hash(children),childrenCount,permissionStatus,uploadedAt,expiredAt,updatedAt,createdAt,deletedAt]);
+int get hashCode {
+  final _this = this as SnCloudFile;
+  return Object.hashAll([runtimeType,_this.id,_this.accountId,_this.description,_this.indexed,_this.isFolder,_this.isMarkedRecycle,_this.name,_this.object,_this.objectId,_this.parentId,_this.resourceIdentifier,_this.storageId,_this.storageUrl,_this.mimeType,_this.applicationType,_this.usage,const DeepCollectionEquality().hash(_this.sensitiveMarks),const DeepCollectionEquality().hash(_this.fileMeta),const DeepCollectionEquality().hash(_this.userMeta),const DeepCollectionEquality().hash(_this.children),_this.childrenCount,_this.permissionStatus,_this.uploadedAt,_this.expiredAt,_this.updatedAt,_this.createdAt,_this.deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnCloudFile(id: $id, accountId: $accountId, description: $description, indexed: $indexed, isFolder: $isFolder, isMarkedRecycle: $isMarkedRecycle, name: $name, object: $object, objectId: $objectId, parentId: $parentId, resourceIdentifier: $resourceIdentifier, storageId: $storageId, storageUrl: $storageUrl, mimeType: $mimeType, applicationType: $applicationType, usage: $usage, sensitiveMarks: $sensitiveMarks, fileMeta: $fileMeta, userMeta: $userMeta, children: $children, childrenCount: $childrenCount, permissionStatus: $permissionStatus, uploadedAt: $uploadedAt, expiredAt: $expiredAt, updatedAt: $updatedAt, createdAt: $createdAt, deletedAt: $deletedAt)';
+  final _this = this as SnCloudFile;
+  return 'SnCloudFile(id: ${_this.id}, accountId: ${_this.accountId}, description: ${_this.description}, indexed: ${_this.indexed}, isFolder: ${_this.isFolder}, isMarkedRecycle: ${_this.isMarkedRecycle}, name: ${_this.name}, object: ${_this.object}, objectId: ${_this.objectId}, parentId: ${_this.parentId}, resourceIdentifier: ${_this.resourceIdentifier}, storageId: ${_this.storageId}, storageUrl: ${_this.storageUrl}, mimeType: ${_this.mimeType}, applicationType: ${_this.applicationType}, usage: ${_this.usage}, sensitiveMarks: ${_this.sensitiveMarks}, fileMeta: ${_this.fileMeta}, userMeta: ${_this.userMeta}, children: ${_this.children}, childrenCount: ${_this.childrenCount}, permissionStatus: ${_this.permissionStatus}, uploadedAt: ${_this.uploadedAt}, expiredAt: ${_this.expiredAt}, updatedAt: ${_this.updatedAt}, createdAt: ${_this.createdAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -924,7 +950,7 @@ abstract mixin class $SnCloudFileCopyWith<$Res>  {
   factory $SnCloudFileCopyWith(SnCloudFile value, $Res Function(SnCloudFile) _then) = _$SnCloudFileCopyWithImpl;
 @useResult
 $Res call({
- String id, String accountId, String? description, bool indexed, bool isFolder, bool isMarkedRecycle, String name, SnCloudFileObject? object, String? objectId, String? parentId, String resourceIdentifier, String? storageId, String? storageUrl, String mimeType, String? applicationType, String? usage, List<int> sensitiveMarks, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<SnCloudFile> children,@JsonKey(name: 'children_count') int childrenCount,@JsonKey(name: 'permission_status') SnFilePermissionStatus? permissionStatus, DateTime? uploadedAt, DateTime? expiredAt, DateTime updatedAt, DateTime createdAt, DateTime? deletedAt
+ String id, String accountId, String? description, bool indexed, bool isFolder, bool isMarkedRecycle, String name, SnCloudFileObject? object, String? objectId, String? parentId, String resourceIdentifier, String? storageId,@JsonKey(fromJson: _nonBlankUrl) String? storageUrl, String mimeType, String? applicationType, String? usage, List<int> sensitiveMarks, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<SnCloudFile> children,@JsonKey(name: 'children_count') int childrenCount,@JsonKey(name: 'permission_status') SnFilePermissionStatus? permissionStatus, DateTime? uploadedAt, DateTime? expiredAt, DateTime updatedAt, DateTime createdAt, DateTime? deletedAt
 });
 
 
@@ -1076,7 +1102,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId,  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId, @JsonKey(fromJson: _nonBlankUrl)  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SnCloudFile() when $default != null:
 return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.isFolder,_that.isMarkedRecycle,_that.name,_that.object,_that.objectId,_that.parentId,_that.resourceIdentifier,_that.storageId,_that.storageUrl,_that.mimeType,_that.applicationType,_that.usage,_that.sensitiveMarks,_that.fileMeta,_that.userMeta,_that.children,_that.childrenCount,_that.permissionStatus,_that.uploadedAt,_that.expiredAt,_that.updatedAt,_that.createdAt,_that.deletedAt);case _:
@@ -1097,7 +1123,7 @@ return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.i
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId,  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId, @JsonKey(fromJson: _nonBlankUrl)  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SnCloudFile():
 return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.isFolder,_that.isMarkedRecycle,_that.name,_that.object,_that.objectId,_that.parentId,_that.resourceIdentifier,_that.storageId,_that.storageUrl,_that.mimeType,_that.applicationType,_that.usage,_that.sensitiveMarks,_that.fileMeta,_that.userMeta,_that.children,_that.childrenCount,_that.permissionStatus,_that.uploadedAt,_that.expiredAt,_that.updatedAt,_that.createdAt,_that.deletedAt);}
@@ -1114,7 +1140,7 @@ return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.i
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId,  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String accountId,  String? description,  bool indexed,  bool isFolder,  bool isMarkedRecycle,  String name,  SnCloudFileObject? object,  String? objectId,  String? parentId,  String resourceIdentifier,  String? storageId, @JsonKey(fromJson: _nonBlankUrl)  String? storageUrl,  String mimeType,  String? applicationType,  String? usage,  List<int> sensitiveMarks,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<SnCloudFile> children, @JsonKey(name: 'children_count')  int childrenCount, @JsonKey(name: 'permission_status')  SnFilePermissionStatus? permissionStatus,  DateTime? uploadedAt,  DateTime? expiredAt,  DateTime updatedAt,  DateTime createdAt,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SnCloudFile() when $default != null:
 return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.isFolder,_that.isMarkedRecycle,_that.name,_that.object,_that.objectId,_that.parentId,_that.resourceIdentifier,_that.storageId,_that.storageUrl,_that.mimeType,_that.applicationType,_that.usage,_that.sensitiveMarks,_that.fileMeta,_that.userMeta,_that.children,_that.childrenCount,_that.permissionStatus,_that.uploadedAt,_that.expiredAt,_that.updatedAt,_that.createdAt,_that.deletedAt);case _:
@@ -1129,7 +1155,7 @@ return $default(_that.id,_that.accountId,_that.description,_that.indexed,_that.i
 @JsonSerializable()
 
 class _SnCloudFile extends SnCloudFile {
-  const _SnCloudFile({required this.id, required this.accountId, required this.description, required this.indexed, required this.isFolder, required this.isMarkedRecycle, required this.name, required this.object, required this.objectId, required this.parentId, required this.resourceIdentifier, required this.storageId, required this.storageUrl, required this.mimeType, required this.applicationType, required this.usage,  List<int> sensitiveMarks = const [],  Map<String, dynamic> fileMeta = const {},  Map<String, dynamic> userMeta = const {},  List<SnCloudFile> children = const [], @JsonKey(name: 'children_count') this.childrenCount = 0, @JsonKey(name: 'permission_status') required this.permissionStatus, required this.uploadedAt, required this.expiredAt, required this.updatedAt, required this.createdAt, required this.deletedAt}): _sensitiveMarks = sensitiveMarks,_fileMeta = fileMeta,_userMeta = userMeta,_children = children,super._();
+  const _SnCloudFile({required this.id, required this.accountId, required this.description, required this.indexed, required this.isFolder, required this.isMarkedRecycle, required this.name, required this.object, required this.objectId, required this.parentId, required this.resourceIdentifier, required this.storageId, @JsonKey(fromJson: _nonBlankUrl) required this.storageUrl, required this.mimeType, required this.applicationType, required this.usage,  List<int> sensitiveMarks = const [],  Map<String, dynamic> fileMeta = const {},  Map<String, dynamic> userMeta = const {},  List<SnCloudFile> children = const [], @JsonKey(name: 'children_count') this.childrenCount = 0, @JsonKey(name: 'permission_status') required this.permissionStatus, required this.uploadedAt, required this.expiredAt, required this.updatedAt, required this.createdAt, required this.deletedAt}): _sensitiveMarks = sensitiveMarks,_fileMeta = fileMeta,_userMeta = userMeta,_children = children,super._();
   factory _SnCloudFile.fromJson(Map<String, dynamic> json) => _$SnCloudFileFromJson(json);
 
 @override final  String id;
@@ -1144,7 +1170,7 @@ class _SnCloudFile extends SnCloudFile {
 @override final  String? parentId;
 @override final  String resourceIdentifier;
 @override final  String? storageId;
-@override final  String? storageUrl;
+@override@JsonKey(fromJson: _nonBlankUrl) final  String? storageUrl;
 @override final  String mimeType;
 @override final  String? applicationType;
 @override final  String? usage;
@@ -1197,16 +1223,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFile&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.description, description) || other.description == description)&&(identical(other.indexed, indexed) || other.indexed == indexed)&&(identical(other.isFolder, isFolder) || other.isFolder == isFolder)&&(identical(other.isMarkedRecycle, isMarkedRecycle) || other.isMarkedRecycle == isMarkedRecycle)&&(identical(other.name, name) || other.name == name)&&(identical(other.object, object) || other.object == object)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType)&&(identical(other.usage, usage) || other.usage == usage)&&const DeepCollectionEquality().equals(other._sensitiveMarks, _sensitiveMarks)&&const DeepCollectionEquality().equals(other._fileMeta, _fileMeta)&&const DeepCollectionEquality().equals(other._userMeta, _userMeta)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.childrenCount, childrenCount) || other.childrenCount == childrenCount)&&(identical(other.permissionStatus, permissionStatus) || other.permissionStatus == permissionStatus)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFile&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.description, description) || other.description == description)&&(identical(other.indexed, indexed) || other.indexed == indexed)&&(identical(other.isFolder, isFolder) || other.isFolder == isFolder)&&(identical(other.isMarkedRecycle, isMarkedRecycle) || other.isMarkedRecycle == isMarkedRecycle)&&(identical(other.name, name) || other.name == name)&&(identical(other.object, object) || other.object == object)&&(identical(other.objectId, objectId) || other.objectId == objectId)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.storageId, storageId) || other.storageId == storageId)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType)&&(identical(other.usage, usage) || other.usage == usage)&&const DeepCollectionEquality().equals(other.sensitiveMarks, _sensitiveMarks)&&const DeepCollectionEquality().equals(other.fileMeta, _fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, _userMeta)&&const DeepCollectionEquality().equals(other.children, _children)&&(identical(other.childrenCount, childrenCount) || other.childrenCount == childrenCount)&&(identical(other.permissionStatus, permissionStatus) || other.permissionStatus == permissionStatus)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,accountId,description,indexed,isFolder,isMarkedRecycle,name,object,objectId,parentId,resourceIdentifier,storageId,storageUrl,mimeType,applicationType,usage,const DeepCollectionEquality().hash(_sensitiveMarks),const DeepCollectionEquality().hash(_fileMeta),const DeepCollectionEquality().hash(_userMeta),const DeepCollectionEquality().hash(_children),childrenCount,permissionStatus,uploadedAt,expiredAt,updatedAt,createdAt,deletedAt]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,accountId,description,indexed,isFolder,isMarkedRecycle,name,object,objectId,parentId,resourceIdentifier,storageId,storageUrl,mimeType,applicationType,usage,const DeepCollectionEquality().hash(_sensitiveMarks),const DeepCollectionEquality().hash(_fileMeta),const DeepCollectionEquality().hash(_userMeta),const DeepCollectionEquality().hash(_children),childrenCount,permissionStatus,uploadedAt,expiredAt,updatedAt,createdAt,deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnCloudFile(id: $id, accountId: $accountId, description: $description, indexed: $indexed, isFolder: $isFolder, isMarkedRecycle: $isMarkedRecycle, name: $name, object: $object, objectId: $objectId, parentId: $parentId, resourceIdentifier: $resourceIdentifier, storageId: $storageId, storageUrl: $storageUrl, mimeType: $mimeType, applicationType: $applicationType, usage: $usage, sensitiveMarks: $sensitiveMarks, fileMeta: $fileMeta, userMeta: $userMeta, children: $children, childrenCount: $childrenCount, permissionStatus: $permissionStatus, uploadedAt: $uploadedAt, expiredAt: $expiredAt, updatedAt: $updatedAt, createdAt: $createdAt, deletedAt: $deletedAt)';
+    return 'SnCloudFile(id: $id, accountId: $accountId, description: $description, indexed: $indexed, isFolder: $isFolder, isMarkedRecycle: $isMarkedRecycle, name: $name, object: $object, objectId: $objectId, parentId: $parentId, resourceIdentifier: $resourceIdentifier, storageId: $storageId, storageUrl: $storageUrl, mimeType: $mimeType, applicationType: $applicationType, usage: $usage, sensitiveMarks: $sensitiveMarks, fileMeta: $fileMeta, userMeta: $userMeta, children: $children, childrenCount: $childrenCount, permissionStatus: $permissionStatus, uploadedAt: $uploadedAt, expiredAt: $expiredAt, updatedAt: $updatedAt, createdAt: $createdAt, deletedAt: $deletedAt)';
 }
 
 
@@ -1217,7 +1245,7 @@ abstract mixin class _$SnCloudFileCopyWith<$Res> implements $SnCloudFileCopyWith
   factory _$SnCloudFileCopyWith(_SnCloudFile value, $Res Function(_SnCloudFile) _then) = __$SnCloudFileCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String accountId, String? description, bool indexed, bool isFolder, bool isMarkedRecycle, String name, SnCloudFileObject? object, String? objectId, String? parentId, String resourceIdentifier, String? storageId, String? storageUrl, String mimeType, String? applicationType, String? usage, List<int> sensitiveMarks, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<SnCloudFile> children,@JsonKey(name: 'children_count') int childrenCount,@JsonKey(name: 'permission_status') SnFilePermissionStatus? permissionStatus, DateTime? uploadedAt, DateTime? expiredAt, DateTime updatedAt, DateTime createdAt, DateTime? deletedAt
+ String id, String accountId, String? description, bool indexed, bool isFolder, bool isMarkedRecycle, String name, SnCloudFileObject? object, String? objectId, String? parentId, String resourceIdentifier, String? storageId,@JsonKey(fromJson: _nonBlankUrl) String? storageUrl, String mimeType, String? applicationType, String? usage, List<int> sensitiveMarks, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<SnCloudFile> children,@JsonKey(name: 'children_count') int childrenCount,@JsonKey(name: 'permission_status') SnFilePermissionStatus? permissionStatus, DateTime? uploadedAt, DateTime? expiredAt, DateTime updatedAt, DateTime createdAt, DateTime? deletedAt
 });
 
 
@@ -1300,7 +1328,7 @@ mixin _$SnCloudFileReference {
 
  String get id; String get name; Map<String, dynamic> get fileMeta; Map<String, dynamic> get userMeta; List<int> get sensitiveMarks;/// Fediverse/remote attachments often omit mime type; default safely.
  String get mimeType;/// Fediverse/remote attachments often omit content hash.
- String get hash; int get size; bool get hasCompression; bool get hasThumbnail;@JsonKey(name: "url") String? get storageUrl; double? get width; double? get height;@JsonKey(name: 'blurhash') String? get blur; String? get usage; String? get applicationType;
+ String get hash; int get size; bool get hasCompression; bool get hasThumbnail;@JsonKey(name: "url", fromJson: _nonBlankUrl) String? get storageUrl; double? get width; double? get height;@JsonKey(name: 'blurhash') String? get blur; String? get usage; String? get applicationType;
 /// Create a copy of SnCloudFileReference
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1313,16 +1341,21 @@ $SnCloudFileReferenceCopyWith<SnCloudFileReference> get copyWith => _$SnCloudFil
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFileReference&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.fileMeta, fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, userMeta)&&const DeepCollectionEquality().equals(other.sensitiveMarks, sensitiveMarks)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.size, size) || other.size == size)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.blur, blur) || other.blur == blur)&&(identical(other.usage, usage) || other.usage == usage)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType));
+  final _this = this as SnCloudFileReference;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnCloudFileReference&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&const DeepCollectionEquality().equals(other.fileMeta, _this.fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, _this.userMeta)&&const DeepCollectionEquality().equals(other.sensitiveMarks, _this.sensitiveMarks)&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.hash, _this.hash) || other.hash == _this.hash)&&(identical(other.size, _this.size) || other.size == _this.size)&&(identical(other.hasCompression, _this.hasCompression) || other.hasCompression == _this.hasCompression)&&(identical(other.hasThumbnail, _this.hasThumbnail) || other.hasThumbnail == _this.hasThumbnail)&&(identical(other.storageUrl, _this.storageUrl) || other.storageUrl == _this.storageUrl)&&(identical(other.width, _this.width) || other.width == _this.width)&&(identical(other.height, _this.height) || other.height == _this.height)&&(identical(other.blur, _this.blur) || other.blur == _this.blur)&&(identical(other.usage, _this.usage) || other.usage == _this.usage)&&(identical(other.applicationType, _this.applicationType) || other.applicationType == _this.applicationType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,const DeepCollectionEquality().hash(fileMeta),const DeepCollectionEquality().hash(userMeta),const DeepCollectionEquality().hash(sensitiveMarks),mimeType,hash,size,hasCompression,hasThumbnail,storageUrl,width,height,blur,usage,applicationType);
+int get hashCode {
+  final _this = this as SnCloudFileReference;
+  return Object.hash(runtimeType,_this.id,_this.name,const DeepCollectionEquality().hash(_this.fileMeta),const DeepCollectionEquality().hash(_this.userMeta),const DeepCollectionEquality().hash(_this.sensitiveMarks),_this.mimeType,_this.hash,_this.size,_this.hasCompression,_this.hasThumbnail,_this.storageUrl,_this.width,_this.height,_this.blur,_this.usage,_this.applicationType);
+}
 
 @override
 String toString() {
-  return 'SnCloudFileReference(id: $id, name: $name, fileMeta: $fileMeta, userMeta: $userMeta, sensitiveMarks: $sensitiveMarks, mimeType: $mimeType, hash: $hash, size: $size, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, storageUrl: $storageUrl, width: $width, height: $height, blur: $blur, usage: $usage, applicationType: $applicationType)';
+  final _this = this as SnCloudFileReference;
+  return 'SnCloudFileReference(id: ${_this.id}, name: ${_this.name}, fileMeta: ${_this.fileMeta}, userMeta: ${_this.userMeta}, sensitiveMarks: ${_this.sensitiveMarks}, mimeType: ${_this.mimeType}, hash: ${_this.hash}, size: ${_this.size}, hasCompression: ${_this.hasCompression}, hasThumbnail: ${_this.hasThumbnail}, storageUrl: ${_this.storageUrl}, width: ${_this.width}, height: ${_this.height}, blur: ${_this.blur}, usage: ${_this.usage}, applicationType: ${_this.applicationType})';
 }
 
 
@@ -1333,7 +1366,7 @@ abstract mixin class $SnCloudFileReferenceCopyWith<$Res>  {
   factory $SnCloudFileReferenceCopyWith(SnCloudFileReference value, $Res Function(SnCloudFileReference) _then) = _$SnCloudFileReferenceCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<int> sensitiveMarks, String mimeType, String hash, int size, bool hasCompression, bool hasThumbnail,@JsonKey(name: "url") String? storageUrl, double? width, double? height,@JsonKey(name: 'blurhash') String? blur, String? usage, String? applicationType
+ String id, String name, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<int> sensitiveMarks, String mimeType, String hash, int size, bool hasCompression, bool hasThumbnail,@JsonKey(name: "url", fromJson: _nonBlankUrl) String? storageUrl, double? width, double? height,@JsonKey(name: 'blurhash') String? blur, String? usage, String? applicationType
 });
 
 
@@ -1450,7 +1483,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url")  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url", fromJson: _nonBlankUrl)  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SnCloudFileReference() when $default != null:
 return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiveMarks,_that.mimeType,_that.hash,_that.size,_that.hasCompression,_that.hasThumbnail,_that.storageUrl,_that.width,_that.height,_that.blur,_that.usage,_that.applicationType);case _:
@@ -1471,7 +1504,7 @@ return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url")  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url", fromJson: _nonBlankUrl)  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)  $default,) {final _that = this;
 switch (_that) {
 case _SnCloudFileReference():
 return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiveMarks,_that.mimeType,_that.hash,_that.size,_that.hasCompression,_that.hasThumbnail,_that.storageUrl,_that.width,_that.height,_that.blur,_that.usage,_that.applicationType);}
@@ -1488,7 +1521,7 @@ return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiv
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url")  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  Map<String, dynamic> fileMeta,  Map<String, dynamic> userMeta,  List<int> sensitiveMarks,  String mimeType,  String hash,  int size,  bool hasCompression,  bool hasThumbnail, @JsonKey(name: "url", fromJson: _nonBlankUrl)  String? storageUrl,  double? width,  double? height, @JsonKey(name: 'blurhash')  String? blur,  String? usage,  String? applicationType)?  $default,) {final _that = this;
 switch (_that) {
 case _SnCloudFileReference() when $default != null:
 return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiveMarks,_that.mimeType,_that.hash,_that.size,_that.hasCompression,_that.hasThumbnail,_that.storageUrl,_that.width,_that.height,_that.blur,_that.usage,_that.applicationType);case _:
@@ -1503,7 +1536,7 @@ return $default(_that.id,_that.name,_that.fileMeta,_that.userMeta,_that.sensitiv
 @JsonSerializable()
 
 class _SnCloudFileReference extends SnCloudFileReference {
-  const _SnCloudFileReference({required this.id, this.name = '',  Map<String, dynamic> fileMeta = const {},  Map<String, dynamic> userMeta = const {},  List<int> sensitiveMarks = const [], this.mimeType = 'application/octet-stream', this.hash = '', this.size = 0, this.hasCompression = false, this.hasThumbnail = false, @JsonKey(name: "url") this.storageUrl, this.width, this.height, @JsonKey(name: 'blurhash') this.blur, this.usage, this.applicationType}): _fileMeta = fileMeta,_userMeta = userMeta,_sensitiveMarks = sensitiveMarks,super._();
+  const _SnCloudFileReference({required this.id, this.name = '',  Map<String, dynamic> fileMeta = const {},  Map<String, dynamic> userMeta = const {},  List<int> sensitiveMarks = const [], this.mimeType = 'application/octet-stream', this.hash = '', this.size = 0, this.hasCompression = false, this.hasThumbnail = false, @JsonKey(name: "url", fromJson: _nonBlankUrl) this.storageUrl, this.width, this.height, @JsonKey(name: 'blurhash') this.blur, this.usage, this.applicationType}): _fileMeta = fileMeta,_userMeta = userMeta,_sensitiveMarks = sensitiveMarks,super._();
   factory _SnCloudFileReference.fromJson(Map<String, dynamic> json) => _$SnCloudFileReferenceFromJson(json);
 
 @override final  String id;
@@ -1536,7 +1569,7 @@ class _SnCloudFileReference extends SnCloudFileReference {
 @override@JsonKey() final  int size;
 @override@JsonKey() final  bool hasCompression;
 @override@JsonKey() final  bool hasThumbnail;
-@override@JsonKey(name: "url") final  String? storageUrl;
+@override@JsonKey(name: "url", fromJson: _nonBlankUrl) final  String? storageUrl;
 @override final  double? width;
 @override final  double? height;
 @override@JsonKey(name: 'blurhash') final  String? blur;
@@ -1556,16 +1589,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFileReference&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other._fileMeta, _fileMeta)&&const DeepCollectionEquality().equals(other._userMeta, _userMeta)&&const DeepCollectionEquality().equals(other._sensitiveMarks, _sensitiveMarks)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.size, size) || other.size == size)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.blur, blur) || other.blur == blur)&&(identical(other.usage, usage) || other.usage == usage)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnCloudFileReference&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.fileMeta, _fileMeta)&&const DeepCollectionEquality().equals(other.userMeta, _userMeta)&&const DeepCollectionEquality().equals(other.sensitiveMarks, _sensitiveMarks)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.hash, hash) || other.hash == hash)&&(identical(other.size, size) || other.size == size)&&(identical(other.hasCompression, hasCompression) || other.hasCompression == hasCompression)&&(identical(other.hasThumbnail, hasThumbnail) || other.hasThumbnail == hasThumbnail)&&(identical(other.storageUrl, storageUrl) || other.storageUrl == storageUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.blur, blur) || other.blur == blur)&&(identical(other.usage, usage) || other.usage == usage)&&(identical(other.applicationType, applicationType) || other.applicationType == applicationType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,const DeepCollectionEquality().hash(_fileMeta),const DeepCollectionEquality().hash(_userMeta),const DeepCollectionEquality().hash(_sensitiveMarks),mimeType,hash,size,hasCompression,hasThumbnail,storageUrl,width,height,blur,usage,applicationType);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,const DeepCollectionEquality().hash(_fileMeta),const DeepCollectionEquality().hash(_userMeta),const DeepCollectionEquality().hash(_sensitiveMarks),mimeType,hash,size,hasCompression,hasThumbnail,storageUrl,width,height,blur,usage,applicationType);
+}
 
 @override
 String toString() {
-  return 'SnCloudFileReference(id: $id, name: $name, fileMeta: $fileMeta, userMeta: $userMeta, sensitiveMarks: $sensitiveMarks, mimeType: $mimeType, hash: $hash, size: $size, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, storageUrl: $storageUrl, width: $width, height: $height, blur: $blur, usage: $usage, applicationType: $applicationType)';
+    return 'SnCloudFileReference(id: $id, name: $name, fileMeta: $fileMeta, userMeta: $userMeta, sensitiveMarks: $sensitiveMarks, mimeType: $mimeType, hash: $hash, size: $size, hasCompression: $hasCompression, hasThumbnail: $hasThumbnail, storageUrl: $storageUrl, width: $width, height: $height, blur: $blur, usage: $usage, applicationType: $applicationType)';
 }
 
 
@@ -1576,7 +1611,7 @@ abstract mixin class _$SnCloudFileReferenceCopyWith<$Res> implements $SnCloudFil
   factory _$SnCloudFileReferenceCopyWith(_SnCloudFileReference value, $Res Function(_SnCloudFileReference) _then) = __$SnCloudFileReferenceCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<int> sensitiveMarks, String mimeType, String hash, int size, bool hasCompression, bool hasThumbnail,@JsonKey(name: "url") String? storageUrl, double? width, double? height,@JsonKey(name: 'blurhash') String? blur, String? usage, String? applicationType
+ String id, String name, Map<String, dynamic> fileMeta, Map<String, dynamic> userMeta, List<int> sensitiveMarks, String mimeType, String hash, int size, bool hasCompression, bool hasThumbnail,@JsonKey(name: "url", fromJson: _nonBlankUrl) String? storageUrl, double? width, double? height,@JsonKey(name: 'blurhash') String? blur, String? usage, String? applicationType
 });
 
 

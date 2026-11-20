@@ -29,16 +29,21 @@ $SnProgressBadgeRewardDefinitionCopyWith<SnProgressBadgeRewardDefinition> get co
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressBadgeRewardDefinition&&(identical(other.type, type) || other.type == type)&&(identical(other.label, label) || other.label == label)&&(identical(other.caption, caption) || other.caption == caption)&&const DeepCollectionEquality().equals(other.meta, meta));
+  final _this = this as SnProgressBadgeRewardDefinition;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressBadgeRewardDefinition&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.caption, _this.caption) || other.caption == _this.caption)&&const DeepCollectionEquality().equals(other.meta, _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,label,caption,const DeepCollectionEquality().hash(meta));
+int get hashCode {
+  final _this = this as SnProgressBadgeRewardDefinition;
+  return Object.hash(runtimeType,_this.type,_this.label,_this.caption,const DeepCollectionEquality().hash(_this.meta));
+}
 
 @override
 String toString() {
-  return 'SnProgressBadgeRewardDefinition(type: $type, label: $label, caption: $caption, meta: $meta)';
+  final _this = this as SnProgressBadgeRewardDefinition;
+  return 'SnProgressBadgeRewardDefinition(type: ${_this.type}, label: ${_this.label}, caption: ${_this.caption}, meta: ${_this.meta})';
 }
 
 
@@ -236,16 +241,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressBadgeRewardDefinition&&(identical(other.type, type) || other.type == type)&&(identical(other.label, label) || other.label == label)&&(identical(other.caption, caption) || other.caption == caption)&&const DeepCollectionEquality().equals(other._meta, _meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressBadgeRewardDefinition&&(identical(other.type, type) || other.type == type)&&(identical(other.label, label) || other.label == label)&&(identical(other.caption, caption) || other.caption == caption)&&const DeepCollectionEquality().equals(other.meta, _meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,label,caption,const DeepCollectionEquality().hash(_meta));
+int get hashCode {
+    return Object.hash(runtimeType,type,label,caption,const DeepCollectionEquality().hash(_meta));
+}
 
 @override
 String toString() {
-  return 'SnProgressBadgeRewardDefinition(type: $type, label: $label, caption: $caption, meta: $meta)';
+    return 'SnProgressBadgeRewardDefinition(type: $type, label: $label, caption: $caption, meta: $meta)';
 }
 
 
@@ -303,16 +310,21 @@ $SnProgressRewardDefinitionCopyWith<SnProgressRewardDefinition> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressRewardDefinition&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.sourcePoints, sourcePoints) || other.sourcePoints == sourcePoints)&&(identical(other.sourcePointsCurrency, sourcePointsCurrency) || other.sourcePointsCurrency == sourcePointsCurrency)&&(identical(other.badge, badge) || other.badge == badge));
+  final _this = this as SnProgressRewardDefinition;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressRewardDefinition&&(identical(other.experience, _this.experience) || other.experience == _this.experience)&&(identical(other.sourcePoints, _this.sourcePoints) || other.sourcePoints == _this.sourcePoints)&&(identical(other.sourcePointsCurrency, _this.sourcePointsCurrency) || other.sourcePointsCurrency == _this.sourcePointsCurrency)&&(identical(other.badge, _this.badge) || other.badge == _this.badge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,experience,sourcePoints,sourcePointsCurrency,badge);
+int get hashCode {
+  final _this = this as SnProgressRewardDefinition;
+  return Object.hash(runtimeType,_this.experience,_this.sourcePoints,_this.sourcePointsCurrency,_this.badge);
+}
 
 @override
 String toString() {
-  return 'SnProgressRewardDefinition(experience: $experience, sourcePoints: $sourcePoints, sourcePointsCurrency: $sourcePointsCurrency, badge: $badge)';
+  final _this = this as SnProgressRewardDefinition;
+  return 'SnProgressRewardDefinition(experience: ${_this.experience}, sourcePoints: ${_this.sourcePoints}, sourcePointsCurrency: ${_this.sourcePointsCurrency}, badge: ${_this.badge})';
 }
 
 
@@ -514,16 +526,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressRewardDefinition&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.sourcePoints, sourcePoints) || other.sourcePoints == sourcePoints)&&(identical(other.sourcePointsCurrency, sourcePointsCurrency) || other.sourcePointsCurrency == sourcePointsCurrency)&&(identical(other.badge, badge) || other.badge == badge));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressRewardDefinition&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.sourcePoints, sourcePoints) || other.sourcePoints == sourcePoints)&&(identical(other.sourcePointsCurrency, sourcePointsCurrency) || other.sourcePointsCurrency == sourcePointsCurrency)&&(identical(other.badge, badge) || other.badge == badge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,experience,sourcePoints,sourcePointsCurrency,badge);
+int get hashCode {
+    return Object.hash(runtimeType,experience,sourcePoints,sourcePointsCurrency,badge);
+}
 
 @override
 String toString() {
-  return 'SnProgressRewardDefinition(experience: $experience, sourcePoints: $sourcePoints, sourcePointsCurrency: $sourcePointsCurrency, badge: $badge)';
+    return 'SnProgressRewardDefinition(experience: $experience, sourcePoints: $sourcePoints, sourcePointsCurrency: $sourcePointsCurrency, badge: $badge)';
 }
 
 
@@ -593,16 +607,21 @@ $SnQuestScheduleConfigCopyWith<SnQuestScheduleConfig> get copyWith => _$SnQuestS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnQuestScheduleConfig&&(identical(other.repeatability, repeatability) || other.repeatability == repeatability)&&const DeepCollectionEquality().equals(other.activeDaysOfWeek, activeDaysOfWeek));
+  final _this = this as SnQuestScheduleConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnQuestScheduleConfig&&(identical(other.repeatability, _this.repeatability) || other.repeatability == _this.repeatability)&&const DeepCollectionEquality().equals(other.activeDaysOfWeek, _this.activeDaysOfWeek));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,repeatability,const DeepCollectionEquality().hash(activeDaysOfWeek));
+int get hashCode {
+  final _this = this as SnQuestScheduleConfig;
+  return Object.hash(runtimeType,_this.repeatability,const DeepCollectionEquality().hash(_this.activeDaysOfWeek));
+}
 
 @override
 String toString() {
-  return 'SnQuestScheduleConfig(repeatability: $repeatability, activeDaysOfWeek: $activeDaysOfWeek)';
+  final _this = this as SnQuestScheduleConfig;
+  return 'SnQuestScheduleConfig(repeatability: ${_this.repeatability}, activeDaysOfWeek: ${_this.activeDaysOfWeek})';
 }
 
 
@@ -794,16 +813,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnQuestScheduleConfig&&(identical(other.repeatability, repeatability) || other.repeatability == repeatability)&&const DeepCollectionEquality().equals(other._activeDaysOfWeek, _activeDaysOfWeek));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnQuestScheduleConfig&&(identical(other.repeatability, repeatability) || other.repeatability == repeatability)&&const DeepCollectionEquality().equals(other.activeDaysOfWeek, _activeDaysOfWeek));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,repeatability,const DeepCollectionEquality().hash(_activeDaysOfWeek));
+int get hashCode {
+    return Object.hash(runtimeType,repeatability,const DeepCollectionEquality().hash(_activeDaysOfWeek));
+}
 
 @override
 String toString() {
-  return 'SnQuestScheduleConfig(repeatability: $repeatability, activeDaysOfWeek: $activeDaysOfWeek)';
+    return 'SnQuestScheduleConfig(repeatability: $repeatability, activeDaysOfWeek: $activeDaysOfWeek)';
 }
 
 
@@ -859,16 +880,21 @@ $SnSeriesStageCopyWith<SnSeriesStage> get copyWith => _$SnSeriesStageCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSeriesStage&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+  final _this = this as SnSeriesStage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSeriesStage&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.seriesOrder, _this.seriesOrder) || other.seriesOrder == _this.seriesOrder)&&(identical(other.targetCount, _this.targetCount) || other.targetCount == _this.targetCount)&&(identical(other.isCompleted, _this.isCompleted) || other.isCompleted == _this.isCompleted)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,title,seriesOrder,targetCount,isCompleted,completedAt);
+int get hashCode {
+  final _this = this as SnSeriesStage;
+  return Object.hash(runtimeType,_this.identifier,_this.title,_this.seriesOrder,_this.targetCount,_this.isCompleted,_this.completedAt);
+}
 
 @override
 String toString() {
-  return 'SnSeriesStage(identifier: $identifier, title: $title, seriesOrder: $seriesOrder, targetCount: $targetCount, isCompleted: $isCompleted, completedAt: $completedAt)';
+  final _this = this as SnSeriesStage;
+  return 'SnSeriesStage(identifier: ${_this.identifier}, title: ${_this.title}, seriesOrder: ${_this.seriesOrder}, targetCount: ${_this.targetCount}, isCompleted: ${_this.isCompleted}, completedAt: ${_this.completedAt})';
 }
 
 
@@ -1062,16 +1088,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSeriesStage&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSeriesStage&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,title,seriesOrder,targetCount,isCompleted,completedAt);
+int get hashCode {
+    return Object.hash(runtimeType,identifier,title,seriesOrder,targetCount,isCompleted,completedAt);
+}
 
 @override
 String toString() {
-  return 'SnSeriesStage(identifier: $identifier, title: $title, seriesOrder: $seriesOrder, targetCount: $targetCount, isCompleted: $isCompleted, completedAt: $completedAt)';
+    return 'SnSeriesStage(identifier: $identifier, title: $title, seriesOrder: $seriesOrder, targetCount: $targetCount, isCompleted: $isCompleted, completedAt: $completedAt)';
 }
 
 
@@ -1131,16 +1159,21 @@ $SnAchievementStatsCopyWith<SnAchievementStats> get copyWith => _$SnAchievementS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAchievementStats&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount)&&(identical(other.hiddenTotalCount, hiddenTotalCount) || other.hiddenTotalCount == hiddenTotalCount)&&(identical(other.hiddenCompletedCount, hiddenCompletedCount) || other.hiddenCompletedCount == hiddenCompletedCount)&&(identical(other.completionPercentage, completionPercentage) || other.completionPercentage == completionPercentage));
+  final _this = this as SnAchievementStats;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAchievementStats&&(identical(other.totalCount, _this.totalCount) || other.totalCount == _this.totalCount)&&(identical(other.completedCount, _this.completedCount) || other.completedCount == _this.completedCount)&&(identical(other.hiddenTotalCount, _this.hiddenTotalCount) || other.hiddenTotalCount == _this.hiddenTotalCount)&&(identical(other.hiddenCompletedCount, _this.hiddenCompletedCount) || other.hiddenCompletedCount == _this.hiddenCompletedCount)&&(identical(other.completionPercentage, _this.completionPercentage) || other.completionPercentage == _this.completionPercentage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCount,completedCount,hiddenTotalCount,hiddenCompletedCount,completionPercentage);
+int get hashCode {
+  final _this = this as SnAchievementStats;
+  return Object.hash(runtimeType,_this.totalCount,_this.completedCount,_this.hiddenTotalCount,_this.hiddenCompletedCount,_this.completionPercentage);
+}
 
 @override
 String toString() {
-  return 'SnAchievementStats(totalCount: $totalCount, completedCount: $completedCount, hiddenTotalCount: $hiddenTotalCount, hiddenCompletedCount: $hiddenCompletedCount, completionPercentage: $completionPercentage)';
+  final _this = this as SnAchievementStats;
+  return 'SnAchievementStats(totalCount: ${_this.totalCount}, completedCount: ${_this.completedCount}, hiddenTotalCount: ${_this.hiddenTotalCount}, hiddenCompletedCount: ${_this.hiddenCompletedCount}, completionPercentage: ${_this.completionPercentage})';
 }
 
 
@@ -1332,16 +1365,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAchievementStats&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount)&&(identical(other.hiddenTotalCount, hiddenTotalCount) || other.hiddenTotalCount == hiddenTotalCount)&&(identical(other.hiddenCompletedCount, hiddenCompletedCount) || other.hiddenCompletedCount == hiddenCompletedCount)&&(identical(other.completionPercentage, completionPercentage) || other.completionPercentage == completionPercentage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAchievementStats&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount)&&(identical(other.completedCount, completedCount) || other.completedCount == completedCount)&&(identical(other.hiddenTotalCount, hiddenTotalCount) || other.hiddenTotalCount == hiddenTotalCount)&&(identical(other.hiddenCompletedCount, hiddenCompletedCount) || other.hiddenCompletedCount == hiddenCompletedCount)&&(identical(other.completionPercentage, completionPercentage) || other.completionPercentage == completionPercentage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCount,completedCount,hiddenTotalCount,hiddenCompletedCount,completionPercentage);
+int get hashCode {
+    return Object.hash(runtimeType,totalCount,completedCount,hiddenTotalCount,hiddenCompletedCount,completionPercentage);
+}
 
 @override
 String toString() {
-  return 'SnAchievementStats(totalCount: $totalCount, completedCount: $completedCount, hiddenTotalCount: $hiddenTotalCount, hiddenCompletedCount: $hiddenCompletedCount, completionPercentage: $completionPercentage)';
+    return 'SnAchievementStats(totalCount: $totalCount, completedCount: $completedCount, hiddenTotalCount: $hiddenTotalCount, hiddenCompletedCount: $hiddenCompletedCount, completionPercentage: $completionPercentage)';
 }
 
 
@@ -1400,16 +1435,21 @@ $SnAchievementStateCopyWith<SnAchievementState> get copyWith => _$SnAchievementS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAchievementState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, seriesStages));
+  final _this = this as SnAchievementState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAchievementState&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.summary, _this.summary) || other.summary == _this.summary)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder)&&(identical(other.hidden, _this.hidden) || other.hidden == _this.hidden)&&(identical(other.isEnabled, _this.isEnabled) || other.isEnabled == _this.isEnabled)&&(identical(other.targetCount, _this.targetCount) || other.targetCount == _this.targetCount)&&(identical(other.progressCount, _this.progressCount) || other.progressCount == _this.progressCount)&&(identical(other.isCompleted, _this.isCompleted) || other.isCompleted == _this.isCompleted)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt)&&(identical(other.reward, _this.reward) || other.reward == _this.reward)&&(identical(other.seriesIdentifier, _this.seriesIdentifier) || other.seriesIdentifier == _this.seriesIdentifier)&&(identical(other.seriesTitle, _this.seriesTitle) || other.seriesTitle == _this.seriesTitle)&&(identical(other.seriesOrder, _this.seriesOrder) || other.seriesOrder == _this.seriesOrder)&&(identical(other.seriesTotalSteps, _this.seriesTotalSteps) || other.seriesTotalSteps == _this.seriesTotalSteps)&&(identical(other.seriesCompletedSteps, _this.seriesCompletedSteps) || other.seriesCompletedSteps == _this.seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, _this.seriesStages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(seriesStages));
+int get hashCode {
+  final _this = this as SnAchievementState;
+  return Object.hash(runtimeType,_this.identifier,_this.title,_this.summary,_this.icon,_this.sortOrder,_this.hidden,_this.isEnabled,_this.targetCount,_this.progressCount,_this.isCompleted,_this.completedAt,_this.reward,_this.seriesIdentifier,_this.seriesTitle,_this.seriesOrder,_this.seriesTotalSteps,_this.seriesCompletedSteps,const DeepCollectionEquality().hash(_this.seriesStages));
+}
 
 @override
 String toString() {
-  return 'SnAchievementState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
+  final _this = this as SnAchievementState;
+  return 'SnAchievementState(identifier: ${_this.identifier}, title: ${_this.title}, summary: ${_this.summary}, icon: ${_this.icon}, sortOrder: ${_this.sortOrder}, hidden: ${_this.hidden}, isEnabled: ${_this.isEnabled}, targetCount: ${_this.targetCount}, progressCount: ${_this.progressCount}, isCompleted: ${_this.isCompleted}, completedAt: ${_this.completedAt}, reward: ${_this.reward}, seriesIdentifier: ${_this.seriesIdentifier}, seriesTitle: ${_this.seriesTitle}, seriesOrder: ${_this.seriesOrder}, seriesTotalSteps: ${_this.seriesTotalSteps}, seriesCompletedSteps: ${_this.seriesCompletedSteps}, seriesStages: ${_this.seriesStages})';
 }
 
 
@@ -1645,16 +1685,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAchievementState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other._seriesStages, _seriesStages));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAchievementState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, _seriesStages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(_seriesStages));
+int get hashCode {
+    return Object.hash(runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(_seriesStages));
+}
 
 @override
 String toString() {
-  return 'SnAchievementState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
+    return 'SnAchievementState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
 }
 
 
@@ -1738,16 +1780,21 @@ $SnQuestStateCopyWith<SnQuestState> get copyWith => _$SnQuestStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnQuestState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.nextResetAt, nextResetAt) || other.nextResetAt == nextResetAt)&&(identical(other.schedule, schedule) || other.schedule == schedule)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, seriesStages));
+  final _this = this as SnQuestState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnQuestState&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.summary, _this.summary) || other.summary == _this.summary)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder)&&(identical(other.hidden, _this.hidden) || other.hidden == _this.hidden)&&(identical(other.isEnabled, _this.isEnabled) || other.isEnabled == _this.isEnabled)&&(identical(other.targetCount, _this.targetCount) || other.targetCount == _this.targetCount)&&(identical(other.progressCount, _this.progressCount) || other.progressCount == _this.progressCount)&&(identical(other.isCompleted, _this.isCompleted) || other.isCompleted == _this.isCompleted)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt)&&(identical(other.periodKey, _this.periodKey) || other.periodKey == _this.periodKey)&&(identical(other.nextResetAt, _this.nextResetAt) || other.nextResetAt == _this.nextResetAt)&&(identical(other.schedule, _this.schedule) || other.schedule == _this.schedule)&&(identical(other.reward, _this.reward) || other.reward == _this.reward)&&(identical(other.seriesIdentifier, _this.seriesIdentifier) || other.seriesIdentifier == _this.seriesIdentifier)&&(identical(other.seriesTitle, _this.seriesTitle) || other.seriesTitle == _this.seriesTitle)&&(identical(other.seriesOrder, _this.seriesOrder) || other.seriesOrder == _this.seriesOrder)&&(identical(other.seriesTotalSteps, _this.seriesTotalSteps) || other.seriesTotalSteps == _this.seriesTotalSteps)&&(identical(other.seriesCompletedSteps, _this.seriesCompletedSteps) || other.seriesCompletedSteps == _this.seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, _this.seriesStages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,periodKey,nextResetAt,schedule,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(seriesStages)]);
+int get hashCode {
+  final _this = this as SnQuestState;
+  return Object.hashAll([runtimeType,_this.identifier,_this.title,_this.summary,_this.icon,_this.sortOrder,_this.hidden,_this.isEnabled,_this.targetCount,_this.progressCount,_this.isCompleted,_this.completedAt,_this.periodKey,_this.nextResetAt,_this.schedule,_this.reward,_this.seriesIdentifier,_this.seriesTitle,_this.seriesOrder,_this.seriesTotalSteps,_this.seriesCompletedSteps,const DeepCollectionEquality().hash(_this.seriesStages)]);
+}
 
 @override
 String toString() {
-  return 'SnQuestState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, periodKey: $periodKey, nextResetAt: $nextResetAt, schedule: $schedule, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
+  final _this = this as SnQuestState;
+  return 'SnQuestState(identifier: ${_this.identifier}, title: ${_this.title}, summary: ${_this.summary}, icon: ${_this.icon}, sortOrder: ${_this.sortOrder}, hidden: ${_this.hidden}, isEnabled: ${_this.isEnabled}, targetCount: ${_this.targetCount}, progressCount: ${_this.progressCount}, isCompleted: ${_this.isCompleted}, completedAt: ${_this.completedAt}, periodKey: ${_this.periodKey}, nextResetAt: ${_this.nextResetAt}, schedule: ${_this.schedule}, reward: ${_this.reward}, seriesIdentifier: ${_this.seriesIdentifier}, seriesTitle: ${_this.seriesTitle}, seriesOrder: ${_this.seriesOrder}, seriesTotalSteps: ${_this.seriesTotalSteps}, seriesCompletedSteps: ${_this.seriesCompletedSteps}, seriesStages: ${_this.seriesStages})';
 }
 
 
@@ -2001,16 +2048,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnQuestState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.nextResetAt, nextResetAt) || other.nextResetAt == nextResetAt)&&(identical(other.schedule, schedule) || other.schedule == schedule)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other._seriesStages, _seriesStages));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnQuestState&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.targetCount, targetCount) || other.targetCount == targetCount)&&(identical(other.progressCount, progressCount) || other.progressCount == progressCount)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.nextResetAt, nextResetAt) || other.nextResetAt == nextResetAt)&&(identical(other.schedule, schedule) || other.schedule == schedule)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.seriesIdentifier, seriesIdentifier) || other.seriesIdentifier == seriesIdentifier)&&(identical(other.seriesTitle, seriesTitle) || other.seriesTitle == seriesTitle)&&(identical(other.seriesOrder, seriesOrder) || other.seriesOrder == seriesOrder)&&(identical(other.seriesTotalSteps, seriesTotalSteps) || other.seriesTotalSteps == seriesTotalSteps)&&(identical(other.seriesCompletedSteps, seriesCompletedSteps) || other.seriesCompletedSteps == seriesCompletedSteps)&&const DeepCollectionEquality().equals(other.seriesStages, _seriesStages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,periodKey,nextResetAt,schedule,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(_seriesStages)]);
+int get hashCode {
+    return Object.hashAll([runtimeType,identifier,title,summary,icon,sortOrder,hidden,isEnabled,targetCount,progressCount,isCompleted,completedAt,periodKey,nextResetAt,schedule,reward,seriesIdentifier,seriesTitle,seriesOrder,seriesTotalSteps,seriesCompletedSteps,const DeepCollectionEquality().hash(_seriesStages)]);
+}
 
 @override
 String toString() {
-  return 'SnQuestState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, periodKey: $periodKey, nextResetAt: $nextResetAt, schedule: $schedule, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
+    return 'SnQuestState(identifier: $identifier, title: $title, summary: $summary, icon: $icon, sortOrder: $sortOrder, hidden: $hidden, isEnabled: $isEnabled, targetCount: $targetCount, progressCount: $progressCount, isCompleted: $isCompleted, completedAt: $completedAt, periodKey: $periodKey, nextResetAt: $nextResetAt, schedule: $schedule, reward: $reward, seriesIdentifier: $seriesIdentifier, seriesTitle: $seriesTitle, seriesOrder: $seriesOrder, seriesTotalSteps: $seriesTotalSteps, seriesCompletedSteps: $seriesCompletedSteps, seriesStages: $seriesStages)';
 }
 
 
@@ -2109,16 +2158,21 @@ $SnProgressRewardGrantCopyWith<SnProgressRewardGrant> get copyWith => _$SnProgre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressRewardGrant&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.definitionType, definitionType) || other.definitionType == definitionType)&&(identical(other.definitionIdentifier, definitionIdentifier) || other.definitionIdentifier == definitionIdentifier)&&(identical(other.definitionTitle, definitionTitle) || other.definitionTitle == definitionTitle)&&(identical(other.rewardToken, rewardToken) || other.rewardToken == rewardToken)&&(identical(other.sourceEventId, sourceEventId) || other.sourceEventId == sourceEventId)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.badgeGrantedAt, badgeGrantedAt) || other.badgeGrantedAt == badgeGrantedAt)&&(identical(other.experienceGrantedAt, experienceGrantedAt) || other.experienceGrantedAt == experienceGrantedAt)&&(identical(other.sourcePointsGrantedAt, sourcePointsGrantedAt) || other.sourcePointsGrantedAt == sourcePointsGrantedAt)&&(identical(other.notificationSentAt, notificationSentAt) || other.notificationSentAt == notificationSentAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnProgressRewardGrant;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressRewardGrant&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.definitionType, _this.definitionType) || other.definitionType == _this.definitionType)&&(identical(other.definitionIdentifier, _this.definitionIdentifier) || other.definitionIdentifier == _this.definitionIdentifier)&&(identical(other.definitionTitle, _this.definitionTitle) || other.definitionTitle == _this.definitionTitle)&&(identical(other.rewardToken, _this.rewardToken) || other.rewardToken == _this.rewardToken)&&(identical(other.sourceEventId, _this.sourceEventId) || other.sourceEventId == _this.sourceEventId)&&(identical(other.reward, _this.reward) || other.reward == _this.reward)&&(identical(other.periodKey, _this.periodKey) || other.periodKey == _this.periodKey)&&(identical(other.badgeGrantedAt, _this.badgeGrantedAt) || other.badgeGrantedAt == _this.badgeGrantedAt)&&(identical(other.experienceGrantedAt, _this.experienceGrantedAt) || other.experienceGrantedAt == _this.experienceGrantedAt)&&(identical(other.sourcePointsGrantedAt, _this.sourcePointsGrantedAt) || other.sourcePointsGrantedAt == _this.sourcePointsGrantedAt)&&(identical(other.notificationSentAt, _this.notificationSentAt) || other.notificationSentAt == _this.notificationSentAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,definitionType,definitionIdentifier,definitionTitle,rewardToken,sourceEventId,reward,periodKey,badgeGrantedAt,experienceGrantedAt,sourcePointsGrantedAt,notificationSentAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnProgressRewardGrant;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.definitionType,_this.definitionIdentifier,_this.definitionTitle,_this.rewardToken,_this.sourceEventId,_this.reward,_this.periodKey,_this.badgeGrantedAt,_this.experienceGrantedAt,_this.sourcePointsGrantedAt,_this.notificationSentAt,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnProgressRewardGrant(id: $id, accountId: $accountId, definitionType: $definitionType, definitionIdentifier: $definitionIdentifier, definitionTitle: $definitionTitle, rewardToken: $rewardToken, sourceEventId: $sourceEventId, reward: $reward, periodKey: $periodKey, badgeGrantedAt: $badgeGrantedAt, experienceGrantedAt: $experienceGrantedAt, sourcePointsGrantedAt: $sourcePointsGrantedAt, notificationSentAt: $notificationSentAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnProgressRewardGrant;
+  return 'SnProgressRewardGrant(id: ${_this.id}, accountId: ${_this.accountId}, definitionType: ${_this.definitionType}, definitionIdentifier: ${_this.definitionIdentifier}, definitionTitle: ${_this.definitionTitle}, rewardToken: ${_this.rewardToken}, sourceEventId: ${_this.sourceEventId}, reward: ${_this.reward}, periodKey: ${_this.periodKey}, badgeGrantedAt: ${_this.badgeGrantedAt}, experienceGrantedAt: ${_this.experienceGrantedAt}, sourcePointsGrantedAt: ${_this.sourcePointsGrantedAt}, notificationSentAt: ${_this.notificationSentAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -2344,16 +2398,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressRewardGrant&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.definitionType, definitionType) || other.definitionType == definitionType)&&(identical(other.definitionIdentifier, definitionIdentifier) || other.definitionIdentifier == definitionIdentifier)&&(identical(other.definitionTitle, definitionTitle) || other.definitionTitle == definitionTitle)&&(identical(other.rewardToken, rewardToken) || other.rewardToken == rewardToken)&&(identical(other.sourceEventId, sourceEventId) || other.sourceEventId == sourceEventId)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.badgeGrantedAt, badgeGrantedAt) || other.badgeGrantedAt == badgeGrantedAt)&&(identical(other.experienceGrantedAt, experienceGrantedAt) || other.experienceGrantedAt == experienceGrantedAt)&&(identical(other.sourcePointsGrantedAt, sourcePointsGrantedAt) || other.sourcePointsGrantedAt == sourcePointsGrantedAt)&&(identical(other.notificationSentAt, notificationSentAt) || other.notificationSentAt == notificationSentAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressRewardGrant&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.definitionType, definitionType) || other.definitionType == definitionType)&&(identical(other.definitionIdentifier, definitionIdentifier) || other.definitionIdentifier == definitionIdentifier)&&(identical(other.definitionTitle, definitionTitle) || other.definitionTitle == definitionTitle)&&(identical(other.rewardToken, rewardToken) || other.rewardToken == rewardToken)&&(identical(other.sourceEventId, sourceEventId) || other.sourceEventId == sourceEventId)&&(identical(other.reward, reward) || other.reward == reward)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.badgeGrantedAt, badgeGrantedAt) || other.badgeGrantedAt == badgeGrantedAt)&&(identical(other.experienceGrantedAt, experienceGrantedAt) || other.experienceGrantedAt == experienceGrantedAt)&&(identical(other.sourcePointsGrantedAt, sourcePointsGrantedAt) || other.sourcePointsGrantedAt == sourcePointsGrantedAt)&&(identical(other.notificationSentAt, notificationSentAt) || other.notificationSentAt == notificationSentAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,definitionType,definitionIdentifier,definitionTitle,rewardToken,sourceEventId,reward,periodKey,badgeGrantedAt,experienceGrantedAt,sourcePointsGrantedAt,notificationSentAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,definitionType,definitionIdentifier,definitionTitle,rewardToken,sourceEventId,reward,periodKey,badgeGrantedAt,experienceGrantedAt,sourcePointsGrantedAt,notificationSentAt,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnProgressRewardGrant(id: $id, accountId: $accountId, definitionType: $definitionType, definitionIdentifier: $definitionIdentifier, definitionTitle: $definitionTitle, rewardToken: $rewardToken, sourceEventId: $sourceEventId, reward: $reward, periodKey: $periodKey, badgeGrantedAt: $badgeGrantedAt, experienceGrantedAt: $experienceGrantedAt, sourcePointsGrantedAt: $sourcePointsGrantedAt, notificationSentAt: $notificationSentAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnProgressRewardGrant(id: $id, accountId: $accountId, definitionType: $definitionType, definitionIdentifier: $definitionIdentifier, definitionTitle: $definitionTitle, rewardToken: $rewardToken, sourceEventId: $sourceEventId, reward: $reward, periodKey: $periodKey, badgeGrantedAt: $badgeGrantedAt, experienceGrantedAt: $experienceGrantedAt, sourcePointsGrantedAt: $sourcePointsGrantedAt, notificationSentAt: $notificationSentAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -2435,16 +2491,21 @@ $SnProgressionCompletedPacketCopyWith<SnProgressionCompletedPacket> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressionCompletedPacket&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.reward, reward) || other.reward == reward));
+  final _this = this as SnProgressionCompletedPacket;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProgressionCompletedPacket&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.periodKey, _this.periodKey) || other.periodKey == _this.periodKey)&&(identical(other.reward, _this.reward) || other.reward == _this.reward));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,identifier,title,periodKey,reward);
+int get hashCode {
+  final _this = this as SnProgressionCompletedPacket;
+  return Object.hash(runtimeType,_this.kind,_this.identifier,_this.title,_this.periodKey,_this.reward);
+}
 
 @override
 String toString() {
-  return 'SnProgressionCompletedPacket(kind: $kind, identifier: $identifier, title: $title, periodKey: $periodKey, reward: $reward)';
+  final _this = this as SnProgressionCompletedPacket;
+  return 'SnProgressionCompletedPacket(kind: ${_this.kind}, identifier: ${_this.identifier}, title: ${_this.title}, periodKey: ${_this.periodKey}, reward: ${_this.reward})';
 }
 
 
@@ -2648,16 +2709,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressionCompletedPacket&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.reward, reward) || other.reward == reward));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProgressionCompletedPacket&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.title, title) || other.title == title)&&(identical(other.periodKey, periodKey) || other.periodKey == periodKey)&&(identical(other.reward, reward) || other.reward == reward));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,identifier,title,periodKey,reward);
+int get hashCode {
+    return Object.hash(runtimeType,kind,identifier,title,periodKey,reward);
+}
 
 @override
 String toString() {
-  return 'SnProgressionCompletedPacket(kind: $kind, identifier: $identifier, title: $title, periodKey: $periodKey, reward: $reward)';
+    return 'SnProgressionCompletedPacket(kind: $kind, identifier: $identifier, title: $title, periodKey: $periodKey, reward: $reward)';
 }
 
 

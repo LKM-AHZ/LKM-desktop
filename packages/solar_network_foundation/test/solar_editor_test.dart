@@ -126,5 +126,43 @@ void main() {
       expect(out, contains('@bob'));
       expect(out, contains('@carol'));
     });
+
+    test('blocks are separated by a blank line', () {
+      // `---` directly under a paragraph is a setext heading underline, so a
+      // missing blank line silently turns the block above into a heading.
+      const src = 'paragraph\n\n---\n\nafter';
+      final out = solarDocumentToMarkdown(solarMarkdownToDocument(src));
+      expect(out, src);
+      expect(out.contains('paragraph\n---'), isFalse);
+    });
+
+    test('a divider after a heading does not swallow it', () {
+      const src = '# Title\n\n---\n\nbody';
+      expect(solarDocumentToMarkdown(solarMarkdownToDocument(src)), src);
+    });
+
+    test('consecutive list items stay one tight list', () {
+      final out = solarDocumentToMarkdown(
+        solarMarkdownToDocument('- a\n- b\n- c'),
+      );
+      // Tight: no blank lines between items, so markdown reads them as one
+      // list instead of three separate ones.
+      expect(out.split('\n').where((l) => l.trim().isEmpty), isEmpty);
+      expect(out, contains('* a'));
+      expect(out, contains('* b'));
+    });
+
+    test('a list after a paragraph keeps its blank line', () {
+      final out = solarDocumentToMarkdown(
+        solarMarkdownToDocument('intro\n\n- a\n- b'),
+      );
+      expect(out, startsWith('intro\n\n'));
+    });
+
+    test('quote and image blocks stay separated', () {
+      const src = '> quoted\n\n![alt](solian://files/1)';
+      final out = solarDocumentToMarkdown(solarMarkdownToDocument(src));
+      expect(out, contains('> quoted\n\n![]'));
+    });
   });
 }

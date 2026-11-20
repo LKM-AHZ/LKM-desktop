@@ -29,16 +29,21 @@ $SnFilePoolCopyWith<SnFilePool> get copyWith => _$SnFilePoolCopyWithImpl<SnFileP
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePool&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.storageConfig, storageConfig)&&const DeepCollectionEquality().equals(other.billingConfig, billingConfig)&&const DeepCollectionEquality().equals(other.policyConfig, policyConfig)&&(identical(other.isHidden, isHidden) || other.isHidden == isHidden)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnFilePool;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePool&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&const DeepCollectionEquality().equals(other.storageConfig, _this.storageConfig)&&const DeepCollectionEquality().equals(other.billingConfig, _this.billingConfig)&&const DeepCollectionEquality().equals(other.policyConfig, _this.policyConfig)&&(identical(other.isHidden, _this.isHidden) || other.isHidden == _this.isHidden)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.resourceIdentifier, _this.resourceIdentifier) || other.resourceIdentifier == _this.resourceIdentifier)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(storageConfig),const DeepCollectionEquality().hash(billingConfig),const DeepCollectionEquality().hash(policyConfig),isHidden,accountId,resourceIdentifier,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnFilePool;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.description,const DeepCollectionEquality().hash(_this.storageConfig),const DeepCollectionEquality().hash(_this.billingConfig),const DeepCollectionEquality().hash(_this.policyConfig),_this.isHidden,_this.accountId,_this.resourceIdentifier,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFilePool(id: $id, name: $name, description: $description, storageConfig: $storageConfig, billingConfig: $billingConfig, policyConfig: $policyConfig, isHidden: $isHidden, accountId: $accountId, resourceIdentifier: $resourceIdentifier, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnFilePool;
+  return 'SnFilePool(id: ${_this.id}, name: ${_this.name}, description: ${_this.description}, storageConfig: ${_this.storageConfig}, billingConfig: ${_this.billingConfig}, policyConfig: ${_this.policyConfig}, isHidden: ${_this.isHidden}, accountId: ${_this.accountId}, resourceIdentifier: ${_this.resourceIdentifier}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -268,16 +273,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePool&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._storageConfig, _storageConfig)&&const DeepCollectionEquality().equals(other._billingConfig, _billingConfig)&&const DeepCollectionEquality().equals(other._policyConfig, _policyConfig)&&(identical(other.isHidden, isHidden) || other.isHidden == isHidden)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePool&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.storageConfig, _storageConfig)&&const DeepCollectionEquality().equals(other.billingConfig, _billingConfig)&&const DeepCollectionEquality().equals(other.policyConfig, _policyConfig)&&(identical(other.isHidden, isHidden) || other.isHidden == isHidden)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(_storageConfig),const DeepCollectionEquality().hash(_billingConfig),const DeepCollectionEquality().hash(_policyConfig),isHidden,accountId,resourceIdentifier,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(_storageConfig),const DeepCollectionEquality().hash(_billingConfig),const DeepCollectionEquality().hash(_policyConfig),isHidden,accountId,resourceIdentifier,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFilePool(id: $id, name: $name, description: $description, storageConfig: $storageConfig, billingConfig: $billingConfig, policyConfig: $policyConfig, isHidden: $isHidden, accountId: $accountId, resourceIdentifier: $resourceIdentifier, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnFilePool(id: $id, name: $name, description: $description, storageConfig: $storageConfig, billingConfig: $billingConfig, policyConfig: $policyConfig, isHidden: $isHidden, accountId: $accountId, resourceIdentifier: $resourceIdentifier, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

@@ -29,16 +29,21 @@ $SnRealmCopyWith<SnRealm> get copyWith => _$SnRealmCopyWithImpl<SnRealm>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealm&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.verifiedAs, verifiedAs) || other.verifiedAs == verifiedAs)&&(identical(other.verifiedAt, verifiedAt) || other.verifiedAt == verifiedAt)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.boostPoints, boostPoints) || other.boostPoints == boostPoints)&&(identical(other.boostLevel, boostLevel) || other.boostLevel == boostLevel));
+  final _this = this as SnRealm;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealm&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.verifiedAs, _this.verifiedAs) || other.verifiedAs == _this.verifiedAs)&&(identical(other.verifiedAt, _this.verifiedAt) || other.verifiedAt == _this.verifiedAt)&&(identical(other.isCommunity, _this.isCommunity) || other.isCommunity == _this.isCommunity)&&(identical(other.isPublic, _this.isPublic) || other.isPublic == _this.isPublic)&&(identical(other.picture, _this.picture) || other.picture == _this.picture)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.boostPoints, _this.boostPoints) || other.boostPoints == _this.boostPoints)&&(identical(other.boostLevel, _this.boostLevel) || other.boostLevel == _this.boostLevel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,verifiedAs,verifiedAt,isCommunity,isPublic,picture,background,accountId,createdAt,updatedAt,deletedAt,boostPoints,boostLevel);
+int get hashCode {
+  final _this = this as SnRealm;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.name,_this.description,_this.verifiedAs,_this.verifiedAt,_this.isCommunity,_this.isPublic,_this.picture,_this.background,_this.accountId,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.boostPoints,_this.boostLevel);
+}
 
 @override
 String toString() {
-  return 'SnRealm(id: $id, slug: $slug, name: $name, description: $description, verifiedAs: $verifiedAs, verifiedAt: $verifiedAt, isCommunity: $isCommunity, isPublic: $isPublic, picture: $picture, background: $background, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, boostPoints: $boostPoints, boostLevel: $boostLevel)';
+  final _this = this as SnRealm;
+  return 'SnRealm(id: ${_this.id}, slug: ${_this.slug}, name: ${_this.name}, description: ${_this.description}, verifiedAs: ${_this.verifiedAs}, verifiedAt: ${_this.verifiedAt}, isCommunity: ${_this.isCommunity}, isPublic: ${_this.isPublic}, picture: ${_this.picture}, background: ${_this.background}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, boostPoints: ${_this.boostPoints}, boostLevel: ${_this.boostLevel})';
 }
 
 
@@ -276,16 +281,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealm&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.verifiedAs, verifiedAs) || other.verifiedAs == verifiedAs)&&(identical(other.verifiedAt, verifiedAt) || other.verifiedAt == verifiedAt)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.boostPoints, boostPoints) || other.boostPoints == boostPoints)&&(identical(other.boostLevel, boostLevel) || other.boostLevel == boostLevel));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealm&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.verifiedAs, verifiedAs) || other.verifiedAs == verifiedAs)&&(identical(other.verifiedAt, verifiedAt) || other.verifiedAt == verifiedAt)&&(identical(other.isCommunity, isCommunity) || other.isCommunity == isCommunity)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.background, background) || other.background == background)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.boostPoints, boostPoints) || other.boostPoints == boostPoints)&&(identical(other.boostLevel, boostLevel) || other.boostLevel == boostLevel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,verifiedAs,verifiedAt,isCommunity,isPublic,picture,background,accountId,createdAt,updatedAt,deletedAt,boostPoints,boostLevel);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,name,description,verifiedAs,verifiedAt,isCommunity,isPublic,picture,background,accountId,createdAt,updatedAt,deletedAt,boostPoints,boostLevel);
+}
 
 @override
 String toString() {
-  return 'SnRealm(id: $id, slug: $slug, name: $name, description: $description, verifiedAs: $verifiedAs, verifiedAt: $verifiedAt, isCommunity: $isCommunity, isPublic: $isPublic, picture: $picture, background: $background, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, boostPoints: $boostPoints, boostLevel: $boostLevel)';
+    return 'SnRealm(id: $id, slug: $slug, name: $name, description: $description, verifiedAs: $verifiedAs, verifiedAt: $verifiedAt, isCommunity: $isCommunity, isPublic: $isPublic, picture: $picture, background: $background, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, boostPoints: $boostPoints, boostLevel: $boostLevel)';
 }
 
 
@@ -379,16 +386,21 @@ $SnRealmMemberCopyWith<SnRealmMember> get copyWith => _$SnRealmMemberCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmMember&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.role, role) || other.role == role)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.labelId, labelId) || other.labelId == labelId)&&(identical(other.label, label) || other.label == label)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.level, level) || other.level == level)&&(identical(other.levelingProgress, levelingProgress) || other.levelingProgress == levelingProgress));
+  final _this = this as SnRealmMember;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmMember&&(identical(other.realmId, _this.realmId) || other.realmId == _this.realmId)&&(identical(other.realm, _this.realm) || other.realm == _this.realm)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.nick, _this.nick) || other.nick == _this.nick)&&(identical(other.bio, _this.bio) || other.bio == _this.bio)&&(identical(other.labelId, _this.labelId) || other.labelId == _this.labelId)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.experience, _this.experience) || other.experience == _this.experience)&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.levelingProgress, _this.levelingProgress) || other.levelingProgress == _this.levelingProgress));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,realmId,realm,accountId,account,role,joinedAt,createdAt,updatedAt,deletedAt,status,nick,bio,labelId,label,experience,level,levelingProgress);
+int get hashCode {
+  final _this = this as SnRealmMember;
+  return Object.hash(runtimeType,_this.realmId,_this.realm,_this.accountId,_this.account,_this.role,_this.joinedAt,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.status,_this.nick,_this.bio,_this.labelId,_this.label,_this.experience,_this.level,_this.levelingProgress);
+}
 
 @override
 String toString() {
-  return 'SnRealmMember(realmId: $realmId, realm: $realm, accountId: $accountId, account: $account, role: $role, joinedAt: $joinedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, status: $status, nick: $nick, bio: $bio, labelId: $labelId, label: $label, experience: $experience, level: $level, levelingProgress: $levelingProgress)';
+  final _this = this as SnRealmMember;
+  return 'SnRealmMember(realmId: ${_this.realmId}, realm: ${_this.realm}, accountId: ${_this.accountId}, account: ${_this.account}, role: ${_this.role}, joinedAt: ${_this.joinedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, status: ${_this.status}, nick: ${_this.nick}, bio: ${_this.bio}, labelId: ${_this.labelId}, label: ${_this.label}, experience: ${_this.experience}, level: ${_this.level}, levelingProgress: ${_this.levelingProgress})';
 }
 
 
@@ -652,16 +664,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmMember&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.role, role) || other.role == role)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.labelId, labelId) || other.labelId == labelId)&&(identical(other.label, label) || other.label == label)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.level, level) || other.level == level)&&(identical(other.levelingProgress, levelingProgress) || other.levelingProgress == levelingProgress));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmMember&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.realm, realm) || other.realm == realm)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.role, role) || other.role == role)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.labelId, labelId) || other.labelId == labelId)&&(identical(other.label, label) || other.label == label)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.level, level) || other.level == level)&&(identical(other.levelingProgress, levelingProgress) || other.levelingProgress == levelingProgress));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,realmId,realm,accountId,account,role,joinedAt,createdAt,updatedAt,deletedAt,status,nick,bio,labelId,label,experience,level,levelingProgress);
+int get hashCode {
+    return Object.hash(runtimeType,realmId,realm,accountId,account,role,joinedAt,createdAt,updatedAt,deletedAt,status,nick,bio,labelId,label,experience,level,levelingProgress);
+}
 
 @override
 String toString() {
-  return 'SnRealmMember(realmId: $realmId, realm: $realm, accountId: $accountId, account: $account, role: $role, joinedAt: $joinedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, status: $status, nick: $nick, bio: $bio, labelId: $labelId, label: $label, experience: $experience, level: $level, levelingProgress: $levelingProgress)';
+    return 'SnRealmMember(realmId: $realmId, realm: $realm, accountId: $accountId, account: $account, role: $role, joinedAt: $joinedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, status: $status, nick: $nick, bio: $bio, labelId: $labelId, label: $label, experience: $experience, level: $level, levelingProgress: $levelingProgress)';
 }
 
 
@@ -780,16 +794,21 @@ $SnRealmLabelCopyWith<SnRealmLabel> get copyWith => _$SnRealmLabelCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmLabel&&(identical(other.id, id) || other.id == id)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdByAccountId, createdByAccountId) || other.createdByAccountId == createdByAccountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt));
+  final _this = this as SnRealmLabel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmLabel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.realmId, _this.realmId) || other.realmId == _this.realmId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.createdByAccountId, _this.createdByAccountId) || other.createdByAccountId == _this.createdByAccountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,realmId,name,description,color,icon,createdByAccountId,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt));
+int get hashCode {
+  final _this = this as SnRealmLabel;
+  return Object.hash(runtimeType,_this.id,_this.realmId,_this.name,_this.description,_this.color,_this.icon,_this.createdByAccountId,_this.createdAt,_this.updatedAt,const DeepCollectionEquality().hash(_this.deletedAt));
+}
 
 @override
 String toString() {
-  return 'SnRealmLabel(id: $id, realmId: $realmId, name: $name, description: $description, color: $color, icon: $icon, createdByAccountId: $createdByAccountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnRealmLabel;
+  return 'SnRealmLabel(id: ${_this.id}, realmId: ${_this.realmId}, name: ${_this.name}, description: ${_this.description}, color: ${_this.color}, icon: ${_this.icon}, createdByAccountId: ${_this.createdByAccountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -991,16 +1010,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmLabel&&(identical(other.id, id) || other.id == id)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdByAccountId, createdByAccountId) || other.createdByAccountId == createdByAccountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmLabel&&(identical(other.id, id) || other.id == id)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdByAccountId, createdByAccountId) || other.createdByAccountId == createdByAccountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,realmId,name,description,color,icon,createdByAccountId,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt));
+int get hashCode {
+    return Object.hash(runtimeType,id,realmId,name,description,color,icon,createdByAccountId,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt));
+}
 
 @override
 String toString() {
-  return 'SnRealmLabel(id: $id, realmId: $realmId, name: $name, description: $description, color: $color, icon: $icon, createdByAccountId: $createdByAccountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnRealmLabel(id: $id, realmId: $realmId, name: $name, description: $description, color: $color, icon: $icon, createdByAccountId: $createdByAccountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -1064,16 +1085,21 @@ $SnRealmRolePermissionCopyWith<SnRealmRolePermission> get copyWith => _$SnRealmR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmRolePermission&&(identical(other.roleLevel, roleLevel) || other.roleLevel == roleLevel)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
+  final _this = this as SnRealmRolePermission;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmRolePermission&&(identical(other.roleLevel, _this.roleLevel) || other.roleLevel == _this.roleLevel)&&(identical(other.canChat, _this.canChat) || other.canChat == _this.canChat)&&(identical(other.canPost, _this.canPost) || other.canPost == _this.canPost)&&(identical(other.canComment, _this.canComment) || other.canComment == _this.canComment)&&(identical(other.canUploadMedia, _this.canUploadMedia) || other.canUploadMedia == _this.canUploadMedia)&&(identical(other.canModeratePosts, _this.canModeratePosts) || other.canModeratePosts == _this.canModeratePosts)&&(identical(other.canModerateChat, _this.canModerateChat) || other.canModerateChat == _this.canModerateChat)&&(identical(other.canManageMembers, _this.canManageMembers) || other.canManageMembers == _this.canManageMembers)&&(identical(other.canManageRealm, _this.canManageRealm) || other.canManageRealm == _this.canManageRealm));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,roleLevel,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+int get hashCode {
+  final _this = this as SnRealmRolePermission;
+  return Object.hash(runtimeType,_this.roleLevel,_this.canChat,_this.canPost,_this.canComment,_this.canUploadMedia,_this.canModeratePosts,_this.canModerateChat,_this.canManageMembers,_this.canManageRealm);
+}
 
 @override
 String toString() {
-  return 'SnRealmRolePermission(roleLevel: $roleLevel, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
+  final _this = this as SnRealmRolePermission;
+  return 'SnRealmRolePermission(roleLevel: ${_this.roleLevel}, canChat: ${_this.canChat}, canPost: ${_this.canPost}, canComment: ${_this.canComment}, canUploadMedia: ${_this.canUploadMedia}, canModeratePosts: ${_this.canModeratePosts}, canModerateChat: ${_this.canModerateChat}, canManageMembers: ${_this.canManageMembers}, canManageRealm: ${_this.canManageRealm})';
 }
 
 
@@ -1273,16 +1299,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmRolePermission&&(identical(other.roleLevel, roleLevel) || other.roleLevel == roleLevel)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmRolePermission&&(identical(other.roleLevel, roleLevel) || other.roleLevel == roleLevel)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,roleLevel,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+int get hashCode {
+    return Object.hash(runtimeType,roleLevel,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+}
 
 @override
 String toString() {
-  return 'SnRealmRolePermission(roleLevel: $roleLevel, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
+    return 'SnRealmRolePermission(roleLevel: $roleLevel, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
 }
 
 
@@ -1345,16 +1373,21 @@ $SnRealmUserPermissionCopyWith<SnRealmUserPermission> get copyWith => _$SnRealmU
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmUserPermission&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
+  final _this = this as SnRealmUserPermission;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRealmUserPermission&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.canChat, _this.canChat) || other.canChat == _this.canChat)&&(identical(other.canPost, _this.canPost) || other.canPost == _this.canPost)&&(identical(other.canComment, _this.canComment) || other.canComment == _this.canComment)&&(identical(other.canUploadMedia, _this.canUploadMedia) || other.canUploadMedia == _this.canUploadMedia)&&(identical(other.canModeratePosts, _this.canModeratePosts) || other.canModeratePosts == _this.canModeratePosts)&&(identical(other.canModerateChat, _this.canModerateChat) || other.canModerateChat == _this.canModerateChat)&&(identical(other.canManageMembers, _this.canManageMembers) || other.canManageMembers == _this.canManageMembers)&&(identical(other.canManageRealm, _this.canManageRealm) || other.canManageRealm == _this.canManageRealm));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accountId,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+int get hashCode {
+  final _this = this as SnRealmUserPermission;
+  return Object.hash(runtimeType,_this.accountId,_this.canChat,_this.canPost,_this.canComment,_this.canUploadMedia,_this.canModeratePosts,_this.canModerateChat,_this.canManageMembers,_this.canManageRealm);
+}
 
 @override
 String toString() {
-  return 'SnRealmUserPermission(accountId: $accountId, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
+  final _this = this as SnRealmUserPermission;
+  return 'SnRealmUserPermission(accountId: ${_this.accountId}, canChat: ${_this.canChat}, canPost: ${_this.canPost}, canComment: ${_this.canComment}, canUploadMedia: ${_this.canUploadMedia}, canModeratePosts: ${_this.canModeratePosts}, canModerateChat: ${_this.canModerateChat}, canManageMembers: ${_this.canManageMembers}, canManageRealm: ${_this.canManageRealm})';
 }
 
 
@@ -1554,16 +1587,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmUserPermission&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRealmUserPermission&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.canChat, canChat) || other.canChat == canChat)&&(identical(other.canPost, canPost) || other.canPost == canPost)&&(identical(other.canComment, canComment) || other.canComment == canComment)&&(identical(other.canUploadMedia, canUploadMedia) || other.canUploadMedia == canUploadMedia)&&(identical(other.canModeratePosts, canModeratePosts) || other.canModeratePosts == canModeratePosts)&&(identical(other.canModerateChat, canModerateChat) || other.canModerateChat == canModerateChat)&&(identical(other.canManageMembers, canManageMembers) || other.canManageMembers == canManageMembers)&&(identical(other.canManageRealm, canManageRealm) || other.canManageRealm == canManageRealm));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accountId,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+int get hashCode {
+    return Object.hash(runtimeType,accountId,canChat,canPost,canComment,canUploadMedia,canModeratePosts,canModerateChat,canManageMembers,canManageRealm);
+}
 
 @override
 String toString() {
-  return 'SnRealmUserPermission(accountId: $accountId, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
+    return 'SnRealmUserPermission(accountId: $accountId, canChat: $canChat, canPost: $canPost, canComment: $canComment, canUploadMedia: $canUploadMedia, canModeratePosts: $canModeratePosts, canModerateChat: $canModerateChat, canManageMembers: $canManageMembers, canManageRealm: $canManageRealm)';
 }
 
 

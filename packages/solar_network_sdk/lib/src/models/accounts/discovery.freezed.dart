@@ -29,16 +29,21 @@ $SnDiscoveryProfileCopyWith<SnDiscoveryProfile> get copyWith => _$SnDiscoveryPro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnDiscoveryProfile&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&const DeepCollectionEquality().equals(other.interests, interests)&&const DeepCollectionEquality().equals(other.suggestedPublishers, suggestedPublishers)&&const DeepCollectionEquality().equals(other.suggestedAccounts, suggestedAccounts)&&const DeepCollectionEquality().equals(other.suggestedRealms, suggestedRealms)&&const DeepCollectionEquality().equals(other.suppressed, suppressed));
+  final _this = this as SnDiscoveryProfile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnDiscoveryProfile&&(identical(other.generatedAt, _this.generatedAt) || other.generatedAt == _this.generatedAt)&&const DeepCollectionEquality().equals(other.interests, _this.interests)&&const DeepCollectionEquality().equals(other.suggestedPublishers, _this.suggestedPublishers)&&const DeepCollectionEquality().equals(other.suggestedAccounts, _this.suggestedAccounts)&&const DeepCollectionEquality().equals(other.suggestedRealms, _this.suggestedRealms)&&const DeepCollectionEquality().equals(other.suppressed, _this.suppressed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,generatedAt,const DeepCollectionEquality().hash(interests),const DeepCollectionEquality().hash(suggestedPublishers),const DeepCollectionEquality().hash(suggestedAccounts),const DeepCollectionEquality().hash(suggestedRealms),const DeepCollectionEquality().hash(suppressed));
+int get hashCode {
+  final _this = this as SnDiscoveryProfile;
+  return Object.hash(runtimeType,_this.generatedAt,const DeepCollectionEquality().hash(_this.interests),const DeepCollectionEquality().hash(_this.suggestedPublishers),const DeepCollectionEquality().hash(_this.suggestedAccounts),const DeepCollectionEquality().hash(_this.suggestedRealms),const DeepCollectionEquality().hash(_this.suppressed));
+}
 
 @override
 String toString() {
-  return 'SnDiscoveryProfile(generatedAt: $generatedAt, interests: $interests, suggestedPublishers: $suggestedPublishers, suggestedAccounts: $suggestedAccounts, suggestedRealms: $suggestedRealms, suppressed: $suppressed)';
+  final _this = this as SnDiscoveryProfile;
+  return 'SnDiscoveryProfile(generatedAt: ${_this.generatedAt}, interests: ${_this.interests}, suggestedPublishers: ${_this.suggestedPublishers}, suggestedAccounts: ${_this.suggestedAccounts}, suggestedRealms: ${_this.suggestedRealms}, suppressed: ${_this.suppressed})';
 }
 
 
@@ -262,16 +267,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnDiscoveryProfile&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&const DeepCollectionEquality().equals(other._interests, _interests)&&const DeepCollectionEquality().equals(other._suggestedPublishers, _suggestedPublishers)&&const DeepCollectionEquality().equals(other._suggestedAccounts, _suggestedAccounts)&&const DeepCollectionEquality().equals(other._suggestedRealms, _suggestedRealms)&&const DeepCollectionEquality().equals(other._suppressed, _suppressed));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnDiscoveryProfile&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&const DeepCollectionEquality().equals(other.interests, _interests)&&const DeepCollectionEquality().equals(other.suggestedPublishers, _suggestedPublishers)&&const DeepCollectionEquality().equals(other.suggestedAccounts, _suggestedAccounts)&&const DeepCollectionEquality().equals(other.suggestedRealms, _suggestedRealms)&&const DeepCollectionEquality().equals(other.suppressed, _suppressed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,generatedAt,const DeepCollectionEquality().hash(_interests),const DeepCollectionEquality().hash(_suggestedPublishers),const DeepCollectionEquality().hash(_suggestedAccounts),const DeepCollectionEquality().hash(_suggestedRealms),const DeepCollectionEquality().hash(_suppressed));
+int get hashCode {
+    return Object.hash(runtimeType,generatedAt,const DeepCollectionEquality().hash(_interests),const DeepCollectionEquality().hash(_suggestedPublishers),const DeepCollectionEquality().hash(_suggestedAccounts),const DeepCollectionEquality().hash(_suggestedRealms),const DeepCollectionEquality().hash(_suppressed));
+}
 
 @override
 String toString() {
-  return 'SnDiscoveryProfile(generatedAt: $generatedAt, interests: $interests, suggestedPublishers: $suggestedPublishers, suggestedAccounts: $suggestedAccounts, suggestedRealms: $suggestedRealms, suppressed: $suppressed)';
+    return 'SnDiscoveryProfile(generatedAt: $generatedAt, interests: $interests, suggestedPublishers: $suggestedPublishers, suggestedAccounts: $suggestedAccounts, suggestedRealms: $suggestedRealms, suppressed: $suppressed)';
 }
 
 
@@ -331,16 +338,21 @@ $SnDiscoveryInterestCopyWith<SnDiscoveryInterest> get copyWith => _$SnDiscoveryI
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnDiscoveryInterest&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&(identical(other.interactionCount, interactionCount) || other.interactionCount == interactionCount)&&(identical(other.lastInteractedAt, lastInteractedAt) || other.lastInteractedAt == lastInteractedAt)&&(identical(other.lastSignalType, lastSignalType) || other.lastSignalType == lastSignalType));
+  final _this = this as SnDiscoveryInterest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnDiscoveryInterest&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.referenceId, _this.referenceId) || other.referenceId == _this.referenceId)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.score, _this.score) || other.score == _this.score)&&(identical(other.interactionCount, _this.interactionCount) || other.interactionCount == _this.interactionCount)&&(identical(other.lastInteractedAt, _this.lastInteractedAt) || other.lastInteractedAt == _this.lastInteractedAt)&&(identical(other.lastSignalType, _this.lastSignalType) || other.lastSignalType == _this.lastSignalType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,referenceId,label,score,interactionCount,lastInteractedAt,lastSignalType);
+int get hashCode {
+  final _this = this as SnDiscoveryInterest;
+  return Object.hash(runtimeType,_this.kind,_this.referenceId,_this.label,_this.score,_this.interactionCount,_this.lastInteractedAt,_this.lastSignalType);
+}
 
 @override
 String toString() {
-  return 'SnDiscoveryInterest(kind: $kind, referenceId: $referenceId, label: $label, score: $score, interactionCount: $interactionCount, lastInteractedAt: $lastInteractedAt, lastSignalType: $lastSignalType)';
+  final _this = this as SnDiscoveryInterest;
+  return 'SnDiscoveryInterest(kind: ${_this.kind}, referenceId: ${_this.referenceId}, label: ${_this.label}, score: ${_this.score}, interactionCount: ${_this.interactionCount}, lastInteractedAt: ${_this.lastInteractedAt}, lastSignalType: ${_this.lastSignalType})';
 }
 
 
@@ -536,16 +548,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnDiscoveryInterest&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&(identical(other.interactionCount, interactionCount) || other.interactionCount == interactionCount)&&(identical(other.lastInteractedAt, lastInteractedAt) || other.lastInteractedAt == lastInteractedAt)&&(identical(other.lastSignalType, lastSignalType) || other.lastSignalType == lastSignalType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnDiscoveryInterest&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&(identical(other.interactionCount, interactionCount) || other.interactionCount == interactionCount)&&(identical(other.lastInteractedAt, lastInteractedAt) || other.lastInteractedAt == lastInteractedAt)&&(identical(other.lastSignalType, lastSignalType) || other.lastSignalType == lastSignalType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,referenceId,label,score,interactionCount,lastInteractedAt,lastSignalType);
+int get hashCode {
+    return Object.hash(runtimeType,kind,referenceId,label,score,interactionCount,lastInteractedAt,lastSignalType);
+}
 
 @override
 String toString() {
-  return 'SnDiscoveryInterest(kind: $kind, referenceId: $referenceId, label: $label, score: $score, interactionCount: $interactionCount, lastInteractedAt: $lastInteractedAt, lastSignalType: $lastSignalType)';
+    return 'SnDiscoveryInterest(kind: $kind, referenceId: $referenceId, label: $label, score: $score, interactionCount: $interactionCount, lastInteractedAt: $lastInteractedAt, lastSignalType: $lastSignalType)';
 }
 
 
@@ -606,16 +620,21 @@ $SnSuggestedDataCopyWith<SnSuggestedData> get copyWith => _$SnSuggestedDataCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSuggestedData&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&const DeepCollectionEquality().equals(other.reasons, reasons)&&const DeepCollectionEquality().equals(other.data, data));
+  final _this = this as SnSuggestedData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSuggestedData&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.referenceId, _this.referenceId) || other.referenceId == _this.referenceId)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.score, _this.score) || other.score == _this.score)&&const DeepCollectionEquality().equals(other.reasons, _this.reasons)&&const DeepCollectionEquality().equals(other.data, _this.data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,referenceId,label,score,const DeepCollectionEquality().hash(reasons),const DeepCollectionEquality().hash(data));
+int get hashCode {
+  final _this = this as SnSuggestedData;
+  return Object.hash(runtimeType,_this.kind,_this.referenceId,_this.label,_this.score,const DeepCollectionEquality().hash(_this.reasons),const DeepCollectionEquality().hash(_this.data));
+}
 
 @override
 String toString() {
-  return 'SnSuggestedData(kind: $kind, referenceId: $referenceId, label: $label, score: $score, reasons: $reasons, data: $data)';
+  final _this = this as SnSuggestedData;
+  return 'SnSuggestedData(kind: ${_this.kind}, referenceId: ${_this.referenceId}, label: ${_this.label}, score: ${_this.score}, reasons: ${_this.reasons}, data: ${_this.data})';
 }
 
 
@@ -815,16 +834,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSuggestedData&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&const DeepCollectionEquality().equals(other._reasons, _reasons)&&const DeepCollectionEquality().equals(other.data, data));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSuggestedData&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.label, label) || other.label == label)&&(identical(other.score, score) || other.score == score)&&const DeepCollectionEquality().equals(other.reasons, _reasons)&&const DeepCollectionEquality().equals(other.data, data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,referenceId,label,score,const DeepCollectionEquality().hash(_reasons),const DeepCollectionEquality().hash(data));
+int get hashCode {
+    return Object.hash(runtimeType,kind,referenceId,label,score,const DeepCollectionEquality().hash(_reasons),const DeepCollectionEquality().hash(data));
+}
 
 @override
 String toString() {
-  return 'SnSuggestedData(kind: $kind, referenceId: $referenceId, label: $label, score: $score, reasons: $reasons, data: $data)';
+    return 'SnSuggestedData(kind: $kind, referenceId: $referenceId, label: $label, score: $score, reasons: $reasons, data: $data)';
 }
 
 

@@ -29,16 +29,21 @@ $SnProtectedTagRecordCopyWith<SnProtectedTagRecord> get copyWith => _$SnProtecte
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProtectedTagRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt));
+  final _this = this as SnProtectedTagRecord;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProtectedTagRecord&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.isProtected, _this.isProtected) || other.isProtected == _this.isProtected)&&(identical(other.isEvent, _this.isEvent) || other.isEvent == _this.isEvent)&&(identical(other.eventEndsAt, _this.eventEndsAt) || other.eventEndsAt == _this.eventEndsAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,isProtected,isEvent,eventEndsAt);
+int get hashCode {
+  final _this = this as SnProtectedTagRecord;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.name,_this.description,_this.isProtected,_this.isEvent,_this.eventEndsAt);
+}
 
 @override
 String toString() {
-  return 'SnProtectedTagRecord(id: $id, slug: $slug, name: $name, description: $description, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt)';
+  final _this = this as SnProtectedTagRecord;
+  return 'SnProtectedTagRecord(id: ${_this.id}, slug: ${_this.slug}, name: ${_this.name}, description: ${_this.description}, isProtected: ${_this.isProtected}, isEvent: ${_this.isEvent}, eventEndsAt: ${_this.eventEndsAt})';
 }
 
 
@@ -234,16 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProtectedTagRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProtectedTagRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,isProtected,isEvent,eventEndsAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,name,description,isProtected,isEvent,eventEndsAt);
+}
 
 @override
 String toString() {
-  return 'SnProtectedTagRecord(id: $id, slug: $slug, name: $name, description: $description, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt)';
+    return 'SnProtectedTagRecord(id: $id, slug: $slug, name: $name, description: $description, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt)';
 }
 
 
@@ -304,16 +311,21 @@ $SnTagQuotaCopyWith<SnTagQuota> get copyWith => _$SnTagQuotaCopyWithImpl<SnTagQu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTagQuota&&(identical(other.total, total) || other.total == total)&&(identical(other.used, used) || other.used == used)&&(identical(other.remaining, remaining) || other.remaining == remaining)&&(identical(other.level, level) || other.level == level)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&const DeepCollectionEquality().equals(other.records, records));
+  final _this = this as SnTagQuota;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTagQuota&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.used, _this.used) || other.used == _this.used)&&(identical(other.remaining, _this.remaining) || other.remaining == _this.remaining)&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.perkLevel, _this.perkLevel) || other.perkLevel == _this.perkLevel)&&const DeepCollectionEquality().equals(other.records, _this.records));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total,used,remaining,level,perkLevel,const DeepCollectionEquality().hash(records));
+int get hashCode {
+  final _this = this as SnTagQuota;
+  return Object.hash(runtimeType,_this.total,_this.used,_this.remaining,_this.level,_this.perkLevel,const DeepCollectionEquality().hash(_this.records));
+}
 
 @override
 String toString() {
-  return 'SnTagQuota(total: $total, used: $used, remaining: $remaining, level: $level, perkLevel: $perkLevel, records: $records)';
+  final _this = this as SnTagQuota;
+  return 'SnTagQuota(total: ${_this.total}, used: ${_this.used}, remaining: ${_this.remaining}, level: ${_this.level}, perkLevel: ${_this.perkLevel}, records: ${_this.records})';
 }
 
 
@@ -513,16 +525,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTagQuota&&(identical(other.total, total) || other.total == total)&&(identical(other.used, used) || other.used == used)&&(identical(other.remaining, remaining) || other.remaining == remaining)&&(identical(other.level, level) || other.level == level)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&const DeepCollectionEquality().equals(other._records, _records));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTagQuota&&(identical(other.total, total) || other.total == total)&&(identical(other.used, used) || other.used == used)&&(identical(other.remaining, remaining) || other.remaining == remaining)&&(identical(other.level, level) || other.level == level)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&const DeepCollectionEquality().equals(other.records, _records));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total,used,remaining,level,perkLevel,const DeepCollectionEquality().hash(_records));
+int get hashCode {
+    return Object.hash(runtimeType,total,used,remaining,level,perkLevel,const DeepCollectionEquality().hash(_records));
+}
 
 @override
 String toString() {
-  return 'SnTagQuota(total: $total, used: $used, remaining: $remaining, level: $level, perkLevel: $perkLevel, records: $records)';
+    return 'SnTagQuota(total: $total, used: $used, remaining: $remaining, level: $level, perkLevel: $perkLevel, records: $records)';
 }
 
 

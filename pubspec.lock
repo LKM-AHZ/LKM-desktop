@@ -57,13 +57,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  appflowy_editor:
-    dependency: "direct main"
-    description:
-      path: "packages/appflowy_editor"
-      relative: true
-    source: path
-    version: "6.2.0"
   archive:
     dependency: "direct main"
     description:
@@ -537,10 +530,10 @@ packages:
     dependency: "direct main"
     description:
       name: dropdown_button2
-      sha256: "24f5b775483a9b3c508092766798c10e3f23127e66b3f4a305b5bfb59ff1debc"
+      sha256: "97bfdb259c9dcf8ca232ee38c3bbf57d9f967b0ebc14eadaea39666fbdfe647a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "4.0.0"
   easy_localization:
     dependency: "direct main"
     description:
@@ -697,10 +690,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_analytics
-      sha256: "4184afc17c5749a1dc008289e582cdc07ea213d03f681f00454aed834db34357"
+      sha256: "164920117bfad80b20f9578bd392585453ba760d7b2e67d3f09325bc566b1417"
       url: "https://pub.dev"
     source: hosted
-    version: "13.0.1"
+    version: "13.1.0"
   firebase_analytics_platform_interface:
     dependency: transitive
     description:
@@ -721,10 +714,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: "21551c1205441d9d155660ea0a409530b65a8d66ce88002bab3f38d94a8638fc"
+      sha256: "1a3a65a71c5a21311a37f3e94fd4aef4c77801a66008a1859b30eb1a8fc1744b"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.2.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -745,10 +738,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_messaging
-      sha256: e19c73b369ae83f4580a0676597f9ac3a0cd91e1b18be69ea16299c153dd9310
+      sha256: b971abf6ca94426d4cfc7685d6f97a34d3e1c2fda8e21d0e923d61736a984774
       url: "https://pub.dev"
     source: hosted
-    version: "17.0.1"
+    version: "17.1.0"
   firebase_messaging_platform_interface:
     dependency: transitive
     description:
@@ -1680,6 +1673,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  island_editor:
+    dependency: "direct main"
+    description:
+      path: "packages/island_editor"
+      relative: true
+    source: path
+    version: "6.2.0"
   island_ui_foundation:
     dependency: "direct main"
     description:
@@ -1764,10 +1764,10 @@ packages:
     dependency: transitive
     description:
       name: keyboard_height_plugin
-      sha256: "3a51c8ebb43465ebe0b3bad17f3b6d945421e58011f3f5a08134afe69a3d775f"
+      sha256: d57944cd3e4f8d9cb4adb1b7f1300d14a8dcec99bfb4414d78c7dd0120c1d66c
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.5"
+    version: "0.3.0"
   latlong2:
     dependency: "direct main"
     description:
@@ -2102,10 +2102,10 @@ packages:
     dependency: "direct main"
     description:
       name: native_glass_navbar
-      sha256: "25631e3a1c96fab5de385175c5413bcf77c8b4c2101eb4f2d95c6d6668141b93"
+      sha256: "56ef300953919ffee5ec88a4209a86f0620be829436ec744fbe0fe45de8ecdfd"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "2.0.0"
   native_toolchain_c:
     dependency: "direct dev"
     description:

@@ -29,16 +29,21 @@ $SnTicketCopyWith<SnTicket> get copyWith => _$SnTicketCopyWithImpl<SnTicket>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTicket&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.assigneeId, assigneeId) || other.assigneeId == assigneeId)&&(identical(other.assignee, assignee) || other.assignee == assignee)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.messages, messages)&&const DeepCollectionEquality().equals(other.fileIds, fileIds)&&const DeepCollectionEquality().equals(other.resources, resources));
+  final _this = this as SnTicket;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTicket&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.priority, _this.priority) || other.priority == _this.priority)&&(identical(other.creatorId, _this.creatorId) || other.creatorId == _this.creatorId)&&(identical(other.creator, _this.creator) || other.creator == _this.creator)&&(identical(other.assigneeId, _this.assigneeId) || other.assigneeId == _this.assigneeId)&&(identical(other.assignee, _this.assignee) || other.assignee == _this.assignee)&&(identical(other.resolvedAt, _this.resolvedAt) || other.resolvedAt == _this.resolvedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&const DeepCollectionEquality().equals(other.messages, _this.messages)&&const DeepCollectionEquality().equals(other.fileIds, _this.fileIds)&&const DeepCollectionEquality().equals(other.resources, _this.resources));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,content,type,status,priority,creatorId,creator,assigneeId,assignee,resolvedAt,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(messages),const DeepCollectionEquality().hash(fileIds),const DeepCollectionEquality().hash(resources));
+int get hashCode {
+  final _this = this as SnTicket;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.content,_this.type,_this.status,_this.priority,_this.creatorId,_this.creator,_this.assigneeId,_this.assignee,_this.resolvedAt,_this.createdAt,_this.updatedAt,_this.deletedAt,const DeepCollectionEquality().hash(_this.messages),const DeepCollectionEquality().hash(_this.fileIds),const DeepCollectionEquality().hash(_this.resources));
+}
 
 @override
 String toString() {
-  return 'SnTicket(id: $id, title: $title, content: $content, type: $type, status: $status, priority: $priority, creatorId: $creatorId, creator: $creator, assigneeId: $assigneeId, assignee: $assignee, resolvedAt: $resolvedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, messages: $messages, fileIds: $fileIds, resources: $resources)';
+  final _this = this as SnTicket;
+  return 'SnTicket(id: ${_this.id}, title: ${_this.title}, content: ${_this.content}, type: ${_this.type}, status: ${_this.status}, priority: ${_this.priority}, creatorId: ${_this.creatorId}, creator: ${_this.creator}, assigneeId: ${_this.assigneeId}, assignee: ${_this.assignee}, resolvedAt: ${_this.resolvedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, messages: ${_this.messages}, fileIds: ${_this.fileIds}, resources: ${_this.resources})';
 }
 
 
@@ -293,16 +298,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTicket&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.assigneeId, assigneeId) || other.assigneeId == assigneeId)&&(identical(other.assignee, assignee) || other.assignee == assignee)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other._messages, _messages)&&const DeepCollectionEquality().equals(other._fileIds, _fileIds)&&const DeepCollectionEquality().equals(other._resources, _resources));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTicket&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.assigneeId, assigneeId) || other.assigneeId == assigneeId)&&(identical(other.assignee, assignee) || other.assignee == assignee)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.messages, _messages)&&const DeepCollectionEquality().equals(other.fileIds, _fileIds)&&const DeepCollectionEquality().equals(other.resources, _resources));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,content,type,status,priority,creatorId,creator,assigneeId,assignee,resolvedAt,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_messages),const DeepCollectionEquality().hash(_fileIds),const DeepCollectionEquality().hash(_resources));
+int get hashCode {
+    return Object.hash(runtimeType,id,title,content,type,status,priority,creatorId,creator,assigneeId,assignee,resolvedAt,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_messages),const DeepCollectionEquality().hash(_fileIds),const DeepCollectionEquality().hash(_resources));
+}
 
 @override
 String toString() {
-  return 'SnTicket(id: $id, title: $title, content: $content, type: $type, status: $status, priority: $priority, creatorId: $creatorId, creator: $creator, assigneeId: $assigneeId, assignee: $assignee, resolvedAt: $resolvedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, messages: $messages, fileIds: $fileIds, resources: $resources)';
+    return 'SnTicket(id: $id, title: $title, content: $content, type: $type, status: $status, priority: $priority, creatorId: $creatorId, creator: $creator, assigneeId: $assigneeId, assignee: $assignee, resolvedAt: $resolvedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, messages: $messages, fileIds: $fileIds, resources: $resources)';
 }
 
 
@@ -394,16 +401,21 @@ $SnTicketMessageCopyWith<SnTicketMessage> get copyWith => _$SnTicketMessageCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTicketMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketId, ticketId) || other.ticketId == ticketId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.files, files));
+  final _this = this as SnTicketMessage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTicketMessage&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.ticketId, _this.ticketId) || other.ticketId == _this.ticketId)&&(identical(other.senderId, _this.senderId) || other.senderId == _this.senderId)&&(identical(other.sender, _this.sender) || other.sender == _this.sender)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&const DeepCollectionEquality().equals(other.files, _this.files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketId,senderId,sender,content,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(files));
+int get hashCode {
+  final _this = this as SnTicketMessage;
+  return Object.hash(runtimeType,_this.id,_this.ticketId,_this.senderId,_this.sender,_this.content,_this.createdAt,_this.updatedAt,_this.deletedAt,const DeepCollectionEquality().hash(_this.files));
+}
 
 @override
 String toString() {
-  return 'SnTicketMessage(id: $id, ticketId: $ticketId, senderId: $senderId, sender: $sender, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, files: $files)';
+  final _this = this as SnTicketMessage;
+  return 'SnTicketMessage(id: ${_this.id}, ticketId: ${_this.ticketId}, senderId: ${_this.senderId}, sender: ${_this.sender}, content: ${_this.content}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, files: ${_this.files})';
 }
 
 
@@ -618,16 +630,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTicketMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketId, ticketId) || other.ticketId == ticketId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other._files, _files));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTicketMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketId, ticketId) || other.ticketId == ticketId)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.files, _files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketId,senderId,sender,content,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_files));
+int get hashCode {
+    return Object.hash(runtimeType,id,ticketId,senderId,sender,content,createdAt,updatedAt,deletedAt,const DeepCollectionEquality().hash(_files));
+}
 
 @override
 String toString() {
-  return 'SnTicketMessage(id: $id, ticketId: $ticketId, senderId: $senderId, sender: $sender, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, files: $files)';
+    return 'SnTicketMessage(id: $id, ticketId: $ticketId, senderId: $senderId, sender: $sender, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, files: $files)';
 }
 
 
@@ -696,16 +710,21 @@ $TicketTypeCopyWith<TicketType> get copyWith => _$TicketTypeCopyWithImpl<TicketT
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketType&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+  final _this = this as TicketType;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketType&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+  final _this = this as TicketType;
+  return Object.hash(runtimeType,_this.value,_this.displayName);
+}
 
 @override
 String toString() {
-  return 'TicketType(value: $value, displayName: $displayName)';
+  final _this = this as TicketType;
+  return 'TicketType(value: ${_this.value}, displayName: ${_this.displayName})';
 }
 
 
@@ -888,16 +907,18 @@ _$TicketTypeCopyWith<_TicketType> get copyWith => __$TicketTypeCopyWithImpl<_Tic
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketType&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketType&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+    return Object.hash(runtimeType,value,displayName);
+}
 
 @override
 String toString() {
-  return 'TicketType(value: $value, displayName: $displayName)';
+    return 'TicketType(value: $value, displayName: $displayName)';
 }
 
 
@@ -950,16 +971,21 @@ $TicketStatusCopyWith<TicketStatus> get copyWith => _$TicketStatusCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketStatus&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+  final _this = this as TicketStatus;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketStatus&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+  final _this = this as TicketStatus;
+  return Object.hash(runtimeType,_this.value,_this.displayName);
+}
 
 @override
 String toString() {
-  return 'TicketStatus(value: $value, displayName: $displayName)';
+  final _this = this as TicketStatus;
+  return 'TicketStatus(value: ${_this.value}, displayName: ${_this.displayName})';
 }
 
 
@@ -1142,16 +1168,18 @@ _$TicketStatusCopyWith<_TicketStatus> get copyWith => __$TicketStatusCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketStatus&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketStatus&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+    return Object.hash(runtimeType,value,displayName);
+}
 
 @override
 String toString() {
-  return 'TicketStatus(value: $value, displayName: $displayName)';
+    return 'TicketStatus(value: $value, displayName: $displayName)';
 }
 
 
@@ -1204,16 +1232,21 @@ $TicketPriorityCopyWith<TicketPriority> get copyWith => _$TicketPriorityCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketPriority&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+  final _this = this as TicketPriority;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketPriority&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+  final _this = this as TicketPriority;
+  return Object.hash(runtimeType,_this.value,_this.displayName);
+}
 
 @override
 String toString() {
-  return 'TicketPriority(value: $value, displayName: $displayName)';
+  final _this = this as TicketPriority;
+  return 'TicketPriority(value: ${_this.value}, displayName: ${_this.displayName})';
 }
 
 
@@ -1396,16 +1429,18 @@ _$TicketPriorityCopyWith<_TicketPriority> get copyWith => __$TicketPriorityCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketPriority&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketPriority&&(identical(other.value, value) || other.value == value)&&(identical(other.displayName, displayName) || other.displayName == displayName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,displayName);
+int get hashCode {
+    return Object.hash(runtimeType,value,displayName);
+}
 
 @override
 String toString() {
-  return 'TicketPriority(value: $value, displayName: $displayName)';
+    return 'TicketPriority(value: $value, displayName: $displayName)';
 }
 
 

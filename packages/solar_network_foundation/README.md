@@ -7,6 +7,13 @@ Reusable building blocks shared by Solar Network Flutter clients:
 - `format.dart`, `markdown.dart`, `markdown_content.dart` — formatting and
   markdown rendering.
 - `media_kit_init.dart` — idempotent `media_kit` bootstrap.
+- `solar_editor/` — the Solar Network block editor, built on the vendored
+  `island_editor` fork: markdown bridge, `/` menu, Solar inline styles,
+  clipboard menus (desktop right-click, mobile selection toolbar),
+  markdown-aware paste with an `onPaste` host hook for clipboard images/files,
+  and a mail-shaped HTML bridge (`solarHTMLToDocument` /
+  `solarDocumentToHTML`: `<br>` as soft breaks, lists, quotes, headings,
+  inline code and colours).
 - `drive/` — the cloud drive service shared by Solian and SolWatt.
 - `auth/` — the multi-factor auth form primitives, the factor picker, and the
   step-up elevation (sudo) flow every client needs before a gated mutation.

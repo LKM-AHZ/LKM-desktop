@@ -548,7 +548,7 @@ class IslandApp extends HookConsumerWidget {
         flutter_localizations.GlobalMaterialLocalizations.delegate,
         flutter_localizations.GlobalCupertinoLocalizations.delegate,
         RelativeTimeLocalizations.delegate,
-        AppFlowyEditorLocalizations.delegate,
+        IslandEditorLocalizations.delegate,
       ],
       locale: context.locale,
       builder: (context, child) {

@@ -100,6 +100,9 @@ Future<void> _pumpSettings(
           child: Builder(
             builder: (context) => MaterialApp.router(
               routerConfig: config,
+              // Exercise settings behavior without loading a GPU shader in the
+              // headless test engine.
+              theme: ThemeData(splashFactory: InkRipple.splashFactory),
               locale: const Locale('en', 'US'),
               supportedLocales: const [Locale('en', 'US')],
               // The app root supplies a legacy Material ancestor for packages
@@ -174,7 +177,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Friends').last);
     await tester.pumpAndSettle();
-    expect(_container.read(appSettingsProvider).exploreSettings.filter, 'friends');
+    expect(
+      _container.read(appSettingsProvider).exploreSettings.filter,
+      'friends',
+    );
 
     await _teardown(tester);
   });

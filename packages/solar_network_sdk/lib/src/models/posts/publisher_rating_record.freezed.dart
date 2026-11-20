@@ -29,16 +29,21 @@ $SnPublisherRatingRecordCopyWith<SnPublisherRatingRecord> get copyWith => _$SnPu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherRatingRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.reasonType, reasonType) || other.reasonType == reasonType)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.delta, delta) || other.delta == delta)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnPublisherRatingRecord;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherRatingRecord&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.reasonType, _this.reasonType) || other.reasonType == _this.reasonType)&&(identical(other.reason, _this.reason) || other.reason == _this.reason)&&(identical(other.delta, _this.delta) || other.delta == _this.delta)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,reasonType,reason,delta,status,expiredAt,publisherId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnPublisherRatingRecord;
+  return Object.hash(runtimeType,_this.id,_this.reasonType,_this.reason,_this.delta,_this.status,_this.expiredAt,_this.publisherId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnPublisherRatingRecord(id: $id, reasonType: $reasonType, reason: $reason, delta: $delta, status: $status, expiredAt: $expiredAt, publisherId: $publisherId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnPublisherRatingRecord;
+  return 'SnPublisherRatingRecord(id: ${_this.id}, reasonType: ${_this.reasonType}, reason: ${_this.reason}, delta: ${_this.delta}, status: ${_this.status}, expiredAt: ${_this.expiredAt}, publisherId: ${_this.publisherId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -240,16 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherRatingRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.reasonType, reasonType) || other.reasonType == reasonType)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.delta, delta) || other.delta == delta)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherRatingRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.reasonType, reasonType) || other.reasonType == reasonType)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.delta, delta) || other.delta == delta)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,reasonType,reason,delta,status,expiredAt,publisherId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,reasonType,reason,delta,status,expiredAt,publisherId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnPublisherRatingRecord(id: $id, reasonType: $reasonType, reason: $reason, delta: $delta, status: $status, expiredAt: $expiredAt, publisherId: $publisherId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnPublisherRatingRecord(id: $id, reasonType: $reasonType, reason: $reason, delta: $delta, status: $status, expiredAt: $expiredAt, publisherId: $publisherId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

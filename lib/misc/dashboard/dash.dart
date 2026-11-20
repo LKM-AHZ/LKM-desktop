@@ -8,7 +8,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/widgets/account/friends_overview.dart';
 import 'package:island/chat/pods/chat_room.dart';
@@ -545,7 +544,8 @@ class ClockCard extends HookConsumerWidget {
                       Flexible(
                         child: Text(
                           '${time.value.hour.toString().padLeft(2, '0')}:${time.value.minute.toString().padLeft(2, '0')}:${time.value.second.toString().padLeft(2, '0')}',
-                          style: GoogleFonts.robotoMono(
+                          style: const TextStyle(
+                            fontFeatures: [FontFeature.tabularFigures()],
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -608,7 +608,8 @@ class ClockCard extends HookConsumerWidget {
                             Flexible(
                               child: Text(
                                 '${time.value.hour.toString().padLeft(2, '0')}:${time.value.minute.toString().padLeft(2, '0')}:${time.value.second.toString().padLeft(2, '0')}',
-                                style: GoogleFonts.robotoMono(
+                                style: const TextStyle(
+                                  fontFeatures: [FontFeature.tabularFigures()],
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),

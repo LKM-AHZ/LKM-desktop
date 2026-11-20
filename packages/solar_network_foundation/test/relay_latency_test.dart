@@ -16,9 +16,12 @@ class _Origin {
   _Origin._(this.server);
 
   static Future<_Origin> start() async {
+    final fixtures = File('test/fixtures/cert.pem').existsSync()
+        ? 'test/fixtures'
+        : 'packages/solar_network_foundation/test/fixtures';
     final context = SecurityContext()
-      ..useCertificateChain('test/fixtures/cert.pem')
-      ..usePrivateKey('test/fixtures/key.pem');
+      ..useCertificateChain('$fixtures/cert.pem')
+      ..usePrivateKey('$fixtures/key.pem');
     final server = await HttpServer.bindSecure(
       InternetAddress.loopbackIPv4,
       0,

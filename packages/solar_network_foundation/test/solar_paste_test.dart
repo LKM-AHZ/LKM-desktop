@@ -1,20 +1,23 @@
-import 'package:appflowy_editor/appflowy_editor.dart'
-    show AppFlowyClipboard, AppFlowyClipboardData;
+import 'package:island_editor/island_editor.dart'
+    show IslandClipboard, IslandClipboardData;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:solar_network_foundation/solar_network_foundation.dart';
 
+/// A paste command with no host hook — the plain markdown text path.
+final _pasteCommand = buildSolarPasteCommand();
+
 /// Copies markdown to the (mocked) clipboard, then fires the Solar paste
 /// shortcut through the real editor state.
 Future<void> _paste(WidgetTester tester, EditorState state, String markdown) async {
-  AppFlowyClipboard.mockSetData(
-    AppFlowyClipboardData(text: markdown, html: null),
+  IslandClipboard.mockSetData(
+    IslandClipboardData(text: markdown, html: null),
   );
-  addTearDown(() => AppFlowyClipboard.mockSetData(null));
+  addTearDown(() => IslandClipboard.mockSetData(null));
   // The command resolves the clipboard asynchronously; pump until the
   // document settles.
-  await solarPasteCommand.handler(state);
+  await _pasteCommand.handler(state);
   await tester.pumpAndSettle();
 }
 
@@ -151,17 +154,54 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('no selection means the paste is ignored, not duplicated', (
+
+  testWidgets('a consuming host hook skips the markdown text path', (
     tester,
   ) async {
-    state.selection = null;
-    AppFlowyClipboard.mockSetData(
-      const AppFlowyClipboardData(text: '# nope', html: null),
+    state.selection = Selection.collapsed(
+      Position(path: state.document.root.children.first.path, offset: 0),
     );
-    addTearDown(() => AppFlowyClipboard.mockSetData(null));
+    IslandClipboard.mockSetData(
+      const IslandClipboardData(text: '# markdown', html: null),
+    );
+    addTearDown(() => IslandClipboard.mockSetData(null));
 
-    expect(await solarPasteCommand.handler(state), KeyEventResult.ignored);
+    var hookCalls = 0;
+    final command = buildSolarPasteCommand(
+      onPaste: () async {
+        hookCalls++;
+        return true;
+      },
+    );
+    expect(await command.handler(state), KeyEventResult.handled);
     await tester.pumpAndSettle();
+
+    // The hook ran; the markdown never reached the document.
+    expect(hookCalls, 1);
     expect(_types(state), ['paragraph']);
+  });
+
+  testWidgets('a declining host hook falls through to markdown', (
+    tester,
+  ) async {
+    state.selection = Selection.collapsed(
+      Position(path: state.document.root.children.first.path, offset: 0),
+    );
+    IslandClipboard.mockSetData(
+      const IslandClipboardData(text: '# Title', html: null),
+    );
+    addTearDown(() => IslandClipboard.mockSetData(null));
+
+    final command = buildSolarPasteCommand(onPaste: () async => false);
+    expect(await command.handler(state), KeyEventResult.handled);
+    await tester.pumpAndSettle();
+
+    // The parsed trailing paragraph merges into the pre-existing blank
+    // paragraph, so a lone heading is the expected result.
+    expect(_types(state), ['heading']);
+    expect(
+      state.document.root.children.first.delta!.toPlainText(),
+      'Title',
+    );
   });
 }

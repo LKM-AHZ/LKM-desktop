@@ -1,4 +1,4 @@
-/// Solar's own inline markdown syntaxes for the AppFlowy editor bridge.
+/// Solar's own inline markdown syntaxes for the Island Editor bridge.
 ///
 /// These are the syntaxes Solian's renderer (`MarkdownTextContent`) already
 /// supports; registering them with the editor's markdown codec keeps the

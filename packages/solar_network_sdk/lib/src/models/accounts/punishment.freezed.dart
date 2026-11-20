@@ -29,16 +29,21 @@ $SnAccountPunishmentCopyWith<SnAccountPunishment> get copyWith => _$SnAccountPun
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountPunishment&&(identical(other.id, id) || other.id == id)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.blockedPermissions, blockedPermissions)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnAccountPunishment;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountPunishment&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.reason, _this.reason) || other.reason == _this.reason)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.blockedPermissions, _this.blockedPermissions)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.creatorId, _this.creatorId) || other.creatorId == _this.creatorId)&&(identical(other.creator, _this.creator) || other.creator == _this.creator)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,reason,expiredAt,type,const DeepCollectionEquality().hash(blockedPermissions),accountId,account,creatorId,creator,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnAccountPunishment;
+  return Object.hash(runtimeType,_this.id,_this.reason,_this.expiredAt,_this.type,const DeepCollectionEquality().hash(_this.blockedPermissions),_this.accountId,_this.account,_this.creatorId,_this.creator,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAccountPunishment(id: $id, reason: $reason, expiredAt: $expiredAt, type: $type, blockedPermissions: $blockedPermissions, accountId: $accountId, account: $account, creatorId: $creatorId, creator: $creator, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnAccountPunishment;
+  return 'SnAccountPunishment(id: ${_this.id}, reason: ${_this.reason}, expiredAt: ${_this.expiredAt}, type: ${_this.type}, blockedPermissions: ${_this.blockedPermissions}, accountId: ${_this.accountId}, account: ${_this.account}, creatorId: ${_this.creatorId}, creator: ${_this.creator}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -276,16 +281,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountPunishment&&(identical(other.id, id) || other.id == id)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._blockedPermissions, _blockedPermissions)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountPunishment&&(identical(other.id, id) || other.id == id)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.blockedPermissions, _blockedPermissions)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,reason,expiredAt,type,const DeepCollectionEquality().hash(_blockedPermissions),accountId,account,creatorId,creator,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,reason,expiredAt,type,const DeepCollectionEquality().hash(_blockedPermissions),accountId,account,creatorId,creator,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAccountPunishment(id: $id, reason: $reason, expiredAt: $expiredAt, type: $type, blockedPermissions: $blockedPermissions, accountId: $accountId, account: $account, creatorId: $creatorId, creator: $creator, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnAccountPunishment(id: $id, reason: $reason, expiredAt: $expiredAt, type: $type, blockedPermissions: $blockedPermissions, accountId: $accountId, account: $account, creatorId: $creatorId, creator: $creator, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

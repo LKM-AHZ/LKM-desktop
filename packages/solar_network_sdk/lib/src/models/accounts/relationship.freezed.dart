@@ -29,16 +29,21 @@ $SnRelationshipCopyWith<SnRelationship> get copyWith => _$SnRelationshipCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRelationship&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.relatedId, relatedId) || other.relatedId == relatedId)&&(identical(other.related, related) || other.related == related)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.degradeToStatus, degradeToStatus) || other.degradeToStatus == degradeToStatus));
+  final _this = this as SnRelationship;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnRelationship&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.relatedId, _this.relatedId) || other.relatedId == _this.relatedId)&&(identical(other.related, _this.related) || other.related == _this.related)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.alias, _this.alias) || other.alias == _this.alias)&&(identical(other.degradeToStatus, _this.degradeToStatus) || other.degradeToStatus == _this.degradeToStatus));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,createdAt,updatedAt,deletedAt,accountId,account,relatedId,related,expiredAt,status,alias,degradeToStatus);
+int get hashCode {
+  final _this = this as SnRelationship;
+  return Object.hash(runtimeType,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.accountId,_this.account,_this.relatedId,_this.related,_this.expiredAt,_this.status,_this.alias,_this.degradeToStatus);
+}
 
 @override
 String toString() {
-  return 'SnRelationship(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, accountId: $accountId, account: $account, relatedId: $relatedId, related: $related, expiredAt: $expiredAt, status: $status, alias: $alias, degradeToStatus: $degradeToStatus)';
+  final _this = this as SnRelationship;
+  return 'SnRelationship(createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, accountId: ${_this.accountId}, account: ${_this.account}, relatedId: ${_this.relatedId}, related: ${_this.related}, expiredAt: ${_this.expiredAt}, status: ${_this.status}, alias: ${_this.alias}, degradeToStatus: ${_this.degradeToStatus})';
 }
 
 
@@ -266,16 +271,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRelationship&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.relatedId, relatedId) || other.relatedId == relatedId)&&(identical(other.related, related) || other.related == related)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.degradeToStatus, degradeToStatus) || other.degradeToStatus == degradeToStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnRelationship&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.relatedId, relatedId) || other.relatedId == relatedId)&&(identical(other.related, related) || other.related == related)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.degradeToStatus, degradeToStatus) || other.degradeToStatus == degradeToStatus));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,createdAt,updatedAt,deletedAt,accountId,account,relatedId,related,expiredAt,status,alias,degradeToStatus);
+int get hashCode {
+    return Object.hash(runtimeType,createdAt,updatedAt,deletedAt,accountId,account,relatedId,related,expiredAt,status,alias,degradeToStatus);
+}
 
 @override
 String toString() {
-  return 'SnRelationship(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, accountId: $accountId, account: $account, relatedId: $relatedId, related: $related, expiredAt: $expiredAt, status: $status, alias: $alias, degradeToStatus: $degradeToStatus)';
+    return 'SnRelationship(createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, accountId: $accountId, account: $account, relatedId: $relatedId, related: $related, expiredAt: $expiredAt, status: $status, alias: $alias, degradeToStatus: $degradeToStatus)';
 }
 
 

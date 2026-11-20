@@ -1,11 +1,11 @@
-/// The markdown ⇄ AppFlowy [Document] bridge with Solar inline syntaxes.
+/// The markdown ⇄ Island Editor [Document] bridge with Solar inline syntaxes.
 ///
 /// `solarMarkdownToDocument` and `solarDocumentToMarkdown` are the two
 /// functions every Solar client uses to enter/exit the editor world.
 ///
 /// Solar's own inline syntaxes (`@mention`, `==highlight==`, `=!spoiler!=`,
 /// `:sticker:`) are kept intact by a text-level pass: after the standard
-/// AppFlowy markdown decode, every plain text insert is re-scanned with the
+/// Island Editor markdown decode, every plain text insert is re-scanned with the
 /// Solar regexes and split into attributed runs ([SolarInlineKeys]); before
 /// encode, attributed runs are re-written to their markdown markers. This
 /// works on the delta level, so it survives every block type the standard
@@ -14,9 +14,12 @@ library;
 
 import 'dart:convert';
 
-import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:collection/collection.dart';
+import 'package:island_editor/island_editor.dart';
 
 import 'blocks/solar_highlight_spoiler_syntaxes.dart';
+
+const _deepEquality = DeepCollectionEquality();
 
 /// Decodes Solar markdown into an editor [Document].
 Document solarMarkdownToDocument(String markdown) {
@@ -29,13 +32,21 @@ Document solarMarkdownToDocument(String markdown) {
 ///
 /// [customParsers] lets a host register encoders for its own custom blocks;
 /// Solar inline attributes are always handled.
+///
+/// Blocks are joined here rather than by the Island Editor codec, whose parsers
+/// are inconsistent about trailing newlines (paragraphs, quotes and lists
+/// emit one, headings, images and tables only when another node follows, and
+/// a divider always emits `---\n`). Concatenating those puts a divider
+/// directly under the previous line, where `---` is a setext underline and
+/// turns the paragraph above it into a heading. Joining with a blank line
+/// keeps every block distinct, while consecutive list items stay tight.
 String solarDocumentToMarkdown(
   Document document, {
   List<NodeParser> customParsers = const [],
 }) {
   final rewritten = _applySolarAttributesToMarkers(document);
-  final codec = AppFlowyEditorMarkdownCodec(
-    encodeParsers: [
+  final encoder = DocumentMarkdownEncoder(
+    parsers: [
       ...customParsers,
       const TextNodeParser(),
       const BulletedListNodeParser(),
@@ -49,7 +60,28 @@ String solarDocumentToMarkdown(
       const DividerNodeParser(),
     ],
   );
-  return codec.encode(rewritten);
+
+  final nodes = rewritten.root.children.toList(growable: false);
+  final buffer = StringBuffer();
+  for (var i = 0; i < nodes.length; i++) {
+    final block = encoder
+        .convertNodes([nodes[i]])
+        .replaceAll(RegExp(r'\n+$'), '');
+    if (i > 0) {
+      buffer.write(_isTightListPair(nodes[i - 1], nodes[i]) ? '\n' : '\n\n');
+    }
+    buffer.write(block);
+  }
+  return buffer.toString();
+}
+
+/// Two neighbouring list items of the same kind render as one tight list;
+/// a blank line between them would split it into separate lists.
+bool _isTightListPair(Node previous, Node next) {
+  if (previous.type != next.type) return false;
+  return next.type == BulletedListBlockKeys.type ||
+      next.type == NumberedListBlockKeys.type ||
+      next.type == TodoListBlockKeys.type;
 }
 
 /// Returns a copy of [document] whose deltas carry the Solar markers
@@ -57,11 +89,36 @@ String solarDocumentToMarkdown(
 /// encoder writes them out verbatim. Mentions already store the `@alias`
 /// as the run text and need no rewriting.
 Document _applySolarAttributesToMarkers(Document document) {
+  if (!_hasSolarAttributes(document.root)) {
+    return document;
+  }
   final copy = Document.fromJson({
     'document': document.root.toJson(),
   });
   _rewriteSubtree(copy.root);
   return copy;
+}
+
+bool _hasSolarAttributes(Node node) {
+  if (node.type != 'code') {
+    final delta = node.delta;
+    if (delta != null) {
+      for (final op in delta) {
+        final attrs = op.attributes;
+        if (attrs != null &&
+            (attrs[SolarInlineKeys.mention] is String ||
+                attrs[SolarInlineKeys.sticker] is String ||
+                attrs[SolarInlineKeys.highlight] == true ||
+                attrs[SolarInlineKeys.spoiler] == true)) {
+          return true;
+        }
+      }
+    }
+  }
+  for (final child in node.children) {
+    if (_hasSolarAttributes(child)) return true;
+  }
+  return false;
 }
 
 void _rewriteSubtree(Node node) {
@@ -169,14 +226,21 @@ Delta _splitDelta(Delta delta) {
 /// No-op for code blocks, which keep raw text, and for nodes already
 /// annotated (their attributes survive because [_splitText] preserves the
 /// base attributes without duplicating Solar keys).
-void solarNormalizeNode(Node node) {
-  if (node.type == 'code') return;
+///
+/// Returns whether the node's text changed. Callers that run this while the
+/// platform IME is attached must re-sync the IME when it did: the markers are
+/// removed from the document, so the IME's own copy of the text is longer and
+/// every later delta it sends would land at the wrong offset.
+bool solarNormalizeNode(Node node) {
+  if (node.type == 'code') return false;
   final delta = node.delta;
-  if (delta == null) return;
+  if (delta == null) return false;
   final split = _splitDelta(delta);
-  if (split.toJson() != delta.toJson()) {
-    node.updateAttributes({'delta': split.toJson()});
-  }
+  final splitJson = split.toJson();
+  final deltaJson = delta.toJson();
+  if (_deepEquality.equals(splitJson, deltaJson)) return false;
+  node.updateAttributes({'delta': splitJson});
+  return true;
 }
 
 /// Splits [text] into plain and Solar-attributed inserts, preserving the

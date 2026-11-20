@@ -29,16 +29,21 @@ $SnActionLogCopyWith<SnActionLog> get copyWith => _$SnActionLogCopyWithImpl<SnAc
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnActionLog&&(identical(other.id, id) || other.id == id)&&(identical(other.action, action) || other.action == action)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.location, location) || other.location == location)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnActionLog;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnActionLog&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.action, _this.action) || other.action == _this.action)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.userAgent, _this.userAgent) || other.userAgent == _this.userAgent)&&(identical(other.ipAddress, _this.ipAddress) || other.ipAddress == _this.ipAddress)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.sessionId, _this.sessionId) || other.sessionId == _this.sessionId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,action,const DeepCollectionEquality().hash(meta),userAgent,ipAddress,location,accountId,sessionId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnActionLog;
+  return Object.hash(runtimeType,_this.id,_this.action,const DeepCollectionEquality().hash(_this.meta),_this.userAgent,_this.ipAddress,_this.location,_this.accountId,_this.sessionId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnActionLog(id: $id, action: $action, meta: $meta, userAgent: $userAgent, ipAddress: $ipAddress, location: $location, accountId: $accountId, sessionId: $sessionId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnActionLog;
+  return 'SnActionLog(id: ${_this.id}, action: ${_this.action}, meta: ${_this.meta}, userAgent: ${_this.userAgent}, ipAddress: ${_this.ipAddress}, location: ${_this.location}, accountId: ${_this.accountId}, sessionId: ${_this.sessionId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -260,16 +265,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnActionLog&&(identical(other.id, id) || other.id == id)&&(identical(other.action, action) || other.action == action)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.location, location) || other.location == location)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnActionLog&&(identical(other.id, id) || other.id == id)&&(identical(other.action, action) || other.action == action)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.location, location) || other.location == location)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,action,const DeepCollectionEquality().hash(_meta),userAgent,ipAddress,location,accountId,sessionId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,action,const DeepCollectionEquality().hash(_meta),userAgent,ipAddress,location,accountId,sessionId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnActionLog(id: $id, action: $action, meta: $meta, userAgent: $userAgent, ipAddress: $ipAddress, location: $location, accountId: $accountId, sessionId: $sessionId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnActionLog(id: $id, action: $action, meta: $meta, userAgent: $userAgent, ipAddress: $ipAddress, location: $location, accountId: $accountId, sessionId: $sessionId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

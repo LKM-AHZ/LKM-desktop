@@ -29,16 +29,21 @@ $SnPostCollectionCopyWith<SnPostCollection> get copyWith => _$SnPostCollectionCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPostCollection&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnPostCollection;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPostCollection&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.publisher, _this.publisher) || other.publisher == _this.publisher)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,publisherId,publisher,background,icon,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnPostCollection;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.name,_this.description,_this.publisherId,_this.publisher,_this.background,_this.icon,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnPostCollection(id: $id, slug: $slug, name: $name, description: $description, publisherId: $publisherId, publisher: $publisher, background: $background, icon: $icon, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnPostCollection;
+  return 'SnPostCollection(id: ${_this.id}, slug: ${_this.slug}, name: ${_this.name}, description: ${_this.description}, publisherId: ${_this.publisherId}, publisher: ${_this.publisher}, background: ${_this.background}, icon: ${_this.icon}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -276,16 +281,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPostCollection&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPostCollection&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.background, background) || other.background == background)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,publisherId,publisher,background,icon,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,name,description,publisherId,publisher,background,icon,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnPostCollection(id: $id, slug: $slug, name: $name, description: $description, publisherId: $publisherId, publisher: $publisher, background: $background, icon: $icon, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnPostCollection(id: $id, slug: $slug, name: $name, description: $description, publisherId: $publisherId, publisher: $publisher, background: $background, icon: $icon, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

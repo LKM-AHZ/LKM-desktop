@@ -29,16 +29,21 @@ $SnWalletCopyWith<SnWallet> get copyWith => _$SnWalletCopyWithImpl<SnWallet>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWallet&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.pockets, pockets)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWallet;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWallet&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.pockets, _this.pockets)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.realmId, _this.realmId) || other.realmId == _this.realmId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.isPrimary, _this.isPrimary) || other.isPrimary == _this.isPrimary)&&(identical(other.publicId, _this.publicId) || other.publicId == _this.publicId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(pockets),accountId,realmId,name,isPrimary,publicId,account,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnWallet;
+  return Object.hash(runtimeType,_this.id,const DeepCollectionEquality().hash(_this.pockets),_this.accountId,_this.realmId,_this.name,_this.isPrimary,_this.publicId,_this.account,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWallet(id: $id, pockets: $pockets, accountId: $accountId, realmId: $realmId, name: $name, isPrimary: $isPrimary, publicId: $publicId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWallet;
+  return 'SnWallet(id: ${_this.id}, pockets: ${_this.pockets}, accountId: ${_this.accountId}, realmId: ${_this.realmId}, name: ${_this.name}, isPrimary: ${_this.isPrimary}, publicId: ${_this.publicId}, account: ${_this.account}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -260,16 +265,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWallet&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._pockets, _pockets)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWallet&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.pockets, _pockets)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.realmId, realmId) || other.realmId == realmId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isPrimary, isPrimary) || other.isPrimary == isPrimary)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.account, account) || other.account == account)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_pockets),accountId,realmId,name,isPrimary,publicId,account,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_pockets),accountId,realmId,name,isPrimary,publicId,account,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWallet(id: $id, pockets: $pockets, accountId: $accountId, realmId: $realmId, name: $name, isPrimary: $isPrimary, publicId: $publicId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWallet(id: $id, pockets: $pockets, accountId: $accountId, realmId: $realmId, name: $name, isPrimary: $isPrimary, publicId: $publicId, account: $account, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -346,16 +353,21 @@ $SnWalletStatsCopyWith<SnWalletStats> get copyWith => _$SnWalletStatsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletStats&&(identical(other.periodBegin, periodBegin) || other.periodBegin == periodBegin)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&(identical(other.totalTransactions, totalTransactions) || other.totalTransactions == totalTransactions)&&(identical(other.totalOrders, totalOrders) || other.totalOrders == totalOrders)&&(identical(other.totalIncome, totalIncome) || other.totalIncome == totalIncome)&&(identical(other.totalOutgoing, totalOutgoing) || other.totalOutgoing == totalOutgoing)&&(identical(other.sum, sum) || other.sum == sum)&&const DeepCollectionEquality().equals(other.incomeCategories, incomeCategories)&&const DeepCollectionEquality().equals(other.outgoingCategories, outgoingCategories));
+  final _this = this as SnWalletStats;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletStats&&(identical(other.periodBegin, _this.periodBegin) || other.periodBegin == _this.periodBegin)&&(identical(other.periodEnd, _this.periodEnd) || other.periodEnd == _this.periodEnd)&&(identical(other.totalTransactions, _this.totalTransactions) || other.totalTransactions == _this.totalTransactions)&&(identical(other.totalOrders, _this.totalOrders) || other.totalOrders == _this.totalOrders)&&(identical(other.totalIncome, _this.totalIncome) || other.totalIncome == _this.totalIncome)&&(identical(other.totalOutgoing, _this.totalOutgoing) || other.totalOutgoing == _this.totalOutgoing)&&(identical(other.sum, _this.sum) || other.sum == _this.sum)&&const DeepCollectionEquality().equals(other.incomeCategories, _this.incomeCategories)&&const DeepCollectionEquality().equals(other.outgoingCategories, _this.outgoingCategories));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,periodBegin,periodEnd,totalTransactions,totalOrders,totalIncome,totalOutgoing,sum,const DeepCollectionEquality().hash(incomeCategories),const DeepCollectionEquality().hash(outgoingCategories));
+int get hashCode {
+  final _this = this as SnWalletStats;
+  return Object.hash(runtimeType,_this.periodBegin,_this.periodEnd,_this.totalTransactions,_this.totalOrders,_this.totalIncome,_this.totalOutgoing,_this.sum,const DeepCollectionEquality().hash(_this.incomeCategories),const DeepCollectionEquality().hash(_this.outgoingCategories));
+}
 
 @override
 String toString() {
-  return 'SnWalletStats(periodBegin: $periodBegin, periodEnd: $periodEnd, totalTransactions: $totalTransactions, totalOrders: $totalOrders, totalIncome: $totalIncome, totalOutgoing: $totalOutgoing, sum: $sum, incomeCategories: $incomeCategories, outgoingCategories: $outgoingCategories)';
+  final _this = this as SnWalletStats;
+  return 'SnWalletStats(periodBegin: ${_this.periodBegin}, periodEnd: ${_this.periodEnd}, totalTransactions: ${_this.totalTransactions}, totalOrders: ${_this.totalOrders}, totalIncome: ${_this.totalIncome}, totalOutgoing: ${_this.totalOutgoing}, sum: ${_this.sum}, incomeCategories: ${_this.incomeCategories}, outgoingCategories: ${_this.outgoingCategories})';
 }
 
 
@@ -567,16 +579,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletStats&&(identical(other.periodBegin, periodBegin) || other.periodBegin == periodBegin)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&(identical(other.totalTransactions, totalTransactions) || other.totalTransactions == totalTransactions)&&(identical(other.totalOrders, totalOrders) || other.totalOrders == totalOrders)&&(identical(other.totalIncome, totalIncome) || other.totalIncome == totalIncome)&&(identical(other.totalOutgoing, totalOutgoing) || other.totalOutgoing == totalOutgoing)&&(identical(other.sum, sum) || other.sum == sum)&&const DeepCollectionEquality().equals(other._incomeCategories, _incomeCategories)&&const DeepCollectionEquality().equals(other._outgoingCategories, _outgoingCategories));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletStats&&(identical(other.periodBegin, periodBegin) || other.periodBegin == periodBegin)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&(identical(other.totalTransactions, totalTransactions) || other.totalTransactions == totalTransactions)&&(identical(other.totalOrders, totalOrders) || other.totalOrders == totalOrders)&&(identical(other.totalIncome, totalIncome) || other.totalIncome == totalIncome)&&(identical(other.totalOutgoing, totalOutgoing) || other.totalOutgoing == totalOutgoing)&&(identical(other.sum, sum) || other.sum == sum)&&const DeepCollectionEquality().equals(other.incomeCategories, _incomeCategories)&&const DeepCollectionEquality().equals(other.outgoingCategories, _outgoingCategories));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,periodBegin,periodEnd,totalTransactions,totalOrders,totalIncome,totalOutgoing,sum,const DeepCollectionEquality().hash(_incomeCategories),const DeepCollectionEquality().hash(_outgoingCategories));
+int get hashCode {
+    return Object.hash(runtimeType,periodBegin,periodEnd,totalTransactions,totalOrders,totalIncome,totalOutgoing,sum,const DeepCollectionEquality().hash(_incomeCategories),const DeepCollectionEquality().hash(_outgoingCategories));
+}
 
 @override
 String toString() {
-  return 'SnWalletStats(periodBegin: $periodBegin, periodEnd: $periodEnd, totalTransactions: $totalTransactions, totalOrders: $totalOrders, totalIncome: $totalIncome, totalOutgoing: $totalOutgoing, sum: $sum, incomeCategories: $incomeCategories, outgoingCategories: $outgoingCategories)';
+    return 'SnWalletStats(periodBegin: $periodBegin, periodEnd: $periodEnd, totalTransactions: $totalTransactions, totalOrders: $totalOrders, totalIncome: $totalIncome, totalOutgoing: $totalOutgoing, sum: $sum, incomeCategories: $incomeCategories, outgoingCategories: $outgoingCategories)';
 }
 
 
@@ -639,16 +653,21 @@ $SnWalletExchangeOptionCopyWith<SnWalletExchangeOption> get copyWith => _$SnWall
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletExchangeOption&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount));
+  final _this = this as SnWalletExchangeOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletExchangeOption&&(identical(other.sourceCurrency, _this.sourceCurrency) || other.sourceCurrency == _this.sourceCurrency)&&(identical(other.sourceAmount, _this.sourceAmount) || other.sourceAmount == _this.sourceAmount)&&(identical(other.targetCurrency, _this.targetCurrency) || other.targetCurrency == _this.targetCurrency)&&(identical(other.targetAmount, _this.targetAmount) || other.targetAmount == _this.targetAmount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sourceCurrency,sourceAmount,targetCurrency,targetAmount);
+int get hashCode {
+  final _this = this as SnWalletExchangeOption;
+  return Object.hash(runtimeType,_this.sourceCurrency,_this.sourceAmount,_this.targetCurrency,_this.targetAmount);
+}
 
 @override
 String toString() {
-  return 'SnWalletExchangeOption(sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount)';
+  final _this = this as SnWalletExchangeOption;
+  return 'SnWalletExchangeOption(sourceCurrency: ${_this.sourceCurrency}, sourceAmount: ${_this.sourceAmount}, targetCurrency: ${_this.targetCurrency}, targetAmount: ${_this.targetAmount})';
 }
 
 
@@ -838,16 +857,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletExchangeOption&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletExchangeOption&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sourceCurrency,sourceAmount,targetCurrency,targetAmount);
+int get hashCode {
+    return Object.hash(runtimeType,sourceCurrency,sourceAmount,targetCurrency,targetAmount);
+}
 
 @override
 String toString() {
-  return 'SnWalletExchangeOption(sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount)';
+    return 'SnWalletExchangeOption(sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount)';
 }
 
 
@@ -905,16 +926,21 @@ $SnWalletExchangeResponseCopyWith<SnWalletExchangeResponse> get copyWith => _$Sn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletExchangeResponse&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.debitTransaction, debitTransaction) || other.debitTransaction == debitTransaction)&&(identical(other.creditTransaction, creditTransaction) || other.creditTransaction == creditTransaction));
+  final _this = this as SnWalletExchangeResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletExchangeResponse&&(identical(other.walletId, _this.walletId) || other.walletId == _this.walletId)&&(identical(other.sourceCurrency, _this.sourceCurrency) || other.sourceCurrency == _this.sourceCurrency)&&(identical(other.sourceAmount, _this.sourceAmount) || other.sourceAmount == _this.sourceAmount)&&(identical(other.targetCurrency, _this.targetCurrency) || other.targetCurrency == _this.targetCurrency)&&(identical(other.targetAmount, _this.targetAmount) || other.targetAmount == _this.targetAmount)&&(identical(other.debitTransaction, _this.debitTransaction) || other.debitTransaction == _this.debitTransaction)&&(identical(other.creditTransaction, _this.creditTransaction) || other.creditTransaction == _this.creditTransaction));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,walletId,sourceCurrency,sourceAmount,targetCurrency,targetAmount,debitTransaction,creditTransaction);
+int get hashCode {
+  final _this = this as SnWalletExchangeResponse;
+  return Object.hash(runtimeType,_this.walletId,_this.sourceCurrency,_this.sourceAmount,_this.targetCurrency,_this.targetAmount,_this.debitTransaction,_this.creditTransaction);
+}
 
 @override
 String toString() {
-  return 'SnWalletExchangeResponse(walletId: $walletId, sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount, debitTransaction: $debitTransaction, creditTransaction: $creditTransaction)';
+  final _this = this as SnWalletExchangeResponse;
+  return 'SnWalletExchangeResponse(walletId: ${_this.walletId}, sourceCurrency: ${_this.sourceCurrency}, sourceAmount: ${_this.sourceAmount}, targetCurrency: ${_this.targetCurrency}, targetAmount: ${_this.targetAmount}, debitTransaction: ${_this.debitTransaction}, creditTransaction: ${_this.creditTransaction})';
 }
 
 
@@ -1128,16 +1154,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletExchangeResponse&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.debitTransaction, debitTransaction) || other.debitTransaction == debitTransaction)&&(identical(other.creditTransaction, creditTransaction) || other.creditTransaction == creditTransaction));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletExchangeResponse&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.sourceCurrency, sourceCurrency) || other.sourceCurrency == sourceCurrency)&&(identical(other.sourceAmount, sourceAmount) || other.sourceAmount == sourceAmount)&&(identical(other.targetCurrency, targetCurrency) || other.targetCurrency == targetCurrency)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.debitTransaction, debitTransaction) || other.debitTransaction == debitTransaction)&&(identical(other.creditTransaction, creditTransaction) || other.creditTransaction == creditTransaction));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,walletId,sourceCurrency,sourceAmount,targetCurrency,targetAmount,debitTransaction,creditTransaction);
+int get hashCode {
+    return Object.hash(runtimeType,walletId,sourceCurrency,sourceAmount,targetCurrency,targetAmount,debitTransaction,creditTransaction);
+}
 
 @override
 String toString() {
-  return 'SnWalletExchangeResponse(walletId: $walletId, sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount, debitTransaction: $debitTransaction, creditTransaction: $creditTransaction)';
+    return 'SnWalletExchangeResponse(walletId: $walletId, sourceCurrency: $sourceCurrency, sourceAmount: $sourceAmount, targetCurrency: $targetCurrency, targetAmount: $targetAmount, debitTransaction: $debitTransaction, creditTransaction: $creditTransaction)';
 }
 
 
@@ -1216,16 +1244,21 @@ $SnWalletPocketCopyWith<SnWalletPocket> get copyWith => _$SnWalletPocketCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletPocket&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.heldAmount, heldAmount) || other.heldAmount == heldAmount)&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletPocket;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletPocket&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.heldAmount, _this.heldAmount) || other.heldAmount == _this.heldAmount)&&(identical(other.walletId, _this.walletId) || other.walletId == _this.walletId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,currency,amount,heldAmount,walletId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnWalletPocket;
+  return Object.hash(runtimeType,_this.id,_this.currency,_this.amount,_this.heldAmount,_this.walletId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletPocket(id: $id, currency: $currency, amount: $amount, heldAmount: $heldAmount, walletId: $walletId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletPocket;
+  return 'SnWalletPocket(id: ${_this.id}, currency: ${_this.currency}, amount: ${_this.amount}, heldAmount: ${_this.heldAmount}, walletId: ${_this.walletId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -1423,16 +1456,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletPocket&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.heldAmount, heldAmount) || other.heldAmount == heldAmount)&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletPocket&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.heldAmount, heldAmount) || other.heldAmount == heldAmount)&&(identical(other.walletId, walletId) || other.walletId == walletId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,currency,amount,heldAmount,walletId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,currency,amount,heldAmount,walletId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletPocket(id: $id, currency: $currency, amount: $amount, heldAmount: $heldAmount, walletId: $walletId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletPocket(id: $id, currency: $currency, amount: $amount, heldAmount: $heldAmount, walletId: $walletId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -1494,16 +1529,21 @@ $SnTransactionCopyWith<SnTransaction> get copyWith => _$SnTransactionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.isFrozen, isFrozen) || other.isFrozen == isFrozen)&&(identical(other.requireConfirmation, requireConfirmation) || other.requireConfirmation == requireConfirmation)&&(identical(other.frozenAt, frozenAt) || other.frozenAt == frozenAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payerWallet, payerWallet) || other.payerWallet == payerWallet)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.payeeWallet, payeeWallet) || other.payeeWallet == payeeWallet)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnTransaction;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnTransaction&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.remarks, _this.remarks) || other.remarks == _this.remarks)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.isFrozen, _this.isFrozen) || other.isFrozen == _this.isFrozen)&&(identical(other.requireConfirmation, _this.requireConfirmation) || other.requireConfirmation == _this.requireConfirmation)&&(identical(other.frozenAt, _this.frozenAt) || other.frozenAt == _this.frozenAt)&&(identical(other.expiresAt, _this.expiresAt) || other.expiresAt == _this.expiresAt)&&(identical(other.confirmedAt, _this.confirmedAt) || other.confirmedAt == _this.confirmedAt)&&(identical(other.payerWalletId, _this.payerWalletId) || other.payerWalletId == _this.payerWalletId)&&(identical(other.payerWallet, _this.payerWallet) || other.payerWallet == _this.payerWallet)&&(identical(other.payeeWalletId, _this.payeeWalletId) || other.payeeWalletId == _this.payeeWalletId)&&(identical(other.payeeWallet, _this.payeeWallet) || other.payeeWallet == _this.payeeWallet)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,currency,amount,remarks,type,status,isFrozen,requireConfirmation,frozenAt,expiresAt,confirmedAt,payerWalletId,payerWallet,payeeWalletId,payeeWallet,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnTransaction;
+  return Object.hash(runtimeType,_this.id,_this.currency,_this.amount,_this.remarks,_this.type,_this.status,_this.isFrozen,_this.requireConfirmation,_this.frozenAt,_this.expiresAt,_this.confirmedAt,_this.payerWalletId,_this.payerWallet,_this.payeeWalletId,_this.payeeWallet,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnTransaction(id: $id, currency: $currency, amount: $amount, remarks: $remarks, type: $type, status: $status, isFrozen: $isFrozen, requireConfirmation: $requireConfirmation, frozenAt: $frozenAt, expiresAt: $expiresAt, confirmedAt: $confirmedAt, payerWalletId: $payerWalletId, payerWallet: $payerWallet, payeeWalletId: $payeeWalletId, payeeWallet: $payeeWallet, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnTransaction;
+  return 'SnTransaction(id: ${_this.id}, currency: ${_this.currency}, amount: ${_this.amount}, remarks: ${_this.remarks}, type: ${_this.type}, status: ${_this.status}, isFrozen: ${_this.isFrozen}, requireConfirmation: ${_this.requireConfirmation}, frozenAt: ${_this.frozenAt}, expiresAt: ${_this.expiresAt}, confirmedAt: ${_this.confirmedAt}, payerWalletId: ${_this.payerWalletId}, payerWallet: ${_this.payerWallet}, payeeWalletId: ${_this.payeeWalletId}, payeeWallet: ${_this.payeeWallet}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -1745,16 +1785,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.isFrozen, isFrozen) || other.isFrozen == isFrozen)&&(identical(other.requireConfirmation, requireConfirmation) || other.requireConfirmation == requireConfirmation)&&(identical(other.frozenAt, frozenAt) || other.frozenAt == frozenAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payerWallet, payerWallet) || other.payerWallet == payerWallet)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.payeeWallet, payeeWallet) || other.payeeWallet == payeeWallet)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.type, type) || other.type == type)&&(identical(other.status, status) || other.status == status)&&(identical(other.isFrozen, isFrozen) || other.isFrozen == isFrozen)&&(identical(other.requireConfirmation, requireConfirmation) || other.requireConfirmation == requireConfirmation)&&(identical(other.frozenAt, frozenAt) || other.frozenAt == frozenAt)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.confirmedAt, confirmedAt) || other.confirmedAt == confirmedAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payerWallet, payerWallet) || other.payerWallet == payerWallet)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.payeeWallet, payeeWallet) || other.payeeWallet == payeeWallet)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,currency,amount,remarks,type,status,isFrozen,requireConfirmation,frozenAt,expiresAt,confirmedAt,payerWalletId,payerWallet,payeeWalletId,payeeWallet,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,currency,amount,remarks,type,status,isFrozen,requireConfirmation,frozenAt,expiresAt,confirmedAt,payerWalletId,payerWallet,payeeWalletId,payeeWallet,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnTransaction(id: $id, currency: $currency, amount: $amount, remarks: $remarks, type: $type, status: $status, isFrozen: $isFrozen, requireConfirmation: $requireConfirmation, frozenAt: $frozenAt, expiresAt: $expiresAt, confirmedAt: $confirmedAt, payerWalletId: $payerWalletId, payerWallet: $payerWallet, payeeWalletId: $payeeWalletId, payeeWallet: $payeeWallet, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnTransaction(id: $id, currency: $currency, amount: $amount, remarks: $remarks, type: $type, status: $status, isFrozen: $isFrozen, requireConfirmation: $requireConfirmation, frozenAt: $frozenAt, expiresAt: $expiresAt, confirmedAt: $confirmedAt, payerWalletId: $payerWalletId, payerWallet: $payerWallet, payeeWalletId: $payeeWalletId, payeeWallet: $payeeWallet, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -1850,16 +1892,21 @@ $SnWalletSubscriptionCopyWith<SnWalletSubscription> get copyWith => _$SnWalletSu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.begunAt, begunAt) || other.begunAt == begunAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isFreeTrial, isFreeTrial) || other.isFreeTrial == isFreeTrial)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&const DeepCollectionEquality().equals(other.paymentDetails, paymentDetails)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.couponId, couponId) || other.couponId == couponId)&&const DeepCollectionEquality().equals(other.coupon, coupon)&&(identical(other.renewalAt, renewalAt) || other.renewalAt == renewalAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.isAvailable, isAvailable) || other.isAvailable == isAvailable)&&(identical(other.isPendingActivation, isPendingActivation) || other.isPendingActivation == isPendingActivation)&&(identical(other.finalPrice, finalPrice) || other.finalPrice == finalPrice)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletSubscription;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletSubscription&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.begunAt, _this.begunAt) || other.begunAt == _this.begunAt)&&(identical(other.endedAt, _this.endedAt) || other.endedAt == _this.endedAt)&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.groupIdentifier, _this.groupIdentifier) || other.groupIdentifier == _this.groupIdentifier)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.isFreeTrial, _this.isFreeTrial) || other.isFreeTrial == _this.isFreeTrial)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.paymentMethod, _this.paymentMethod) || other.paymentMethod == _this.paymentMethod)&&const DeepCollectionEquality().equals(other.paymentDetails, _this.paymentDetails)&&(identical(other.basePrice, _this.basePrice) || other.basePrice == _this.basePrice)&&(identical(other.couponId, _this.couponId) || other.couponId == _this.couponId)&&const DeepCollectionEquality().equals(other.coupon, _this.coupon)&&(identical(other.renewalAt, _this.renewalAt) || other.renewalAt == _this.renewalAt)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.account, _this.account) || other.account == _this.account)&&(identical(other.isAvailable, _this.isAvailable) || other.isAvailable == _this.isAvailable)&&(identical(other.isPendingActivation, _this.isPendingActivation) || other.isPendingActivation == _this.isPendingActivation)&&(identical(other.finalPrice, _this.finalPrice) || other.finalPrice == _this.finalPrice)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,begunAt,endedAt,identifier,groupIdentifier,isActive,isFreeTrial,status,paymentMethod,const DeepCollectionEquality().hash(paymentDetails),basePrice,couponId,const DeepCollectionEquality().hash(coupon),renewalAt,accountId,account,isAvailable,isPendingActivation,finalPrice,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+  final _this = this as SnWalletSubscription;
+  return Object.hashAll([runtimeType,_this.id,_this.begunAt,_this.endedAt,_this.identifier,_this.groupIdentifier,_this.isActive,_this.isFreeTrial,_this.status,_this.paymentMethod,const DeepCollectionEquality().hash(_this.paymentDetails),_this.basePrice,_this.couponId,const DeepCollectionEquality().hash(_this.coupon),_this.renewalAt,_this.accountId,_this.account,_this.isAvailable,_this.isPendingActivation,_this.finalPrice,_this.createdAt,_this.updatedAt,_this.deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnWalletSubscription(id: $id, begunAt: $begunAt, endedAt: $endedAt, identifier: $identifier, groupIdentifier: $groupIdentifier, isActive: $isActive, isFreeTrial: $isFreeTrial, status: $status, paymentMethod: $paymentMethod, paymentDetails: $paymentDetails, basePrice: $basePrice, couponId: $couponId, coupon: $coupon, renewalAt: $renewalAt, accountId: $accountId, account: $account, isAvailable: $isAvailable, isPendingActivation: $isPendingActivation, finalPrice: $finalPrice, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletSubscription;
+  return 'SnWalletSubscription(id: ${_this.id}, begunAt: ${_this.begunAt}, endedAt: ${_this.endedAt}, identifier: ${_this.identifier}, groupIdentifier: ${_this.groupIdentifier}, isActive: ${_this.isActive}, isFreeTrial: ${_this.isFreeTrial}, status: ${_this.status}, paymentMethod: ${_this.paymentMethod}, paymentDetails: ${_this.paymentDetails}, basePrice: ${_this.basePrice}, couponId: ${_this.couponId}, coupon: ${_this.coupon}, renewalAt: ${_this.renewalAt}, accountId: ${_this.accountId}, account: ${_this.account}, isAvailable: ${_this.isAvailable}, isPendingActivation: ${_this.isPendingActivation}, finalPrice: ${_this.finalPrice}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -2105,16 +2152,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.begunAt, begunAt) || other.begunAt == begunAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isFreeTrial, isFreeTrial) || other.isFreeTrial == isFreeTrial)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&const DeepCollectionEquality().equals(other._paymentDetails, _paymentDetails)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.couponId, couponId) || other.couponId == couponId)&&const DeepCollectionEquality().equals(other.coupon, coupon)&&(identical(other.renewalAt, renewalAt) || other.renewalAt == renewalAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.isAvailable, isAvailable) || other.isAvailable == isAvailable)&&(identical(other.isPendingActivation, isPendingActivation) || other.isPendingActivation == isPendingActivation)&&(identical(other.finalPrice, finalPrice) || other.finalPrice == finalPrice)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.begunAt, begunAt) || other.begunAt == begunAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.isFreeTrial, isFreeTrial) || other.isFreeTrial == isFreeTrial)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&const DeepCollectionEquality().equals(other.paymentDetails, _paymentDetails)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.couponId, couponId) || other.couponId == couponId)&&const DeepCollectionEquality().equals(other.coupon, coupon)&&(identical(other.renewalAt, renewalAt) || other.renewalAt == renewalAt)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.account, account) || other.account == account)&&(identical(other.isAvailable, isAvailable) || other.isAvailable == isAvailable)&&(identical(other.isPendingActivation, isPendingActivation) || other.isPendingActivation == isPendingActivation)&&(identical(other.finalPrice, finalPrice) || other.finalPrice == finalPrice)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,begunAt,endedAt,identifier,groupIdentifier,isActive,isFreeTrial,status,paymentMethod,const DeepCollectionEquality().hash(_paymentDetails),basePrice,couponId,const DeepCollectionEquality().hash(coupon),renewalAt,accountId,account,isAvailable,isPendingActivation,finalPrice,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,begunAt,endedAt,identifier,groupIdentifier,isActive,isFreeTrial,status,paymentMethod,const DeepCollectionEquality().hash(_paymentDetails),basePrice,couponId,const DeepCollectionEquality().hash(coupon),renewalAt,accountId,account,isAvailable,isPendingActivation,finalPrice,createdAt,updatedAt,deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnWalletSubscription(id: $id, begunAt: $begunAt, endedAt: $endedAt, identifier: $identifier, groupIdentifier: $groupIdentifier, isActive: $isActive, isFreeTrial: $isFreeTrial, status: $status, paymentMethod: $paymentMethod, paymentDetails: $paymentDetails, basePrice: $basePrice, couponId: $couponId, coupon: $coupon, renewalAt: $renewalAt, accountId: $accountId, account: $account, isAvailable: $isAvailable, isPendingActivation: $isPendingActivation, finalPrice: $finalPrice, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletSubscription(id: $id, begunAt: $begunAt, endedAt: $endedAt, identifier: $identifier, groupIdentifier: $groupIdentifier, isActive: $isActive, isFreeTrial: $isFreeTrial, status: $status, paymentMethod: $paymentMethod, paymentDetails: $paymentDetails, basePrice: $basePrice, couponId: $couponId, coupon: $coupon, renewalAt: $renewalAt, accountId: $accountId, account: $account, isAvailable: $isAvailable, isPendingActivation: $isPendingActivation, finalPrice: $finalPrice, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -2202,16 +2251,21 @@ $SnWalletSubscriptionRefCopyWith<SnWalletSubscriptionRef> get copyWith => _$SnWa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletSubscriptionRef&&(identical(other.id, id) || other.id == id)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier));
+  final _this = this as SnWalletSubscriptionRef;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletSubscriptionRef&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,isActive,accountId,createdAt,deletedAt,updatedAt,identifier);
+int get hashCode {
+  final _this = this as SnWalletSubscriptionRef;
+  return Object.hash(runtimeType,_this.id,_this.isActive,_this.accountId,_this.createdAt,_this.deletedAt,_this.updatedAt,_this.identifier);
+}
 
 @override
 String toString() {
-  return 'SnWalletSubscriptionRef(id: $id, isActive: $isActive, accountId: $accountId, createdAt: $createdAt, deletedAt: $deletedAt, updatedAt: $updatedAt, identifier: $identifier)';
+  final _this = this as SnWalletSubscriptionRef;
+  return 'SnWalletSubscriptionRef(id: ${_this.id}, isActive: ${_this.isActive}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, deletedAt: ${_this.deletedAt}, updatedAt: ${_this.updatedAt}, identifier: ${_this.identifier})';
 }
 
 
@@ -2407,16 +2461,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletSubscriptionRef&&(identical(other.id, id) || other.id == id)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletSubscriptionRef&&(identical(other.id, id) || other.id == id)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.identifier, identifier) || other.identifier == identifier));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,isActive,accountId,createdAt,deletedAt,updatedAt,identifier);
+int get hashCode {
+    return Object.hash(runtimeType,id,isActive,accountId,createdAt,deletedAt,updatedAt,identifier);
+}
 
 @override
 String toString() {
-  return 'SnWalletSubscriptionRef(id: $id, isActive: $isActive, accountId: $accountId, createdAt: $createdAt, deletedAt: $deletedAt, updatedAt: $updatedAt, identifier: $identifier)';
+    return 'SnWalletSubscriptionRef(id: $id, isActive: $isActive, accountId: $accountId, createdAt: $createdAt, deletedAt: $deletedAt, updatedAt: $updatedAt, identifier: $identifier)';
 }
 
 
@@ -2477,16 +2533,21 @@ $SnWalletOrderCopyWith<SnWalletOrder> get copyWith => _$SnWalletOrderCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.appIdentifier, appIdentifier) || other.appIdentifier == appIdentifier)&&const DeepCollectionEquality().equals(other.meta, meta)&&const DeepCollectionEquality().equals(other.app, app)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.transactionId, transactionId) || other.transactionId == transactionId)&&(identical(other.issuerAppId, issuerAppId) || other.issuerAppId == issuerAppId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletOrder;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletOrder&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.remarks, _this.remarks) || other.remarks == _this.remarks)&&(identical(other.appIdentifier, _this.appIdentifier) || other.appIdentifier == _this.appIdentifier)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&const DeepCollectionEquality().equals(other.app, _this.app)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.payerWalletId, _this.payerWalletId) || other.payerWalletId == _this.payerWalletId)&&(identical(other.payeeWalletId, _this.payeeWalletId) || other.payeeWalletId == _this.payeeWalletId)&&(identical(other.transactionId, _this.transactionId) || other.transactionId == _this.transactionId)&&(identical(other.issuerAppId, _this.issuerAppId) || other.issuerAppId == _this.issuerAppId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,currency,remarks,appIdentifier,const DeepCollectionEquality().hash(meta),const DeepCollectionEquality().hash(app),amount,expiredAt,payerWalletId,payeeWalletId,transactionId,issuerAppId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnWalletOrder;
+  return Object.hash(runtimeType,_this.id,_this.status,_this.currency,_this.remarks,_this.appIdentifier,const DeepCollectionEquality().hash(_this.meta),const DeepCollectionEquality().hash(_this.app),_this.amount,_this.expiredAt,_this.payerWalletId,_this.payeeWalletId,_this.transactionId,_this.issuerAppId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletOrder(id: $id, status: $status, currency: $currency, remarks: $remarks, appIdentifier: $appIdentifier, meta: $meta, app: $app, amount: $amount, expiredAt: $expiredAt, payerWalletId: $payerWalletId, payeeWalletId: $payeeWalletId, transactionId: $transactionId, issuerAppId: $issuerAppId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletOrder;
+  return 'SnWalletOrder(id: ${_this.id}, status: ${_this.status}, currency: ${_this.currency}, remarks: ${_this.remarks}, appIdentifier: ${_this.appIdentifier}, meta: ${_this.meta}, app: ${_this.app}, amount: ${_this.amount}, expiredAt: ${_this.expiredAt}, payerWalletId: ${_this.payerWalletId}, payeeWalletId: ${_this.payeeWalletId}, transactionId: ${_this.transactionId}, issuerAppId: ${_this.issuerAppId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -2714,16 +2775,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.appIdentifier, appIdentifier) || other.appIdentifier == appIdentifier)&&const DeepCollectionEquality().equals(other._meta, _meta)&&const DeepCollectionEquality().equals(other._app, _app)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.transactionId, transactionId) || other.transactionId == transactionId)&&(identical(other.issuerAppId, issuerAppId) || other.issuerAppId == issuerAppId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.appIdentifier, appIdentifier) || other.appIdentifier == appIdentifier)&&const DeepCollectionEquality().equals(other.meta, _meta)&&const DeepCollectionEquality().equals(other.app, _app)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.payerWalletId, payerWalletId) || other.payerWalletId == payerWalletId)&&(identical(other.payeeWalletId, payeeWalletId) || other.payeeWalletId == payeeWalletId)&&(identical(other.transactionId, transactionId) || other.transactionId == transactionId)&&(identical(other.issuerAppId, issuerAppId) || other.issuerAppId == issuerAppId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,currency,remarks,appIdentifier,const DeepCollectionEquality().hash(_meta),const DeepCollectionEquality().hash(_app),amount,expiredAt,payerWalletId,payeeWalletId,transactionId,issuerAppId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,status,currency,remarks,appIdentifier,const DeepCollectionEquality().hash(_meta),const DeepCollectionEquality().hash(_app),amount,expiredAt,payerWalletId,payeeWalletId,transactionId,issuerAppId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletOrder(id: $id, status: $status, currency: $currency, remarks: $remarks, appIdentifier: $appIdentifier, meta: $meta, app: $app, amount: $amount, expiredAt: $expiredAt, payerWalletId: $payerWalletId, payeeWalletId: $payeeWalletId, transactionId: $transactionId, issuerAppId: $issuerAppId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletOrder(id: $id, status: $status, currency: $currency, remarks: $remarks, appIdentifier: $appIdentifier, meta: $meta, app: $app, amount: $amount, expiredAt: $expiredAt, payerWalletId: $payerWalletId, payeeWalletId: $payeeWalletId, transactionId: $transactionId, issuerAppId: $issuerAppId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -2793,16 +2856,21 @@ $SnWalletGiftCopyWith<SnWalletGift> get copyWith => _$SnWalletGiftCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletGift&&(identical(other.id, id) || other.id == id)&&(identical(other.giftCode, giftCode) || other.giftCode == giftCode)&&(identical(other.subscriptionIdentifier, subscriptionIdentifier) || other.subscriptionIdentifier == subscriptionIdentifier)&&(identical(other.recipientId, recipientId) || other.recipientId == recipientId)&&(identical(other.recipient, recipient) || other.recipient == recipient)&&(identical(other.gifterId, gifterId) || other.gifterId == gifterId)&&(identical(other.gifter, gifter) || other.gifter == gifter)&&(identical(other.redeemerId, redeemerId) || other.redeemerId == redeemerId)&&(identical(other.redeemer, redeemer) || other.redeemer == redeemer)&&(identical(other.message, message) || other.message == message)&&(identical(other.status, status) || other.status == status)&&(identical(other.redeemedAt, redeemedAt) || other.redeemedAt == redeemedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletGift;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletGift&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.giftCode, _this.giftCode) || other.giftCode == _this.giftCode)&&(identical(other.subscriptionIdentifier, _this.subscriptionIdentifier) || other.subscriptionIdentifier == _this.subscriptionIdentifier)&&(identical(other.recipientId, _this.recipientId) || other.recipientId == _this.recipientId)&&(identical(other.recipient, _this.recipient) || other.recipient == _this.recipient)&&(identical(other.gifterId, _this.gifterId) || other.gifterId == _this.gifterId)&&(identical(other.gifter, _this.gifter) || other.gifter == _this.gifter)&&(identical(other.redeemerId, _this.redeemerId) || other.redeemerId == _this.redeemerId)&&(identical(other.redeemer, _this.redeemer) || other.redeemer == _this.redeemer)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.redeemedAt, _this.redeemedAt) || other.redeemedAt == _this.redeemedAt)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.subscriptionId, _this.subscriptionId) || other.subscriptionId == _this.subscriptionId)&&(identical(other.subscription, _this.subscription) || other.subscription == _this.subscription)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,giftCode,subscriptionIdentifier,recipientId,recipient,gifterId,gifter,redeemerId,redeemer,message,status,redeemedAt,expiredAt,subscriptionId,subscription,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnWalletGift;
+  return Object.hash(runtimeType,_this.id,_this.giftCode,_this.subscriptionIdentifier,_this.recipientId,_this.recipient,_this.gifterId,_this.gifter,_this.redeemerId,_this.redeemer,_this.message,_this.status,_this.redeemedAt,_this.expiredAt,_this.subscriptionId,_this.subscription,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletGift(id: $id, giftCode: $giftCode, subscriptionIdentifier: $subscriptionIdentifier, recipientId: $recipientId, recipient: $recipient, gifterId: $gifterId, gifter: $gifter, redeemerId: $redeemerId, redeemer: $redeemer, message: $message, status: $status, redeemedAt: $redeemedAt, expiredAt: $expiredAt, subscriptionId: $subscriptionId, subscription: $subscription, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletGift;
+  return 'SnWalletGift(id: ${_this.id}, giftCode: ${_this.giftCode}, subscriptionIdentifier: ${_this.subscriptionIdentifier}, recipientId: ${_this.recipientId}, recipient: ${_this.recipient}, gifterId: ${_this.gifterId}, gifter: ${_this.gifter}, redeemerId: ${_this.redeemerId}, redeemer: ${_this.redeemer}, message: ${_this.message}, status: ${_this.status}, redeemedAt: ${_this.redeemedAt}, expiredAt: ${_this.expiredAt}, subscriptionId: ${_this.subscriptionId}, subscription: ${_this.subscription}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -3068,16 +3136,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletGift&&(identical(other.id, id) || other.id == id)&&(identical(other.giftCode, giftCode) || other.giftCode == giftCode)&&(identical(other.subscriptionIdentifier, subscriptionIdentifier) || other.subscriptionIdentifier == subscriptionIdentifier)&&(identical(other.recipientId, recipientId) || other.recipientId == recipientId)&&(identical(other.recipient, recipient) || other.recipient == recipient)&&(identical(other.gifterId, gifterId) || other.gifterId == gifterId)&&(identical(other.gifter, gifter) || other.gifter == gifter)&&(identical(other.redeemerId, redeemerId) || other.redeemerId == redeemerId)&&(identical(other.redeemer, redeemer) || other.redeemer == redeemer)&&(identical(other.message, message) || other.message == message)&&(identical(other.status, status) || other.status == status)&&(identical(other.redeemedAt, redeemedAt) || other.redeemedAt == redeemedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletGift&&(identical(other.id, id) || other.id == id)&&(identical(other.giftCode, giftCode) || other.giftCode == giftCode)&&(identical(other.subscriptionIdentifier, subscriptionIdentifier) || other.subscriptionIdentifier == subscriptionIdentifier)&&(identical(other.recipientId, recipientId) || other.recipientId == recipientId)&&(identical(other.recipient, recipient) || other.recipient == recipient)&&(identical(other.gifterId, gifterId) || other.gifterId == gifterId)&&(identical(other.gifter, gifter) || other.gifter == gifter)&&(identical(other.redeemerId, redeemerId) || other.redeemerId == redeemerId)&&(identical(other.redeemer, redeemer) || other.redeemer == redeemer)&&(identical(other.message, message) || other.message == message)&&(identical(other.status, status) || other.status == status)&&(identical(other.redeemedAt, redeemedAt) || other.redeemedAt == redeemedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,giftCode,subscriptionIdentifier,recipientId,recipient,gifterId,gifter,redeemerId,redeemer,message,status,redeemedAt,expiredAt,subscriptionId,subscription,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,giftCode,subscriptionIdentifier,recipientId,recipient,gifterId,gifter,redeemerId,redeemer,message,status,redeemedAt,expiredAt,subscriptionId,subscription,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletGift(id: $id, giftCode: $giftCode, subscriptionIdentifier: $subscriptionIdentifier, recipientId: $recipientId, recipient: $recipient, gifterId: $gifterId, gifter: $gifter, redeemerId: $redeemerId, redeemer: $redeemer, message: $message, status: $status, redeemedAt: $redeemedAt, expiredAt: $expiredAt, subscriptionId: $subscriptionId, subscription: $subscription, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletGift(id: $id, giftCode: $giftCode, subscriptionIdentifier: $subscriptionIdentifier, recipientId: $recipientId, recipient: $recipient, gifterId: $gifterId, gifter: $gifter, redeemerId: $redeemerId, redeemer: $redeemer, message: $message, status: $status, redeemedAt: $redeemedAt, expiredAt: $expiredAt, subscriptionId: $subscriptionId, subscription: $subscription, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -3197,16 +3267,21 @@ $SnWalletFundCopyWith<SnWalletFund> get copyWith => _$SnWalletFundCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletFund&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.totalAmount, totalAmount) || other.totalAmount == totalAmount)&&(identical(other.remainingAmount, remainingAmount) || other.remainingAmount == remainingAmount)&&(identical(other.amountOfSplits, amountOfSplits) || other.amountOfSplits == amountOfSplits)&&(identical(other.splitType, splitType) || other.splitType == splitType)&&(identical(other.status, status) || other.status == status)&&(identical(other.message, message) || other.message == message)&&(identical(other.creatorAccountId, creatorAccountId) || other.creatorAccountId == creatorAccountId)&&(identical(other.creatorAccount, creatorAccount) || other.creatorAccount == creatorAccount)&&(identical(other.isRaising, isRaising) || other.isRaising == isRaising)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.contributionType, contributionType) || other.contributionType == contributionType)&&(identical(other.contributionAmount, contributionAmount) || other.contributionAmount == contributionAmount)&&(identical(other.deadlineAt, deadlineAt) || other.deadlineAt == deadlineAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&const DeepCollectionEquality().equals(other.recipients, recipients)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletFund;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletFund&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.totalAmount, _this.totalAmount) || other.totalAmount == _this.totalAmount)&&(identical(other.remainingAmount, _this.remainingAmount) || other.remainingAmount == _this.remainingAmount)&&(identical(other.amountOfSplits, _this.amountOfSplits) || other.amountOfSplits == _this.amountOfSplits)&&(identical(other.splitType, _this.splitType) || other.splitType == _this.splitType)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.creatorAccountId, _this.creatorAccountId) || other.creatorAccountId == _this.creatorAccountId)&&(identical(other.creatorAccount, _this.creatorAccount) || other.creatorAccount == _this.creatorAccount)&&(identical(other.isRaising, _this.isRaising) || other.isRaising == _this.isRaising)&&(identical(other.targetAmount, _this.targetAmount) || other.targetAmount == _this.targetAmount)&&(identical(other.contributionType, _this.contributionType) || other.contributionType == _this.contributionType)&&(identical(other.contributionAmount, _this.contributionAmount) || other.contributionAmount == _this.contributionAmount)&&(identical(other.deadlineAt, _this.deadlineAt) || other.deadlineAt == _this.deadlineAt)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&const DeepCollectionEquality().equals(other.recipients, _this.recipients)&&(identical(other.isOpen, _this.isOpen) || other.isOpen == _this.isOpen)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,currency,totalAmount,remainingAmount,amountOfSplits,splitType,status,message,creatorAccountId,creatorAccount,isRaising,targetAmount,contributionType,contributionAmount,deadlineAt,expiredAt,const DeepCollectionEquality().hash(recipients),isOpen,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+  final _this = this as SnWalletFund;
+  return Object.hashAll([runtimeType,_this.id,_this.currency,_this.totalAmount,_this.remainingAmount,_this.amountOfSplits,_this.splitType,_this.status,_this.message,_this.creatorAccountId,_this.creatorAccount,_this.isRaising,_this.targetAmount,_this.contributionType,_this.contributionAmount,_this.deadlineAt,_this.expiredAt,const DeepCollectionEquality().hash(_this.recipients),_this.isOpen,_this.createdAt,_this.updatedAt,_this.deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnWalletFund(id: $id, currency: $currency, totalAmount: $totalAmount, remainingAmount: $remainingAmount, amountOfSplits: $amountOfSplits, splitType: $splitType, status: $status, message: $message, creatorAccountId: $creatorAccountId, creatorAccount: $creatorAccount, isRaising: $isRaising, targetAmount: $targetAmount, contributionType: $contributionType, contributionAmount: $contributionAmount, deadlineAt: $deadlineAt, expiredAt: $expiredAt, recipients: $recipients, isOpen: $isOpen, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletFund;
+  return 'SnWalletFund(id: ${_this.id}, currency: ${_this.currency}, totalAmount: ${_this.totalAmount}, remainingAmount: ${_this.remainingAmount}, amountOfSplits: ${_this.amountOfSplits}, splitType: ${_this.splitType}, status: ${_this.status}, message: ${_this.message}, creatorAccountId: ${_this.creatorAccountId}, creatorAccount: ${_this.creatorAccount}, isRaising: ${_this.isRaising}, targetAmount: ${_this.targetAmount}, contributionType: ${_this.contributionType}, contributionAmount: ${_this.contributionAmount}, deadlineAt: ${_this.deadlineAt}, expiredAt: ${_this.expiredAt}, recipients: ${_this.recipients}, isOpen: ${_this.isOpen}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -3448,16 +3523,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletFund&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.totalAmount, totalAmount) || other.totalAmount == totalAmount)&&(identical(other.remainingAmount, remainingAmount) || other.remainingAmount == remainingAmount)&&(identical(other.amountOfSplits, amountOfSplits) || other.amountOfSplits == amountOfSplits)&&(identical(other.splitType, splitType) || other.splitType == splitType)&&(identical(other.status, status) || other.status == status)&&(identical(other.message, message) || other.message == message)&&(identical(other.creatorAccountId, creatorAccountId) || other.creatorAccountId == creatorAccountId)&&(identical(other.creatorAccount, creatorAccount) || other.creatorAccount == creatorAccount)&&(identical(other.isRaising, isRaising) || other.isRaising == isRaising)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.contributionType, contributionType) || other.contributionType == contributionType)&&(identical(other.contributionAmount, contributionAmount) || other.contributionAmount == contributionAmount)&&(identical(other.deadlineAt, deadlineAt) || other.deadlineAt == deadlineAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&const DeepCollectionEquality().equals(other._recipients, _recipients)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletFund&&(identical(other.id, id) || other.id == id)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.totalAmount, totalAmount) || other.totalAmount == totalAmount)&&(identical(other.remainingAmount, remainingAmount) || other.remainingAmount == remainingAmount)&&(identical(other.amountOfSplits, amountOfSplits) || other.amountOfSplits == amountOfSplits)&&(identical(other.splitType, splitType) || other.splitType == splitType)&&(identical(other.status, status) || other.status == status)&&(identical(other.message, message) || other.message == message)&&(identical(other.creatorAccountId, creatorAccountId) || other.creatorAccountId == creatorAccountId)&&(identical(other.creatorAccount, creatorAccount) || other.creatorAccount == creatorAccount)&&(identical(other.isRaising, isRaising) || other.isRaising == isRaising)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.contributionType, contributionType) || other.contributionType == contributionType)&&(identical(other.contributionAmount, contributionAmount) || other.contributionAmount == contributionAmount)&&(identical(other.deadlineAt, deadlineAt) || other.deadlineAt == deadlineAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&const DeepCollectionEquality().equals(other.recipients, _recipients)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,currency,totalAmount,remainingAmount,amountOfSplits,splitType,status,message,creatorAccountId,creatorAccount,isRaising,targetAmount,contributionType,contributionAmount,deadlineAt,expiredAt,const DeepCollectionEquality().hash(_recipients),isOpen,createdAt,updatedAt,deletedAt]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,currency,totalAmount,remainingAmount,amountOfSplits,splitType,status,message,creatorAccountId,creatorAccount,isRaising,targetAmount,contributionType,contributionAmount,deadlineAt,expiredAt,const DeepCollectionEquality().hash(_recipients),isOpen,createdAt,updatedAt,deletedAt]);
+}
 
 @override
 String toString() {
-  return 'SnWalletFund(id: $id, currency: $currency, totalAmount: $totalAmount, remainingAmount: $remainingAmount, amountOfSplits: $amountOfSplits, splitType: $splitType, status: $status, message: $message, creatorAccountId: $creatorAccountId, creatorAccount: $creatorAccount, isRaising: $isRaising, targetAmount: $targetAmount, contributionType: $contributionType, contributionAmount: $contributionAmount, deadlineAt: $deadlineAt, expiredAt: $expiredAt, recipients: $recipients, isOpen: $isOpen, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletFund(id: $id, currency: $currency, totalAmount: $totalAmount, remainingAmount: $remainingAmount, amountOfSplits: $amountOfSplits, splitType: $splitType, status: $status, message: $message, creatorAccountId: $creatorAccountId, creatorAccount: $creatorAccount, isRaising: $isRaising, targetAmount: $targetAmount, contributionType: $contributionType, contributionAmount: $contributionAmount, deadlineAt: $deadlineAt, expiredAt: $expiredAt, recipients: $recipients, isOpen: $isOpen, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -3544,16 +3621,21 @@ $SnWalletFundRecipientCopyWith<SnWalletFundRecipient> get copyWith => _$SnWallet
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletFundRecipient&&(identical(other.id, id) || other.id == id)&&(identical(other.fundId, fundId) || other.fundId == fundId)&&(identical(other.recipientAccountId, recipientAccountId) || other.recipientAccountId == recipientAccountId)&&(identical(other.recipientAccount, recipientAccount) || other.recipientAccount == recipientAccount)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.isReceived, isReceived) || other.isReceived == isReceived)&&(identical(other.receivedAt, receivedAt) || other.receivedAt == receivedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnWalletFundRecipient;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnWalletFundRecipient&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.fundId, _this.fundId) || other.fundId == _this.fundId)&&(identical(other.recipientAccountId, _this.recipientAccountId) || other.recipientAccountId == _this.recipientAccountId)&&(identical(other.recipientAccount, _this.recipientAccount) || other.recipientAccount == _this.recipientAccount)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.isReceived, _this.isReceived) || other.isReceived == _this.isReceived)&&(identical(other.receivedAt, _this.receivedAt) || other.receivedAt == _this.receivedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fundId,recipientAccountId,recipientAccount,amount,isReceived,receivedAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnWalletFundRecipient;
+  return Object.hash(runtimeType,_this.id,_this.fundId,_this.recipientAccountId,_this.recipientAccount,_this.amount,_this.isReceived,_this.receivedAt,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletFundRecipient(id: $id, fundId: $fundId, recipientAccountId: $recipientAccountId, recipientAccount: $recipientAccount, amount: $amount, isReceived: $isReceived, receivedAt: $receivedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnWalletFundRecipient;
+  return 'SnWalletFundRecipient(id: ${_this.id}, fundId: ${_this.fundId}, recipientAccountId: ${_this.recipientAccountId}, recipientAccount: ${_this.recipientAccount}, amount: ${_this.amount}, isReceived: ${_this.isReceived}, receivedAt: ${_this.receivedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -3767,16 +3849,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletFundRecipient&&(identical(other.id, id) || other.id == id)&&(identical(other.fundId, fundId) || other.fundId == fundId)&&(identical(other.recipientAccountId, recipientAccountId) || other.recipientAccountId == recipientAccountId)&&(identical(other.recipientAccount, recipientAccount) || other.recipientAccount == recipientAccount)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.isReceived, isReceived) || other.isReceived == isReceived)&&(identical(other.receivedAt, receivedAt) || other.receivedAt == receivedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnWalletFundRecipient&&(identical(other.id, id) || other.id == id)&&(identical(other.fundId, fundId) || other.fundId == fundId)&&(identical(other.recipientAccountId, recipientAccountId) || other.recipientAccountId == recipientAccountId)&&(identical(other.recipientAccount, recipientAccount) || other.recipientAccount == recipientAccount)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.isReceived, isReceived) || other.isReceived == isReceived)&&(identical(other.receivedAt, receivedAt) || other.receivedAt == receivedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fundId,recipientAccountId,recipientAccount,amount,isReceived,receivedAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,fundId,recipientAccountId,recipientAccount,amount,isReceived,receivedAt,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnWalletFundRecipient(id: $id, fundId: $fundId, recipientAccountId: $recipientAccountId, recipientAccount: $recipientAccount, amount: $amount, isReceived: $isReceived, receivedAt: $receivedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnWalletFundRecipient(id: $id, fundId: $fundId, recipientAccountId: $recipientAccountId, recipientAccount: $recipientAccount, amount: $amount, isReceived: $isReceived, receivedAt: $receivedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -3852,16 +3936,21 @@ $SnSubscriptionCatalogCopyWith<SnSubscriptionCatalog> get copyWith => _$SnSubscr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionCatalog&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&(identical(other.minimumAccountLevel, minimumAccountLevel) || other.minimumAccountLevel == minimumAccountLevel)&&(identical(other.experienceMultiplier, experienceMultiplier) || other.experienceMultiplier == experienceMultiplier)&&(identical(other.goldenPointReward, goldenPointReward) || other.goldenPointReward == goldenPointReward)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other.allowedPaymentMethods, allowedPaymentMethods)&&(identical(other.providerMappings, providerMappings) || other.providerMappings == providerMappings));
+  final _this = this as SnSubscriptionCatalog;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionCatalog&&(identical(other.identifier, _this.identifier) || other.identifier == _this.identifier)&&(identical(other.groupIdentifier, _this.groupIdentifier) || other.groupIdentifier == _this.groupIdentifier)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.basePrice, _this.basePrice) || other.basePrice == _this.basePrice)&&(identical(other.perkLevel, _this.perkLevel) || other.perkLevel == _this.perkLevel)&&(identical(other.minimumAccountLevel, _this.minimumAccountLevel) || other.minimumAccountLevel == _this.minimumAccountLevel)&&(identical(other.experienceMultiplier, _this.experienceMultiplier) || other.experienceMultiplier == _this.experienceMultiplier)&&(identical(other.goldenPointReward, _this.goldenPointReward) || other.goldenPointReward == _this.goldenPointReward)&&(identical(other.displayConfig, _this.displayConfig) || other.displayConfig == _this.displayConfig)&&const DeepCollectionEquality().equals(other.allowedPaymentMethods, _this.allowedPaymentMethods)&&(identical(other.providerMappings, _this.providerMappings) || other.providerMappings == _this.providerMappings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,groupIdentifier,displayName,currency,basePrice,perkLevel,minimumAccountLevel,experienceMultiplier,goldenPointReward,displayConfig,const DeepCollectionEquality().hash(allowedPaymentMethods),providerMappings);
+int get hashCode {
+  final _this = this as SnSubscriptionCatalog;
+  return Object.hash(runtimeType,_this.identifier,_this.groupIdentifier,_this.displayName,_this.currency,_this.basePrice,_this.perkLevel,_this.minimumAccountLevel,_this.experienceMultiplier,_this.goldenPointReward,_this.displayConfig,const DeepCollectionEquality().hash(_this.allowedPaymentMethods),_this.providerMappings);
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionCatalog(identifier: $identifier, groupIdentifier: $groupIdentifier, displayName: $displayName, currency: $currency, basePrice: $basePrice, perkLevel: $perkLevel, minimumAccountLevel: $minimumAccountLevel, experienceMultiplier: $experienceMultiplier, goldenPointReward: $goldenPointReward, displayConfig: $displayConfig, allowedPaymentMethods: $allowedPaymentMethods, providerMappings: $providerMappings)';
+  final _this = this as SnSubscriptionCatalog;
+  return 'SnSubscriptionCatalog(identifier: ${_this.identifier}, groupIdentifier: ${_this.groupIdentifier}, displayName: ${_this.displayName}, currency: ${_this.currency}, basePrice: ${_this.basePrice}, perkLevel: ${_this.perkLevel}, minimumAccountLevel: ${_this.minimumAccountLevel}, experienceMultiplier: ${_this.experienceMultiplier}, goldenPointReward: ${_this.goldenPointReward}, displayConfig: ${_this.displayConfig}, allowedPaymentMethods: ${_this.allowedPaymentMethods}, providerMappings: ${_this.providerMappings})';
 }
 
 
@@ -4094,16 +4183,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionCatalog&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&(identical(other.minimumAccountLevel, minimumAccountLevel) || other.minimumAccountLevel == minimumAccountLevel)&&(identical(other.experienceMultiplier, experienceMultiplier) || other.experienceMultiplier == experienceMultiplier)&&(identical(other.goldenPointReward, goldenPointReward) || other.goldenPointReward == goldenPointReward)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other._allowedPaymentMethods, _allowedPaymentMethods)&&(identical(other.providerMappings, providerMappings) || other.providerMappings == providerMappings));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionCatalog&&(identical(other.identifier, identifier) || other.identifier == identifier)&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.basePrice, basePrice) || other.basePrice == basePrice)&&(identical(other.perkLevel, perkLevel) || other.perkLevel == perkLevel)&&(identical(other.minimumAccountLevel, minimumAccountLevel) || other.minimumAccountLevel == minimumAccountLevel)&&(identical(other.experienceMultiplier, experienceMultiplier) || other.experienceMultiplier == experienceMultiplier)&&(identical(other.goldenPointReward, goldenPointReward) || other.goldenPointReward == goldenPointReward)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other.allowedPaymentMethods, _allowedPaymentMethods)&&(identical(other.providerMappings, providerMappings) || other.providerMappings == providerMappings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,identifier,groupIdentifier,displayName,currency,basePrice,perkLevel,minimumAccountLevel,experienceMultiplier,goldenPointReward,displayConfig,const DeepCollectionEquality().hash(_allowedPaymentMethods),providerMappings);
+int get hashCode {
+    return Object.hash(runtimeType,identifier,groupIdentifier,displayName,currency,basePrice,perkLevel,minimumAccountLevel,experienceMultiplier,goldenPointReward,displayConfig,const DeepCollectionEquality().hash(_allowedPaymentMethods),providerMappings);
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionCatalog(identifier: $identifier, groupIdentifier: $groupIdentifier, displayName: $displayName, currency: $currency, basePrice: $basePrice, perkLevel: $perkLevel, minimumAccountLevel: $minimumAccountLevel, experienceMultiplier: $experienceMultiplier, goldenPointReward: $goldenPointReward, displayConfig: $displayConfig, allowedPaymentMethods: $allowedPaymentMethods, providerMappings: $providerMappings)';
+    return 'SnSubscriptionCatalog(identifier: $identifier, groupIdentifier: $groupIdentifier, displayName: $displayName, currency: $currency, basePrice: $basePrice, perkLevel: $perkLevel, minimumAccountLevel: $minimumAccountLevel, experienceMultiplier: $experienceMultiplier, goldenPointReward: $goldenPointReward, displayConfig: $displayConfig, allowedPaymentMethods: $allowedPaymentMethods, providerMappings: $providerMappings)';
 }
 
 
@@ -4190,16 +4281,21 @@ $SnSubscriptionDisplayConfigCopyWith<SnSubscriptionDisplayConfig> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionDisplayConfig&&(identical(other.color, color) || other.color == color)&&const DeepCollectionEquality().equals(other.backgroundColor, backgroundColor)&&const DeepCollectionEquality().equals(other.badgeText, badgeText));
+  final _this = this as SnSubscriptionDisplayConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionDisplayConfig&&(identical(other.color, _this.color) || other.color == _this.color)&&const DeepCollectionEquality().equals(other.backgroundColor, _this.backgroundColor)&&const DeepCollectionEquality().equals(other.badgeText, _this.badgeText));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,color,const DeepCollectionEquality().hash(backgroundColor),const DeepCollectionEquality().hash(badgeText));
+int get hashCode {
+  final _this = this as SnSubscriptionDisplayConfig;
+  return Object.hash(runtimeType,_this.color,const DeepCollectionEquality().hash(_this.backgroundColor),const DeepCollectionEquality().hash(_this.badgeText));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionDisplayConfig(color: $color, backgroundColor: $backgroundColor, badgeText: $badgeText)';
+  final _this = this as SnSubscriptionDisplayConfig;
+  return 'SnSubscriptionDisplayConfig(color: ${_this.color}, backgroundColor: ${_this.backgroundColor}, badgeText: ${_this.badgeText})';
 }
 
 
@@ -4387,16 +4483,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionDisplayConfig&&(identical(other.color, color) || other.color == color)&&const DeepCollectionEquality().equals(other.backgroundColor, backgroundColor)&&const DeepCollectionEquality().equals(other.badgeText, badgeText));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionDisplayConfig&&(identical(other.color, color) || other.color == color)&&const DeepCollectionEquality().equals(other.backgroundColor, backgroundColor)&&const DeepCollectionEquality().equals(other.badgeText, badgeText));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,color,const DeepCollectionEquality().hash(backgroundColor),const DeepCollectionEquality().hash(badgeText));
+int get hashCode {
+    return Object.hash(runtimeType,color,const DeepCollectionEquality().hash(backgroundColor),const DeepCollectionEquality().hash(badgeText));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionDisplayConfig(color: $color, backgroundColor: $backgroundColor, badgeText: $badgeText)';
+    return 'SnSubscriptionDisplayConfig(color: $color, backgroundColor: $backgroundColor, badgeText: $badgeText)';
 }
 
 
@@ -4453,16 +4551,21 @@ $SnProductProviderMappingsCopyWith<SnProductProviderMappings> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProductProviderMappings&&const DeepCollectionEquality().equals(other.afdian, afdian)&&const DeepCollectionEquality().equals(other.paddle, paddle)&&const DeepCollectionEquality().equals(other.appleStore, appleStore));
+  final _this = this as SnProductProviderMappings;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnProductProviderMappings&&const DeepCollectionEquality().equals(other.afdian, _this.afdian)&&const DeepCollectionEquality().equals(other.paddle, _this.paddle)&&const DeepCollectionEquality().equals(other.appleStore, _this.appleStore));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(afdian),const DeepCollectionEquality().hash(paddle),const DeepCollectionEquality().hash(appleStore));
+int get hashCode {
+  final _this = this as SnProductProviderMappings;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.afdian),const DeepCollectionEquality().hash(_this.paddle),const DeepCollectionEquality().hash(_this.appleStore));
+}
 
 @override
 String toString() {
-  return 'SnProductProviderMappings(afdian: $afdian, paddle: $paddle, appleStore: $appleStore)';
+  final _this = this as SnProductProviderMappings;
+  return 'SnProductProviderMappings(afdian: ${_this.afdian}, paddle: ${_this.paddle}, appleStore: ${_this.appleStore})';
 }
 
 
@@ -4668,16 +4771,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProductProviderMappings&&const DeepCollectionEquality().equals(other._afdian, _afdian)&&const DeepCollectionEquality().equals(other._paddle, _paddle)&&const DeepCollectionEquality().equals(other._appleStore, _appleStore));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnProductProviderMappings&&const DeepCollectionEquality().equals(other.afdian, _afdian)&&const DeepCollectionEquality().equals(other.paddle, _paddle)&&const DeepCollectionEquality().equals(other.appleStore, _appleStore));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_afdian),const DeepCollectionEquality().hash(_paddle),const DeepCollectionEquality().hash(_appleStore));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_afdian),const DeepCollectionEquality().hash(_paddle),const DeepCollectionEquality().hash(_appleStore));
+}
 
 @override
 String toString() {
-  return 'SnProductProviderMappings(afdian: $afdian, paddle: $paddle, appleStore: $appleStore)';
+    return 'SnProductProviderMappings(afdian: $afdian, paddle: $paddle, appleStore: $appleStore)';
 }
 
 
@@ -4734,16 +4839,21 @@ $SnSubscriptionGroupCopyWith<SnSubscriptionGroup> get copyWith => _$SnSubscripti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionGroup&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.catalog, catalog) || other.catalog == catalog)&&(identical(other.current, current) || other.current == current)&&(identical(other.next, next) || other.next == next)&&const DeepCollectionEquality().equals(other.subscriptions, subscriptions));
+  final _this = this as SnSubscriptionGroup;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionGroup&&(identical(other.groupIdentifier, _this.groupIdentifier) || other.groupIdentifier == _this.groupIdentifier)&&(identical(other.catalog, _this.catalog) || other.catalog == _this.catalog)&&(identical(other.current, _this.current) || other.current == _this.current)&&(identical(other.next, _this.next) || other.next == _this.next)&&const DeepCollectionEquality().equals(other.subscriptions, _this.subscriptions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,groupIdentifier,catalog,current,next,const DeepCollectionEquality().hash(subscriptions));
+int get hashCode {
+  final _this = this as SnSubscriptionGroup;
+  return Object.hash(runtimeType,_this.groupIdentifier,_this.catalog,_this.current,_this.next,const DeepCollectionEquality().hash(_this.subscriptions));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionGroup(groupIdentifier: $groupIdentifier, catalog: $catalog, current: $current, next: $next, subscriptions: $subscriptions)';
+  final _this = this as SnSubscriptionGroup;
+  return 'SnSubscriptionGroup(groupIdentifier: ${_this.groupIdentifier}, catalog: ${_this.catalog}, current: ${_this.current}, next: ${_this.next}, subscriptions: ${_this.subscriptions})';
 }
 
 
@@ -4974,16 +5084,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionGroup&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.catalog, catalog) || other.catalog == catalog)&&(identical(other.current, current) || other.current == current)&&(identical(other.next, next) || other.next == next)&&const DeepCollectionEquality().equals(other._subscriptions, _subscriptions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionGroup&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.catalog, catalog) || other.catalog == catalog)&&(identical(other.current, current) || other.current == current)&&(identical(other.next, next) || other.next == next)&&const DeepCollectionEquality().equals(other.subscriptions, _subscriptions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,groupIdentifier,catalog,current,next,const DeepCollectionEquality().hash(_subscriptions));
+int get hashCode {
+    return Object.hash(runtimeType,groupIdentifier,catalog,current,next,const DeepCollectionEquality().hash(_subscriptions));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionGroup(groupIdentifier: $groupIdentifier, catalog: $catalog, current: $current, next: $next, subscriptions: $subscriptions)';
+    return 'SnSubscriptionGroup(groupIdentifier: $groupIdentifier, catalog: $catalog, current: $current, next: $next, subscriptions: $subscriptions)';
 }
 
 
@@ -5075,16 +5187,21 @@ $SnSubscriptionGroupCatalogCopyWith<SnSubscriptionGroupCatalog> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionGroupCatalog&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.maxPerkLevel, maxPerkLevel) || other.maxPerkLevel == maxPerkLevel)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other.items, items));
+  final _this = this as SnSubscriptionGroupCatalog;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSubscriptionGroupCatalog&&(identical(other.groupIdentifier, _this.groupIdentifier) || other.groupIdentifier == _this.groupIdentifier)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName)&&(identical(other.maxPerkLevel, _this.maxPerkLevel) || other.maxPerkLevel == _this.maxPerkLevel)&&(identical(other.displayConfig, _this.displayConfig) || other.displayConfig == _this.displayConfig)&&const DeepCollectionEquality().equals(other.items, _this.items));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,groupIdentifier,displayName,maxPerkLevel,displayConfig,const DeepCollectionEquality().hash(items));
+int get hashCode {
+  final _this = this as SnSubscriptionGroupCatalog;
+  return Object.hash(runtimeType,_this.groupIdentifier,_this.displayName,_this.maxPerkLevel,_this.displayConfig,const DeepCollectionEquality().hash(_this.items));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionGroupCatalog(groupIdentifier: $groupIdentifier, displayName: $displayName, maxPerkLevel: $maxPerkLevel, displayConfig: $displayConfig, items: $items)';
+  final _this = this as SnSubscriptionGroupCatalog;
+  return 'SnSubscriptionGroupCatalog(groupIdentifier: ${_this.groupIdentifier}, displayName: ${_this.displayName}, maxPerkLevel: ${_this.maxPerkLevel}, displayConfig: ${_this.displayConfig}, items: ${_this.items})';
 }
 
 
@@ -5294,16 +5411,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionGroupCatalog&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.maxPerkLevel, maxPerkLevel) || other.maxPerkLevel == maxPerkLevel)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other._items, _items));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSubscriptionGroupCatalog&&(identical(other.groupIdentifier, groupIdentifier) || other.groupIdentifier == groupIdentifier)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.maxPerkLevel, maxPerkLevel) || other.maxPerkLevel == maxPerkLevel)&&(identical(other.displayConfig, displayConfig) || other.displayConfig == displayConfig)&&const DeepCollectionEquality().equals(other.items, _items));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,groupIdentifier,displayName,maxPerkLevel,displayConfig,const DeepCollectionEquality().hash(_items));
+int get hashCode {
+    return Object.hash(runtimeType,groupIdentifier,displayName,maxPerkLevel,displayConfig,const DeepCollectionEquality().hash(_items));
+}
 
 @override
 String toString() {
-  return 'SnSubscriptionGroupCatalog(groupIdentifier: $groupIdentifier, displayName: $displayName, maxPerkLevel: $maxPerkLevel, displayConfig: $displayConfig, items: $items)';
+    return 'SnSubscriptionGroupCatalog(groupIdentifier: $groupIdentifier, displayName: $displayName, maxPerkLevel: $maxPerkLevel, displayConfig: $displayConfig, items: $items)';
 }
 
 
@@ -5374,16 +5493,21 @@ $SnActiveSubscriptionCopyWith<SnActiveSubscription> get copyWith => _$SnActiveSu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnActiveSubscription&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.definition, definition) || other.definition == definition));
+  final _this = this as SnActiveSubscription;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnActiveSubscription&&(identical(other.subscription, _this.subscription) || other.subscription == _this.subscription)&&(identical(other.definition, _this.definition) || other.definition == _this.definition));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,subscription,definition);
+int get hashCode {
+  final _this = this as SnActiveSubscription;
+  return Object.hash(runtimeType,_this.subscription,_this.definition);
+}
 
 @override
 String toString() {
-  return 'SnActiveSubscription(subscription: $subscription, definition: $definition)';
+  final _this = this as SnActiveSubscription;
+  return 'SnActiveSubscription(subscription: ${_this.subscription}, definition: ${_this.definition})';
 }
 
 
@@ -5587,16 +5711,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnActiveSubscription&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.definition, definition) || other.definition == definition));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnActiveSubscription&&(identical(other.subscription, subscription) || other.subscription == subscription)&&(identical(other.definition, definition) || other.definition == definition));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,subscription,definition);
+int get hashCode {
+    return Object.hash(runtimeType,subscription,definition);
+}
 
 @override
 String toString() {
-  return 'SnActiveSubscription(subscription: $subscription, definition: $definition)';
+    return 'SnActiveSubscription(subscription: $subscription, definition: $definition)';
 }
 
 

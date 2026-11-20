@@ -29,16 +29,21 @@ $SnAbuseReportCopyWith<SnAbuseReport> get copyWith => _$SnAbuseReportCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAbuseReport&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.type, type) || other.type == type)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnAbuseReport;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAbuseReport&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.resourceIdentifier, _this.resourceIdentifier) || other.resourceIdentifier == _this.resourceIdentifier)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.reason, _this.reason) || other.reason == _this.reason)&&(identical(other.resolvedAt, _this.resolvedAt) || other.resolvedAt == _this.resolvedAt)&&(identical(other.resolution, _this.resolution) || other.resolution == _this.resolution)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,resourceIdentifier,type,reason,resolvedAt,resolution,accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnAbuseReport;
+  return Object.hash(runtimeType,_this.id,_this.resourceIdentifier,_this.type,_this.reason,_this.resolvedAt,_this.resolution,_this.accountId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAbuseReport(id: $id, resourceIdentifier: $resourceIdentifier, type: $type, reason: $reason, resolvedAt: $resolvedAt, resolution: $resolution, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnAbuseReport;
+  return 'SnAbuseReport(id: ${_this.id}, resourceIdentifier: ${_this.resourceIdentifier}, type: ${_this.type}, reason: ${_this.reason}, resolvedAt: ${_this.resolvedAt}, resolution: ${_this.resolution}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -240,16 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAbuseReport&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.type, type) || other.type == type)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAbuseReport&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.type, type) || other.type == type)&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.resolvedAt, resolvedAt) || other.resolvedAt == resolvedAt)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,resourceIdentifier,type,reason,resolvedAt,resolution,accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,resourceIdentifier,type,reason,resolvedAt,resolution,accountId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAbuseReport(id: $id, resourceIdentifier: $resourceIdentifier, type: $type, reason: $reason, resolvedAt: $resolvedAt, resolution: $resolution, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnAbuseReport(id: $id, resourceIdentifier: $resourceIdentifier, type: $type, reason: $reason, resolvedAt: $resolvedAt, resolution: $resolution, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

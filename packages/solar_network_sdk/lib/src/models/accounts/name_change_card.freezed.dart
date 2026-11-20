@@ -29,16 +29,21 @@ $SnNameChangeCardOrderCopyWith<SnNameChangeCardOrder> get copyWith => _$SnNameCh
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNameChangeCardOrder&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
+  final _this = this as SnNameChangeCardOrder;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNameChangeCardOrder&&(identical(other.purchaseId, _this.purchaseId) || other.purchaseId == _this.purchaseId)&&(identical(other.orderId, _this.orderId) || other.orderId == _this.orderId)&&(identical(other.amount, _this.amount) || other.amount == _this.amount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,purchaseId,orderId,amount);
+int get hashCode {
+  final _this = this as SnNameChangeCardOrder;
+  return Object.hash(runtimeType,_this.purchaseId,_this.orderId,_this.amount);
+}
 
 @override
 String toString() {
-  return 'SnNameChangeCardOrder(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
+  final _this = this as SnNameChangeCardOrder;
+  return 'SnNameChangeCardOrder(purchaseId: ${_this.purchaseId}, orderId: ${_this.orderId}, amount: ${_this.amount})';
 }
 
 
@@ -226,16 +231,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNameChangeCardOrder&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNameChangeCardOrder&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,purchaseId,orderId,amount);
+int get hashCode {
+    return Object.hash(runtimeType,purchaseId,orderId,amount);
+}
 
 @override
 String toString() {
-  return 'SnNameChangeCardOrder(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
+    return 'SnNameChangeCardOrder(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
 }
 
 
@@ -292,16 +299,21 @@ $SnNameChangeCardPurchaseCopyWith<SnNameChangeCardPurchase> get copyWith => _$Sn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNameChangeCardPurchase&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.fulfilledAt, fulfilledAt) || other.fulfilledAt == fulfilledAt)&&(identical(other.consumedAt, consumedAt) || other.consumedAt == consumedAt)&&(identical(other.targetType, targetType) || other.targetType == targetType)&&(identical(other.targetId, targetId) || other.targetId == targetId)&&(identical(other.oldName, oldName) || other.oldName == oldName)&&(identical(other.newName, newName) || other.newName == newName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnNameChangeCardPurchase;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnNameChangeCardPurchase&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.orderId, _this.orderId) || other.orderId == _this.orderId)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.fulfilledAt, _this.fulfilledAt) || other.fulfilledAt == _this.fulfilledAt)&&(identical(other.consumedAt, _this.consumedAt) || other.consumedAt == _this.consumedAt)&&(identical(other.targetType, _this.targetType) || other.targetType == _this.targetType)&&(identical(other.targetId, _this.targetId) || other.targetId == _this.targetId)&&(identical(other.oldName, _this.oldName) || other.oldName == _this.oldName)&&(identical(other.newName, _this.newName) || other.newName == _this.newName)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,orderId,amount,fulfilledAt,consumedAt,targetType,targetId,oldName,newName,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnNameChangeCardPurchase;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.orderId,_this.amount,_this.fulfilledAt,_this.consumedAt,_this.targetType,_this.targetId,_this.oldName,_this.newName,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnNameChangeCardPurchase(id: $id, accountId: $accountId, orderId: $orderId, amount: $amount, fulfilledAt: $fulfilledAt, consumedAt: $consumedAt, targetType: $targetType, targetId: $targetId, oldName: $oldName, newName: $newName, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnNameChangeCardPurchase;
+  return 'SnNameChangeCardPurchase(id: ${_this.id}, accountId: ${_this.accountId}, orderId: ${_this.orderId}, amount: ${_this.amount}, fulfilledAt: ${_this.fulfilledAt}, consumedAt: ${_this.consumedAt}, targetType: ${_this.targetType}, targetId: ${_this.targetId}, oldName: ${_this.oldName}, newName: ${_this.newName}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -507,16 +519,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNameChangeCardPurchase&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.fulfilledAt, fulfilledAt) || other.fulfilledAt == fulfilledAt)&&(identical(other.consumedAt, consumedAt) || other.consumedAt == consumedAt)&&(identical(other.targetType, targetType) || other.targetType == targetType)&&(identical(other.targetId, targetId) || other.targetId == targetId)&&(identical(other.oldName, oldName) || other.oldName == oldName)&&(identical(other.newName, newName) || other.newName == newName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnNameChangeCardPurchase&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.fulfilledAt, fulfilledAt) || other.fulfilledAt == fulfilledAt)&&(identical(other.consumedAt, consumedAt) || other.consumedAt == consumedAt)&&(identical(other.targetType, targetType) || other.targetType == targetType)&&(identical(other.targetId, targetId) || other.targetId == targetId)&&(identical(other.oldName, oldName) || other.oldName == oldName)&&(identical(other.newName, newName) || other.newName == newName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,orderId,amount,fulfilledAt,consumedAt,targetType,targetId,oldName,newName,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,orderId,amount,fulfilledAt,consumedAt,targetType,targetId,oldName,newName,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnNameChangeCardPurchase(id: $id, accountId: $accountId, orderId: $orderId, amount: $amount, fulfilledAt: $fulfilledAt, consumedAt: $consumedAt, targetType: $targetType, targetId: $targetId, oldName: $oldName, newName: $newName, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnNameChangeCardPurchase(id: $id, accountId: $accountId, orderId: $orderId, amount: $amount, fulfilledAt: $fulfilledAt, consumedAt: $consumedAt, targetType: $targetType, targetId: $targetId, oldName: $oldName, newName: $newName, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

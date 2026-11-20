@@ -29,16 +29,21 @@ $SnFilePermissionStatusCopyWith<SnFilePermissionStatus> get copyWith => _$SnFile
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePermissionStatus&&(identical(other.readable, readable) || other.readable == readable)&&(identical(other.writable, writable) || other.writable == writable)&&(identical(other.manageable, manageable) || other.manageable == manageable)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.inheritedFrom, inheritedFrom) || other.inheritedFrom == inheritedFrom));
+  final _this = this as SnFilePermissionStatus;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePermissionStatus&&(identical(other.readable, _this.readable) || other.readable == _this.readable)&&(identical(other.writable, _this.writable) || other.writable == _this.writable)&&(identical(other.manageable, _this.manageable) || other.manageable == _this.manageable)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&(identical(other.inheritedFrom, _this.inheritedFrom) || other.inheritedFrom == _this.inheritedFrom));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,readable,writable,manageable,visibility,inheritedFrom);
+int get hashCode {
+  final _this = this as SnFilePermissionStatus;
+  return Object.hash(runtimeType,_this.readable,_this.writable,_this.manageable,_this.visibility,_this.inheritedFrom);
+}
 
 @override
 String toString() {
-  return 'SnFilePermissionStatus(readable: $readable, writable: $writable, manageable: $manageable, visibility: $visibility, inheritedFrom: $inheritedFrom)';
+  final _this = this as SnFilePermissionStatus;
+  return 'SnFilePermissionStatus(readable: ${_this.readable}, writable: ${_this.writable}, manageable: ${_this.manageable}, visibility: ${_this.visibility}, inheritedFrom: ${_this.inheritedFrom})';
 }
 
 
@@ -230,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePermissionStatus&&(identical(other.readable, readable) || other.readable == readable)&&(identical(other.writable, writable) || other.writable == writable)&&(identical(other.manageable, manageable) || other.manageable == manageable)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.inheritedFrom, inheritedFrom) || other.inheritedFrom == inheritedFrom));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePermissionStatus&&(identical(other.readable, readable) || other.readable == readable)&&(identical(other.writable, writable) || other.writable == writable)&&(identical(other.manageable, manageable) || other.manageable == manageable)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.inheritedFrom, inheritedFrom) || other.inheritedFrom == inheritedFrom));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,readable,writable,manageable,visibility,inheritedFrom);
+int get hashCode {
+    return Object.hash(runtimeType,readable,writable,manageable,visibility,inheritedFrom);
+}
 
 @override
 String toString() {
-  return 'SnFilePermissionStatus(readable: $readable, writable: $writable, manageable: $manageable, visibility: $visibility, inheritedFrom: $inheritedFrom)';
+    return 'SnFilePermissionStatus(readable: $readable, writable: $writable, manageable: $manageable, visibility: $visibility, inheritedFrom: $inheritedFrom)';
 }
 
 
@@ -298,16 +305,21 @@ $SnFilePermissionCopyWith<SnFilePermission> get copyWith => _$SnFilePermissionCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePermission&&(identical(other.id, id) || other.id == id)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.subjectType, subjectType) || other.subjectType == subjectType)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.permission, permission) || other.permission == permission)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnFilePermission;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFilePermission&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.fileId, _this.fileId) || other.fileId == _this.fileId)&&(identical(other.subjectType, _this.subjectType) || other.subjectType == _this.subjectType)&&(identical(other.subjectId, _this.subjectId) || other.subjectId == _this.subjectId)&&(identical(other.permission, _this.permission) || other.permission == _this.permission)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fileId,subjectType,subjectId,permission,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnFilePermission;
+  return Object.hash(runtimeType,_this.id,_this.fileId,_this.subjectType,_this.subjectId,_this.permission,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFilePermission(id: $id, fileId: $fileId, subjectType: $subjectType, subjectId: $subjectId, permission: $permission, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnFilePermission;
+  return 'SnFilePermission(id: ${_this.id}, fileId: ${_this.fileId}, subjectType: ${_this.subjectType}, subjectId: ${_this.subjectId}, permission: ${_this.permission}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -505,16 +517,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePermission&&(identical(other.id, id) || other.id == id)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.subjectType, subjectType) || other.subjectType == subjectType)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.permission, permission) || other.permission == permission)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFilePermission&&(identical(other.id, id) || other.id == id)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.subjectType, subjectType) || other.subjectType == subjectType)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.permission, permission) || other.permission == permission)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fileId,subjectType,subjectId,permission,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,fileId,subjectType,subjectId,permission,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnFilePermission(id: $id, fileId: $fileId, subjectType: $subjectType, subjectId: $subjectId, permission: $permission, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnFilePermission(id: $id, fileId: $fileId, subjectType: $subjectType, subjectId: $subjectId, permission: $permission, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

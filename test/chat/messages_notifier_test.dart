@@ -411,6 +411,18 @@ Future<void> _seedLocalHistory(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test(
+    'queued sync updates are harmless after the owning container closes',
+    () async {
+      final owner = ProviderContainer();
+      final syncing = owner.read(chatSyncingProvider.notifier);
+      syncing.begin();
+      owner.dispose();
+      expect(syncing.end, returnsNormally);
+      expect(syncing.begin, returnsNormally);
+    },
+  );
+
   group('MessagesNotifier top-level actions', () {
     late AppDatabase database;
     late ProviderContainer container;
@@ -555,6 +567,16 @@ void main() {
           orderedEquals(List.generate(20, (index) => 'new-$index')),
         );
 
+        final olderLoaded = Completer<void>();
+        final prefetchSubscription = container.listen(
+          messagesProvider('room-1'),
+          (_, next) {
+            if (next.value?.length == 60 && !olderLoaded.isCompleted) {
+              olderLoaded.complete();
+            }
+          },
+        );
+        addTearDown(prefetchSubscription.close);
         adapter.olderResponse.complete(
           ResponseBody.fromString(
             jsonEncode(older),
@@ -565,9 +587,7 @@ void main() {
             },
           ),
         );
-        for (var i = 0; i < 5; i++) {
-          await pumpEventQueue();
-        }
+        await olderLoaded.future.timeout(const Duration(seconds: 5));
 
         expect(container.read(messagesProvider('room-1')).value, hasLength(60));
       },

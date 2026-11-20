@@ -29,16 +29,21 @@ $SnPostTagCopyWith<SnPostTag> get copyWith => _$SnPostTagCopyWithImpl<SnPostTag>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPostTag&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.ownerPublisherId, ownerPublisherId) || other.ownerPublisherId == ownerPublisherId)&&(identical(other.ownerPublisher, ownerPublisher) || other.ownerPublisher == ownerPublisher)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.posts, posts)&&(identical(other.usage, usage) || other.usage == usage));
+  final _this = this as SnPostTag;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPostTag&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.ownerPublisherId, _this.ownerPublisherId) || other.ownerPublisherId == _this.ownerPublisherId)&&(identical(other.ownerPublisher, _this.ownerPublisher) || other.ownerPublisher == _this.ownerPublisher)&&(identical(other.isProtected, _this.isProtected) || other.isProtected == _this.isProtected)&&(identical(other.isEvent, _this.isEvent) || other.isEvent == _this.isEvent)&&(identical(other.eventEndsAt, _this.eventEndsAt) || other.eventEndsAt == _this.eventEndsAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&const DeepCollectionEquality().equals(other.posts, _this.posts)&&(identical(other.usage, _this.usage) || other.usage == _this.usage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,ownerPublisherId,ownerPublisher,isProtected,isEvent,eventEndsAt,createdAt,updatedAt,const DeepCollectionEquality().hash(posts),usage);
+int get hashCode {
+  final _this = this as SnPostTag;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.name,_this.description,_this.ownerPublisherId,_this.ownerPublisher,_this.isProtected,_this.isEvent,_this.eventEndsAt,_this.createdAt,_this.updatedAt,const DeepCollectionEquality().hash(_this.posts),_this.usage);
+}
 
 @override
 String toString() {
-  return 'SnPostTag(id: $id, slug: $slug, name: $name, description: $description, ownerPublisherId: $ownerPublisherId, ownerPublisher: $ownerPublisher, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt, createdAt: $createdAt, updatedAt: $updatedAt, posts: $posts, usage: $usage)';
+  final _this = this as SnPostTag;
+  return 'SnPostTag(id: ${_this.id}, slug: ${_this.slug}, name: ${_this.name}, description: ${_this.description}, ownerPublisherId: ${_this.ownerPublisherId}, ownerPublisher: ${_this.ownerPublisher}, isProtected: ${_this.isProtected}, isEvent: ${_this.isEvent}, eventEndsAt: ${_this.eventEndsAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, posts: ${_this.posts}, usage: ${_this.usage})';
 }
 
 
@@ -264,16 +269,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPostTag&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.ownerPublisherId, ownerPublisherId) || other.ownerPublisherId == ownerPublisherId)&&(identical(other.ownerPublisher, ownerPublisher) || other.ownerPublisher == ownerPublisher)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._posts, _posts)&&(identical(other.usage, usage) || other.usage == usage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPostTag&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.ownerPublisherId, ownerPublisherId) || other.ownerPublisherId == ownerPublisherId)&&(identical(other.ownerPublisher, ownerPublisher) || other.ownerPublisher == ownerPublisher)&&(identical(other.isProtected, isProtected) || other.isProtected == isProtected)&&(identical(other.isEvent, isEvent) || other.isEvent == isEvent)&&(identical(other.eventEndsAt, eventEndsAt) || other.eventEndsAt == eventEndsAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.posts, _posts)&&(identical(other.usage, usage) || other.usage == usage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,name,description,ownerPublisherId,ownerPublisher,isProtected,isEvent,eventEndsAt,createdAt,updatedAt,const DeepCollectionEquality().hash(_posts),usage);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,name,description,ownerPublisherId,ownerPublisher,isProtected,isEvent,eventEndsAt,createdAt,updatedAt,const DeepCollectionEquality().hash(_posts),usage);
+}
 
 @override
 String toString() {
-  return 'SnPostTag(id: $id, slug: $slug, name: $name, description: $description, ownerPublisherId: $ownerPublisherId, ownerPublisher: $ownerPublisher, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt, createdAt: $createdAt, updatedAt: $updatedAt, posts: $posts, usage: $usage)';
+    return 'SnPostTag(id: $id, slug: $slug, name: $name, description: $description, ownerPublisherId: $ownerPublisherId, ownerPublisher: $ownerPublisher, isProtected: $isProtected, isEvent: $isEvent, eventEndsAt: $eventEndsAt, createdAt: $createdAt, updatedAt: $updatedAt, posts: $posts, usage: $usage)';
 }
 
 

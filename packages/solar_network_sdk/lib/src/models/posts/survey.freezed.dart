@@ -29,16 +29,21 @@ $SnSurveyWithStatsCopyWith<SnSurveyWithStats> get copyWith => _$SnSurveyWithStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyWithStats&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer)&&const DeepCollectionEquality().equals(other.stats, stats)&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnSurveyWithStats;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyWithStats&&(identical(other.userAnswer, _this.userAnswer) || other.userAnswer == _this.userAnswer)&&const DeepCollectionEquality().equals(other.stats, _this.stats)&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.questions, _this.questions)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.endedAt, _this.endedAt) || other.endedAt == _this.endedAt)&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.publisher, _this.publisher) || other.publisher == _this.publisher)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt)&&(identical(other.notifySubscribers, _this.notifySubscribers) || other.notifySubscribers == _this.notifySubscribers)&&(identical(other.isAnonymous, _this.isAnonymous) || other.isAnonymous == _this.isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userAnswer,const DeepCollectionEquality().hash(stats),id,const DeepCollectionEquality().hash(questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(attachments),createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnSurveyWithStats;
+  return Object.hash(runtimeType,_this.userAnswer,const DeepCollectionEquality().hash(_this.stats),_this.id,const DeepCollectionEquality().hash(_this.questions),_this.title,_this.description,_this.endedAt,_this.publisherId,_this.publisher,_this.status,_this.publishedAt,_this.notifySubscribers,_this.isAnonymous,const DeepCollectionEquality().hash(_this.attachments),_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurveyWithStats(userAnswer: $userAnswer, stats: $stats, id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnSurveyWithStats;
+  return 'SnSurveyWithStats(userAnswer: ${_this.userAnswer}, stats: ${_this.stats}, id: ${_this.id}, questions: ${_this.questions}, title: ${_this.title}, description: ${_this.description}, endedAt: ${_this.endedAt}, publisherId: ${_this.publisherId}, publisher: ${_this.publisher}, status: ${_this.status}, publishedAt: ${_this.publishedAt}, notifySubscribers: ${_this.notifySubscribers}, isAnonymous: ${_this.isAnonymous}, attachments: ${_this.attachments}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -296,16 +301,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyWithStats&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer)&&const DeepCollectionEquality().equals(other._stats, _stats)&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._questions, _questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyWithStats&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer)&&const DeepCollectionEquality().equals(other.stats, _stats)&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.questions, _questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userAnswer,const DeepCollectionEquality().hash(_stats),id,const DeepCollectionEquality().hash(_questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(_attachments),createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,userAnswer,const DeepCollectionEquality().hash(_stats),id,const DeepCollectionEquality().hash(_questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(_attachments),createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurveyWithStats(userAnswer: $userAnswer, stats: $stats, id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnSurveyWithStats(userAnswer: $userAnswer, stats: $stats, id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -400,16 +407,21 @@ $SnSurveyCopyWith<SnSurvey> get copyWith => _$SnSurveyCopyWithImpl<SnSurvey>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurvey&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnSurvey;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurvey&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.questions, _this.questions)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.endedAt, _this.endedAt) || other.endedAt == _this.endedAt)&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.publisher, _this.publisher) || other.publisher == _this.publisher)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt)&&(identical(other.notifySubscribers, _this.notifySubscribers) || other.notifySubscribers == _this.notifySubscribers)&&(identical(other.isAnonymous, _this.isAnonymous) || other.isAnonymous == _this.isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(attachments),createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnSurvey;
+  return Object.hash(runtimeType,_this.id,const DeepCollectionEquality().hash(_this.questions),_this.title,_this.description,_this.endedAt,_this.publisherId,_this.publisher,_this.status,_this.publishedAt,_this.notifySubscribers,_this.isAnonymous,const DeepCollectionEquality().hash(_this.attachments),_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurvey(id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnSurvey;
+  return 'SnSurvey(id: ${_this.id}, questions: ${_this.questions}, title: ${_this.title}, description: ${_this.description}, endedAt: ${_this.endedAt}, publisherId: ${_this.publisherId}, publisher: ${_this.publisher}, status: ${_this.status}, publishedAt: ${_this.publishedAt}, notifySubscribers: ${_this.notifySubscribers}, isAnonymous: ${_this.isAnonymous}, attachments: ${_this.attachments}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -645,16 +657,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurvey&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._questions, _questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurvey&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.questions, _questions)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisher, publisher) || other.publisher == publisher)&&(identical(other.status, status) || other.status == status)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.notifySubscribers, notifySubscribers) || other.notifySubscribers == notifySubscribers)&&(identical(other.isAnonymous, isAnonymous) || other.isAnonymous == isAnonymous)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(_attachments),createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_questions),title,description,endedAt,publisherId,publisher,status,publishedAt,notifySubscribers,isAnonymous,const DeepCollectionEquality().hash(_attachments),createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurvey(id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnSurvey(id: $id, questions: $questions, title: $title, description: $description, endedAt: $endedAt, publisherId: $publisherId, publisher: $publisher, status: $status, publishedAt: $publishedAt, notifySubscribers: $notifySubscribers, isAnonymous: $isAnonymous, attachments: $attachments, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -735,16 +749,21 @@ $SnSurveyQuestionCopyWith<SnSurveyQuestion> get copyWith => _$SnSurveyQuestionCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyQuestion&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&const DeepCollectionEquality().equals(other.attachments, attachments));
+  final _this = this as SnSurveyQuestion;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyQuestion&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.options, _this.options)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.order, _this.order) || other.order == _this.order)&&(identical(other.isRequired, _this.isRequired) || other.isRequired == _this.isRequired)&&(identical(other.maxSelections, _this.maxSelections) || other.maxSelections == _this.maxSelections)&&(identical(other.maxLength, _this.maxLength) || other.maxLength == _this.maxLength)&&(identical(other.minValue, _this.minValue) || other.minValue == _this.minValue)&&(identical(other.maxValue, _this.maxValue) || other.maxValue == _this.maxValue)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,const DeepCollectionEquality().hash(options),title,description,order,isRequired,maxSelections,maxLength,minValue,maxValue,const DeepCollectionEquality().hash(attachments));
+int get hashCode {
+  final _this = this as SnSurveyQuestion;
+  return Object.hash(runtimeType,_this.id,_this.type,const DeepCollectionEquality().hash(_this.options),_this.title,_this.description,_this.order,_this.isRequired,_this.maxSelections,_this.maxLength,_this.minValue,_this.maxValue,const DeepCollectionEquality().hash(_this.attachments));
+}
 
 @override
 String toString() {
-  return 'SnSurveyQuestion(id: $id, type: $type, options: $options, title: $title, description: $description, order: $order, isRequired: $isRequired, maxSelections: $maxSelections, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, attachments: $attachments)';
+  final _this = this as SnSurveyQuestion;
+  return 'SnSurveyQuestion(id: ${_this.id}, type: ${_this.type}, options: ${_this.options}, title: ${_this.title}, description: ${_this.description}, order: ${_this.order}, isRequired: ${_this.isRequired}, maxSelections: ${_this.maxSelections}, maxLength: ${_this.maxLength}, minValue: ${_this.minValue}, maxValue: ${_this.maxValue}, attachments: ${_this.attachments})';
 }
 
 
@@ -964,16 +983,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyQuestion&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&const DeepCollectionEquality().equals(other._attachments, _attachments));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyQuestion&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, _options)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&const DeepCollectionEquality().equals(other.attachments, _attachments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,const DeepCollectionEquality().hash(_options),title,description,order,isRequired,maxSelections,maxLength,minValue,maxValue,const DeepCollectionEquality().hash(_attachments));
+int get hashCode {
+    return Object.hash(runtimeType,id,type,const DeepCollectionEquality().hash(_options),title,description,order,isRequired,maxSelections,maxLength,minValue,maxValue,const DeepCollectionEquality().hash(_attachments));
+}
 
 @override
 String toString() {
-  return 'SnSurveyQuestion(id: $id, type: $type, options: $options, title: $title, description: $description, order: $order, isRequired: $isRequired, maxSelections: $maxSelections, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, attachments: $attachments)';
+    return 'SnSurveyQuestion(id: $id, type: $type, options: $options, title: $title, description: $description, order: $order, isRequired: $isRequired, maxSelections: $maxSelections, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, attachments: $attachments)';
 }
 
 
@@ -1039,16 +1060,21 @@ $SnSurveyOptionCopyWith<SnSurveyOption> get copyWith => _$SnSurveyOptionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order));
+  final _this = this as SnSurveyOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyOption&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.order, _this.order) || other.order == _this.order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,description,order);
+int get hashCode {
+  final _this = this as SnSurveyOption;
+  return Object.hash(runtimeType,_this.id,_this.label,_this.description,_this.order);
+}
 
 @override
 String toString() {
-  return 'SnSurveyOption(id: $id, label: $label, description: $description, order: $order)';
+  final _this = this as SnSurveyOption;
+  return 'SnSurveyOption(id: ${_this.id}, label: ${_this.label}, description: ${_this.description}, order: ${_this.order})';
 }
 
 
@@ -1238,16 +1264,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.description, description) || other.description == description)&&(identical(other.order, order) || other.order == order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,description,order);
+int get hashCode {
+    return Object.hash(runtimeType,id,label,description,order);
+}
 
 @override
 String toString() {
-  return 'SnSurveyOption(id: $id, label: $label, description: $description, order: $order)';
+    return 'SnSurveyOption(id: $id, label: $label, description: $description, order: $order)';
 }
 
 
@@ -1305,16 +1333,21 @@ $SnSurveyAnswerCopyWith<SnSurveyAnswer> get copyWith => _$SnSurveyAnswerCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyAnswer&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.answer, answer)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.account, account) || other.account == account));
+  final _this = this as SnSurveyAnswer;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveyAnswer&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.answer, _this.answer)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.surveyId, _this.surveyId) || other.surveyId == _this.surveyId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.account, _this.account) || other.account == _this.account));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(answer),accountId,surveyId,createdAt,updatedAt,deletedAt,account);
+int get hashCode {
+  final _this = this as SnSurveyAnswer;
+  return Object.hash(runtimeType,_this.id,const DeepCollectionEquality().hash(_this.answer),_this.accountId,_this.surveyId,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.account);
+}
 
 @override
 String toString() {
-  return 'SnSurveyAnswer(id: $id, answer: $answer, accountId: $accountId, surveyId: $surveyId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, account: $account)';
+  final _this = this as SnSurveyAnswer;
+  return 'SnSurveyAnswer(id: ${_this.id}, answer: ${_this.answer}, accountId: ${_this.accountId}, surveyId: ${_this.surveyId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, account: ${_this.account})';
 }
 
 
@@ -1530,16 +1563,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyAnswer&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._answer, _answer)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.account, account) || other.account == account));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveyAnswer&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.answer, _answer)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.account, account) || other.account == account));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_answer),accountId,surveyId,createdAt,updatedAt,deletedAt,account);
+int get hashCode {
+    return Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_answer),accountId,surveyId,createdAt,updatedAt,deletedAt,account);
+}
 
 @override
 String toString() {
-  return 'SnSurveyAnswer(id: $id, answer: $answer, accountId: $accountId, surveyId: $surveyId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, account: $account)';
+    return 'SnSurveyAnswer(id: $id, answer: $answer, accountId: $accountId, surveyId: $surveyId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, account: $account)';
 }
 
 
@@ -1613,16 +1648,21 @@ $SnSurveySubscriptionCopyWith<SnSurveySubscription> get copyWith => _$SnSurveySu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveySubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnSurveySubscription;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnSurveySubscription&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.surveyId, _this.surveyId) || other.surveyId == _this.surveyId)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,surveyId,accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnSurveySubscription;
+  return Object.hash(runtimeType,_this.id,_this.surveyId,_this.accountId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurveySubscription(id: $id, surveyId: $surveyId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnSurveySubscription;
+  return 'SnSurveySubscription(id: ${_this.id}, surveyId: ${_this.surveyId}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -1816,16 +1856,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveySubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnSurveySubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.surveyId, surveyId) || other.surveyId == surveyId)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,surveyId,accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,surveyId,accountId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnSurveySubscription(id: $id, surveyId: $surveyId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnSurveySubscription(id: $id, surveyId: $surveyId, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

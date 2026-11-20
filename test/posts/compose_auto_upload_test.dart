@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/core/config.dart';
@@ -136,6 +137,46 @@ void main() {
     await tester.pump();
     capturedRef.read(driveFileUploaderProvider);
   }
+
+  testWidgets('pasting copied image files does not attach a second bitmap', (
+    tester,
+  ) async {
+    await pumpHost(tester);
+    final state = ComposeLogic.createState();
+    final directory = Directory.systemTemp.createTempSync('lkm-paste-');
+    addTearDown(() => directory.deleteSync(recursive: true));
+    final imageFile = File('${directory.path}/copied.png')
+      ..writeAsBytesSync([1, 2, 3]);
+    final textFile = File('${directory.path}/notes.txt')
+      ..writeAsStringSync('notes');
+    var imageReads = 0;
+    const channel = MethodChannel('pasteboard');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      if (call.method == 'files') return [imageFile.path, textFile.path];
+      if (call.method == 'image') {
+        imageReads++;
+        return Uint8List.fromList([1, 2, 3]);
+      }
+      return null;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    await tester.runAsync(() async {
+      expect(await ComposeLogic.handlePaste(capturedRef, state), isTrue);
+      await Future<void>.delayed(Duration.zero);
+      expect(state.attachments.value.map((file) => file.type), [
+        UniversalFileType.image,
+        UniversalFileType.file,
+      ]);
+      expect(uploader.uploadedFiles, hasLength(2));
+      expect(imageReads, 0);
+      for (var index = 0; index < 2; index++) {
+        ComposeLogic.cancelAttachmentUpload(capturedRef, state, index);
+      }
+      await Future<void>.delayed(Duration.zero);
+    });
+  });
 
   testWidgets('auto upload starts on pick and publish joins it', (
     tester,

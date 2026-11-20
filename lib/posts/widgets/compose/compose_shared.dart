@@ -66,7 +66,7 @@ class ComposeState {
   final ValueNotifier<List<String>> collectionIds;
   Timer? _autoSaveTimer;
 
-  /// Solar block editor (AppFlowy-based, Notion-like) over markdown blocks,
+  /// Solar block editor (Island Editor-based, Notion-like) over markdown blocks,
   /// created lazily by [ensureEditorLoaded]. Edits flow editor → markdown
   /// into [contentController]; external writes to [contentController]
   /// (draft restore, placeholder insertion, imports) re-import through
@@ -141,6 +141,7 @@ class ComposeState {
       config: SolarEditorConfig(
         placeholder: 'Start writing or use "/" to insert something',
         onPickImage: pickCloudImageForEditor,
+        onPaste: () => ComposeLogic.handlePaste(editorRef!, this),
         imageUrlResolver: (context, src) {
           final uri = Uri.tryParse(src);
           if (uri == null ||
@@ -185,6 +186,10 @@ class ComposeState {
     if (cloudFile.mimeType.split('/').first != 'image') return null;
     return 'solian://files/${cloudFile.id}';
   }
+
+  /// WidgetRef the host widget assigns on mount, used by editor flows
+  /// (paste upload) that need provider access without a widget parameter.
+  WidgetRef? editorRef;
 
   /// BuildContext the editor widget assigns on mount, used by host flows
   /// (the image picker sheet) triggered from editor menu items.
@@ -2237,23 +2242,63 @@ class ComposeLogic {
     );
   }
 
-  static Future<void> handlePaste(WidgetRef ref, ComposeState state) async {
-    final clipboard = await Pasteboard.image;
-    if (clipboard == null) return;
+  /// Reads clipboard images and files into the attachment list. Called from
+  /// the editor's Cmd/Ctrl+V hook before its markdown text path runs — the
+  /// text path can only ever see clipboard text, so any image or file on the
+  /// pasteboard must be intercepted here.
+  ///
+  /// Returns true when something was found and attached (paste consumed),
+  /// false to let the editor paste clipboard text as markdown.
+  static Future<bool> handlePaste(WidgetRef ref, ComposeState state) async {
+    var attached = false;
 
-    state.attachments.value = [
-      ...state.attachments.value,
-      UniversalFile(
-        displayName: 'image.jpeg',
-        data: XFile.fromData(
-          clipboard,
-          mimeType: "image/jpeg",
-          name: 'image.jpeg',
+    // Desktop file pastes (Finder/Explorer copies) arrive as file URLs, not
+    // as image bytes. iOS returns local paths; Android returns content://
+    // URIs that need a resolver, so those are skipped here.
+    final files = await Pasteboard.files();
+    if (!ref.context.mounted) return false;
+    for (final path in files) {
+      if (!path.startsWith('content://') && File(path).existsSync()) {
+        final xfile = XFile(path);
+        final mimeType = FileUploader.getMimeType(
+          UniversalFile(data: xfile, type: UniversalFileType.file),
+        );
+        final fileType = switch (mimeType.split('/').firstOrNull) {
+          'image' => UniversalFileType.image,
+          'video' => UniversalFileType.video,
+          'audio' => UniversalFileType.audio,
+          _ => UniversalFileType.file,
+        };
+        state.attachments.value = [
+          ...state.attachments.value,
+          UniversalFile(data: xfile, type: fileType),
+        ];
+        attached = true;
+      }
+    }
+
+    // A copied image file can expose both file and bitmap flavors. Prefer the
+    // original files so one paste never uploads an extra bitmap copy.
+    final image = attached ? null : await Pasteboard.image;
+    if (!ref.context.mounted) return attached;
+    if (image != null) {
+      state.attachments.value = [
+        ...state.attachments.value,
+        UniversalFile(
+          displayName: 'image.jpeg',
+          data: XFile.fromData(
+            image,
+            mimeType: "image/jpeg",
+            name: 'image.jpeg',
+          ),
+          type: UniversalFileType.image,
         ),
-        type: UniversalFileType.image,
-      ),
-    ];
-    autoUploadAttachments(ref, state);
+      ];
+      attached = true;
+    }
+
+    if (attached) autoUploadAttachments(ref, state);
+    return attached;
   }
 
   static KeyEventResult handleKeyPress(
@@ -2267,17 +2312,17 @@ class ComposeLogic {
   }) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
 
-    final isPaste = event.logicalKey == LogicalKeyboardKey.keyV;
+    // Paste is handled by the editor's own Cmd/Ctrl+V command
+    // ([SolarEditorConfig.onPaste] → [ComposeLogic.handlePaste]); the
+    // KeyboardListener wrapping the compose form never holds focus while the
+    // editor does, so intercepting here would only double-handle it.
     final isSave = event.logicalKey == LogicalKeyboardKey.keyS;
     final isModifierPressed =
         HardwareKeyboard.instance.isMetaPressed ||
         HardwareKeyboard.instance.isControlPressed;
     final isSubmit = event.logicalKey == LogicalKeyboardKey.enter;
 
-    if (isPaste && isModifierPressed) {
-      handlePaste(ref, state);
-      return KeyEventResult.handled;
-    } else if (isSave && isModifierPressed) {
+    if (isSave && isModifierPressed) {
       saveDraftManually(ref, state, context);
       return KeyEventResult.handled;
     } else if (isSubmit && isModifierPressed && !state.submitting.value) {

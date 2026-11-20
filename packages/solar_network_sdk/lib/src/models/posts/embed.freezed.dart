@@ -29,16 +29,21 @@ $SnScrappedLinkCopyWith<SnScrappedLink> get copyWith => _$SnScrappedLinkCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnScrappedLink&&(identical(other.type, type) || other.type == type)&&(identical(other.url, url) || other.url == url)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.faviconUrl, faviconUrl) || other.faviconUrl == faviconUrl)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.author, author) || other.author == author)&&(identical(other.publishedDate, publishedDate) || other.publishedDate == publishedDate));
+  final _this = this as SnScrappedLink;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnScrappedLink&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.imageUrl, _this.imageUrl) || other.imageUrl == _this.imageUrl)&&(identical(other.faviconUrl, _this.faviconUrl) || other.faviconUrl == _this.faviconUrl)&&(identical(other.siteName, _this.siteName) || other.siteName == _this.siteName)&&(identical(other.contentType, _this.contentType) || other.contentType == _this.contentType)&&(identical(other.author, _this.author) || other.author == _this.author)&&(identical(other.publishedDate, _this.publishedDate) || other.publishedDate == _this.publishedDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,url,title,description,imageUrl,faviconUrl,siteName,contentType,author,publishedDate);
+int get hashCode {
+  final _this = this as SnScrappedLink;
+  return Object.hash(runtimeType,_this.type,_this.url,_this.title,_this.description,_this.imageUrl,_this.faviconUrl,_this.siteName,_this.contentType,_this.author,_this.publishedDate);
+}
 
 @override
 String toString() {
-  return 'SnScrappedLink(type: $type, url: $url, title: $title, description: $description, imageUrl: $imageUrl, faviconUrl: $faviconUrl, siteName: $siteName, contentType: $contentType, author: $author, publishedDate: $publishedDate)';
+  final _this = this as SnScrappedLink;
+  return 'SnScrappedLink(type: ${_this.type}, url: ${_this.url}, title: ${_this.title}, description: ${_this.description}, imageUrl: ${_this.imageUrl}, faviconUrl: ${_this.faviconUrl}, siteName: ${_this.siteName}, contentType: ${_this.contentType}, author: ${_this.author}, publishedDate: ${_this.publishedDate})';
 }
 
 
@@ -240,16 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnScrappedLink&&(identical(other.type, type) || other.type == type)&&(identical(other.url, url) || other.url == url)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.faviconUrl, faviconUrl) || other.faviconUrl == faviconUrl)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.author, author) || other.author == author)&&(identical(other.publishedDate, publishedDate) || other.publishedDate == publishedDate));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnScrappedLink&&(identical(other.type, type) || other.type == type)&&(identical(other.url, url) || other.url == url)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.faviconUrl, faviconUrl) || other.faviconUrl == faviconUrl)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.contentType, contentType) || other.contentType == contentType)&&(identical(other.author, author) || other.author == author)&&(identical(other.publishedDate, publishedDate) || other.publishedDate == publishedDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,url,title,description,imageUrl,faviconUrl,siteName,contentType,author,publishedDate);
+int get hashCode {
+    return Object.hash(runtimeType,type,url,title,description,imageUrl,faviconUrl,siteName,contentType,author,publishedDate);
+}
 
 @override
 String toString() {
-  return 'SnScrappedLink(type: $type, url: $url, title: $title, description: $description, imageUrl: $imageUrl, faviconUrl: $faviconUrl, siteName: $siteName, contentType: $contentType, author: $author, publishedDate: $publishedDate)';
+    return 'SnScrappedLink(type: $type, url: $url, title: $title, description: $description, imageUrl: $imageUrl, faviconUrl: $faviconUrl, siteName: $siteName, contentType: $contentType, author: $author, publishedDate: $publishedDate)';
 }
 
 

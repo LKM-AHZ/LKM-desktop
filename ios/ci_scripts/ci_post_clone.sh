@@ -7,9 +7,17 @@ set -e
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 echo "=== Installing Flutter SDK ==="
-# Clone the stable Flutter SDK from Git into the home folder
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
-export PATH="$PATH:$HOME/flutter/bin"
+# Vendored plugins share OHOS platform cases on every target, so Xcode Cloud
+# must use the same OH-Flutter release as local development.
+FLUTTER_VERSION=$(tr -d '\r\n' < .flutter-version)
+if [ -z "$FLUTTER_VERSION" ]; then
+  echo "Could not read the Flutter version from .flutter-version"
+  exit 1
+fi
+echo "Pinned Flutter version: $FLUTTER_VERSION"
+git clone https://atomgit.com/oh-flutter/flutter_flutter.git --depth 1 -b "$FLUTTER_VERSION" "$HOME/flutter"
+export PATH="$HOME/flutter/bin:$PATH"
+flutter --version
 
 # Pre-cache iOS artifacts and fetch dependencies
 flutter precache --ios

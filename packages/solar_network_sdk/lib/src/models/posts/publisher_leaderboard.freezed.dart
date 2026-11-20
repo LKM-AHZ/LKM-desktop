@@ -29,16 +29,21 @@ $SnPublisherLeaderboardEntryCopyWith<SnPublisherLeaderboardEntry> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherLeaderboardEntry&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
+  final _this = this as SnPublisherLeaderboardEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherLeaderboardEntry&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.nick, _this.nick) || other.nick == _this.nick)&&(identical(other.picture, _this.picture) || other.picture == _this.picture)&&(identical(other.rating, _this.rating) || other.rating == _this.rating)&&(identical(other.rank, _this.rank) || other.rank == _this.rank)&&(identical(other.percentile, _this.percentile) || other.percentile == _this.percentile)&&(identical(other.grade, _this.grade) || other.grade == _this.grade));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publisherId,name,nick,picture,rating,rank,percentile,grade);
+int get hashCode {
+  final _this = this as SnPublisherLeaderboardEntry;
+  return Object.hash(runtimeType,_this.publisherId,_this.name,_this.nick,_this.picture,_this.rating,_this.rank,_this.percentile,_this.grade);
+}
 
 @override
 String toString() {
-  return 'SnPublisherLeaderboardEntry(publisherId: $publisherId, name: $name, nick: $nick, picture: $picture, rating: $rating, rank: $rank, percentile: $percentile, grade: $grade)';
+  final _this = this as SnPublisherLeaderboardEntry;
+  return 'SnPublisherLeaderboardEntry(publisherId: ${_this.publisherId}, name: ${_this.name}, nick: ${_this.nick}, picture: ${_this.picture}, rating: ${_this.rating}, rank: ${_this.rank}, percentile: ${_this.percentile}, grade: ${_this.grade})';
 }
 
 
@@ -248,16 +253,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherLeaderboardEntry&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherLeaderboardEntry&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.name, name) || other.name == name)&&(identical(other.nick, nick) || other.nick == nick)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publisherId,name,nick,picture,rating,rank,percentile,grade);
+int get hashCode {
+    return Object.hash(runtimeType,publisherId,name,nick,picture,rating,rank,percentile,grade);
+}
 
 @override
 String toString() {
-  return 'SnPublisherLeaderboardEntry(publisherId: $publisherId, name: $name, nick: $nick, picture: $picture, rating: $rating, rank: $rank, percentile: $percentile, grade: $grade)';
+    return 'SnPublisherLeaderboardEntry(publisherId: $publisherId, name: $name, nick: $nick, picture: $picture, rating: $rating, rank: $rank, percentile: $percentile, grade: $grade)';
 }
 
 
@@ -331,16 +338,21 @@ $SnPublisherRatingOverviewCopyWith<SnPublisherRatingOverview> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherRatingOverview&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.totalPublishers, totalPublishers) || other.totalPublishers == totalPublishers)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
+  final _this = this as SnPublisherRatingOverview;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublisherRatingOverview&&(identical(other.rating, _this.rating) || other.rating == _this.rating)&&(identical(other.rank, _this.rank) || other.rank == _this.rank)&&(identical(other.totalPublishers, _this.totalPublishers) || other.totalPublishers == _this.totalPublishers)&&(identical(other.percentile, _this.percentile) || other.percentile == _this.percentile)&&(identical(other.grade, _this.grade) || other.grade == _this.grade));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rating,rank,totalPublishers,percentile,grade);
+int get hashCode {
+  final _this = this as SnPublisherRatingOverview;
+  return Object.hash(runtimeType,_this.rating,_this.rank,_this.totalPublishers,_this.percentile,_this.grade);
+}
 
 @override
 String toString() {
-  return 'SnPublisherRatingOverview(rating: $rating, rank: $rank, totalPublishers: $totalPublishers, percentile: $percentile, grade: $grade)';
+  final _this = this as SnPublisherRatingOverview;
+  return 'SnPublisherRatingOverview(rating: ${_this.rating}, rank: ${_this.rank}, totalPublishers: ${_this.totalPublishers}, percentile: ${_this.percentile}, grade: ${_this.grade})';
 }
 
 
@@ -532,16 +544,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherRatingOverview&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.totalPublishers, totalPublishers) || other.totalPublishers == totalPublishers)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublisherRatingOverview&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.totalPublishers, totalPublishers) || other.totalPublishers == totalPublishers)&&(identical(other.percentile, percentile) || other.percentile == percentile)&&(identical(other.grade, grade) || other.grade == grade));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rating,rank,totalPublishers,percentile,grade);
+int get hashCode {
+    return Object.hash(runtimeType,rating,rank,totalPublishers,percentile,grade);
+}
 
 @override
 String toString() {
-  return 'SnPublisherRatingOverview(rating: $rating, rank: $rank, totalPublishers: $totalPublishers, percentile: $percentile, grade: $grade)';
+    return 'SnPublisherRatingOverview(rating: $rating, rank: $rank, totalPublishers: $totalPublishers, percentile: $percentile, grade: $grade)';
 }
 
 

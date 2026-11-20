@@ -29,16 +29,21 @@ $LeaderboardEntryCopyWith<LeaderboardEntry> get copyWith => _$LeaderboardEntryCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LeaderboardEntry&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.value, value) || other.value == value)&&(identical(other.account, account) || other.account == account));
+  final _this = this as LeaderboardEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LeaderboardEntry&&(identical(other.rank, _this.rank) || other.rank == _this.rank)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.account, _this.account) || other.account == _this.account));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rank,accountId,value,account);
+int get hashCode {
+  final _this = this as LeaderboardEntry;
+  return Object.hash(runtimeType,_this.rank,_this.accountId,_this.value,_this.account);
+}
 
 @override
 String toString() {
-  return 'LeaderboardEntry(rank: $rank, accountId: $accountId, value: $value, account: $account)';
+  final _this = this as LeaderboardEntry;
+  return 'LeaderboardEntry(rank: ${_this.rank}, accountId: ${_this.accountId}, value: ${_this.value}, account: ${_this.account})';
 }
 
 
@@ -240,16 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaderboardEntry&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.value, value) || other.value == value)&&(identical(other.account, account) || other.account == account));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaderboardEntry&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.value, value) || other.value == value)&&(identical(other.account, account) || other.account == account));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,rank,accountId,value,account);
+int get hashCode {
+    return Object.hash(runtimeType,rank,accountId,value,account);
+}
 
 @override
 String toString() {
-  return 'LeaderboardEntry(rank: $rank, accountId: $accountId, value: $value, account: $account)';
+    return 'LeaderboardEntry(rank: $rank, accountId: $accountId, value: $value, account: $account)';
 }
 
 
@@ -319,16 +326,21 @@ $LeaderboardResponseCopyWith<LeaderboardResponse> get copyWith => _$LeaderboardR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LeaderboardResponse&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.userEntry, userEntry) || other.userEntry == userEntry)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount));
+  final _this = this as LeaderboardResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LeaderboardResponse&&const DeepCollectionEquality().equals(other.entries, _this.entries)&&(identical(other.userEntry, _this.userEntry) || other.userEntry == _this.userEntry)&&(identical(other.totalCount, _this.totalCount) || other.totalCount == _this.totalCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(entries),userEntry,totalCount);
+int get hashCode {
+  final _this = this as LeaderboardResponse;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.entries),_this.userEntry,_this.totalCount);
+}
 
 @override
 String toString() {
-  return 'LeaderboardResponse(entries: $entries, userEntry: $userEntry, totalCount: $totalCount)';
+  final _this = this as LeaderboardResponse;
+  return 'LeaderboardResponse(entries: ${_this.entries}, userEntry: ${_this.userEntry}, totalCount: ${_this.totalCount})';
 }
 
 
@@ -534,16 +546,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaderboardResponse&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.userEntry, userEntry) || other.userEntry == userEntry)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaderboardResponse&&const DeepCollectionEquality().equals(other.entries, _entries)&&(identical(other.userEntry, userEntry) || other.userEntry == userEntry)&&(identical(other.totalCount, totalCount) || other.totalCount == totalCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_entries),userEntry,totalCount);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_entries),userEntry,totalCount);
+}
 
 @override
 String toString() {
-  return 'LeaderboardResponse(entries: $entries, userEntry: $userEntry, totalCount: $totalCount)';
+    return 'LeaderboardResponse(entries: $entries, userEntry: $userEntry, totalCount: $totalCount)';
 }
 
 

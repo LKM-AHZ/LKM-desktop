@@ -1,7 +1,7 @@
-/// The configured Solar Network editor widget on top of AppFlowy.
+/// The configured Solar Network editor widget on top of Island Editor.
 ///
 /// Everything opinionated about Solar lives here so all clients render the
-/// same: standard AppFlowy blocks with Solar text styles, the `/` slash
+/// same: standard Island Editor blocks with Solar text styles, the `/` slash
 /// menu, a floating format toolbar, and the markdown bridge
 /// ([solarMarkdownToDocument]/[solarDocumentToMarkdown]) through
 /// [SolarEditorController].
@@ -12,14 +12,17 @@ library;
 
 import 'dart:async';
 
-import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:island_editor/island_editor.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 
 import 'blocks/solar_highlight_spoiler_syntaxes.dart';
+import 'solar_context_menu.dart';
+import 'solar_html_codec.dart';
 import 'solar_paste_command.dart';
 
-// The global image-src resolver AppFlowy's image block consults.
-export 'package:appflowy_editor/appflowy_editor.dart' show imageCustomResolver;
+// The global image-src resolver Island Editor's image block consults.
+export 'package:island_editor/island_editor.dart' show imageCustomResolver;
 import 'solar_markdown_codec.dart';
 
 /// Host-specific extension points. All optional.
@@ -31,11 +34,13 @@ class SolarEditorConfig {
     this.slashTriggerCharacter = '/',
     this.imageUrlResolver,
     this.onPickImage,
+    this.onPaste,
+    this.onEscape,
     this.placeholder = 'Type / for commands…',
   });
 
   /// Additional/overriding block builders merged over the standard set.
-  /// Keys are AppFlowy node types (e.g. `'my_callout'`).
+  /// Keys are Island Editor node types (e.g. `'my_callout'`).
   final Map<String, BlockComponentBuilder> blockComponentBuilders;
 
   /// Additional `/` menu items appended after the standard set.
@@ -48,7 +53,7 @@ class SolarEditorConfig {
   final String slashTriggerCharacter;
 
   /// Resolves an image block's `src` to a widget. Return null to fall back
-  /// to AppFlowy's default rendering (network/base64/local file).
+  /// to Island Editor's default rendering (network/base64/local file).
   ///
   /// Use this for app-specific schemes — e.g. Solian's
   /// `solian://files/<id>` resolves through its cloud file widget; a plain
@@ -56,20 +61,35 @@ class SolarEditorConfig {
   final Widget? Function(BuildContext context, String src)? imageUrlResolver;
 
   /// When provided, the menu's image entry calls this instead of showing
-  /// AppFlowy's URL prompt — the host decides how to pick the file (e.g.
+  /// Island Editor's URL prompt — the host decides how to pick the file (e.g.
   /// its own cloud file picker) and returns the URL to insert, or null to
   /// cancel.
   final Future<String?> Function()? onPickImage;
+
+  /// Fired on Cmd/Ctrl+V before the markdown text path runs. The host reads
+  /// the platform clipboard itself (images, files — payloads the text path
+  /// cannot represent), uploads/attaches what it found and returns `true` to
+  /// consume the paste. Return `false` to fall through to markdown text.
+  final Future<bool> Function()? onPaste;
+
+  /// Fired when Escape is pressed while the editor holds the caret.
+  ///
+  /// The editor handles Escape before a sheet-level listener can see it, so
+  /// without this the composer's "Esc keeps what was written and closes" would
+  /// never fire. Return `true` when the host acted on it; `false` keeps the
+  /// editor's own behaviour (clear the selection).
+  final bool Function()? onEscape;
 
   /// Shown on empty, unfocused paragraphs.
   final String placeholder;
 }
 
-/// Owns an [EditorState] and mirrors it with a markdown string.
+/// Owns an [EditorState] and mirrors it with markdown.
 ///
-/// The markdown string is the persisted/posted form; the document is the
-/// editing form. Changes flow editor → markdown through [onChange];
-/// external markdown (draft restore, imports) enters through [setMarkdown].
+/// Markdown is what pages and posts persist; mail persists `text/html`, which
+/// [htmlBody] encodes on demand from the same document. Changes flow editor →
+/// markdown through [onChange]; external content enters through [setMarkdown]
+/// or [setHTML].
 class SolarEditorController {
   SolarEditorController({
     String? initialMarkdown,
@@ -86,11 +106,27 @@ class SolarEditorController {
   void Function(String markdown)? onChange;
 
   String _markdown;
+  bool _markdownDirty = false;
+  Timer? _onChangeDebounce;
   bool _disposed = false;
   StreamSubscription<EditorTransactionValue>? _subscription;
 
-  /// The current document as markdown (the posted form).
-  String get markdown => _markdown;
+  /// The current document as markdown (the posted form for pages).
+  String get markdown {
+    if (_markdownDirty) {
+      _markdown = solarDocumentToMarkdown(
+        editorState.document,
+        customParsers: config.markdownNodeParsers,
+      );
+      _markdownDirty = false;
+    }
+    return _markdown;
+  }
+
+  /// The document as the HTML a mail body is sent as. An empty document
+  /// encodes to an empty string, so a composer that never wrote anything
+  /// saves nothing.
+  String get htmlBody => solarDocumentToHTML(editorState.document);
 
   /// Whether the document has no content at all (used for the
   /// empty-state placeholder).
@@ -110,6 +146,12 @@ class SolarEditorController {
     return state;
   }
 
+  /// The range the platform IME currently owns, or an empty range when the
+  /// IME is idle. See [IslandKeyboardService.composingTextRange].
+  TextRange get _composingTextRange =>
+      editorState.service.keyboardService?.composingTextRange ??
+      TextRange.empty;
+
   /// Fires whenever the document changed. Listenable form of [onChange]
   /// for widgets that only need to know *that* something changed (e.g.
   /// the empty-state placeholder).
@@ -121,31 +163,118 @@ class SolarEditorController {
     if (time != TransactionTime.after) return;
     // Annotate Solar syntaxes typed or inserted since the last decode; the
     // markdown codec only annotates what came in through a document load.
-    final selection = editorState.selection;
-    if (selection != null) {
-      final node = editorState.getNodeAtPath(selection.end.path);
-      if (node != null) solarNormalizeNode(node);
+    //
+    // Never while the platform IME owns text (dictation, CJK composition):
+    // normalization rewrites the run text (`==hi==` → `hi`), and the IME keeps
+    // tracking the text it handed over, so the next delta lands at the wrong
+    // offset and the rest of the utterance is dropped. The markers are
+    // annotated once the IME commits and this runs on a later transaction —
+    // and the IME is then re-synced, because it still holds the longer text
+    // and would otherwise keep sending offsets the document no longer has.
+    if (_composingTextRange.isCollapsed) {
+      final selection = editorState.selection;
+      if (selection != null) {
+        final node = editorState.getNodeAtPath(selection.end.path);
+        if (node != null && solarNormalizeNode(node)) {
+          final maxLen = node.delta?.length ?? 0;
+          if (selection.start.offset > maxLen || selection.end.offset > maxLen) {
+            editorState.updateSelectionWithReason(
+              Selection(
+                start: Position(
+                  path: selection.start.path,
+                  offset: selection.start.offset.clamp(0, maxLen),
+                ),
+                end: Position(
+                  path: selection.end.path,
+                  offset: selection.end.offset.clamp(0, maxLen),
+                ),
+              ),
+              reason: SelectionUpdateReason.transaction,
+            );
+          }
+        }
+      }
     }
-    final next = solarDocumentToMarkdown(
-      editorState.document,
-      customParsers: config.markdownNodeParsers,
-    );
-    if (next == _markdown) return;
-    _markdown = next;
+    _markdownDirty = true;
     contentChanged.value++;
-    onChange?.call(next);
+    if (onChange != null) {
+      _onChangeDebounce?.cancel();
+      _onChangeDebounce = Timer(const Duration(milliseconds: 120), () {
+        if (_disposed) return;
+        final prev = _markdown;
+        final next = markdown;
+        if (next == prev) return;
+        onChange?.call(next);
+      });
+    }
   }
 
-  /// Replaces the document with [markdown]. History is cleared — an import
-  /// is not an editing step.
+  /// Replaces the document contents with [markdown]. History is cleared — an
+  /// import is not an editing step.
+  ///
+  /// The swap happens *inside* the live [EditorState] rather than by
+  /// constructing a new one: [SolarBlockEditor] builds its widget tree from
+  /// the state it was handed, so replacing the object left the rendered
+  /// editor showing the previous document while markdown/undo pointed at the
+  /// new one — editing an existing post looked empty and clicks landed on
+  /// detached nodes.
   void setMarkdown(String markdown) {
-    if (markdown == _markdown) return;
-    _subscription?.cancel();
+    _onChangeDebounce?.cancel();
+    if (!_markdownDirty && markdown == _markdown) return;
     _markdown = markdown;
-    editorState.dispose();
-    editorState = _buildEditorState(markdown);
+    _markdownDirty = false;
+
+    final replacement = markdown.trim().isEmpty
+        ? Document.blank(withInitialText: true)
+        : solarMarkdownToDocument(markdown);
+    _replaceDocument(replacement);
     contentChanged.value++;
-    _subscription = editorState.transactionStream.listen(_onTransaction);
+  }
+
+  /// Replaces the document with mail [html]. Same contract as [setMarkdown]:
+  /// imports are not editing steps, so history is cleared.
+  ///
+  /// Loading mail through the HTML codec keeps the tags markdown cannot
+  /// carry (inline colours, `<code>`, soft line breaks) instead of flattening
+  /// the message to prose.
+  void setHTML(String html) {
+    _onChangeDebounce?.cancel();
+    final replacement = html.trim().isEmpty
+        ? Document.blank(withInitialText: true)
+        : solarHTMLToDocument(html);
+    _markdown = solarDocumentToMarkdown(
+      replacement,
+      customParsers: config.markdownNodeParsers,
+    );
+    _markdownDirty = false;
+    _replaceDocument(replacement);
+    contentChanged.value++;
+  }
+
+  /// Replaces every root child of the live document with [replacement]'s
+  /// children, in one transaction, without recording undo history.
+  void _replaceDocument(Document replacement) {
+    final children = editorState.document.root.children;
+    final transaction = editorState.transaction;
+    if (children.isNotEmpty) {
+      transaction.deleteNodesAtPath([0], children.length);
+    }
+    // One insert per node: the transaction inserts each node *before* the
+    // node at the target path, so a batch appended every node ahead of the
+    // previous one and loaded documents in reverse order.
+    final nodes = replacement.root.children.toList(growable: false);
+    for (var index = 0; index < nodes.length; index++) {
+      transaction.insertNodes([index], [nodes[index].copyWith()]);
+    }
+    transaction.afterSelection = null;
+
+    editorState.undoManager.undoStack.clear();
+    editorState.undoManager.redoStack.clear();
+    editorState.selection = null;
+    editorState.apply(
+      transaction,
+      options: const ApplyOptions(recordUndo: false),
+    );
   }
 
   /// Inserts [text] at the current selection (or into the last paragraph
@@ -181,7 +310,9 @@ class SolarEditorController {
 
   void dispose() {
     _disposed = true;
+    _onChangeDebounce?.cancel();
     _subscription?.cancel();
+    contentChanged.dispose();
     editorState.dispose();
   }
 }
@@ -231,7 +362,7 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // AppFlowy's image block reads this global when building its widget;
+    // Island Editor's image block reads this global when building its widget;
     // keep it pointed at the current config's resolver.
     imageCustomResolver = widget.controller.config.imageUrlResolver == null
         ? null
@@ -315,7 +446,7 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
   }
 
   /// Island UI styling for the insert menu: theme surfaces, rounded card
-  /// corners, primary highlight — instead of AppFlowy's hardcoded light/dark
+  /// corners, primary highlight — instead of Island Editor's hardcoded light/dark
   /// defaults.
   SelectionMenuStyle _slashMenuStyle(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -370,18 +501,43 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
     return items;
   }
 
-  /// The standard shortcuts with AppFlowy's plain-text paste replaced.
+  /// The markdown-aware paste command, rebuilt with the current config so a
+  /// menu paste behaves exactly like Cmd/Ctrl+V (including the host hook).
+  late CommandShortcutEvent _pasteCommand;
+
+  /// The standard shortcuts with Island Editor's plain-text paste replaced.
   ///
-  /// AppFlowy's `pastePlainText` splits the clipboard on newlines and builds
+  /// Island Editor's `pastePlainText` splits the clipboard on newlines and builds
   /// plain paragraphs, so pasted markdown (`# Heading`, `**bold**`, `- item`)
   /// arrives literally. The replacement parses the clipboard as markdown into
   /// editor nodes instead, which also re-applies the Solar inline
   /// annotations through [solarMarkdownToDocument].
   List<CommandShortcutEvent> _buildCommandShortcuts() {
+    _pasteCommand = buildSolarPasteCommand(
+      onPaste: widget.controller.config.onPaste,
+    );
+    // Escape reaches the editor's own command before the host's sheet-level
+    // listener ever sees it, so the host's close is wired here rather than at
+    // the sheet.
+    final onEscape = widget.controller.config.onEscape;
+    final escapeOverride = onEscape == null
+        ? null
+        : CommandShortcutEvent(
+            key: exitEditingCommand.key,
+            command: exitEditingCommand.command,
+            getDescription: () => IslandEditorL10n.current.cmdExitEditing,
+            handler: (editorState) {
+              if (!onEscape()) exitEditingCommand.handler(editorState);
+              return KeyEventResult.handled;
+            },
+          );
     return [
-      solarPasteCommand,
+      _pasteCommand,
+      if (escapeOverride != null) escapeOverride,
       ...standardCommandShortcutEvents.where(
-        (event) => event.key != pasteCommand.key,
+        (event) =>
+            event.key != pasteCommand.key &&
+            (escapeOverride == null || event.key != exitEditingCommand.key),
       ),
     ];
   }
@@ -405,7 +561,7 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
       textSpanDecorator: _solarSpanDecorator,
     );
 
-    final editor = AppFlowyEditor(
+    final editor = IslandEditor(
       editorState: _editorState,
       editable: widget.editable,
       shrinkWrap: widget.shrinkWrap,
@@ -420,6 +576,16 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
         ),
       ],
       commandShortcutEvents: _buildCommandShortcuts(),
+      // Right-click: Island Editor renders nothing unless the host supplies a
+      // builder, so the Solar menu (cut/copy/paste/select-all) is passed here.
+      contextMenuBuilder: (context, position, editorState, close) =>
+          buildSolarContextMenu(
+            context,
+            position,
+            editorState,
+            close,
+            solarPaste: (state) => _pasteCommand.handler(state),
+          ),
     );
 
     // Host key hook (autocomplete popups) runs before the editor's own
@@ -438,8 +604,29 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
       );
     }
 
-    final content = widget.shrinkWrap
-        ? keyed(editor)
+    final isMobile =
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.android;
+
+    // Mobile: long-press/drag selection opens the platform clipboard toolbar.
+    // Island Editor only raises it when the host supplies the items, so the Solar
+    // builder (cut/copy/paste/select-all) is wired here.
+    // Desktop: the floating format toolbar; right-click is handled by
+    // [contextMenuBuilder] on the editor itself.
+    final content = isMobile
+        ? MobileFloatingToolbar(
+            editorState: _editorState,
+            editorScrollController: _scrollController!,
+            floatingToolbarHeight: 44,
+            toolbarBuilder: (context, anchor, close) => buildSolarMobileToolbar(
+              context,
+              anchor,
+              close,
+              editorState: _editorState,
+              solarPaste: (state) => _pasteCommand.handler(state),
+            ),
+            child: keyed(editor),
+          )
         : FloatingToolbar(
             items: [
               paragraphItem,
@@ -458,28 +645,36 @@ class _SolarBlockEditorState extends State<SolarBlockEditor> {
 
     // Empty-state placeholder: the built-in per-block placeholder only
     // shows while the block is being edited; this overlay covers the
-    // empty + unfocused case with a tappable hint.
+    // empty + unfocused case with a tappable hint. Keeping a stable Stack
+    // and passing [content] as [ListenableBuilder.child] prevents the editor
+    // subtree from reparenting or rebuilding on selection changes.
     return ListenableBuilder(
       listenable: Listenable.merge([
         _editorState.selectionNotifier,
         widget.controller.contentChanged,
       ]),
-      builder: (context, _) {
-        final showHint = widget.controller.isEmpty && _editorState.selection == null;
-        if (!showHint) return content;
+      child: content,
+      builder: (context, child) {
+        final showHint =
+            widget.controller.isEmpty && _editorState.selection == null;
         return Stack(
           children: [
-            content,
+            child!,
             Positioned.fill(
               child: IgnorePointer(
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    widget.controller.config.placeholder,
-                    style: (theme.textTheme.bodyMedium ?? const TextStyle())
-                        .copyWith(
-                      color: theme.colorScheme.onSurfaceVariant
-                          .withValues(alpha: 0.6),
+                child: AnimatedOpacity(
+                  opacity: showHint ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 140),
+                  curve: Curves.easeOut,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      widget.controller.config.placeholder,
+                      style: (theme.textTheme.bodyMedium ?? const TextStyle())
+                          .copyWith(
+                        color: theme.colorScheme.onSurfaceVariant
+                            .withValues(alpha: 0.6),
+                      ),
                     ),
                   ),
                 ),

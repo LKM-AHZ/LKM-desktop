@@ -29,16 +29,21 @@ $SnFitnessMetricCopyWith<SnFitnessMetric> get copyWith => _$SnFitnessMetricCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFitnessMetric&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnFitnessMetric;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFitnessMetric&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.metricType, _this.metricType) || other.metricType == _this.metricType)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.recordedAt, _this.recordedAt) || other.recordedAt == _this.recordedAt)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,metricType,value,unit,recordedAt,notes,source,visibility,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnFitnessMetric;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.metricType,_this.value,_this.unit,_this.recordedAt,_this.notes,_this.source,_this.visibility,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnFitnessMetric(id: $id, accountId: $accountId, metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnFitnessMetric;
+  return 'SnFitnessMetric(id: ${_this.id}, accountId: ${_this.accountId}, metricType: ${_this.metricType}, value: ${_this.value}, unit: ${_this.unit}, recordedAt: ${_this.recordedAt}, notes: ${_this.notes}, source: ${_this.source}, visibility: ${_this.visibility}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -242,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFitnessMetric&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFitnessMetric&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,metricType,value,unit,recordedAt,notes,source,visibility,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,metricType,value,unit,recordedAt,notes,source,visibility,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnFitnessMetric(id: $id, accountId: $accountId, metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnFitnessMetric(id: $id, accountId: $accountId, metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -316,16 +323,21 @@ $CreateMetricRequestCopyWith<CreateMetricRequest> get copyWith => _$CreateMetric
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+  final _this = this as CreateMetricRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMetricRequest&&(identical(other.metricType, _this.metricType) || other.metricType == _this.metricType)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.recordedAt, _this.recordedAt) || other.recordedAt == _this.recordedAt)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.externalId, _this.externalId) || other.externalId == _this.externalId)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,externalId,visibility);
+int get hashCode {
+  final _this = this as CreateMetricRequest;
+  return Object.hash(runtimeType,_this.metricType,_this.value,_this.unit,_this.recordedAt,_this.notes,_this.source,_this.externalId,_this.visibility);
+}
 
 @override
 String toString() {
-  return 'CreateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, externalId: $externalId, visibility: $visibility)';
+  final _this = this as CreateMetricRequest;
+  return 'CreateMetricRequest(metricType: ${_this.metricType}, value: ${_this.value}, unit: ${_this.unit}, recordedAt: ${_this.recordedAt}, notes: ${_this.notes}, source: ${_this.source}, externalId: ${_this.externalId}, visibility: ${_this.visibility})';
 }
 
 
@@ -523,16 +535,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.externalId, externalId) || other.externalId == externalId)&&(identical(other.visibility, visibility) || other.visibility == visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,externalId,visibility);
+int get hashCode {
+    return Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,externalId,visibility);
+}
 
 @override
 String toString() {
-  return 'CreateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, externalId: $externalId, visibility: $visibility)';
+    return 'CreateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, externalId: $externalId, visibility: $visibility)';
 }
 
 
@@ -594,16 +608,21 @@ $UpdateMetricRequestCopyWith<UpdateMetricRequest> get copyWith => _$UpdateMetric
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+  final _this = this as UpdateMetricRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateMetricRequest&&(identical(other.metricType, _this.metricType) || other.metricType == _this.metricType)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.unit, _this.unit) || other.unit == _this.unit)&&(identical(other.recordedAt, _this.recordedAt) || other.recordedAt == _this.recordedAt)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.visibility, _this.visibility) || other.visibility == _this.visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,visibility);
+int get hashCode {
+  final _this = this as UpdateMetricRequest;
+  return Object.hash(runtimeType,_this.metricType,_this.value,_this.unit,_this.recordedAt,_this.notes,_this.source,_this.visibility);
+}
 
 @override
 String toString() {
-  return 'UpdateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility)';
+  final _this = this as UpdateMetricRequest;
+  return 'UpdateMetricRequest(metricType: ${_this.metricType}, value: ${_this.value}, unit: ${_this.unit}, recordedAt: ${_this.recordedAt}, notes: ${_this.notes}, source: ${_this.source}, visibility: ${_this.visibility})';
 }
 
 
@@ -799,16 +818,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateMetricRequest&&(identical(other.metricType, metricType) || other.metricType == metricType)&&(identical(other.value, value) || other.value == value)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.source, source) || other.source == source)&&(identical(other.visibility, visibility) || other.visibility == visibility));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,visibility);
+int get hashCode {
+    return Object.hash(runtimeType,metricType,value,unit,recordedAt,notes,source,visibility);
+}
 
 @override
 String toString() {
-  return 'UpdateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility)';
+    return 'UpdateMetricRequest(metricType: $metricType, value: $value, unit: $unit, recordedAt: $recordedAt, notes: $notes, source: $source, visibility: $visibility)';
 }
 
 
@@ -869,16 +890,21 @@ $CreateMetricsBatchRequestCopyWith<CreateMetricsBatchRequest> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMetricsBatchRequest&&const DeepCollectionEquality().equals(other.metrics, metrics));
+  final _this = this as CreateMetricsBatchRequest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateMetricsBatchRequest&&const DeepCollectionEquality().equals(other.metrics, _this.metrics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(metrics));
+int get hashCode {
+  final _this = this as CreateMetricsBatchRequest;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.metrics));
+}
 
 @override
 String toString() {
-  return 'CreateMetricsBatchRequest(metrics: $metrics)';
+  final _this = this as CreateMetricsBatchRequest;
+  return 'CreateMetricsBatchRequest(metrics: ${_this.metrics})';
 }
 
 
@@ -1068,16 +1094,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMetricsBatchRequest&&const DeepCollectionEquality().equals(other._metrics, _metrics));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateMetricsBatchRequest&&const DeepCollectionEquality().equals(other.metrics, _metrics));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_metrics));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_metrics));
+}
 
 @override
 String toString() {
-  return 'CreateMetricsBatchRequest(metrics: $metrics)';
+    return 'CreateMetricsBatchRequest(metrics: $metrics)';
 }
 
 

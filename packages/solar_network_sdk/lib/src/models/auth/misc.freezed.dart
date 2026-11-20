@@ -29,16 +29,21 @@ $AppTokenCopyWith<AppToken> get copyWith => _$AppTokenCopyWithImpl<AppToken>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppToken&&(identical(other.token, token) || other.token == token));
+  final _this = this as AppToken;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppToken&&(identical(other.token, _this.token) || other.token == _this.token));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,token);
+int get hashCode {
+  final _this = this as AppToken;
+  return Object.hash(runtimeType,_this.token);
+}
 
 @override
 String toString() {
-  return 'AppToken(token: $token)';
+  final _this = this as AppToken;
+  return 'AppToken(token: ${_this.token})';
 }
 
 
@@ -222,16 +227,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppToken&&(identical(other.token, token) || other.token == token));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppToken&&(identical(other.token, token) || other.token == token));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,token);
+int get hashCode {
+    return Object.hash(runtimeType,token);
+}
 
 @override
 String toString() {
-  return 'AppToken(token: $token)';
+    return 'AppToken(token: $token)';
 }
 
 
@@ -286,16 +293,21 @@ $GeoIpLocationCopyWith<GeoIpLocation> get copyWith => _$GeoIpLocationCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIpLocation&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.country, country) || other.country == country)&&(identical(other.city, city) || other.city == city));
+  final _this = this as GeoIpLocation;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIpLocation&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.countryCode, _this.countryCode) || other.countryCode == _this.countryCode)&&(identical(other.country, _this.country) || other.country == _this.country)&&(identical(other.city, _this.city) || other.city == _this.city));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,latitude,longitude,countryCode,country,city);
+int get hashCode {
+  final _this = this as GeoIpLocation;
+  return Object.hash(runtimeType,_this.latitude,_this.longitude,_this.countryCode,_this.country,_this.city);
+}
 
 @override
 String toString() {
-  return 'GeoIpLocation(latitude: $latitude, longitude: $longitude, countryCode: $countryCode, country: $country, city: $city)';
+  final _this = this as GeoIpLocation;
+  return 'GeoIpLocation(latitude: ${_this.latitude}, longitude: ${_this.longitude}, countryCode: ${_this.countryCode}, country: ${_this.country}, city: ${_this.city})';
 }
 
 
@@ -487,16 +499,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIpLocation&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.country, country) || other.country == country)&&(identical(other.city, city) || other.city == city));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIpLocation&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.country, country) || other.country == country)&&(identical(other.city, city) || other.city == city));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,latitude,longitude,countryCode,country,city);
+int get hashCode {
+    return Object.hash(runtimeType,latitude,longitude,countryCode,country,city);
+}
 
 @override
 String toString() {
-  return 'GeoIpLocation(latitude: $latitude, longitude: $longitude, countryCode: $countryCode, country: $country, city: $city)';
+    return 'GeoIpLocation(latitude: $latitude, longitude: $longitude, countryCode: $countryCode, country: $country, city: $city)';
 }
 
 
@@ -555,16 +569,21 @@ $SnAuthFactorCopyWith<SnAuthFactor> get copyWith => _$SnAuthFactorCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAuthFactor&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.enabledAt, enabledAt) || other.enabledAt == enabledAt)&&(identical(other.trustworthy, trustworthy) || other.trustworthy == trustworthy)&&const DeepCollectionEquality().equals(other.createdResponse, createdResponse));
+  final _this = this as SnAuthFactor;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAuthFactor&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt)&&(identical(other.expiredAt, _this.expiredAt) || other.expiredAt == _this.expiredAt)&&(identical(other.enabledAt, _this.enabledAt) || other.enabledAt == _this.enabledAt)&&(identical(other.trustworthy, _this.trustworthy) || other.trustworthy == _this.trustworthy)&&const DeepCollectionEquality().equals(other.createdResponse, _this.createdResponse));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,createdAt,updatedAt,deletedAt,expiredAt,enabledAt,trustworthy,const DeepCollectionEquality().hash(createdResponse));
+int get hashCode {
+  final _this = this as SnAuthFactor;
+  return Object.hash(runtimeType,_this.id,_this.type,_this.createdAt,_this.updatedAt,_this.deletedAt,_this.expiredAt,_this.enabledAt,_this.trustworthy,const DeepCollectionEquality().hash(_this.createdResponse));
+}
 
 @override
 String toString() {
-  return 'SnAuthFactor(id: $id, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, expiredAt: $expiredAt, enabledAt: $enabledAt, trustworthy: $trustworthy, createdResponse: $createdResponse)';
+  final _this = this as SnAuthFactor;
+  return 'SnAuthFactor(id: ${_this.id}, type: ${_this.type}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt}, expiredAt: ${_this.expiredAt}, enabledAt: ${_this.enabledAt}, trustworthy: ${_this.trustworthy}, createdResponse: ${_this.createdResponse})';
 }
 
 
@@ -772,16 +791,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAuthFactor&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.enabledAt, enabledAt) || other.enabledAt == enabledAt)&&(identical(other.trustworthy, trustworthy) || other.trustworthy == trustworthy)&&const DeepCollectionEquality().equals(other._createdResponse, _createdResponse));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAuthFactor&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.enabledAt, enabledAt) || other.enabledAt == enabledAt)&&(identical(other.trustworthy, trustworthy) || other.trustworthy == trustworthy)&&const DeepCollectionEquality().equals(other.createdResponse, _createdResponse));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,createdAt,updatedAt,deletedAt,expiredAt,enabledAt,trustworthy,const DeepCollectionEquality().hash(_createdResponse));
+int get hashCode {
+    return Object.hash(runtimeType,id,type,createdAt,updatedAt,deletedAt,expiredAt,enabledAt,trustworthy,const DeepCollectionEquality().hash(_createdResponse));
+}
 
 @override
 String toString() {
-  return 'SnAuthFactor(id: $id, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, expiredAt: $expiredAt, enabledAt: $enabledAt, trustworthy: $trustworthy, createdResponse: $createdResponse)';
+    return 'SnAuthFactor(id: $id, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, expiredAt: $expiredAt, enabledAt: $enabledAt, trustworthy: $trustworthy, createdResponse: $createdResponse)';
 }
 
 
@@ -844,16 +865,21 @@ $SnAccountConnectionCopyWith<SnAccountConnection> get copyWith => _$SnAccountCon
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountConnection&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.providedIdentifier, providedIdentifier) || other.providedIdentifier == providedIdentifier)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.lastUsedAt, lastUsedAt) || other.lastUsedAt == lastUsedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnAccountConnection;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAccountConnection&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.provider, _this.provider) || other.provider == _this.provider)&&(identical(other.providedIdentifier, _this.providedIdentifier) || other.providedIdentifier == _this.providedIdentifier)&&(identical(other.isPublic, _this.isPublic) || other.isPublic == _this.isPublic)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.lastUsedAt, _this.lastUsedAt) || other.lastUsedAt == _this.lastUsedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,provider,providedIdentifier,isPublic,const DeepCollectionEquality().hash(meta),lastUsedAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnAccountConnection;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.provider,_this.providedIdentifier,_this.isPublic,const DeepCollectionEquality().hash(_this.meta),_this.lastUsedAt,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAccountConnection(id: $id, accountId: $accountId, provider: $provider, providedIdentifier: $providedIdentifier, isPublic: $isPublic, meta: $meta, lastUsedAt: $lastUsedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnAccountConnection;
+  return 'SnAccountConnection(id: ${_this.id}, accountId: ${_this.accountId}, provider: ${_this.provider}, providedIdentifier: ${_this.providedIdentifier}, isPublic: ${_this.isPublic}, meta: ${_this.meta}, lastUsedAt: ${_this.lastUsedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -1061,16 +1087,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountConnection&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.providedIdentifier, providedIdentifier) || other.providedIdentifier == providedIdentifier)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.lastUsedAt, lastUsedAt) || other.lastUsedAt == lastUsedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAccountConnection&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.providedIdentifier, providedIdentifier) || other.providedIdentifier == providedIdentifier)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.lastUsedAt, lastUsedAt) || other.lastUsedAt == lastUsedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,provider,providedIdentifier,isPublic,const DeepCollectionEquality().hash(_meta),lastUsedAt,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,provider,providedIdentifier,isPublic,const DeepCollectionEquality().hash(_meta),lastUsedAt,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAccountConnection(id: $id, accountId: $accountId, provider: $provider, providedIdentifier: $providedIdentifier, isPublic: $isPublic, meta: $meta, lastUsedAt: $lastUsedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnAccountConnection(id: $id, accountId: $accountId, provider: $provider, providedIdentifier: $providedIdentifier, isPublic: $isPublic, meta: $meta, lastUsedAt: $lastUsedAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

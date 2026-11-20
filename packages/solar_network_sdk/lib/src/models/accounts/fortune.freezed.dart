@@ -29,16 +29,21 @@ $SnFortuneSayingCopyWith<SnFortuneSaying> get copyWith => _$SnFortuneSayingCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFortuneSaying&&(identical(other.content, content) || other.content == content)&&(identical(other.source, source) || other.source == source)&&(identical(other.language, language) || other.language == language));
+  final _this = this as SnFortuneSaying;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFortuneSaying&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.language, _this.language) || other.language == _this.language));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,content,source,language);
+int get hashCode {
+  final _this = this as SnFortuneSaying;
+  return Object.hash(runtimeType,_this.content,_this.source,_this.language);
+}
 
 @override
 String toString() {
-  return 'SnFortuneSaying(content: $content, source: $source, language: $language)';
+  final _this = this as SnFortuneSaying;
+  return 'SnFortuneSaying(content: ${_this.content}, source: ${_this.source}, language: ${_this.language})';
 }
 
 
@@ -226,16 +231,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFortuneSaying&&(identical(other.content, content) || other.content == content)&&(identical(other.source, source) || other.source == source)&&(identical(other.language, language) || other.language == language));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFortuneSaying&&(identical(other.content, content) || other.content == content)&&(identical(other.source, source) || other.source == source)&&(identical(other.language, language) || other.language == language));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,content,source,language);
+int get hashCode {
+    return Object.hash(runtimeType,content,source,language);
+}
 
 @override
 String toString() {
-  return 'SnFortuneSaying(content: $content, source: $source, language: $language)';
+    return 'SnFortuneSaying(content: $content, source: $source, language: $language)';
 }
 
 

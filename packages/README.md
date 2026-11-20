@@ -2,8 +2,9 @@
 
 These packages were imported from **[Socommon](https://github.com/LKM-AHZ/LKM-socommon)** —
 the LKM fork of [Solsynth's Socommon](https://src.solsynth.dev/SoSYS/Socommon) — at commit
-`2f3b2b4`, with the Socommon upstream sync at `3d8c7eb` (appflowy editor,
-`solar_editor`, pill surface and auth host hooks) applied on 2026-11-15.
+`2f3b2b4`, with the Socommon upstream sync at
+`f135d75c228ff7bfc597faea254f7f8696201a42` (Island Editor, HTML/clipboard bridges,
+markdown export fixes and shared generated models) applied on 2026-11-20.
 
 They are ordinary path dependencies (`packages/<name>`), so `flutter pub get` works without
 any submodule checkout. The packages depend on each other through relative `../<name>` paths,
@@ -16,7 +17,7 @@ so the tree must stay together.
 | `island_ui_foundation` | Desktop window frame, overlay systems, responsive helpers |
 | `island_desktop_presence` | Desktop idle presence and local RPC transport (Linux/macOS/Windows) |
 | `solsynth_express` | Solsynth Express marketplace / release / artifact client |
-| `appflowy_editor` | AppFlowy block editor used by the shared `SolarBlockEditor` compose surface |
+| `island_editor` | Island Editor fork used by the shared `SolarBlockEditor` compose surface |
 | `flutter_app_update` | Vendored fork of `azhon/flutter_app_update` |
 | `flutter_math_fork` | Vendored fork of `simpleclub/flutter_math` (KaTeX fonts loaded lazily) |
 | `protocol_handler_windows` | Vendored fork of `leanflutter/protocol_handler` |
@@ -57,18 +58,18 @@ Treat this directory as a fork of the LKM-socommon repo. To pull upstream change
 
 ```bash
 # 1. Fetch upstream Socommon next to the app repo
-git clone --filter=blob:none https://github.com/LKM-AHZ/LKM-socommon /tmp/lkm-socommon
+git clone --filter=blob:none https://src.solsynth.dev/SoSYS/Socommon /tmp/lkm-socommon
 git -C /tmp/lkm-socommon fetch https://src.solsynth.dev/SoSYS/Socommon.git main:upstream
 
 # 2. Diff upstream against the vendored baseline, from the app repository root
-git -C /tmp/lkm-socommon diff 3d8c7eb upstream -- packages > /tmp/socommon.patch
+git -C /tmp/lkm-socommon diff f135d75c228ff7bfc597faea254f7f8696201a42 upstream -- packages > /tmp/socommon.patch
 git apply --reject --whitespace=nowarn /tmp/socommon.patch
 
 # 3. Resolve any *.rej files, then verify
 flutter pub get && flutter analyze lib
 ```
 
-Record the new upstream commit here (replace `3d8c7eb`) once the update lands, so the next
+Record the new upstream commit here (replace `f135d75c228ff7bfc597faea254f7f8696201a42`) once the update lands, so the next
 diff starts from the right baseline.
 
 OHOS backend licenses are listed under each local package's `flutter.licenses`

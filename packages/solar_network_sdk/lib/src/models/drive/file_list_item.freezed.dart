@@ -26,16 +26,21 @@ $FileListItemCopyWith<FileListItem> get copyWith => _$FileListItemCopyWithImpl<F
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FileListItem&&(identical(other.file, file) || other.file == file));
+  final _this = this as FileListItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FileListItem&&(identical(other.file, _this.file) || other.file == _this.file));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file);
+int get hashCode {
+  final _this = this as FileListItem;
+  return Object.hash(runtimeType,_this.file);
+}
 
 @override
 String toString() {
-  return 'FileListItem(file: $file)';
+  final _this = this as FileListItem;
+  return 'FileListItem(file: ${_this.file})';
 }
 
 
@@ -237,16 +242,18 @@ $FileItemCopyWith<FileItem> get copyWith => _$FileItemCopyWithImpl<FileItem>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FileItem&&(identical(other.file, file) || other.file == file));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is FileItem&&(identical(other.file, file) || other.file == file));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file);
+int get hashCode {
+    return Object.hash(runtimeType,file);
+}
 
 @override
 String toString() {
-  return 'FileListItem.file(file: $file)';
+    return 'FileListItem.file(file: $file)';
 }
 
 
@@ -312,16 +319,18 @@ $FolderItemCopyWith<FolderItem> get copyWith => _$FolderItemCopyWithImpl<FolderI
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FolderItem&&(identical(other.file, file) || other.file == file));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is FolderItem&&(identical(other.file, file) || other.file == file));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file);
+int get hashCode {
+    return Object.hash(runtimeType,file);
+}
 
 @override
 String toString() {
-  return 'FileListItem.folder(file: $file)';
+    return 'FileListItem.folder(file: $file)';
 }
 
 
@@ -387,16 +396,18 @@ $UnindexedFileItemCopyWith<UnindexedFileItem> get copyWith => _$UnindexedFileIte
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UnindexedFileItem&&(identical(other.file, file) || other.file == file));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UnindexedFileItem&&(identical(other.file, file) || other.file == file));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file);
+int get hashCode {
+    return Object.hash(runtimeType,file);
+}
 
 @override
 String toString() {
-  return 'FileListItem.unindexedFile(file: $file)';
+    return 'FileListItem.unindexedFile(file: $file)';
 }
 
 

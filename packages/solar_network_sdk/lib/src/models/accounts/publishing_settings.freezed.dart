@@ -29,16 +29,21 @@ $SnPublishingSettingsCopyWith<SnPublishingSettings> get copyWith => _$SnPublishi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublishingSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.defaultPostingPublisherId, defaultPostingPublisherId) || other.defaultPostingPublisherId == defaultPostingPublisherId)&&(identical(other.defaultReplyPublisherId, defaultReplyPublisherId) || other.defaultReplyPublisherId == defaultReplyPublisherId)&&(identical(other.defaultFediversePublisherId, defaultFediversePublisherId) || other.defaultFediversePublisherId == defaultFediversePublisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as SnPublishingSettings;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnPublishingSettings&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.defaultPostingPublisherId, _this.defaultPostingPublisherId) || other.defaultPostingPublisherId == _this.defaultPostingPublisherId)&&(identical(other.defaultReplyPublisherId, _this.defaultReplyPublisherId) || other.defaultReplyPublisherId == _this.defaultReplyPublisherId)&&(identical(other.defaultFediversePublisherId, _this.defaultFediversePublisherId) || other.defaultFediversePublisherId == _this.defaultFediversePublisherId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,defaultPostingPublisherId,defaultReplyPublisherId,defaultFediversePublisherId,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as SnPublishingSettings;
+  return Object.hash(runtimeType,_this.id,_this.accountId,_this.defaultPostingPublisherId,_this.defaultReplyPublisherId,_this.defaultFediversePublisherId,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnPublishingSettings(id: $id, accountId: $accountId, defaultPostingPublisherId: $defaultPostingPublisherId, defaultReplyPublisherId: $defaultReplyPublisherId, defaultFediversePublisherId: $defaultFediversePublisherId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as SnPublishingSettings;
+  return 'SnPublishingSettings(id: ${_this.id}, accountId: ${_this.accountId}, defaultPostingPublisherId: ${_this.defaultPostingPublisherId}, defaultReplyPublisherId: ${_this.defaultReplyPublisherId}, defaultFediversePublisherId: ${_this.defaultFediversePublisherId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -234,16 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublishingSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.defaultPostingPublisherId, defaultPostingPublisherId) || other.defaultPostingPublisherId == defaultPostingPublisherId)&&(identical(other.defaultReplyPublisherId, defaultReplyPublisherId) || other.defaultReplyPublisherId == defaultReplyPublisherId)&&(identical(other.defaultFediversePublisherId, defaultFediversePublisherId) || other.defaultFediversePublisherId == defaultFediversePublisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnPublishingSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.defaultPostingPublisherId, defaultPostingPublisherId) || other.defaultPostingPublisherId == defaultPostingPublisherId)&&(identical(other.defaultReplyPublisherId, defaultReplyPublisherId) || other.defaultReplyPublisherId == defaultReplyPublisherId)&&(identical(other.defaultFediversePublisherId, defaultFediversePublisherId) || other.defaultFediversePublisherId == defaultFediversePublisherId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,defaultPostingPublisherId,defaultReplyPublisherId,defaultFediversePublisherId,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,accountId,defaultPostingPublisherId,defaultReplyPublisherId,defaultFediversePublisherId,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'SnPublishingSettings(id: $id, accountId: $accountId, defaultPostingPublisherId: $defaultPostingPublisherId, defaultReplyPublisherId: $defaultReplyPublisherId, defaultFediversePublisherId: $defaultFediversePublisherId, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SnPublishingSettings(id: $id, accountId: $accountId, defaultPostingPublisherId: $defaultPostingPublisherId, defaultReplyPublisherId: $defaultReplyPublisherId, defaultFediversePublisherId: $defaultFediversePublisherId, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -304,16 +311,21 @@ $SnFediversePublisherAvailabilityCopyWith<SnFediversePublisherAvailability> get 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFediversePublisherAvailability&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisherName, publisherName) || other.publisherName == publisherName)&&(identical(other.fediverseHandle, fediverseHandle) || other.fediverseHandle == fediverseHandle)&&(identical(other.fediverseUri, fediverseUri) || other.fediverseUri == fediverseUri)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.followersCount, followersCount) || other.followersCount == followersCount)&&(identical(other.followingCount, followingCount) || other.followingCount == followingCount)&&(identical(other.postsCount, postsCount) || other.postsCount == postsCount));
+  final _this = this as SnFediversePublisherAvailability;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFediversePublisherAvailability&&(identical(other.publisherId, _this.publisherId) || other.publisherId == _this.publisherId)&&(identical(other.publisherName, _this.publisherName) || other.publisherName == _this.publisherName)&&(identical(other.fediverseHandle, _this.fediverseHandle) || other.fediverseHandle == _this.fediverseHandle)&&(identical(other.fediverseUri, _this.fediverseUri) || other.fediverseUri == _this.fediverseUri)&&(identical(other.avatarUrl, _this.avatarUrl) || other.avatarUrl == _this.avatarUrl)&&(identical(other.isEnabled, _this.isEnabled) || other.isEnabled == _this.isEnabled)&&(identical(other.followersCount, _this.followersCount) || other.followersCount == _this.followersCount)&&(identical(other.followingCount, _this.followingCount) || other.followingCount == _this.followingCount)&&(identical(other.postsCount, _this.postsCount) || other.postsCount == _this.postsCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publisherId,publisherName,fediverseHandle,fediverseUri,avatarUrl,isEnabled,followersCount,followingCount,postsCount);
+int get hashCode {
+  final _this = this as SnFediversePublisherAvailability;
+  return Object.hash(runtimeType,_this.publisherId,_this.publisherName,_this.fediverseHandle,_this.fediverseUri,_this.avatarUrl,_this.isEnabled,_this.followersCount,_this.followingCount,_this.postsCount);
+}
 
 @override
 String toString() {
-  return 'SnFediversePublisherAvailability(publisherId: $publisherId, publisherName: $publisherName, fediverseHandle: $fediverseHandle, fediverseUri: $fediverseUri, avatarUrl: $avatarUrl, isEnabled: $isEnabled, followersCount: $followersCount, followingCount: $followingCount, postsCount: $postsCount)';
+  final _this = this as SnFediversePublisherAvailability;
+  return 'SnFediversePublisherAvailability(publisherId: ${_this.publisherId}, publisherName: ${_this.publisherName}, fediverseHandle: ${_this.fediverseHandle}, fediverseUri: ${_this.fediverseUri}, avatarUrl: ${_this.avatarUrl}, isEnabled: ${_this.isEnabled}, followersCount: ${_this.followersCount}, followingCount: ${_this.followingCount}, postsCount: ${_this.postsCount})';
 }
 
 
@@ -513,16 +525,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFediversePublisherAvailability&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisherName, publisherName) || other.publisherName == publisherName)&&(identical(other.fediverseHandle, fediverseHandle) || other.fediverseHandle == fediverseHandle)&&(identical(other.fediverseUri, fediverseUri) || other.fediverseUri == fediverseUri)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.followersCount, followersCount) || other.followersCount == followersCount)&&(identical(other.followingCount, followingCount) || other.followingCount == followingCount)&&(identical(other.postsCount, postsCount) || other.postsCount == postsCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFediversePublisherAvailability&&(identical(other.publisherId, publisherId) || other.publisherId == publisherId)&&(identical(other.publisherName, publisherName) || other.publisherName == publisherName)&&(identical(other.fediverseHandle, fediverseHandle) || other.fediverseHandle == fediverseHandle)&&(identical(other.fediverseUri, fediverseUri) || other.fediverseUri == fediverseUri)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&(identical(other.followersCount, followersCount) || other.followersCount == followersCount)&&(identical(other.followingCount, followingCount) || other.followingCount == followingCount)&&(identical(other.postsCount, postsCount) || other.postsCount == postsCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publisherId,publisherName,fediverseHandle,fediverseUri,avatarUrl,isEnabled,followersCount,followingCount,postsCount);
+int get hashCode {
+    return Object.hash(runtimeType,publisherId,publisherName,fediverseHandle,fediverseUri,avatarUrl,isEnabled,followersCount,followingCount,postsCount);
+}
 
 @override
 String toString() {
-  return 'SnFediversePublisherAvailability(publisherId: $publisherId, publisherName: $publisherName, fediverseHandle: $fediverseHandle, fediverseUri: $fediverseUri, avatarUrl: $avatarUrl, isEnabled: $isEnabled, followersCount: $followersCount, followingCount: $followingCount, postsCount: $postsCount)';
+    return 'SnFediversePublisherAvailability(publisherId: $publisherId, publisherName: $publisherName, fediverseHandle: $fediverseHandle, fediverseUri: $fediverseUri, avatarUrl: $avatarUrl, isEnabled: $isEnabled, followersCount: $followersCount, followingCount: $followingCount, postsCount: $postsCount)';
 }
 
 
@@ -585,16 +599,21 @@ $SnFediverseAvailabilityResponseCopyWith<SnFediverseAvailabilityResponse> get co
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFediverseAvailabilityResponse&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&const DeepCollectionEquality().equals(other.publishers, publishers));
+  final _this = this as SnFediverseAvailabilityResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnFediverseAvailabilityResponse&&(identical(other.isEnabled, _this.isEnabled) || other.isEnabled == _this.isEnabled)&&const DeepCollectionEquality().equals(other.publishers, _this.publishers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,isEnabled,const DeepCollectionEquality().hash(publishers));
+int get hashCode {
+  final _this = this as SnFediverseAvailabilityResponse;
+  return Object.hash(runtimeType,_this.isEnabled,const DeepCollectionEquality().hash(_this.publishers));
+}
 
 @override
 String toString() {
-  return 'SnFediverseAvailabilityResponse(isEnabled: $isEnabled, publishers: $publishers)';
+  final _this = this as SnFediverseAvailabilityResponse;
+  return 'SnFediverseAvailabilityResponse(isEnabled: ${_this.isEnabled}, publishers: ${_this.publishers})';
 }
 
 
@@ -786,16 +805,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFediverseAvailabilityResponse&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&const DeepCollectionEquality().equals(other._publishers, _publishers));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnFediverseAvailabilityResponse&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled)&&const DeepCollectionEquality().equals(other.publishers, _publishers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,isEnabled,const DeepCollectionEquality().hash(_publishers));
+int get hashCode {
+    return Object.hash(runtimeType,isEnabled,const DeepCollectionEquality().hash(_publishers));
+}
 
 @override
 String toString() {
-  return 'SnFediverseAvailabilityResponse(isEnabled: $isEnabled, publishers: $publishers)';
+    return 'SnFediverseAvailabilityResponse(isEnabled: $isEnabled, publishers: $publishers)';
 }
 
 

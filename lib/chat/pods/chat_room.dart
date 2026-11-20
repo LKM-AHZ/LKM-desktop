@@ -38,12 +38,13 @@ class ChatSyncingNotifier extends Notifier<bool> {
   bool build() => false;
 
   void begin() {
+    if (!ref.mounted) return;
     _activeOperations += 1;
     state = true;
   }
 
   void end() {
-    if (_activeOperations == 0) return;
+    if (!ref.mounted || _activeOperations == 0) return;
     _activeOperations -= 1;
     state = _activeOperations > 0;
   }

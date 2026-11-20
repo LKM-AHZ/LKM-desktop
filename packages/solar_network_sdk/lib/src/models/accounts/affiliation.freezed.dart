@@ -29,16 +29,21 @@ $SnAffiliationSpellCopyWith<SnAffiliationSpell> get copyWith => _$SnAffiliationS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationSpell&&(identical(other.id, id) || other.id == id)&&(identical(other.spell, spell) || other.spell == spell)&&(identical(other.type, type) || other.type == type)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.affectedAt, affectedAt) || other.affectedAt == affectedAt)&&const DeepCollectionEquality().equals(other.meta, meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnAffiliationSpell;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationSpell&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.spell, _this.spell) || other.spell == _this.spell)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.expiresAt, _this.expiresAt) || other.expiresAt == _this.expiresAt)&&(identical(other.affectedAt, _this.affectedAt) || other.affectedAt == _this.affectedAt)&&const DeepCollectionEquality().equals(other.meta, _this.meta)&&(identical(other.accountId, _this.accountId) || other.accountId == _this.accountId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,spell,type,expiresAt,affectedAt,const DeepCollectionEquality().hash(meta),accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnAffiliationSpell;
+  return Object.hash(runtimeType,_this.id,_this.spell,_this.type,_this.expiresAt,_this.affectedAt,const DeepCollectionEquality().hash(_this.meta),_this.accountId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationSpell(id: $id, spell: $spell, type: $type, expiresAt: $expiresAt, affectedAt: $affectedAt, meta: $meta, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnAffiliationSpell;
+  return 'SnAffiliationSpell(id: ${_this.id}, spell: ${_this.spell}, type: ${_this.type}, expiresAt: ${_this.expiresAt}, affectedAt: ${_this.affectedAt}, meta: ${_this.meta}, accountId: ${_this.accountId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -246,16 +251,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationSpell&&(identical(other.id, id) || other.id == id)&&(identical(other.spell, spell) || other.spell == spell)&&(identical(other.type, type) || other.type == type)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.affectedAt, affectedAt) || other.affectedAt == affectedAt)&&const DeepCollectionEquality().equals(other._meta, _meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationSpell&&(identical(other.id, id) || other.id == id)&&(identical(other.spell, spell) || other.spell == spell)&&(identical(other.type, type) || other.type == type)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt)&&(identical(other.affectedAt, affectedAt) || other.affectedAt == affectedAt)&&const DeepCollectionEquality().equals(other.meta, _meta)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,spell,type,expiresAt,affectedAt,const DeepCollectionEquality().hash(_meta),accountId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,spell,type,expiresAt,affectedAt,const DeepCollectionEquality().hash(_meta),accountId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationSpell(id: $id, spell: $spell, type: $type, expiresAt: $expiresAt, affectedAt: $affectedAt, meta: $meta, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnAffiliationSpell(id: $id, spell: $spell, type: $type, expiresAt: $expiresAt, affectedAt: $affectedAt, meta: $meta, accountId: $accountId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -319,16 +326,21 @@ $SnAffiliationResultCopyWith<SnAffiliationResult> get copyWith => _$SnAffiliatio
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationResult&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.spellId, spellId) || other.spellId == spellId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnAffiliationResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationResult&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.resourceIdentifier, _this.resourceIdentifier) || other.resourceIdentifier == _this.resourceIdentifier)&&(identical(other.spellId, _this.spellId) || other.spellId == _this.spellId)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,resourceIdentifier,spellId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnAffiliationResult;
+  return Object.hash(runtimeType,_this.id,_this.resourceIdentifier,_this.spellId,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationResult(id: $id, resourceIdentifier: $resourceIdentifier, spellId: $spellId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnAffiliationResult;
+  return 'SnAffiliationResult(id: ${_this.id}, resourceIdentifier: ${_this.resourceIdentifier}, spellId: ${_this.spellId}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -522,16 +534,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationResult&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.spellId, spellId) || other.spellId == spellId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationResult&&(identical(other.id, id) || other.id == id)&&(identical(other.resourceIdentifier, resourceIdentifier) || other.resourceIdentifier == resourceIdentifier)&&(identical(other.spellId, spellId) || other.spellId == spellId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,resourceIdentifier,spellId,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,resourceIdentifier,spellId,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationResult(id: $id, resourceIdentifier: $resourceIdentifier, spellId: $spellId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnAffiliationResult(id: $id, resourceIdentifier: $resourceIdentifier, spellId: $spellId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -591,16 +605,21 @@ $SnAffiliationPurchaseCopyWith<SnAffiliationPurchase> get copyWith => _$SnAffili
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationPurchase&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
+  final _this = this as SnAffiliationPurchase;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnAffiliationPurchase&&(identical(other.purchaseId, _this.purchaseId) || other.purchaseId == _this.purchaseId)&&(identical(other.orderId, _this.orderId) || other.orderId == _this.orderId)&&(identical(other.amount, _this.amount) || other.amount == _this.amount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,purchaseId,orderId,amount);
+int get hashCode {
+  final _this = this as SnAffiliationPurchase;
+  return Object.hash(runtimeType,_this.purchaseId,_this.orderId,_this.amount);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationPurchase(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
+  final _this = this as SnAffiliationPurchase;
+  return 'SnAffiliationPurchase(purchaseId: ${_this.purchaseId}, orderId: ${_this.orderId}, amount: ${_this.amount})';
 }
 
 
@@ -788,16 +807,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationPurchase&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnAffiliationPurchase&&(identical(other.purchaseId, purchaseId) || other.purchaseId == purchaseId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.amount, amount) || other.amount == amount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,purchaseId,orderId,amount);
+int get hashCode {
+    return Object.hash(runtimeType,purchaseId,orderId,amount);
+}
 
 @override
 String toString() {
-  return 'SnAffiliationPurchase(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
+    return 'SnAffiliationPurchase(purchaseId: $purchaseId, orderId: $orderId, amount: $amount)';
 }
 
 
