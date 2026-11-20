@@ -6412,5 +6412,16 @@
   "legalDocument": {
     "language": "This document is provided in Simplified Chinese."
   },
-  "miniApps": {"title": "Mini apps", "empty": "No mini apps yet", "notFound": "Mini app not found", "signIn": "Sign in to use mini apps", "loadFailed": "Could not load mini apps", "retry": "Retry"}
+  "miniApps": {"title": "Mini apps", "empty": "No mini apps yet", "notFound": "Mini app not found", "signIn": "Sign in to use mini apps", "loadFailed": "Could not load mini apps", "retry": "Retry"},
+  "workbench": {
+    "all": "All",
+    "brand": "LKM",
+    "community": "LKM Community",
+    "search": "Search discussions, resources…",
+    "overview": "Overview",
+    "overviewHint": "Discover questions worth exploring and move ideas forward.",
+    "discussions": "Discussions",
+    "discussionHint": "Ideas and discoveries across disciplines",
+    "boards": "Community boards"
+  }
 }

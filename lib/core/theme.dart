@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:island/core/config.dart';
@@ -149,8 +150,16 @@ ThemeSet createAppThemeSet(AppSettings settings) {
 }
 
 ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
+  final desktop = switch (defaultTargetPlatform) {
+    TargetPlatform.linux ||
+    TargetPlatform.macOS ||
+    TargetPlatform.windows => true,
+    _ => false,
+  };
   final seedColor = settings.appColorScheme != null
       ? Color(settings.appColorScheme!)
+      : desktop
+      ? const Color(0xFF1B756B)
       : Colors.indigo;
 
   var colorScheme = ColorScheme.fromSeed(
@@ -163,6 +172,18 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
   // (soft, low-contrast steps); the hue comes from the seed, so the ground
   // moves with the accent instead of sitting on a fixed beige.
   colorScheme = _seedPaper(colorScheme, seedColor, brightness);
+  if (desktop &&
+      settings.appColorScheme == null &&
+      brightness == Brightness.light) {
+    colorScheme = colorScheme.copyWith(
+      surface: const Color(0xFFF5F5F0),
+      surfaceContainerLowest: Colors.white,
+      surfaceContainerLow: Colors.white,
+      surfaceContainer: const Color(0xFFEEEEEA),
+      surfaceContainerHigh: const Color(0xFFE8EAE4),
+      outlineVariant: const Color(0xFFDDDFD8),
+    );
+  }
 
   final customColors = settings.customColors;
   if (customColors != null) {
@@ -259,7 +280,7 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
   final onSurfaceVariant = colorScheme.onSurfaceVariant;
 
   final buttonShape = RoundedRectangleBorder(
-    borderRadius: SolRadius.controlRadius,
+    borderRadius: desktop ? BorderRadius.circular(8) : SolRadius.controlRadius,
   );
 
   // Inputs are tonal first: a soft filled shape defines the field, and only
@@ -267,21 +288,24 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
   // `OutlineInputBorder` with no side so the fill keeps its rounded shape
   // instead of collapsing into a sharp rectangle.
   final inputBorder = OutlineInputBorder(
-    borderRadius: SolRadius.inputRadius,
+    borderRadius: desktop ? BorderRadius.circular(8) : SolRadius.inputRadius,
     borderSide: .none,
   );
   final focusedInputBorder = OutlineInputBorder(
-    borderRadius: SolRadius.inputRadius,
-    borderSide: .none,
+    borderRadius: inputBorder.borderRadius,
+    borderSide: desktop
+        ? BorderSide(color: colorScheme.primary, width: 1.5)
+        : BorderSide.none,
   );
   final errorInputBorder = OutlineInputBorder(
-    borderRadius: SolRadius.inputRadius,
+    borderRadius: inputBorder.borderRadius,
     borderSide: BorderSide(color: colorScheme.error),
   );
 
   final appBarForeground = colorScheme.onSurface;
 
   return baseTheme.copyWith(
+    visualDensity: desktop ? VisualDensity.compact : VisualDensity.standard,
     textTheme: textTheme,
     appBarTheme: AppBarThemeData(
       // Titles read left aligned, like a document: the leading icon occupies
@@ -309,14 +333,23 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
     cardTheme: CardThemeData(
       // A card is a slightly deeper sheet of the same warm paper. Separation
       // comes from tone, not from a shadow.
-      color: colorScheme.surfaceContainer.withValues(
-        alpha: settings.cardTransparency,
-      ),
+      color:
+          (desktop
+                  ? colorScheme.surfaceContainerLow
+                  : colorScheme.surfaceContainer)
+              .withValues(alpha: settings.cardTransparency),
       surfaceTintColor: Colors.transparent,
       shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
       elevation: 0,
       margin: const EdgeInsets.all(SolSpace.xs),
-      shape: _cardShape,
+      shape: desktop
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+              ),
+            )
+          : _cardShape,
       clipBehavior: Clip.antiAlias,
     ),
     // No `minTileHeight`: material_ui resolves a tile's target height as
@@ -378,7 +411,7 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         padding: SolInsets.control,
-        minimumSize: const Size(64, SolSpace.control),
+        minimumSize: Size(64, desktop ? 40 : SolSpace.control),
         shape: buttonShape,
         animationDuration: const Duration(milliseconds: 180),
       ),
@@ -387,7 +420,7 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
       style: ElevatedButton.styleFrom(
         elevation: 0,
         padding: SolInsets.control,
-        minimumSize: const Size(64, SolSpace.control),
+        minimumSize: Size(64, desktop ? 40 : SolSpace.control),
         shape: buttonShape,
         animationDuration: const Duration(milliseconds: 180),
       ),
@@ -395,7 +428,7 @@ ThemeData createAppTheme(Brightness brightness, AppSettings settings) {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         padding: SolInsets.control,
-        minimumSize: const Size(64, SolSpace.control),
+        minimumSize: Size(64, desktop ? 40 : SolSpace.control),
         shape: buttonShape,
         side: BorderSide(color: colorScheme.outlineVariant),
         animationDuration: const Duration(milliseconds: 180),

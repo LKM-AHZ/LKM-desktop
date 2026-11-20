@@ -275,7 +275,7 @@ class _DashboardSection extends StatelessWidget {
       elevation: 0,
       shadowColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(borderRadius: SolRadius.cardRadius),
+      shape: theme.cardTheme.shape,
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -312,8 +312,12 @@ class _DashboardSection extends StatelessWidget {
               ],
             ),
           ),
+          Divider(
+            height: 1,
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
           child,
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
         ],
       ),
     );

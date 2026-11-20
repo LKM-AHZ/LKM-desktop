@@ -6377,5 +6377,16 @@
   "legalDocument": {
     "language": "本文以简体中文提供。"
   },
-  "miniApps": {"title": "小程序", "empty": "暂无小程序", "notFound": "此小程序不存在", "signIn": "登录后使用小程序", "loadFailed": "小程序列表加载失败", "retry": "重试"}
+  "miniApps": {"title": "小程序", "empty": "暂无小程序", "notFound": "此小程序不存在", "signIn": "登录后使用小程序", "loadFailed": "小程序列表加载失败", "retry": "重试"},
+  "workbench": {
+    "all": "全部",
+    "brand": "理科迷",
+    "community": "LKM 社区空间",
+    "search": "搜索讨论、资料、项目…",
+    "overview": "总览",
+    "overviewHint": "发现值得关注的问题，一起推进新的想法。",
+    "discussions": "讨论",
+    "discussionHint": "连接不同学科的想法与发现",
+    "boards": "社区板块"
+  }
 }

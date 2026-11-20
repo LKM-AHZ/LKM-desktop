@@ -6229,5 +6229,16 @@
   "legalDocument": {
     "language": "本文以簡體中文提供。"
   },
-  "miniApps": {"title": "小程式", "empty": "暫無小程式", "notFound": "此小程式不存在", "signIn": "登入後使用小程式", "loadFailed": "小程式清單載入失敗", "retry": "重試"}
+  "miniApps": {"title": "小程式", "empty": "暫無小程式", "notFound": "此小程式不存在", "signIn": "登入後使用小程式", "loadFailed": "小程式清單載入失敗", "retry": "重試"},
+  "workbench": {
+    "all": "全部",
+    "brand": "理科迷",
+    "community": "LKM 社群空間",
+    "search": "搜尋討論、資料、專案…",
+    "overview": "總覽",
+    "overviewHint": "發現值得關注的問題，一起推進新的想法。",
+    "discussions": "討論",
+    "discussionHint": "連結不同學科的想法與發現",
+    "boards": "社群板塊"
+  }
 }

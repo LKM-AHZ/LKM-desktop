@@ -1,4 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:island/core/theme.dart';
+import 'package:island/core/api/content_api.dart';
+import 'package:island/core/api/timeline_api.dart';
+import 'package:island/accounts/widgets/account/friends_overview.dart';
+import 'package:island/posts/screens/post_detail.dart';
+import 'package:island/posts/widgets/compose/post_featured.dart';
+import 'package:island/community/widgets/feed_item_card.dart';
+import 'package:island/shared/widgets/workbench_header.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'
@@ -32,6 +41,32 @@ class _SignedOutUserInfo extends UserInfoNotifier {
   Future<SnAccount?> build() async => null;
 }
 
+class _WorkbenchFeed extends CommunityFeedNotifier {
+  @override
+  Future<CommunityFeedState> build() async => CommunityFeedState(
+    mode: 'hot',
+    items: [
+      for (final (index, title) in [
+        '关于可积系统 Lax 对构造的一个疑问，希望得到严格推导',
+        'Transformer 在偏微分方程数值解中的可解释性边界在哪里？',
+        '招募：面向高中生的开源物理实验数据平台',
+        '《线性代数及其应用》课程讲义与习题解答',
+        '如何为计算化学的分子动力学结果写一份可复现的实验报告？',
+        '复变函数中支点与留数定理的几何直观',
+      ].indexed)
+        FeedItem(
+          itemType: ['qa', 'discussion', 'project', 'article'][index % 4],
+          id: '$index',
+          authorName: ['林间', 'Eptazocine', 'Jason'][index % 3],
+          title: title,
+          contentPreview: '分享思路、记录进展，与社区一起探索新的可能',
+          createdAt: DateTime(2026, 11, 20),
+          sortScore: 0,
+        ),
+    ],
+  );
+}
+
 late AppRouter _router;
 late ProviderContainer _container;
 
@@ -39,8 +74,10 @@ late ProviderContainer _container;
 /// dashboard settings are read exactly as the app reads them.
 Future<void> _pumpApp(
   WidgetTester tester,
-  Map<String, Object> prefsValues,
-) async {
+  Map<String, Object> prefsValues, {
+  bool preview = false,
+}) async {
+  final locale = preview ? const Locale('zh', 'CN') : const Locale('en', 'US');
   SharedPreferences.setMockInitialValues({
     kAppDashboardConfig: jsonEncode({
       'vertical_layouts': [],
@@ -57,6 +94,17 @@ Future<void> _pumpApp(
       sharedPreferencesProvider.overrideWithValue(prefs),
       userInfoProvider.overrideWith(_SignedOutUserInfo.new),
       dashboardEntriesProvider.overrideWith((ref, kind) async => []),
+      if (preview) ...[
+        communityFeedProvider.overrideWith(_WorkbenchFeed.new),
+        friendsOverviewProvider.overrideWith((ref) async => []),
+        featuredPostsProvider.overrideWith((ref) async => []),
+        contentBoardsProvider.overrideWith(
+          (ref) async => [
+            for (final title in ['基础学科', '应用学科', '语言学习', '项目与协作', '资料与文献'])
+              LkmBoard(id: title, slug: title, title: title, status: 'active'),
+          ],
+        ),
+      ],
       pointsLeaderboardProvider.overrideWith(
         (ref, period) async => const ApiPage.empty(),
       ),
@@ -74,14 +122,17 @@ Future<void> _pumpApp(
       UncontrolledProviderScope(
         container: _container,
         child: EasyLocalization(
-          supportedLocales: const [Locale('en', 'US')],
+          supportedLocales: [locale],
+          startLocale: locale,
           path: 'assets/i18n',
           saveLocale: false,
           child: Builder(
             builder: (context) => MaterialApp.router(
               routerConfig: config,
-              locale: const Locale('en', 'US'),
-              supportedLocales: const [Locale('en', 'US')],
+              debugShowCheckedModeBanner: false,
+              theme: preview ? _container.read(themeProvider).light : null,
+              locale: locale,
+              supportedLocales: [locale],
               localizationsDelegates: [
                 ...context.localizationDelegates,
                 ...GlobalMaterialLocalizations.delegates,
@@ -124,6 +175,68 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await EasyLocalization.ensureInitialized();
   });
+
+  testWidgets('light workbench keeps navigation and discussion rows usable', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    for (final (family, assets) in {
+      'Nunito': [
+        'assets/fonts/Nunito-Regular.ttf',
+        'assets/fonts/Nunito-Bold.ttf',
+      ],
+      'NotoSansSC': [
+        'assets/fonts/NotoSansSC-Regular.otf',
+        'assets/fonts/NotoSansSC-Bold.otf',
+      ],
+      'packages/material_symbols_icons/MaterialSymbolsRounded': [
+        'packages/material_symbols_icons/lib/fonts/MaterialSymbolsRounded.ttf',
+      ],
+      'packages/material_symbols_icons/MaterialSymbolsOutlined': [
+        'packages/material_symbols_icons/lib/fonts/MaterialSymbolsOutlined.ttf',
+      ],
+    }.entries.map((entry) => (entry.key, entry.value))) {
+      final loader = FontLoader(family);
+      for (final asset in assets) {
+        loader.addFont(rootBundle.load(asset));
+      }
+      await loader.load();
+    }
+    await _pumpApp(tester, const {
+      'app_dashboard_enabled': false,
+    }, preview: true);
+    await tester.tap(find.byIcon(Symbols.menu_rounded).first);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('社区板块'), findsOneWidget);
+    expect(find.byType(FeedItemCard), findsNWidgets(6));
+    expect(
+      tester.getSize(find.byType(FeedItemCard).first).height,
+      lessThan(100),
+    );
+    final brandContext = tester.element(find.byType(WorkbenchBrand));
+    expect(
+      Theme.of(brandContext).colorScheme.surface.computeLuminance(),
+      greaterThan(0.8),
+    );
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../goldens/workbench_light.png'),
+    );
+
+    // The directory yields space as the window narrows; rows and toolbar fit.
+    tester.view.physicalSize = const Size(980, 720);
+    await tester.pumpAndSettle();
+    expect(find.text('社区板块'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byIcon(Symbols.search).last);
+    await tester.pumpAndSettle();
+    expect(_router.currentPath, '/search');
+    expect(tester.takeException(), isNull);
+    await _teardown(tester);
+  }, variant: TargetPlatformVariant({TargetPlatform.linux}));
 
   group('app settings', () {
     Future<(ProviderContainer, SharedPreferences)> makeContainer(

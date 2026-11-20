@@ -316,11 +316,7 @@ class ExploreScreen extends HookConsumerWidget {
         : null;
 
     if (isWide) {
-      // Two even columns around a floating detail card: the feed keeps its
-      // reading measure on the left and yields half the window to the pane
-      // while it is open. The pill spans only the feed's column so it never
-      // floats over the pane; the feed still drives `fade`, so its rows slide
-      // underneath and the surface glassies in exactly as it does on narrow.
+      // Keep the discussion list visible beside an open post or composer.
       return AppScaffold(
         isNoBackground: false,
         appBar: null,
@@ -328,7 +324,6 @@ class ExploreScreen extends HookConsumerWidget {
         body: ComposePaneHost(
           show: showComposeInPane,
           child: _WideExploreLayout(
-            fade: fade,
             detailPostId: detailPostId.value,
             composeRequest: composeRequest.value,
             barControls: _buildExploreBarControls(
@@ -652,7 +647,8 @@ class ExploreScreen extends HookConsumerWidget {
         padding: gutter,
         sliver: SliverList.separated(
           itemCount: state.items.length + (state.hasMore ? 1 : 0),
-          separatorBuilder: (_, _) => const Gap(kExploreCardGap),
+          separatorBuilder: (_, _) =>
+              SizedBox(height: isWideScreen(context) ? 0 : kExploreCardGap),
           itemBuilder: (context, index) {
             if (index >= state.items.length) {
               return Center(
@@ -668,10 +664,23 @@ class ExploreScreen extends HookConsumerWidget {
               );
             }
             final item = state.items[index];
-            return FeedItemCard(
+            final compact = isWideScreen(context);
+            final card = FeedItemCard(
               item: item,
+              compact: compact,
               onTap: () => _openFeedItem(context, item),
             );
+            return compact
+                ? ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(index == 0 ? 10 : 0),
+                      bottom: Radius.circular(
+                        index == state.items.length - 1 ? 10 : 0,
+                      ),
+                    ),
+                    child: card,
+                  )
+                : card;
           },
         ),
       ),
@@ -801,17 +810,7 @@ class ExploreScreen extends HookConsumerWidget {
               ),
               const SliverGap(kExploreCardGap),
             ],
-            // The wide header floats over the feed instead of being a sliver
-            // of it, so the column has to reserve the band's own height (plus
-            // the status inset the pill's margin already carries) before its
-            // first card. The gap is the scroll distance the rows travel under
-            // the glass.
-            if (isWide)
-              SliverGap(
-                MediaQuery.paddingOf(context).top +
-                    kPillSplitBarBand +
-                    kExploreCardGap,
-              ),
+            if (isWide) const SliverGap(SolSpace.md),
             // The Subscriptions tab keeps the publisher quick pick; Explore and
             // Friends show the friend presence strip in the same floating slot.
             if (isSubscriptionsTab)
@@ -871,20 +870,8 @@ class ExploreScreen extends HookConsumerWidget {
   }
 }
 
-/// The explore page's wide layout: the feed and, beside it, the post currently
-/// open.
-///
-/// The pane is a floating card of its own — same tone, radius and gap family
-/// as the feed's rows — inset from the window edges so the page ground shows
-/// around it. It animates width in and out rather than snapping the window in
-/// two; while it moves the feed keeps its reading measure (centred in whatever
-/// width is left to it) and the pill stays over the feed column, so the pane
-/// never slides under the bar's controls.
+/// Desktop discussion list with a board directory or an open detail pane.
 class _WideExploreLayout extends StatelessWidget {
-  /// The feed's glass ramp: 0 transparent at the top of the timeline, 1 fully
-  /// surfaced once scrolled.
-  final ValueNotifier<double> fade;
-
   /// The post open beside the feed, or null.
   final String? detailPostId;
 
@@ -917,7 +904,6 @@ class _WideExploreLayout extends StatelessWidget {
   final ValueChanged<bool> onCloseCompose;
 
   const _WideExploreLayout({
-    required this.fade,
     required this.detailPostId,
     required this.composeRequest,
     required this.barControls,
@@ -942,79 +928,182 @@ class _WideExploreLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     final statusTop = MediaQuery.paddingOf(context).top;
     final openId = detailPostId;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // The feed column keeps the reading measure the wide layout has always
-        // used: centred, capped at the column width. It yields half the window
-        // while the pane is open and takes it back on close — the pane's
-        // [AnimatedSize] is what makes that handover a slide rather than a cut.
-        Expanded(
-          child: Stack(
-            children: [
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: kDiscoveryWideColumnWidth,
+    return LayoutBuilder(
+      builder: (context, constraints) => Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // The feed column keeps the reading measure the wide layout has always
+          // used: centred, capped at the column width. It yields half the window
+          // while the pane is open and takes it back on close — the pane's
+          // [AnimatedSize] is what makes that handover a slide rather than a cut.
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'workbench.discussions'.tr(),
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'workbench.discussionHint'.tr(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 12,
+                          children: [barControls, barTrailing],
+                        ),
+                      ),
+                    ],
                   ),
-                  child: SizedBox.expand(child: feed),
                 ),
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                // The same measurement the sliver's toolbar height gives it,
-                // so both surfaces are exactly one control row tall either way.
-                height: statusTop + kPillSplitBarBand,
-                child: PillSplitBar(
-                  fade: fade,
-                  statusTop: statusTop,
-                  trailing: barTrailing,
-                  child: barControls,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // The pane column: zero width while closed so the feed owns the whole
-        // window, half the window while open — whether it holds a post or the
-        // composer. The card inside fades and slides with the width, and stays
-        // mounted through the close animation so the transition never flashes
-        // the empty ground. The composer takes the pane while it is open; the
-        // detail card is what remains.
-        AnimatedSize(
-          duration: _duration,
-          curve: _curve,
-          alignment: Alignment.centerRight,
-          child: SizedBox(
-            width: _isPaneOpen ? _paneWidth(context) : 0,
-            child: !_isPaneOpen
-                ? null
-                : composeRequest != null
-                ? _ComposePaneCard(
-                    request: composeRequest!,
-                    statusTop: statusTop,
-                    onClose: onCloseCompose,
-                  )
-                : _DetailPaneCard(
-                    key: ValueKey(openId),
-                    postId: openId!,
-                    statusTop: statusTop,
-                    onOpenFullPage: onOpenFullPage,
-                    onOpenInPane: onOpenInPane,
-                    onClose: onCloseDetail,
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final showBoards =
+                          !_isPaneOpen && constraints.maxWidth >= 1050;
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 1100,
+                                ),
+                                child: SizedBox.expand(child: feed),
+                              ),
+                            ),
+                          ),
+                          if (showBoards)
+                            const SizedBox(
+                              width: 280,
+                              child: _ExploreBoardsCard(),
+                            ),
+                        ],
+                      );
+                    },
                   ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          // The pane column: zero width while closed so the feed owns the whole
+          // window, half the window while open — whether it holds a post or the
+          // composer. The card inside fades and slides with the width, and stays
+          // mounted through the close animation so the transition never flashes
+          // the empty ground. The composer takes the pane while it is open; the
+          // detail card is what remains.
+          AnimatedSize(
+            duration: _duration,
+            curve: _curve,
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              width: _isPaneOpen ? constraints.maxWidth / 2 : 0,
+              child: !_isPaneOpen
+                  ? null
+                  : composeRequest != null
+                  ? _ComposePaneCard(
+                      request: composeRequest!,
+                      statusTop: statusTop,
+                      onClose: onCloseCompose,
+                    )
+                  : _DetailPaneCard(
+                      key: ValueKey(openId),
+                      postId: openId!,
+                      statusTop: statusTop,
+                      onOpenFullPage: onOpenFullPage,
+                      onOpenInPane: onOpenInPane,
+                      onClose: onCloseDetail,
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
+}
 
-  /// The pane's width: an even split of the window with the feed column, so a
-  /// post reads in as much room as the timeline beside it.
-  double _paneWidth(BuildContext context) =>
-      MediaQuery.sizeOf(context).width / 2;
+class _ExploreBoardsCard extends ConsumerWidget {
+  const _ExploreBoardsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final boards = ref.watch(contentBoardsProvider);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(8, 12, 24, 24),
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'workbench.boards'.tr(),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+            const Divider(height: 1),
+            boards.when(
+              loading: () => const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              ),
+              error: (_, _) => TextButton(
+                onPressed: () => ref.invalidate(contentBoardsProvider),
+                child: Text('retry'.tr()),
+              ),
+              data: (items) {
+                final visible = items
+                    .where((board) => board.isPublic && board.parentId == null)
+                    .toList();
+                return Column(
+                  children: [
+                    if (visible.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text('home.empty'.tr()),
+                      ),
+                    for (final board in visible)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(
+                          Symbols.tag,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        title: Text(
+                          board.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Symbols.chevron_right, size: 16),
+                        onTap: () => context.router.push(
+                          BoardDetailRoute(id: board.id, title: board.title),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// The composer as the wide layout's floating card: the detail pane's surface
@@ -1326,6 +1415,51 @@ class _ExploreSectionButton extends StatelessWidget {
       (section) => section.filter == filter,
       orElse: () => _sections.first,
     );
+
+    if (isWideScreen(context)) {
+      return Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Wrap(
+          spacing: 2,
+          children: [
+            for (final section in _sections)
+              Semantics(
+                selected: section.filter == selected.filter,
+                child: TextButton(
+                  onPressed: hasFiltersApplied
+                      ? null
+                      : () => onSelected(section.filter),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 32),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    backgroundColor: section.filter == selected.filter
+                        ? colorScheme.surfaceContainerLow
+                        : Colors.transparent,
+                    foregroundColor: section.filter == selected.filter
+                        ? colorScheme.onSurface
+                        : colorScheme.onSurfaceVariant,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    textStyle: theme.textTheme.labelMedium,
+                  ),
+                  child: Text(
+                    (section.filter == null ? 'workbench.all' : section.label)
+                        .tr(),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
 
     return MenuAnchor(
       animated: true,

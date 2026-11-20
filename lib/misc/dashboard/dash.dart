@@ -161,7 +161,9 @@ class DashboardGrid extends HookConsumerWidget {
     final devicePadding = MediaQuery.paddingOf(context);
     // Only the safe area stays fixed; the breathing band scrolls with the
     // content, so it never permanently eats the viewport.
-    final topBand = MediaQuery.sizeOf(context).height * _kTopBand;
+    final topBand = isWide
+        ? SolSpace.xxl
+        : MediaQuery.sizeOf(context).height * _kTopBand;
 
     return Stack(
       children: [
@@ -241,7 +243,8 @@ class _DashboardGridWide extends HookConsumerWidget {
 
     // The band arrives above the clock/search row and repeats at the end, so
     // the last row can settle with the same room.
-    final bottomSpacerHeight = MediaQuery.sizeOf(context).height * _kTopBand;
+    final bottomSpacerHeight =
+        SolSpace.huge + MediaQuery.paddingOf(context).bottom;
 
     void updateScrollHint() {
       if (!scrollController.hasClients) {
@@ -276,8 +279,33 @@ class _DashboardGridWide extends HookConsumerWidget {
             controller: scrollController,
             primary: false,
             slivers: [
-              // Push clock lower in the viewport by default.
               SliverToBoxAdapter(child: SizedBox(height: topBand)),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  _kGutterExpanded,
+                  0,
+                  _kGutterExpanded,
+                  _kCardGap,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'workbench.overview'.tr(),
+                        style: theme.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'workbench.overviewHint'.tr(),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               if (showClock)
                 SliverToBoxAdapter(
                   child: ClockCard().padding(
@@ -285,8 +313,7 @@ class _DashboardGridWide extends HookConsumerWidget {
                     bottom: _kCardGap,
                   ),
                 ),
-              if (showClock)
-                const SliverToBoxAdapter(child: SizedBox(height: _kBlockGap)),
+
               // Waterfall of section cards, centered on ultra-wide monitors.
               if (cards.isNotEmpty)
                 SliverLayoutBuilder(

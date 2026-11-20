@@ -5,10 +5,16 @@ import 'package:island/core/api/timeline_api.dart';
 
 /// One timeline entry: type, author, date, title and preview.
 class FeedItemCard extends StatelessWidget {
-  const FeedItemCard({super.key, required this.item, this.onTap});
+  const FeedItemCard({
+    super.key,
+    required this.item,
+    this.onTap,
+    this.compact = false,
+  });
 
   final FeedItem item;
   final VoidCallback? onTap;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,7 @@ class FeedItemCard extends StatelessWidget {
       color: theme.colorScheme.surfaceContainerLow,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(compact ? 0 : 18),
         side: BorderSide(
           color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
@@ -28,49 +34,95 @@ class FeedItemCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  _TypeChip(type: item.itemType),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item.authorName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: muted),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _formatDate(item.createdAt),
-                    style: theme.textTheme.bodySmall?.copyWith(color: muted),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                item.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (preview.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  preview,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: muted),
-                ),
-              ],
-            ],
+          padding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: compact ? 14 : 16,
           ),
+          child: compact
+              ? Row(
+                  children: [
+                    _TypeChip(type: item.itemType),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            [
+                              item.authorName,
+                              if (preview.isNotEmpty) preview,
+                            ].join(' · '),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: muted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Text(
+                      _formatDate(item.createdAt),
+                      style: theme.textTheme.labelSmall?.copyWith(color: muted),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        _TypeChip(type: item.itemType),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            item.authorName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: muted,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _formatDate(item.createdAt),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: muted,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (preview.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        preview,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: muted,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
         ),
       ),
     );
@@ -97,17 +149,33 @@ class _TypeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final (background, foreground) = switch (type) {
+      'qa' => (
+        theme.colorScheme.tertiaryContainer,
+        theme.colorScheme.onTertiaryContainer,
+      ),
+      'project' => (
+        theme.colorScheme.secondaryContainer,
+        theme.colorScheme.onSecondaryContainer,
+      ),
+      'article' || 'column' => (
+        theme.colorScheme.primaryContainer,
+        theme.colorScheme.onPrimaryContainer,
+      ),
+      _ => (
+        theme.colorScheme.surfaceContainerHigh,
+        theme.colorScheme.onSurfaceVariant,
+      ),
+    };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(6),
+        color: background.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         _typeLabel(type),
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        style: theme.textTheme.labelSmall?.copyWith(color: foreground),
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/account_pod.dart';
 import 'package:island/core/config.dart';
+import 'package:island/shared/widgets/workbench_header.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/services/responsive.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
@@ -483,6 +484,11 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
       // control column), but with no label beside it.
       Widget rail = NavigationRail(
         backgroundColor: Colors.transparent,
+        minExtendedWidth: 224,
+        minWidth: 80,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         extended: railExpanded,
         // Extended rails always paint their labels and reject any
         // other label type.
@@ -511,6 +517,12 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
         trailing: showRailToggle ? const SizedBox(height: 56) : null,
         trailingAtBottom: true,
       );
+      rail = Column(
+        children: [
+          WorkbenchBrand(expanded: railExpanded),
+          Expanded(child: rail),
+        ],
+      );
       if (showRailToggle) {
         rail = Stack(
           children: [
@@ -530,13 +542,38 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
         body: SafeArea(
           child: Row(
             children: [
-              rail,
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border(
+                    right: BorderSide(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.6),
+                    ),
                   ),
-                  child: RepaintBoundary(child: widget.child),
+                ),
+                child: rail,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    WorkbenchHeader(
+                      title: allDestinations
+                          .firstWhere(
+                            (d) => d.routeIndex == tabsRouter.activeIndex,
+                            orElse: () => allDestinations.first,
+                          )
+                          .label,
+                      accountName: userInfo.value?.nick,
+                      onSearch: () => tabsRouter.setActiveIndex(2),
+                      onAccount: () =>
+                          tabsRouter.setActiveIndex(accountRouteIndex),
+                      onSettings: () =>
+                          context.router.push(const SettingsRoute()),
+                    ),
+                    Expanded(child: RepaintBoundary(child: widget.child)),
+                  ],
                 ),
               ),
             ],

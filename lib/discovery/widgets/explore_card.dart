@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:island/core/theme.dart';
+import 'package:island/core/services/responsive.dart';
 
 /// Vertical gap between two floating cards in the explore feed.
 ///
@@ -63,5 +64,6 @@ class ExploreCard extends StatelessWidget {
 /// The feed uses one 12px gap between cards, so the side margin matches it:
 /// the stacked cards read as one evenly spaced column instead of a narrow
 /// column floating inside wide page gutters.
-EdgeInsets explorePageGutter(BuildContext context) =>
-    const EdgeInsets.symmetric(horizontal: SolSpace.md);
+EdgeInsets explorePageGutter(BuildContext context) => EdgeInsets.symmetric(
+  horizontal: isWideScreen(context) ? SolSpace.xxl : SolSpace.md,
+);
