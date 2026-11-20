@@ -1,0 +1,15 @@
+diff --git a/packages/flutter_tools/lib/src/artifacts.dart b/packages/flutter_tools/lib/src/artifacts.dart
+index fbabd3dcb29..562541dbb8c 100644
+--- a/packages/flutter_tools/lib/src/artifacts.dart
++++ b/packages/flutter_tools/lib/src/artifacts.dart
+@@ -490,6 +490,10 @@ class CachedArtifacts implements Artifacts {
+       case Artifact.engineDartBinary:
+       case Artifact.engineDartAotRuntime:
+       case Artifact.frontendServerSnapshotForEngineDartSdk:
++        // OHOS: KernelCompiler.compile now forwards the target platform, so
++        // desktop targets reach this branch. Dart SDK tools are host
++        // artifacts, not macOS frameworks.
++        return _getHostArtifactPath(artifact, platform, mode);
+       case Artifact.constFinder:
+       case Artifact.flutterFramework:
+       case Artifact.flutterFrameworkDsym:

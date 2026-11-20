@@ -66,6 +66,10 @@ webf/coverage/
 # Generated mini app assets (pnpm --dir webf build)
 assets/webf/
 
+# flutter_webrtc prebuilt engine download cache (CMake/downloads at build time)
+packages/flutter_webrtc/third_party/downloads/
+packages/flutter_webrtc/third_party/libwebrtc/
+
 # Generated HarmonyOS files in vendored cross-platform plugins.
 /packages/*/ohos/build/
 /packages/*/ohos/oh_modules/
