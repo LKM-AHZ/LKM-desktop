@@ -7,6 +7,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/network.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/calendar_api.dart';
 
 import 'package:island/route.gr.dart';
 import 'package:island/creators/screens/survey/survey_list.dart';
@@ -797,9 +799,12 @@ class _SurveyEmbedCard extends ConsumerWidget {
 
 final calendarEventDetailProvider = FutureProvider.autoDispose
     .family<SnUserCalendarEvent, (String, String)>((ref, params) async {
-      final (username, eventId) = params;
-      final client = ref.watch(solarNetworkClientProvider);
-      return client.accounts.getUserCalendarEvent(username, eventId);
+      final (_, eventId) = params;
+      final session = ref.watch(lkmApiSessionProvider);
+      final api = CalendarApi(session.client);
+      return session.run(
+        () async => SnUserCalendarEvent.fromJson(await api.event(eventId)),
+      );
     });
 
 final accountByIdProvider = FutureProvider.autoDispose

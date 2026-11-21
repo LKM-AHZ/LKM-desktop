@@ -1,11 +1,18 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/core/network.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/calendar_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 part 'event_calendar.g.dart';
+
+/// `uname` 是用户名（'me'/空 = 当前用户）；日历接口只认 auth user id。
+Future<String?> _resolveUserId(CalendarApi api, String? uname) async {
+  if (uname == null || uname.isEmpty || uname == 'me') return null;
+  return api.resolveUserId(uname);
+}
 
 /// Search result item that can be either a user event or a notable day
 class CalendarSearchResult {
@@ -108,26 +115,21 @@ Future<List<SnEventCalendarEntry>> eventCalendar(
   Ref ref,
   EventCalendarQuery query,
 ) async {
-  final client = ref.watch(solarNetworkClientProvider);
+  final session = ref.watch(lkmApiSessionProvider);
+  final isMe = query.uname == null || query.uname == 'me';
+  if (isMe && !session.isSignedIn) return const [];
 
-  if (query.useMergedView) {
-    // For merged view, we fetch a single day and wrap it in a list
-    // The merged view returns one entry per request with mergedEvents
-    final mergedEntry = await client.accounts.getEventCalendar(
-      username: query.uname,
+  final api = CalendarApi(session.client);
+  return session.run(() async {
+    final userId = await _resolveUserId(api, query.uname);
+    final entries = await api.month(
       year: query.year,
       month: query.month,
+      userId: userId,
       includeNotableDays: query.includeNotableDays,
     );
-    return mergedEntry;
-  }
-
-  return await client.accounts.getEventCalendar(
-    username: query.uname,
-    year: query.year,
-    month: query.month,
-    includeNotableDays: query.includeNotableDays,
-  );
+    return entries.map(SnEventCalendarEntry.fromJson).toList();
+  });
 }
 
 /// Provider for fetching merged calendar for a specific month
@@ -138,17 +140,13 @@ Future<SnEventCalendarEntry> mergedCalendar(
   required int month,
   String? username,
 }) async {
-  final client = ref.watch(solarNetworkClientProvider);
-
-  if (username != null) {
-    return await client.accounts.getUserMergedCalendar(
-      username: username,
-      year: year,
-      month: month,
-    );
-  }
-
-  return await client.accounts.getMergedCalendar(year: year, month: month);
+  final session = ref.watch(lkmApiSessionProvider);
+  final api = CalendarApi(session.client);
+  return session.run(() async {
+    final userId = await _resolveUserId(api, username);
+    final entry = await api.merged(year: year, month: month, userId: userId);
+    return SnEventCalendarEntry.fromJson(entry);
+  });
 }
 
 /// Query parameters for listing calendar events
@@ -186,20 +184,33 @@ Future<PaginatedResult<SnUserCalendarEvent>> calendarEvents(
   Ref ref,
   CalendarEventListQuery query,
 ) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.listCalendarEvents(
-    startTime: query.startTime,
-    endTime: query.endTime,
-    offset: query.offset,
-    take: query.take,
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) {
+    return const PaginatedResult(items: [], totalCount: 0);
+  }
+  final api = CalendarApi(session.client);
+  final page = await session.run(
+    () => api.listEvents(
+      startTime: query.startTime,
+      endTime: query.endTime,
+      offset: query.offset,
+      take: query.take,
+    ),
+  );
+  return PaginatedResult(
+    items: page.items.map(SnUserCalendarEvent.fromJson).toList(),
+    totalCount: page.total,
   );
 }
 
 /// Provider for a single calendar event
 @riverpod
 Future<SnUserCalendarEvent> calendarEvent(Ref ref, String eventId) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.getCalendarEvent(eventId);
+  final session = ref.watch(lkmApiSessionProvider);
+  final api = CalendarApi(session.client);
+  return session.run(
+    () async => SnUserCalendarEvent.fromJson(await api.event(eventId)),
+  );
 }
 
 /// Query parameters for event countdowns
@@ -255,37 +266,37 @@ class EventCountdownListNotifier
 
   @override
   Future<List<SnEventCountdownItem>> fetch() async {
-    final client = ref.read(solarNetworkClientProvider);
-
-    PaginatedResult<SnEventCountdownItem> result;
-    if (query.username != null && query.username != 'me') {
-      result = await client.accounts.getUserEventCountdowns(
-        query.username!,
-        take: pageSize,
-        offset: fetchedCount,
-        includeNotableDays: query.includeNotableDays,
-        tag: query.tag,
-      );
-    } else {
-      result = await client.accounts.getEventCountdowns(
-        take: pageSize,
-        offset: fetchedCount,
-        includeNotableDays: query.includeNotableDays,
-        tag: query.tag,
-      );
+    final session = ref.read(lkmApiSessionProvider);
+    if (!session.isSignedIn) {
+      totalCount = 0;
+      return const [];
     }
+    final api = CalendarApi(session.client);
 
-    totalCount = result.totalCount;
+    final result = await session.run(() async {
+      final userId = await _resolveUserId(api, query.username);
+      return api.countdown(
+        userId: userId,
+        take: pageSize,
+        offset: fetchedCount,
+        includeNotableDays: query.includeNotableDays,
+        tag: query.tag,
+      );
+    });
 
-    return result.items;
+    totalCount = result.total;
+
+    return result.items.map(SnEventCountdownItem.fromJson).toList();
   }
 }
 
 /// Provider for the list of account IDs the current user has subscribed to
 @riverpod
 Future<List<String>> calendarSubscriptions(Ref ref) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.listCalendarSubscriptions();
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) return const [];
+  final api = CalendarApi(session.client);
+  return session.run(api.subscriptions);
 }
 
 /// Checks if the current user is subscribed to a specific account's calendar
@@ -298,8 +309,10 @@ Future<bool> isCalendarSubscribed(Ref ref, String accountId) async {
 /// Provider for fetching the current user's used calendar tags
 @riverpod
 Future<List<String>> usedCalendarTags(Ref ref) async {
-  final client = ref.watch(solarNetworkClientProvider);
-  return await client.accounts.getUsedCalendarTags();
+  final session = ref.watch(lkmApiSessionProvider);
+  if (!session.isSignedIn) return const [];
+  final api = CalendarApi(session.client);
+  return session.run(api.tags);
 }
 
 /// Query parameters for calendar search
@@ -381,16 +394,19 @@ Future<List<CalendarSearchResult>> calendarSearch(
     return const [];
   }
 
-  final client = ref.watch(solarNetworkClientProvider);
-  final results = await client.accounts.searchCalendarEvents(
-    query: normalizedQuery,
-    accountId: query.accountId,
-    tags: query.tags.isEmpty ? null : query.tags,
-    startTime: query.startTime,
-    endTime: query.endTime,
-    notableDayTag: query.notableDayTag,
-    offset: query.offset,
-    take: query.take,
+  final session = ref.watch(lkmApiSessionProvider);
+  final api = CalendarApi(session.client);
+  final results = await session.run(
+    () => api.search(
+      query: normalizedQuery,
+      accountId: query.accountId,
+      tags: query.tags.isEmpty ? null : query.tags,
+      startTime: query.startTime,
+      endTime: query.endTime,
+      notableDayTag: query.notableDayTag,
+      offset: query.offset,
+      take: query.take,
+    ),
   );
   return results
       .map((json) => CalendarSearchResult.fromJson(json))

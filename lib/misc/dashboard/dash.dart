@@ -34,7 +34,6 @@ import 'package:island/misc/dashboard/dashboard_layout.dart';
 import 'package:island/misc/dashboard/community_cards.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/community/user_pod.dart';
-import 'package:island/core/network.dart' show tokenProvider;
 import 'package:island/misc/dashboard/weather.dart';
 import 'package:island/core/config.dart';
 import 'package:island/core/theme.dart';
@@ -490,7 +489,8 @@ class ClockCard extends HookConsumerWidget {
     final appSettings = ref.watch(appSettingsProvider);
 
     // Only fetch countdowns if user is authenticated
-    final isAuthenticated = ref.watch(tokenProvider) != null;
+    // 倒计时数据来自 LKM-service，登录态也应以 LKM 会话为准。
+    final isAuthenticated = ref.watch(lkmApiSessionProvider).isSignedIn;
     final query = isAuthenticated
         ? EventCountdownQuery(
             username: 'me',

@@ -4,7 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/event_calendar.dart';
-import 'package:island/core/network.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/calendar_api.dart';
 import 'package:island/core/widgets/content/image_picker_editor.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/shared/widgets/alert.dart';
@@ -145,8 +146,10 @@ class CalendarEventCreationSheet extends HookConsumerWidget {
 
       try {
         submitting.value = true;
-        final client = ref.read(solarNetworkClientProvider);
-        await client.accounts.deleteCalendarEvent(initialEvent!.id);
+        final session = ref.read(lkmApiSessionProvider);
+        await session.run(
+          () => CalendarApi(session.client).deleteEvent(initialEvent!.id),
+        );
 
         ref.invalidate(eventCalendarProvider);
 
@@ -184,7 +187,8 @@ class CalendarEventCreationSheet extends HookConsumerWidget {
 
       try {
         submitting.value = true;
-        final client = ref.read(solarNetworkClientProvider);
+        final session = ref.read(lkmApiSessionProvider);
+        final api = CalendarApi(session.client);
 
         SnRecurrencePattern? recurrence;
         if (recurrenceFrequency.value != SnRecurrenceFrequency.none) {
@@ -204,43 +208,45 @@ class CalendarEventCreationSheet extends HookConsumerWidget {
           );
         }
 
+        final body = <String, dynamic>{
+          'title': titleController.text.trim(),
+          'description': descriptionController.text.trim().isNotEmpty
+              ? descriptionController.text.trim()
+              : null,
+          'location': locationController.text.trim().isNotEmpty
+              ? locationController.text.trim()
+              : null,
+          'start_time': startTime.value.toUtc().toIso8601String(),
+          'end_time': endTime.value.toUtc().toIso8601String(),
+          'is_all_day': isAllDay.value,
+          'visibility': visibility.value,
+          'recurrence': recurrence == null
+              ? null
+              : {
+                  'frequency': recurrence.frequency,
+                  'interval': recurrence.interval,
+                  if (recurrence.endDate != null)
+                    'end_date': recurrence.endDate!.toUtc().toIso8601String(),
+                  if (recurrence.occurrences != null)
+                    'occurrences': recurrence.occurrences,
+                  if (recurrence.daysOfWeek != null)
+                    'days_of_week': recurrence.daysOfWeek,
+                  if (recurrence.dayOfMonth != null)
+                    'day_of_month': recurrence.dayOfMonth,
+                  if (recurrence.monthOfYear != null)
+                    'month_of_year': recurrence.monthOfYear,
+                },
+          'tags': parseTags(tagsController.text),
+          'icon_id': icon.value?.id,
+          'background_id': background.value?.id,
+        };
+
         if (isEditing) {
-          await client.accounts.updateCalendarEvent(
-            id: initialEvent!.id,
-            title: titleController.text.trim(),
-            description: descriptionController.text.trim().isNotEmpty
-                ? descriptionController.text.trim()
-                : null,
-            location: locationController.text.trim().isNotEmpty
-                ? locationController.text.trim()
-                : null,
-            startTime: startTime.value,
-            endTime: endTime.value,
-            isAllDay: isAllDay.value,
-            visibility: visibility.value,
-            recurrence: recurrence,
-            tags: parseTags(tagsController.text),
-            iconId: icon.value?.id,
-            backgroundId: background.value?.id,
+          await session.run(
+            () => api.updateEvent(initialEvent!.id, body),
           );
         } else {
-          await client.accounts.createCalendarEvent(
-            title: titleController.text.trim(),
-            description: descriptionController.text.trim().isNotEmpty
-                ? descriptionController.text.trim()
-                : null,
-            location: locationController.text.trim().isNotEmpty
-                ? locationController.text.trim()
-                : null,
-            startTime: startTime.value,
-            endTime: endTime.value,
-            isAllDay: isAllDay.value,
-            visibility: visibility.value,
-            recurrence: recurrence,
-            tags: parseTags(tagsController.text),
-            iconId: icon.value?.id,
-            backgroundId: background.value?.id,
-          );
+          await session.run(() => api.createEvent(body));
         }
 
         ref.invalidate(eventCalendarProvider);

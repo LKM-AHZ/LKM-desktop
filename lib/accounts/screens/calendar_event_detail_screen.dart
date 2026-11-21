@@ -6,11 +6,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/event_calendar.dart';
 import 'package:island/accounts/widgets/account/account_name.dart';
 import 'package:island/accounts/widgets/account/calendar_event_creation_sheet.dart';
-import 'package:island/core/network.dart';
+import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/calendar_api.dart';
 import 'package:island/core/utils/share_utils.dart';
 import 'package:island/core/widgets/embeds/embed_list.dart';
 import 'package:island/drive/widgets/cloud_files.dart';
@@ -35,17 +36,20 @@ class CalendarEventDetailScreen extends ConsumerWidget {
     final eventAsync = ref.watch(
       calendarEventDetailProvider((username, eventId)),
     );
-    final currentUserAsync = ref.watch(userInfoProvider);
-    final currentUser = currentUserAsync.whenOrNull(data: (user) => user);
+    // 事件与身份都来自 LKM-service；Solar 的 userInfo 在纯 LKM 会话下为空，
+    // 用它比较 accountId 会让创建者看不到编辑/删除按钮。
+    final currentUserId = ref
+        .watch(lkmMeProvider)
+        .whenOrNull(data: (me) => me?.id);
 
     return Scaffold(
       body: eventAsync.when(
         data: (event) {
           final isOwner =
-              currentUser != null && event.accountId == currentUser.id;
+              currentUserId != null && event.accountId == currentUserId;
           final isPublic = event.visibility == 200;
           final canSubscribe =
-              currentUser != null && !isOwner && isPublic;
+              currentUserId != null && !isOwner && isPublic;
 
           return _CalendarEventDetailContent(
             event: event,
@@ -74,8 +78,10 @@ class CalendarEventDetailScreen extends ConsumerWidget {
               );
               if (confirmed) {
                 try {
-                  final client = ref.read(solarNetworkClientProvider);
-                  await client.accounts.deleteCalendarEvent(eventId);
+                  final session = ref.read(lkmApiSessionProvider);
+                  await session.run(
+                    () => CalendarApi(session.client).deleteEvent(eventId),
+                  );
                   if (context.mounted) {
                     context.router.maybePop();
                   }
@@ -189,14 +195,13 @@ class _CalendarEventDetailContent extends HookConsumerWidget {
                     : () async {
                         isToggling.value = true;
                         try {
-                          final client = ref.read(solarNetworkClientProvider);
-                          if (isSubscribed) {
-                            await client.accounts
-                                .unsubscribeFromCalendar(event.accountId);
-                          } else {
-                            await client.accounts
-                                .subscribeToCalendar(event.accountId);
-                          }
+                          final session = ref.read(lkmApiSessionProvider);
+                          final api = CalendarApi(session.client);
+                          await session.run(
+                            () => isSubscribed
+                                ? api.unsubscribe(event.accountId)
+                                : api.subscribe(event.accountId),
+                          );
                           ref.invalidate(isCalendarSubscribedProvider);
                           ref.invalidate(calendarSubscriptionsProvider);
                         } catch (e) {
