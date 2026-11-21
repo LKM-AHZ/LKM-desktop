@@ -96,7 +96,6 @@ import 'package:island/surveys/widgets/survey_feedback.dart' as _i75;
 import 'package:island/surveys/widgets/survey_submit_page.dart' as _i76;
 import 'package:island/thoughts/screens/ai_console.dart' as _i13;
 import 'package:island/thoughts/screens/thoughts.dart' as _i78;
-import 'package:island/treehole/treehole_screen.dart' as _i80;
 import 'package:island/wallets/transaction_detail.dart' as _i79;
 import 'package:island/wallets/wallet.dart' as _i83;
 import 'package:material_ui/material_ui.dart' as _i85;
@@ -3462,22 +3461,6 @@ class TransactionDetailRouteArgs {
   @override
   int get hashCode =>
       key.hashCode ^ transactionId.hashCode ^ currentWalletId.hashCode;
-}
-
-/// generated route for
-/// [_i80.TreeholeScreen]
-class TreeholeRoute extends _i84.PageRouteInfo<void> {
-  const TreeholeRoute({List<_i84.PageRouteInfo>? children})
-    : super(TreeholeRoute.name, initialChildren: children);
-
-  static const String name = 'TreeholeRoute';
-
-  static _i84.PageInfo page = _i84.PageInfo(
-    name,
-    builder: (data) {
-      return const _i80.TreeholeScreen();
-    },
-  );
 }
 
 /// generated route for

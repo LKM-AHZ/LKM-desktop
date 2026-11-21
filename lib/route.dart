@@ -38,7 +38,6 @@ class AppRouter extends RootStackRouter {
 
     // Other standalone routes
     AutoRoute(page: ContentDetailRoute.page, path: '/content/:id'),
-    AutoRoute(page: TreeholeRoute.page, path: '/treehole'),
     AutoRoute(page: ProgressRoute.page, path: '/points'),
     AutoRoute(page: ExamAttemptRoute.page, path: '/exam/attempt'),
     AutoRoute(page: ExamDetailRoute.page, path: '/exam/:id'),

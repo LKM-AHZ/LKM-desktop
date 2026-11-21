@@ -13,7 +13,7 @@ export 'admin_models.dart';
 /// (`/admin/auth/*` is served by the auth process, every `/admin/*` endpoint
 /// reads `admin_session` only). The desktop has no cookie jar, so the two
 /// cookie values are persisted here and replayed as an explicit `Cookie`
-/// header — same approach as the treehole visitor token.
+/// header.
 const String kAdminAccessTokenKey = 'lkm_admin_access_token';
 const String kAdminRefreshTokenKey = 'lkm_admin_refresh_token';
 

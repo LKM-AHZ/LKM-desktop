@@ -14,7 +14,7 @@ String? resolveFeedUrl(String? url, String? serverHost) {
   return null;
 }
 
-enum FeedRouteKind { content, qa, project, file, treehole }
+enum FeedRouteKind { content, qa, project, file }
 
 class FeedRouteTarget {
   const FeedRouteTarget(this.kind, this.id);
@@ -69,8 +69,5 @@ FeedRouteTarget? parseFeedRoute(String? url, {String? serverHost}) {
   }
   final fileId = idOf(const ['files']) ?? idOf(const ['library', 'files']);
   if (fileId != null) return FeedRouteTarget(FeedRouteKind.file, fileId);
-  if (segments.first == 'treehole') {
-    return const FeedRouteTarget(FeedRouteKind.treehole, '');
-  }
   return null;
 }

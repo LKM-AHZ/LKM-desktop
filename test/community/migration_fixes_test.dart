@@ -14,8 +14,6 @@ import 'package:island/core/config.dart';
 import 'package:island/community/my_content_screen.dart';
 import 'package:island/hub/hub_pod.dart';
 import 'package:island/shared/widgets/api_page_list.dart';
-import 'package:island/treehole/letters_view.dart';
-import 'package:island/treehole/treehole_pod.dart';
 
 class _Adapter implements HttpClientAdapter {
   final requests = <RequestOptions>[];
@@ -29,25 +27,7 @@ class _Adapter implements HttpClientAdapter {
   ) async {
     requests.add(o);
     Object? data;
-    if (o.path == '/treehole/letters') {
-      data = [
-        {
-          'id': o.queryParameters['scope'],
-          'content': '${o.queryParameters['scope']} letter',
-          'privacy': o.queryParameters['scope'],
-          'status': 'published',
-          'codename': 'Reader',
-        },
-        {
-          'id': 'mine',
-          'content': 'Private own letter',
-          'status': 'published',
-          'isMine': true,
-        },
-      ];
-    } else if (o.path.endsWith('/reply')) {
-      data = {'conversationId': 'conversation'};
-    } else if (o.uri.path == '/graphql/v1') {
+    if (o.uri.path == '/graphql/v1') {
       final page = (o.data as Map)['variables']['page'] as int;
       return ResponseBody.fromString(
         jsonEncode({
@@ -90,7 +70,7 @@ class _Adapter implements HttpClientAdapter {
 
 Future<({ProviderContainer container, ApiSession session, _Adapter adapter})>
 _setup() async {
-  SharedPreferences.setMockInitialValues({'lkm_treehole_session': 'visitor'});
+  SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   final adapter = _Adapter();
   final session = ApiSession(
@@ -226,49 +206,6 @@ void main() {
       await tester.tap(find.byTooltip('Previous page'));
       await tester.pumpAndSettle();
       expect(find.text('First page'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'random reading mixes scopes, excludes own letters and switches one at a time',
-    (tester) async {
-      final setup = await _setup();
-      final pool = (await tester.runAsync(
-        () => setup.container.read(treeholeRandomLettersProvider.future),
-      ))!;
-      expect(pool.map((l) => l.id).toSet(), {'public', 'random'});
-      await _pump(
-        tester,
-        setup.container,
-        const TreeholeLettersView(scope: 'random'),
-      );
-      expect(find.text('Private own letter'), findsNothing);
-      expect(find.text('public letter'), findsNothing);
-      await tester.runAsync(() async {
-        await tester.tap(find.text('Draw a letter'));
-        await setup.container.read(treeholeRandomLettersProvider.future);
-      });
-      await tester.pumpAndSettle();
-      final publicFirst = find.text('public letter').evaluate().isNotEmpty;
-      expect(
-        find.text(publicFirst ? 'public letter' : 'random letter'),
-        findsOneWidget,
-      );
-      await tester.runAsync(() async {
-        await tester.tap(find.text('Another letter'));
-        await setup.container.read(treeholeRandomLettersProvider.future);
-      });
-      await tester.pumpAndSettle();
-      expect(
-        find.text(publicFirst ? 'random letter' : 'public letter'),
-        findsOneWidget,
-      );
-      expect(
-        find.text(publicFirst ? 'public letter' : 'random letter'),
-        findsNothing,
-      );
-      expect(find.text('Private own letter'), findsNothing);
-      expect(find.text('Reply'), findsOneWidget);
     },
   );
 }

@@ -46,7 +46,7 @@ void main() {
     expect(parseFeedRoute('/projects/p1')?.kind, FeedRouteKind.project);
     expect(parseFeedRoute('/files/f1')?.kind, FeedRouteKind.file);
     expect(parseFeedRoute('/library/files/f1')?.kind, FeedRouteKind.file);
-    expect(parseFeedRoute('/treehole/letters/1')?.kind, FeedRouteKind.treehole);
+    expect(parseFeedRoute('/treehole/letters/1'), isNull);
   });
 
   test('external and unknown links stay with the browser', () {

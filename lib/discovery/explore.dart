@@ -476,15 +476,6 @@ class ExploreScreen extends HookConsumerWidget {
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Symbols.forest),
-                title: Text('treehole'.tr()),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  context.router.push(TreeholeRoute());
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                 leading: const Icon(Symbols.emoji_events),
                 title: Text('contribution.title'.tr()),
                 onTap: () {
