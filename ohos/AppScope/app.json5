@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "ltd.lkmahz.desktop",
     "vendor": "LKM-AHZ",
-    "versionCode": 316,
-    "versionName": "4.2.0",
+    "versionCode": 1,
+    "versionName": "0.1.0",
     "icon": "$media:app_icon",
     "label": "$string:app_name"
   }
