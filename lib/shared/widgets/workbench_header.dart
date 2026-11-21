@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import 'package:island/drive/widgets/cloud_files.dart';
+
 /// The desktop shell's compact, shared navigation header.
 class WorkbenchHeader extends StatelessWidget {
   const WorkbenchHeader({
@@ -11,10 +13,14 @@ class WorkbenchHeader extends StatelessWidget {
     required this.onAccount,
     required this.onSettings,
     this.accountName,
+    this.avatarUrl,
+    this.fallbackName,
   });
 
   final String title;
   final String? accountName;
+  final String? avatarUrl;
+  final String? fallbackName;
   final VoidCallback onSearch;
   final VoidCallback onAccount;
   final VoidCallback onSettings;
@@ -85,13 +91,26 @@ class WorkbenchHeader extends StatelessWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: onAccount,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 110),
-                    child: Text(
-                      accountName ?? 'login'.tr(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (avatarUrl != null || fallbackName != null) ...[
+                        ProfilePictureWidget(
+                          imageUrl: avatarUrl,
+                          fallbackName: fallbackName,
+                          radius: 13,
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 110),
+                        child: Text(
+                          accountName ?? 'login'.tr(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -8,6 +8,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/accounts/account_pod.dart';
+import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/users_api.dart';
 import 'package:island/core/config.dart';
 import 'package:island/shared/widgets/workbench_header.dart';
 import 'package:island/core/network.dart';
@@ -162,6 +165,7 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
 
     final token = ref.watch(tokenProvider);
     final userInfo = ref.watch(userInfoProvider);
+    final me = ref.watch(lkmMeProvider).value;
     final notificationUnreadCount = ref.watch(notificationUnreadCountProvider);
     final chatUnreadCount = ref.watch(chatUnreadCountProvider);
     final wideScreen = isWideScreen(context);
@@ -565,7 +569,15 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
                             orElse: () => allDestinations.first,
                           )
                           .label,
-                      accountName: userInfo.value?.nick,
+                      accountName: me?.displayName,
+                      avatarUrl: me == null
+                          ? null
+                          : userAvatarUrl(
+                              ref.watch(lkmServerUrlProvider),
+                              me.id,
+                              me.avatar,
+                            ),
+                      fallbackName: me?.displayName,
                       onSearch: () => tabsRouter.setActiveIndex(2),
                       onAccount: () =>
                           tabsRouter.setActiveIndex(accountRouteIndex),

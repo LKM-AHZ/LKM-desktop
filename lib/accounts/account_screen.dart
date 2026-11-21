@@ -37,26 +37,57 @@ class AccountScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWide = isWideScreen(context);
+    if (!isWide) {
+      return AppBackground(isRoot: true, child: const AutoRouter());
+    }
+
+    // 宽屏的 master-detail：只有进入具体子页（设置/贴纸等）时才分栏。
+    // 停在默认子路由时右侧本来什么都没有，分栏会留下大片空白——此时让账户页
+    // 居中占满，与桌面端其它单栏页面一致。
+    final inner = context.router.innerRouterOf<StackRouter>(AccountRoute.name);
 
     return AppBackground(
       isRoot: true,
-      child: isWide
-          ? SafeArea(
-              child: Row(
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      child: const AccountFeatureWidget(isAside: true),
+      child: ListenableBuilder(
+        listenable: inner == null
+            ? context.router
+            : Listenable.merge([context.router, inner]),
+        builder: (context, _) {
+          final hasDetail = (inner?.stack.length ?? 1) > 1;
+          if (!hasDetail) {
+            return Stack(
+              children: [
+                SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
+                      child: const AccountFeatureWidget(),
                     ),
                   ),
-                  const VerticalDivider(width: 1),
-                  Flexible(flex: 3, child: const AutoRouter()),
-                ],
-              ),
-            )
-          : const AutoRouter(),
+                ),
+                // 保活嵌套路由的控制器：否则回到默认子路由时 AutoRouter 被卸载，
+                // 下一次 push 需要重新挂载整个子栈。
+                const Offstage(child: AutoRouter()),
+              ],
+            );
+          }
+          return SafeArea(
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    child: const AccountFeatureWidget(isAside: true),
+                  ),
+                ),
+                const VerticalDivider(width: 1),
+                Flexible(flex: 3, child: const AutoRouter()),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
