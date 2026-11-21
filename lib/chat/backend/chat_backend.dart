@@ -10,6 +10,8 @@ import 'package:island/chat/tinode/tinode_client.dart';
 import 'package:island/chat/tinode/tinode_provider.dart';
 import 'package:island/accounts/account_pod.dart';
 import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/users_api.dart';
 
 /// One page of history, newest first, in the shape the message sync service
 /// expects from the old REST endpoint.
@@ -157,7 +159,10 @@ class ChatBackend {
       {
         'topic': topic,
         'user': uid,
-        'public': {if (profile.name.isNotEmpty) 'fn': profile.name},
+        'public': {
+          if (profile.name.isNotEmpty) 'fn': profile.name,
+          if (profile.avatar != null) 'photo': {'ref': profile.avatar},
+        },
       },
       topic: topic,
       selfUid: uid,
@@ -549,6 +554,12 @@ final chatSelfProfileProvider = Provider<ChatSelfProfile>((ref) {
   return ChatSelfProfile(
     uid: uid == null ? null : tinodeUid(uid),
     name: name.isEmpty ? (uid ?? '我') : name,
-    avatar: account?.avatar,
+    avatar: account == null
+        ? null
+        : userAvatarUrl(
+            ref.watch(lkmServerUrlProvider),
+            account.id,
+            account.avatar,
+          ),
   );
 });

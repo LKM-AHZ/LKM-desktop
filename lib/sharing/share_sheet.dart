@@ -888,6 +888,9 @@ class _ChatRoomOption extends HookConsumerWidget {
                   ),
                   child: (isDirect && room.picture == null)
                       ? SplitAvatarWidget(
+                          fallbackNames: validMembers
+                              .map((e) => e.account.nick)
+                              .toList(),
                           files: validMembers
                               .map((e) => e.account.profile.picture)
                               .toList(),

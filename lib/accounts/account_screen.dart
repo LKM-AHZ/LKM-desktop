@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -152,8 +152,9 @@ class _LkmAccountPage extends HookConsumerWidget {
         children: [
           _ProfileHeader(
             account: account,
-            onAvatarTap: () =>
-                context.router.push(AccountProfileRoute(name: '', id: account.id)),
+            onAvatarTap: () => context.router.push(
+              AccountProfileRoute(name: '', id: account.id),
+            ),
           ),
           const Divider(height: 24),
           ListTile(
@@ -376,22 +377,11 @@ class _LkmAvatar extends ConsumerWidget {
   final double radius;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final initial = name.isEmpty ? '?' : name.characters.first;
-    final image = userAvatarUrl(ref.watch(lkmServerUrlProvider), userId, url);
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      foregroundImage: image == null ? null : CachedNetworkImageProvider(image),
-      child: Text(
-        initial,
-        style: theme.textTheme.titleLarge?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => ProfilePictureWidget(
+    imageUrl: userAvatarUrl(ref.watch(lkmServerUrlProvider), userId, url),
+    fallbackName: name,
+    radius: radius,
+  );
 }
 
 class _UnauthorizedAccountScreen extends HookConsumerWidget {

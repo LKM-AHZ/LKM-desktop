@@ -172,10 +172,7 @@ class RoomAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selfChatId = ref.watch(chatSelfIdProvider);
-    final validMembers = getValidMembers(
-      room.members ?? [],
-      selfChatId,
-    );
+    final validMembers = getValidMembers(room.members ?? [], selfChatId);
     final isDirect = room.type == 1;
     String title;
     if (isDirect && room.name == null) {
@@ -467,12 +464,15 @@ class _RoomAvatar extends StatelessWidget {
       width: size,
       child: (room.type == 1 && room.picture == null)
           ? SplitAvatarWidget(
+              radius: size / 2,
+              fallbackNames: validMembers.map((e) => e.account.nick).toList(),
               files: validMembers
                   .map((e) => e.account.profile.picture)
                   .toList(),
             )
           : room.picture != null
           ? ProfilePictureWidget(
+              radius: size / 2,
               file: room.picture,
               fallbackName: room.name,
               fallbackIcon: Symbols.chat,

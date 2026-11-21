@@ -114,7 +114,11 @@ class PublicRoomPreview extends HookConsumerWidget {
           width: 26,
           child: (room.type == 1 && room.picture == null)
               ? SplitAvatarWidget(
-                  files: room.members!
+                  fallbackNames: (room.members ?? const <SnChatMember>[])
+                      .map((e) => e.account.nick)
+                      .toList(),
+                  radius: 13,
+                  files: (room.members ?? const <SnChatMember>[])
                       .map((e) => e.account.profile.picture)
                       .toList(),
                 )
@@ -148,7 +152,11 @@ class PublicRoomPreview extends HookConsumerWidget {
           width: 26,
           child: (room.type == 1 && room.picture == null)
               ? SplitAvatarWidget(
-                  files: room.members!
+                  fallbackNames: (room.members ?? const <SnChatMember>[])
+                      .map((e) => e.account.nick)
+                      .toList(),
+                  radius: 13,
+                  files: (room.members ?? const <SnChatMember>[])
                       .map((e) => e.account.profile.picture)
                       .toList(),
                 )

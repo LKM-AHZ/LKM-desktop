@@ -35,13 +35,9 @@ class ChatRoomAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatarChild = (isDirect && room.picture == null)
         ? SplitAvatarWidget(
+            fallbackNames: validMembers.map((e) => e.account.nick).toList(),
             files: validMembers.map((e) => e.account.profile.picture).toList(),
             radius: radius ?? 20,
-          )
-        : room.picture == null
-        ? CircleAvatar(
-            radius: radius,
-            child: Text(avatarFallbackText(room.name ?? 'DM') ?? 'DM'),
           )
         : ProfilePictureWidget(
             file: room.picture,
@@ -136,9 +132,7 @@ class ChatRoomSubtitle extends HookConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final baseUrl = ref.watch(serverUrlProvider);
-    final currentUserId = ref.watch(
-      chatSelfIdProvider,
-    );
+    final currentUserId = ref.watch(chatSelfIdProvider);
 
     final mutedStyle = theme.textTheme.bodySmall?.copyWith(
       color: colorScheme.onSurfaceVariant.withOpacity(

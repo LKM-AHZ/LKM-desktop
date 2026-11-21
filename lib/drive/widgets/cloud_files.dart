@@ -15,7 +15,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-import 'package:island/core/data_saving_gate.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/utils/file_icon_utils.dart';
 import 'package:island/shared/widgets/layouts/sheet_scaffold.dart';
@@ -36,9 +35,6 @@ final folderChildrenProvider = FutureProvider.family<List<SnCloudFile>, String>(
 
 Widget _buildCloudImageLoadingIndicator(BuildContext _, double? progress) =>
     _CloudImageLoadingIndicator(progress: progress);
-
-Widget _buildCloudAvatarLoadingIndicator(BuildContext _, double? progress) =>
-    _CloudAvatarLoadingIndicator(progress: progress);
 
 class CloudFileWidget extends HookConsumerWidget {
   final IDisplayableCloudFile item;
@@ -352,45 +348,6 @@ class _CloudImageLoadingIndicator extends StatelessWidget {
               ),
             ),
             child: ColoredBox(color: Colors.white.withOpacity(0.24)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CloudAvatarLoadingIndicator extends StatelessWidget {
-  final double? progress;
-
-  const _CloudAvatarLoadingIndicator({this.progress});
-
-  @override
-  Widget build(BuildContext context) {
-    final target = (progress ?? 0).clamp(0.0, 1.0).toDouble();
-
-    return SizedBox.expand(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ColoredBox(color: Colors.black.withOpacity(0.35)),
-          TweenAnimationBuilder<double>(
-            tween: Tween<double>(begin: 0, end: target),
-            duration: const Duration(milliseconds: 80),
-            curve: Curves.linear,
-            builder: (context, value, child) => Align(
-              alignment: Alignment.center,
-              child: FractionallySizedBox(
-                widthFactor: value,
-                heightFactor: value,
-                child: child,
-              ),
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.78),
-                shape: BoxShape.circle,
-              ),
-            ),
           ),
         ],
       ),
@@ -743,7 +700,7 @@ class CloudImageWidget extends ConsumerWidget {
 // false positive.
 final RegExp _cjkOrEmoji = RegExp(
   // ignore: valid_regexps
-  r'[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Emoji}\p{Extended_Pictographic}]',
+  r'[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u20E3]',
   unicode: true,
 );
 
@@ -784,6 +741,7 @@ String? avatarFallbackText(String? name) {
 }
 
 class ProfilePictureWidget extends ConsumerWidget {
+  final String? imageUrl;
   final String? fileId;
   final IDisplayableCloudFile? file;
   final double radius;
@@ -794,6 +752,7 @@ class ProfilePictureWidget extends ConsumerWidget {
   final ProfileDecoration? decoration;
   const ProfilePictureWidget({
     super.key,
+    this.imageUrl,
     this.fileId,
     this.file,
     this.radius = 20,
@@ -807,25 +766,34 @@ class ProfilePictureWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final serverUrl = ref.watch(serverUrlProvider);
-    final uri = cloudFileReferenceUrl(
-      serverUrl: serverUrl,
-      id: file?.id ?? fileId,
-      storageUrl: file?.storageUrl,
-    );
+    final uri = imageUrl?.trim().isNotEmpty == true
+        ? imageUrl!.trim()
+        : cloudFileReferenceUrl(
+            serverUrl: serverUrl,
+            id: file?.id ?? fileId,
+            storageUrl: file?.storageUrl,
+          );
 
     final blurHash = file?.blurhash;
 
     final fallbackText = avatarFallbackText(fallbackName);
     final fallback = fallbackText != null
-        ? Text(
-            fallbackText,
-            style: TextStyle(
-              color:
-                  fallbackColor ??
-                  Theme.of(context).colorScheme.onPrimaryContainer,
-              fontSize: radius * 0.72,
-              fontWeight: FontWeight.bold,
-              height: 1,
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: radius * 0.12),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                fallbackText,
+                maxLines: 1,
+                style: TextStyle(
+                  color:
+                      fallbackColor ??
+                      Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontSize: radius * 0.72,
+                  fontWeight: FontWeight.bold,
+                  height: 1,
+                ),
+              ),
             ),
           ).center()
         : Icon(
@@ -838,14 +806,16 @@ class ProfilePictureWidget extends ConsumerWidget {
 
     final image = uri == null
         ? fallback
-        : DataSavingGate(
-            bypass: true,
-            placeholder: fallback,
-            content: () => UniversalImage(
+        : LayoutBuilder(
+            builder: (context, constraints) => UniversalImage(
+              key: ValueKey(uri),
               uri: uri,
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
               blurHash: blurHash,
               fit: BoxFit.cover,
-              loadingIndicatorBuilder: _buildCloudAvatarLoadingIndicator,
+              loadingIndicatorBuilder: (_, _) => fallback,
+              errorBuilder: (_, _) => fallback,
             ),
           );
 
@@ -870,17 +840,24 @@ class ProfilePictureWidget extends ConsumerWidget {
           : image,
     );
 
-    return ClipRRect(
-      borderRadius: borderRadius == null
-          ? BorderRadius.all(Radius.circular(radius))
-          : BorderRadius.all(Radius.circular(borderRadius!)),
-      child: content,
+    return Semantics(
+      image: true,
+      label: fallbackName,
+      child: ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: borderRadius == null
+              ? BorderRadius.all(Radius.circular(radius))
+              : BorderRadius.all(Radius.circular(borderRadius!)),
+          child: content,
+        ),
+      ),
     );
   }
 }
 
-class SplitAvatarWidget extends ConsumerWidget {
+class SplitAvatarWidget extends StatelessWidget {
   final List<IDisplayableCloudFile?> files;
+  final List<String?> fallbackNames;
   final double radius;
   final IconData fallbackIcon;
   final Color? fallbackColor;
@@ -888,148 +865,80 @@ class SplitAvatarWidget extends ConsumerWidget {
   const SplitAvatarWidget({
     super.key,
     required this.files,
+    this.fallbackNames = const [],
     this.radius = 20,
     this.fallbackIcon = Symbols.account_circle,
     this.fallbackColor,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (files.isEmpty) {
-      return ProfilePictureWidget(
-        file: null,
-        radius: radius,
+  Widget build(BuildContext context) {
+    Widget tile(int index) => SizedBox.expand(
+      child: ProfilePictureWidget(
+        file: files.elementAtOrNull(index),
+        fallbackName: fallbackNames.elementAtOrNull(index),
+        radius: files.length <= 1 ? radius : radius / 2,
+        borderRadius: 0,
         fallbackIcon: fallbackIcon,
         fallbackColor: fallbackColor,
-      );
-    }
-    if (files.length == 1) {
-      return ProfilePictureWidget(
-        file: files[0],
-        radius: radius,
-        fallbackIcon: fallbackIcon,
-        fallbackColor: fallbackColor,
-      );
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(radius)),
-      child: Container(
-        width: radius * 2,
-        height: radius * 2,
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: Stack(
-          children: [
-            if (files.length == 2)
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildQuadrant(context, files[0], ref, radius),
-                  ),
-                  Expanded(
-                    child: _buildQuadrant(context, files[1], ref, radius),
-                  ),
-                ],
-              )
-            else if (files.length == 3)
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Expanded(
-                        child: _buildQuadrant(context, files[0], ref, radius),
-                      ),
-                      Expanded(
-                        child: _buildQuadrant(context, files[1], ref, radius),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: _buildQuadrant(context, files[2], ref, radius),
-                  ),
-                ],
-              )
-            else
-              Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildQuadrant(context, files[0], ref, radius),
-                        ),
-                        Expanded(
-                          child: _buildQuadrant(context, files[1], ref, radius),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildQuadrant(context, files[2], ref, radius),
-                        ),
-                        Expanded(
-                          child: files.length > 4
-                              ? Container(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primaryContainer,
-                                  child: Center(
-                                    child: Text(
-                                      '+${files.length - 3}',
-                                      style: TextStyle(
-                                        fontSize: radius * 0.4,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimaryContainer,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : _buildQuadrant(context, files[3], ref, radius),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
       ),
     );
-  }
 
-  Widget _buildQuadrant(
-    BuildContext context,
-    IDisplayableCloudFile? file,
-    WidgetRef ref,
-    double radius,
-  ) {
-    if (file == null) {
-      return Container(
-        width: radius,
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: Icon(
-          fallbackIcon,
-          size: radius * 0.6,
-          color:
-              fallbackColor ?? Theme.of(context).colorScheme.onPrimaryContainer,
-        ).center(),
+    Widget row(Widget first, Widget second) => Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: first),
+        Expanded(child: second),
+      ],
+    );
+
+    final Widget content;
+    if (files.length <= 1) {
+      content = tile(0);
+    } else if (files.length == 2) {
+      content = row(tile(0), tile(1));
+    } else if (files.length == 3) {
+      content = row(
+        Column(
+          children: [
+            Expanded(child: tile(0)),
+            Expanded(child: tile(1)),
+          ],
+        ),
+        tile(2),
+      );
+    } else {
+      content = Column(
+        children: [
+          Expanded(child: row(tile(0), tile(1))),
+          Expanded(
+            child: row(
+              tile(2),
+              files.length == 4
+                  ? tile(3)
+                  : ColoredBox(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      child: Center(
+                        child: Text(
+                          '+${files.length - 3}',
+                          style: TextStyle(
+                            fontSize: radius * 0.4,
+                            color:
+                                fallbackColor ??
+                                Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        ],
       );
     }
-
-    final serverUrl = ref.watch(serverUrlProvider);
-    final uri = '$serverUrl/drive/files/${file.id}';
-
-    return SizedBox(
-      width: radius,
-      child: UniversalImage(
-        uri: uri,
-        fit: BoxFit.cover,
-        loadingIndicatorBuilder: _buildCloudAvatarLoadingIndicator,
-      ),
+    return ClipOval(
+      child: SizedBox(width: radius * 2, height: radius * 2, child: content),
     );
   }
 }

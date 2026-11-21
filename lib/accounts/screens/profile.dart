@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:island/accounts/account_pod.dart';
 import 'package:island/accounts/screens/progress.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -51,9 +51,9 @@ final _userContentProvider = FutureProvider.autoDispose
 final profileUserIdByNameProvider = FutureProvider.autoDispose
     .family<String, String>((ref, name) {
       final session = ref.watch(lkmApiSessionProvider);
-      return session.run(
-        () => UsersApi(session.client).profileByUsername(name),
-      ).then((profile) => profile.userId);
+      return session
+          .run(() => UsersApi(session.client).profileByUsername(name))
+          .then((profile) => profile.userId);
     });
 
 /// Another account's page: profile plus the follow relation. The deep link
@@ -606,22 +606,11 @@ class _Avatar extends ConsumerWidget {
   final double radius;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final initial = name.isEmpty ? '?' : name.characters.first;
-    final image = userAvatarUrl(ref.watch(lkmServerUrlProvider), userId, url);
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      foregroundImage: image == null ? null : CachedNetworkImageProvider(image),
-      child: Text(
-        initial,
-        style: theme.textTheme.headlineMedium?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => ProfilePictureWidget(
+    imageUrl: userAvatarUrl(ref.watch(lkmServerUrlProvider), userId, url),
+    fallbackName: name,
+    radius: radius,
+  );
 }
 
 /// Pinned strip used by the narrow layout; the wide layout hands its tabs to
@@ -698,7 +687,6 @@ class _ErrorView extends StatelessWidget {
     );
   }
 }
-
 
 /// Solar account lookup used by widgets that still render Solar identities.
 /// Kept beside the merged profile page because its consumers already import

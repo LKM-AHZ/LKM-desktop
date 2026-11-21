@@ -23,6 +23,7 @@ class UniversalImage extends HookConsumerWidget {
   final bool noCacheOptimization;
   final bool isSvg;
   final bool useFallbackImage;
+  final Widget Function(BuildContext context, Object error)? errorBuilder;
 
   /// Headers for hosts this widget does not own (LKM-service attachment URLs
   /// need the desktop's LKM bearer; the built-in rule only knows the Solian
@@ -42,6 +43,7 @@ class UniversalImage extends HookConsumerWidget {
     this.isSvg = false,
     this.useFallbackImage = true,
     this.httpHeaders,
+    this.errorBuilder,
     this.loadingIndicatorBuilder,
   });
 
@@ -59,9 +61,19 @@ class UniversalImage extends HookConsumerWidget {
     final loaded = useState(false);
     final loadingCompletionScheduled = useRef(false);
     final isCached = useState<bool?>(null);
-    final isSvgImage = isSvg || uri.toLowerCase().endsWith('.svg');
+    final parsedUri = Uri.tryParse(uri);
+    final hasHost = parsedUri?.host.isNotEmpty == true;
+    final isSvgImage =
+        isSvg || (parsedUri?.path.toLowerCase().endsWith('.svg') ?? false);
     final serverUrl = ref.watch(serverUrlProvider);
     final token = ref.watch(tokenProvider);
+    final serverUri = Uri.tryParse(serverUrl);
+    final sameOrigin =
+        hasHost &&
+        serverUri != null &&
+        parsedUri!.scheme == serverUri.scheme &&
+        parsedUri.host == serverUri.host &&
+        parsedUri.port == serverUri.port;
 
     // On web, cached_network_image's default HtmlImage render decodes through
     // a browser <img> element and only snapshots a single frame, so GIFs
@@ -71,31 +83,41 @@ class UniversalImage extends HookConsumerWidget {
 
     final Map<String, String>? httpHeaders =
         this.httpHeaders ??
-        (uri.startsWith(serverUrl) && token != null
+        (sameOrigin && token != null
             ? {'Authorization': 'Bearer ${token.token}'}
             : null);
 
     useEffect(() {
+      if (!hasHost || isSvgImage) return null;
       loaded.value = false;
       loadingCompletionScheduled.value = false;
       isCached.value = null;
-      DefaultCacheManager().getFileFromCache(uri).then((fileInfo) {
-        if (context.mounted) isCached.value = fileInfo != null;
-      });
-      return null;
+      var active = true;
+      DefaultCacheManager()
+          .getFileFromCache(uri)
+          .then(
+            (fileInfo) {
+              if (active && context.mounted) isCached.value = fileInfo != null;
+            },
+            onError: (Object _) {
+              if (active && context.mounted) isCached.value = false;
+            },
+          );
+      return () => active = false;
     }, [uri]);
 
     // A blank or relative URI can only fail downstream — "No host specified
     // in URI" — and that failure surfaces far from its cause. Answer with the
     // error presentation instead of handing an unloadable address to the cache.
     // Declared after every hook so the hook order stays unconditional.
-    if ((Uri.tryParse(uri)?.host ?? '').isEmpty) {
-      return CachedImageErrorWidget(
-        useFallbackImage: useFallbackImage,
-        uri: uri,
-        blurHash: blurHash,
-        error: 'Image URI has no host: "$uri"',
-      );
+    if (!hasHost) {
+      return errorBuilder?.call(context, StateError('Invalid image URI')) ??
+          CachedImageErrorWidget(
+            useFallbackImage: useFallbackImage,
+            uri: uri,
+            blurHash: blurHash,
+            error: 'Image URI has no host: "$uri"',
+          );
     }
 
     if (isSvgImage) {
@@ -104,6 +126,10 @@ class UniversalImage extends HookConsumerWidget {
         fit: fit,
         width: width,
         height: height,
+        headers: httpHeaders,
+        errorBuilder: errorBuilder == null
+            ? null
+            : (context, error, _) => errorBuilder!(context, error),
         placeholderBuilder: (BuildContext context) =>
             loadingIndicatorBuilder?.call(context, null) ??
             const Center(child: CircularProgressIndicator()),
@@ -150,22 +176,24 @@ class UniversalImage extends HookConsumerWidget {
               memCacheHeight: cacheHeight,
               memCacheWidth: cacheWidth,
               imageBuilder: (context, imageProvider) => Image(
-                image: CachedNetworkImageProvider(
-                  uri,
-                  headers: httpHeaders,
-                  imageRenderMethodForWeb: renderMethod,
+                image: ResizeImage.resizeIfNeeded(
+                  cacheWidth,
+                  cacheHeight,
+                  imageProvider,
                 ),
                 fit: fit,
                 width: width,
                 height: height,
               ),
-              errorWidget: (context, url, error) => CachedImageErrorWidget(
-                useFallbackImage: useFallbackImage,
-                uri: uri,
-                blurHash: blurHash,
-                error: error,
-                debug: true,
-              ),
+              errorWidget: (context, url, error) =>
+                  errorBuilder?.call(context, error) ??
+                  CachedImageErrorWidget(
+                    useFallbackImage: useFallbackImage,
+                    uri: uri,
+                    blurHash: blurHash,
+                    error: error,
+                    debug: true,
+                  ),
             )
           else
             CachedNetworkImage(
@@ -204,15 +232,17 @@ class UniversalImage extends HookConsumerWidget {
                   fit: StackFit.expand,
                   children: [
                     AnimatedOpacity(
-                      opacity: loaded.value ? 1.0 : 0.0,
+                      opacity: loadingIndicatorBuilder == null || loaded.value
+                          ? 1.0
+                          : 0.0,
                       duration: loadingIndicatorBuilder == null
                           ? const Duration(milliseconds: 300)
                           : const Duration(milliseconds: 180),
                       child: Image(
-                        image: CachedNetworkImageProvider(
-                          uri,
-                          headers: httpHeaders,
-                          imageRenderMethodForWeb: renderMethod,
+                        image: ResizeImage.resizeIfNeeded(
+                          cacheWidth,
+                          cacheHeight,
+                          imageProvider,
                         ),
                         fit: fit,
                         width: width,
@@ -224,13 +254,15 @@ class UniversalImage extends HookConsumerWidget {
                   ],
                 );
               },
-              errorWidget: (context, url, error) => CachedImageErrorWidget(
-                useFallbackImage: useFallbackImage,
-                uri: uri,
-                blurHash: blurHash,
-                error: error,
-                debug: true,
-              ),
+              errorWidget: (context, url, error) =>
+                  errorBuilder?.call(context, error) ??
+                  CachedImageErrorWidget(
+                    useFallbackImage: useFallbackImage,
+                    uri: uri,
+                    blurHash: blurHash,
+                    error: error,
+                    debug: true,
+                  ),
             ),
         ],
       ),

@@ -4,9 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/community/user_pod.dart';
+import 'package:island/core/api/auth_api.dart';
+import 'package:island/core/api/api_providers.dart';
 import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/tinode/tinode_client.dart';
 import 'package:island/chat/tinode/tinode_provider.dart';
+
+class _Server extends LkmServerUrlNotifier {
+  @override
+  String build() => 'https://community.example/api/v1';
+}
 
 class _HistoryClient extends TinodeClient {
   _HistoryClient() : super(endpoint: Uri(), apiKey: '') {
@@ -68,6 +76,34 @@ void main() {
     await container.read(tinodeClientProvider.future);
   });
   tearDown(() => container.dispose());
+
+  test(
+    'outgoing avatars resolve storage keys to versioned public URLs',
+    () async {
+      final owner = ProviderContainer(
+        overrides: [
+          tinodeClientProvider.overrideWith((ref) async => null),
+          lkmServerUrlProvider.overrideWith(_Server.new),
+          lkmMeProvider.overrideWith(
+            (ref) async => const LkmAccount(
+              id: 'account-1',
+              username: 'alice',
+              accountLevel: 'normal',
+              role: 'member',
+              avatar: 'avatars/a.png',
+            ),
+          ),
+        ],
+      );
+      addTearDown(owner.dispose);
+      await owner.read(lkmMeProvider.future);
+      final profile = owner.read(chatSelfProfileProvider);
+      expect(
+        profile.avatar,
+        'https://community.example/api/v1/auth/avatar/account-1?v=avatars%2Fa.png',
+      );
+    },
+  );
 
   test('live arrivals advance read receipts without a rooms refresh', () {
     final backend = container.read(chatBackendProvider);

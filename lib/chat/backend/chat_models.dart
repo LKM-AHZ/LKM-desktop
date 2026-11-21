@@ -65,6 +65,17 @@ Map<String, dynamic>? _map(dynamic raw) {
 List<T> _list<T>(dynamic raw) =>
     raw is List ? raw.whereType<T>().toList(growable: false) : const [];
 
+Map<String, dynamic>? _avatarPicture(String? value) {
+  final url = value?.trim();
+  final uri = url == null ? null : Uri.tryParse(url);
+  if (uri == null ||
+      uri.host.isEmpty ||
+      (uri.scheme != 'http' && uri.scheme != 'https')) {
+    return null;
+  }
+  return {'id': '', 'url': url};
+}
+
 /// `typing`-style synthetic members and system senders have no server row;
 /// the UI still needs a displayable account.
 Map<String, dynamic> chatAccountJson({
@@ -86,10 +97,7 @@ Map<String, dynamic> chatAccountJson({
       'experience': 0,
       'level': 1,
       'leveling_progress': 0,
-      // Avatars live in the LKM file store, not the Solar drive the picture
-      // widget resolves; show the initials fallback until a chat avatar path
-      // exists.
-      'picture': null,
+      'picture': _avatarPicture(avatar),
       'background': null,
       'verification': null,
       'created_at': now,
@@ -236,13 +244,29 @@ Map<String, dynamic> chatMessageJson(
   final ts = (message.ts ?? DateTime.now()).toUtc();
   final sender = memberFor(senderUid);
   final senderName = content[ChatContentKeys.senderName]?.toString();
-  final labelledSender = (senderName == null || senderName.isEmpty)
+  final avatarPicture = _avatarPicture(
+    content[ChatContentKeys.senderAvatar]?.toString(),
+  );
+  final hasSenderName = senderName != null && senderName.trim().isNotEmpty;
+  final labelledSender = (!hasSenderName && avatarPicture == null)
       ? sender
       : () {
           final account = _map(sender['account']) ?? <String, dynamic>{};
-          account['name'] = senderName;
-          account['nick'] = senderName;
-          return {...sender, 'nick': senderName, 'account': account};
+          if (hasSenderName) {
+            account['name'] = senderName;
+            account['nick'] = senderName;
+          }
+          if (avatarPicture != null) {
+            account['profile'] = {
+              ...?_map(account['profile']),
+              'picture': avatarPicture,
+            };
+          }
+          return {
+            ...sender,
+            if (hasSenderName) 'nick': senderName,
+            'account': account,
+          };
         }();
   final messageMeta = <String, dynamic>{
     ...meta,
