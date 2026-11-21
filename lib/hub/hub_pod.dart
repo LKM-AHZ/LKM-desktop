@@ -89,14 +89,15 @@ final boardItemsProvider = FutureProvider.autoDispose
     });
 
 /// The board detail's first page, large enough to rank locally like the
-/// website does. ponytail: 50-item cap, switch back to server paging if a
-/// board ever outgrows one page.
+/// website does. ponytail: 20-item cap (the GraphQL cost budget rejects >21
+/// rows for the item field set), switch to server paging if a board outgrows
+/// one page.
 final boardFeedProvider = FutureProvider.autoDispose
     .family<List<LkmContentItem>, String>((ref, boardId) async {
       final session = ref.watch(lkmApiSessionProvider);
       final page = await session.run(
         () =>
-            ref.watch(contentApiProvider).items(boardId: boardId, pageSize: 50),
+            ref.watch(contentApiProvider).items(boardId: boardId, pageSize: 20),
       );
       return page.items;
     });

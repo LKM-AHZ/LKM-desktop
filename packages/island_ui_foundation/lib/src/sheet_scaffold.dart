@@ -34,104 +34,116 @@ class _SheetScaffoldState extends State<SheetScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final keyboardInset = mediaQuery.viewInsets.bottom;
-    final maxHeight =
-        widget.height ?? mediaQuery.size.height * widget.heightFactor;
-    // The keyboard steals room from the bottom of the screen. Clamp the sheet
-    // content to the part that stays visible instead of subtracting the inset
-    // from the sheet height: the latter squeezes the content into
-    // `heightFactor * screen - keyboard`, which collapses a form to a sliver
-    // (and overflows) as soon as a field is focused.
-    final contentHeight = (mediaQuery.size.height - keyboardInset).clamp(
-      0.0,
-      maxHeight,
-    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final mediaQuery = MediaQuery.of(context);
+        final keyboardInset = mediaQuery.viewInsets.bottom;
+        // Use the height the sheet is actually laid out into: on web the
+        // MediaQuery height can disagree with the viewport, and multiplying
+        // the wrong one by the factor pushed every sheet past the bottom edge.
+        final viewportHeight = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : mediaQuery.size.height;
+        final maxHeight =
+            widget.height ?? viewportHeight * widget.heightFactor;
+        // The keyboard steals room from the bottom of the screen. Clamp the
+        // sheet content to the part that stays visible instead of subtracting
+        // the inset from the sheet height: the latter squeezes the content
+        // into `heightFactor * screen - keyboard`, which collapses a form to
+        // a sliver (and overflows) as soon as a field is focused.
+        final contentHeight = (viewportHeight - keyboardInset).clamp(
+          0.0,
+          maxHeight,
+        );
 
-    return AnimatedPadding(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(bottom: keyboardInset),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: contentHeight),
-        child: Column(
-          children: [
-            if (widget.showHeader) ...[
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                decoration: BoxDecoration(
-                  color: _isScrolled
-                      ? Theme.of(context).colorScheme.surfaceContainerHigh
-                      : Colors.transparent,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(28),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 16,
-                    left: 20,
-                    right: 16,
-                    bottom: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      if (widget.leading != null) ...[
-                        widget.leading!,
-                        const SizedBox(width: 8),
-                      ],
-                      if (widget.title != null || widget.titleText != null)
-                        Expanded(
-                          child:
-                              widget.title ??
-                              Text(
-                                widget.titleText!,
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.5,
-                                    ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                        )
-                      else
-                        const Spacer(),
-                      ...widget.actions,
-                      IconButton(
-                        icon: Icon(
-                          Symbols.close,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        onPressed: () => widget.onClose != null
-                            ? widget.onClose?.call()
-                            : Navigator.pop(context),
-                        style: IconButton.styleFrom(
-                          minimumSize: const Size(36, 36),
-                        ),
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: contentHeight),
+            child: Column(
+              children: [
+                if (widget.showHeader) ...[
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      color: _isScrolled
+                          ? Theme.of(context).colorScheme.surfaceContainerHigh
+                          : Colors.transparent,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(28),
                       ),
-                    ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                        left: 20,
+                        right: 16,
+                        bottom: 12,
+                      ),
+                      child: Row(
+                        children: [
+                          if (widget.leading != null) ...[
+                            widget.leading!,
+                            const SizedBox(width: 8),
+                          ],
+                          if (widget.title != null || widget.titleText != null)
+                            Expanded(
+                              child:
+                                  widget.title ??
+                                  Text(
+                                    widget.titleText!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: -0.5,
+                                        ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                            )
+                          else
+                            const Spacer(),
+                          ...widget.actions,
+                          IconButton(
+                            icon: Icon(
+                              Symbols.close,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            onPressed: () => widget.onClose != null
+                                ? widget.onClose?.call()
+                                : Navigator.pop(context),
+                            style: IconButton.styleFrom(
+                              minimumSize: const Size(36, 36),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      final isScrolled = notification.metrics.pixels > 0;
+                      if (isScrolled != _isScrolled) {
+                        setState(() {
+                          _isScrolled = isScrolled;
+                        });
+                      }
+                      return false;
+                    },
+                    child: widget.child,
                   ),
                 ),
-              ),
-            ],
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  final isScrolled = notification.metrics.pixels > 0;
-                  if (isScrolled != _isScrolled) {
-                    setState(() {
-                      _isScrolled = isScrolled;
-                    });
-                  }
-                  return false;
-                },
-                child: widget.child,
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

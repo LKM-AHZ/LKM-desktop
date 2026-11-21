@@ -63,10 +63,12 @@ final dashboardEntriesProvider = FutureProvider.autoDispose
               )
               .toList();
         case 'columns':
+          // GraphQL cost budget rejects >21 rows for the 24-field item set
+          // (1000 / ~45 per row); 50 failed with "query exceeds cost budget".
           final page = await session.run(
             () => ref
                 .watch(contentApiProvider)
-                .items(contentType: 'column_post', pageSize: 50),
+                .items(contentType: 'column_post', pageSize: 20),
           );
           final featured = page.items.where((p) => p.isFeatured).toList()
             ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
