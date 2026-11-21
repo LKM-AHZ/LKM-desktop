@@ -28,6 +28,8 @@ import 'package:island/community/user_pod.dart';
 import 'package:island/core/api/api_client.dart';
 import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/api/auth_api.dart';
+import 'package:island/core/api/users_api.dart';
+import 'package:island/drive/widgets/cloud_files.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/services/nfc_scan_service.dart';
 import 'package:island/core/theme.dart';
@@ -129,31 +131,44 @@ Future<String> securityPreferencesMode(Ref ref) async {
 /// Account settings backed by `/auth/settings`, `/auth/2fa` and
 /// `/auth/passkey`: profile, bound contacts, TOTP and passkeys.
 @RoutePage()
-class AccountSettingsScreen extends HookConsumerWidget {
+class AccountSettingsScreen extends ConsumerWidget {
   const AccountSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(lkmApiSessionProvider);
+    return _AccountSettingsContent(
+      key: ValueKey((session, session.identityRevision)),
+    );
+  }
+}
+
+class _AccountSettingsContent extends HookConsumerWidget {
+  const _AccountSettingsContent({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final settings = useState<LkmAccountSettings?>(null);
-    final credentials = useState<List<LkmPasskeyCredential>>(const []);
-    final me = useState<LkmAccount?>(null);
+    final credentials = useState<List<LkmPasskeyCredential>?>(null);
+    final me = ref.watch(lkmMeProvider);
     final busy = useState(false);
     final error = useState<String?>(null);
 
     Future<void> load() async {
+      if (!context.mounted) return;
       busy.value = true;
       error.value = null;
       try {
         final api = ref.read(authApiProvider);
-        final results = await Future.wait([
-          api.accountSettings(),
-          api.passkeyCredentials(),
-          api.me(),
+        final session = ref.read(lkmApiSessionProvider);
+        await Future.wait([
+          session.run(api.accountSettings).then((value) {
+            if (context.mounted) settings.value = value;
+          }),
+          session.run(api.passkeyCredentials).then((value) {
+            if (context.mounted) credentials.value = value;
+          }),
         ]);
-        if (!context.mounted) return;
-        settings.value = results[0] as LkmAccountSettings;
-        credentials.value = results[1] as List<LkmPasskeyCredential>;
-        me.value = results[2] as LkmAccount;
       } catch (failure) {
         if (context.mounted) error.value = _describe(failure);
       } finally {
@@ -167,7 +182,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
     }, const []);
 
     Future<void> run(Future<void> Function() action) async {
-      if (busy.value) return;
+      if (!context.mounted || busy.value) return;
       busy.value = true;
       error.value = null;
       try {
@@ -182,10 +197,13 @@ class AccountSettingsScreen extends HookConsumerWidget {
     Future<void> saveProfile(String nickname) => run(() async {
       final account = me.value;
       if (account == null) return;
+      final api = ref.read(authApiProvider);
       await ref
-          .read(authApiProvider)
-          .updateProfile(userId: account.id, nickname: nickname);
+          .read(lkmApiSessionProvider)
+          .run(() => api.updateProfile(userId: account.id, nickname: nickname));
+      if (!context.mounted) return;
       ref.invalidate(lkmMeProvider);
+      ref.invalidate(userProfileProvider(account.id));
       if (context.mounted) showSnackBar('authFlow.profileSaved'.tr());
     });
 
@@ -195,8 +213,10 @@ class AccountSettingsScreen extends HookConsumerWidget {
         title: 'authFlow.nickname'.tr(),
         label: 'authFlow.nickname'.tr(),
         initial: me.value?.nickname ?? '',
+        helperText: 'authFlow.nicknameHint'.tr(),
+        maxLength: 100,
       );
-      if (value == null || value.isEmpty) return;
+      if (value == null || value == (me.value?.nickname ?? '').trim()) return;
       await saveProfile(value);
     }
 
@@ -204,13 +224,26 @@ class AccountSettingsScreen extends HookConsumerWidget {
       final account = me.value;
       if (account == null) return;
       final picked = await FilePicker.pickFiles(type: FileType.image);
-      if (picked.isEmpty) return;
+      if (picked.isEmpty || !context.mounted) return;
       final file = picked.first;
+      const maxBytes = 2 * 1024 * 1024;
+      if ((await file.length() ?? 0) > maxBytes) {
+        throw StateError('authFlow.avatarTooLarge'.tr());
+      }
       final bytes = await file.xFile.readAsBytes();
+      if (bytes.length > maxBytes) {
+        throw StateError('authFlow.avatarTooLarge'.tr());
+      }
+      if (bytes.isEmpty) throw StateError('authFlow.avatarEmpty'.tr());
+      if (!context.mounted) return;
       final api = ref.read(authApiProvider);
-      final key = await api.uploadAvatar(bytes: bytes, filename: file.name);
-      await api.updateProfile(userId: account.id, avatar: key);
+      await ref
+          .read(lkmApiSessionProvider)
+          .run(() => api.uploadAvatar(bytes: bytes, filename: file.name));
+      // The upload endpoint already updates Profile.avatar.
+      if (!context.mounted) return;
       ref.invalidate(lkmMeProvider);
+      ref.invalidate(userProfileProvider(account.id));
       if (context.mounted) showSnackBar('authFlow.avatarUpdated'.tr());
     });
 
@@ -233,7 +266,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
           label: 'authFlow.codeSentTo'.tr(args: [contact]),
           number: true,
         );
-        if (code == null || code.trim().isEmpty) return;
+        if (code == null || code.trim().isEmpty || !context.mounted) return;
         email
             ? await api.verifyBindEmail(email: contact, code: code)
             : await api.verifyBindPhone(phone: contact, code: code);
@@ -243,6 +276,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
 
     Future<void> bindGithub() => run(() async {
       final bound = await runGithubBind(ref.read(authApiProvider));
+      if (!context.mounted) return;
       if (!bound) {
         error.value = 'authFlow.bindFailed'.tr();
         return;
@@ -278,7 +312,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
         return;
       }
       final values = await _askTwoFactor(context);
-      if (values == null) return;
+      if (values == null || !context.mounted) return;
       await api.disableTotp(code: values.$1, recoveryCode: values.$2);
       await load();
     });
@@ -288,6 +322,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
       final options = await ref
           .read(authApiProvider)
           .beginPasskeyRegistration();
+      if (!context.mounted) return;
       final pk = options.publicKey;
       final rp = pk['rp'] is Map ? pk['rp'] as Map : const {};
       final user = pk['user'] is Map ? pk['user'] as Map : const {};
@@ -339,6 +374,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
         attestation: 'none',
       );
       final credential = await authenticator.register(request);
+      if (!context.mounted) return;
       await ref
           .read(authApiProvider)
           .completePasskeyRegistration(
@@ -374,7 +410,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
               return;
             }
             final values = await _askTwoFactor(context);
-            if (values == null) return;
+            if (values == null || !context.mounted) return;
             final stepped = await session.run(
               () => api.stepUpTotp(code: values.$1, recoveryCode: values.$2),
             );
@@ -398,6 +434,15 @@ class AccountSettingsScreen extends HookConsumerWidget {
 
     final theme = Theme.of(context);
     final has2fa = settings.value?.has2fa ?? false;
+    final account = me.value;
+    final profileBusy = busy.value || account == null;
+    final securityBusy = busy.value || settings.value == null;
+    final failure = error.value ?? (me.hasError ? _describe(me.error!) : null);
+
+    Future<void> refresh() async {
+      ref.invalidate(lkmMeProvider);
+      await load();
+    }
 
     return AppScaffold(
       isNoBackground: false,
@@ -406,194 +451,297 @@ class AccountSettingsScreen extends HookConsumerWidget {
         title: Text('accountSettings'.tr()),
         actions: [
           IconButton(
-            onPressed: busy.value ? null : load,
+            onPressed: busy.value ? null : refresh,
+            tooltip: 'refresh'.tr(),
             icon: const Icon(Icons.refresh),
           ),
         ],
       ),
       body: busy.value && settings.value == null
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: SolSpace.page),
-              child: Column(
-                spacing: SolSpace.xl,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (error.value != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: SolSpace.page,
-                      ),
-                      child: Text(
-                        error.value!,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    ),
-                  _SettingsSection(
-                    title: 'accountProfileTitle',
+          : Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 920),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: SolSpace.page),
+                  child: Column(
+                    spacing: SolSpace.xl,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ListTile(
-                        minLeadingWidth: 44,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        leading: _buildLeadingIcon(
-                          context,
-                          Symbols.person_edit,
-                        ),
-                        title: Text('authFlow.nickname'.tr()),
-                        subtitle: Text(
-                          me.value?.nickname ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall,
-                        ),
-                        trailing: const Icon(Symbols.chevron_right),
-                        onTap: busy.value ? null : editNickname,
-                      ),
-                      ListTile(
-                        minLeadingWidth: 44,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        leading: _buildLeadingIcon(context, Symbols.image),
-                        title: Text('authFlow.uploadAvatar'.tr()),
-                        trailing: const Icon(Symbols.chevron_right),
-                        onTap: busy.value ? null : uploadAvatar,
-                      ),
-                    ],
-                  ),
-                  _SettingsSection(
-                    title: 'accountSecurityTitle',
-                    children: [
-                      SwitchListTile(
-                        secondary: _buildLeadingIcon(context, Symbols.security),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        value: has2fa,
-                        onChanged: busy.value ? null : toggleTotp,
-                        title: Text('authFlow.twoFactor'.tr()),
-                        subtitle: Text(
-                          has2fa
-                              ? 'authFlow.enabled'.tr()
-                              : 'authFlow.disabled'.tr(),
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ),
-                      ExpansionTile(
-                        leading: _buildLeadingIcon(context, Symbols.key),
-                        title: Text('authFlow.sectionPasskeys'.tr()),
-                        subtitle: Text(
-                          credentials.value.isEmpty
-                              ? 'authFlow.passkeyEmpty'.tr()
-                              : '${credentials.value.length}',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                        tilePadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                            child: Column(
-                              spacing: 6,
+                      if (busy.value) const LinearProgressIndicator(),
+                      if (failure != null)
+                        Semantics(
+                          liveRegion: true,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: SolSpace.page,
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
                               children: [
-                                for (final credential in credentials.value)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(
-                                        SolRadius.md,
-                                      ),
-                                    ),
-                                    child: ListTile(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 2,
-                                          ),
-                                      leading: const CircleAvatar(
-                                        child: Icon(Symbols.key, size: 16),
-                                      ),
-                                      title: Text(credential.deviceName),
-                                      subtitle: Text(
-                                        credential.createdAt == null
-                                            ? credential.credentialId
-                                            : '${credential.credentialId} · '
-                                                  '${_date(credential.createdAt!)}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      trailing: IconButton(
-                                        tooltip: 'authFlow.delete'.tr(),
-                                        onPressed: busy.value
-                                            ? null
-                                            : () => deletePasskey(credential),
-                                        icon: const Icon(Symbols.delete),
-                                      ),
+                                Icon(
+                                  Symbols.error_outline,
+                                  color: theme.colorScheme.onErrorContainer,
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                  child: Text(
+                                    failure,
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onErrorContainer,
                                     ),
                                   ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        theme.colorScheme.surfaceContainerHigh,
-                                    borderRadius: BorderRadius.circular(
-                                      SolRadius.md,
-                                    ),
-                                  ),
-                                  child: ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 2,
-                                    ),
-                                    leading: const Icon(Symbols.add),
-                                    title: Text('authFlow.addPasskey'.tr()),
-                                    trailing: const Icon(Symbols.chevron_right),
-                                    onTap: busy.value ? null : addPasskey,
-                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: busy.value ? null : refresh,
+                                  child: Text('retry'.tr()),
                                 ),
                               ],
                             ),
+                          ),
+                        ),
+                      _SettingsSection(
+                        title: 'accountProfileTitle',
+                        children: [
+                          if (account != null)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 4, 20, 12),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    tooltip: 'authFlow.uploadAvatar'.tr(),
+                                    onPressed: profileBusy
+                                        ? null
+                                        : uploadAvatar,
+                                    icon: ProfilePictureWidget(
+                                      imageUrl: userAvatarUrl(
+                                        ref.watch(lkmServerUrlProvider),
+                                        account.id,
+                                        account.avatar,
+                                      ),
+                                      fallbackName: account.displayName,
+                                      radius: 28,
+                                    ),
+                                  ),
+                                  const Gap(12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          account.displayName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: theme.textTheme.titleMedium,
+                                        ),
+                                        const Gap(4),
+                                        Text(
+                                          '@${account.username}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: theme.textTheme.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else if (me.isLoading)
+                            const LinearProgressIndicator(),
+                          ListTile(
+                            minLeadingWidth: 44,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 2,
+                            ),
+                            leading: _buildLeadingIcon(
+                              context,
+                              Symbols.person_edit,
+                            ),
+                            title: Text('authFlow.nickname'.tr()),
+                            subtitle: Text(
+                              account?.displayName ?? 'loading'.tr(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            trailing: const Icon(Symbols.chevron_right),
+                            onTap: profileBusy ? null : editNickname,
+                          ),
+                          ListTile(
+                            minLeadingWidth: 44,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 2,
+                            ),
+                            leading: _buildLeadingIcon(context, Symbols.image),
+                            title: Text('authFlow.uploadAvatar'.tr()),
+                            trailing: const Icon(Symbols.chevron_right),
+                            onTap: profileBusy ? null : uploadAvatar,
+                          ),
+                        ],
+                      ),
+                      _SettingsSection(
+                        title: 'accountSecurityTitle',
+                        children: [
+                          SwitchListTile(
+                            secondary: _buildLeadingIcon(
+                              context,
+                              Symbols.security,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 2,
+                            ),
+                            value: has2fa,
+                            onChanged: securityBusy ? null : toggleTotp,
+                            title: Text('authFlow.twoFactor'.tr()),
+                            subtitle: Text(
+                              settings.value == null
+                                  ? (busy.value ? 'loading' : 'failedToLoad')
+                                        .tr()
+                                  : has2fa
+                                  ? 'authFlow.enabled'.tr()
+                                  : 'authFlow.disabled'.tr(),
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                          ExpansionTile(
+                            leading: _buildLeadingIcon(context, Symbols.key),
+                            title: Text('authFlow.sectionPasskeys'.tr()),
+                            subtitle: Text(
+                              credentials.value == null
+                                  ? (busy.value ? 'loading' : 'failedToLoad')
+                                        .tr()
+                                  : credentials.value!.isEmpty
+                                  ? 'authFlow.passkeyEmpty'.tr()
+                                  : '${credentials.value!.length}',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            tilePadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 2,
+                            ),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  4,
+                                  16,
+                                  12,
+                                ),
+                                child: Column(
+                                  spacing: 6,
+                                  children: [
+                                    for (final credential
+                                        in credentials.value ??
+                                            const <LkmPasskeyCredential>[])
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: theme
+                                              .colorScheme
+                                              .surfaceContainer,
+                                          borderRadius: BorderRadius.circular(
+                                            SolRadius.md,
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 2,
+                                              ),
+                                          leading: const CircleAvatar(
+                                            child: Icon(Symbols.key, size: 16),
+                                          ),
+                                          title: Text(credential.deviceName),
+                                          subtitle: Text(
+                                            credential.createdAt == null
+                                                ? credential.credentialId
+                                                : '${credential.credentialId} · '
+                                                      '${_date(credential.createdAt!)}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          trailing: IconButton(
+                                            tooltip: 'authFlow.delete'.tr(),
+                                            onPressed: securityBusy
+                                                ? null
+                                                : () =>
+                                                      deletePasskey(credential),
+                                            icon: const Icon(Symbols.delete),
+                                          ),
+                                        ),
+                                      ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: theme
+                                            .colorScheme
+                                            .surfaceContainerHigh,
+                                        borderRadius: BorderRadius.circular(
+                                          SolRadius.md,
+                                        ),
+                                      ),
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 2,
+                                            ),
+                                        leading: const Icon(Symbols.add),
+                                        title: Text('authFlow.addPasskey'.tr()),
+                                        trailing: const Icon(
+                                          Symbols.chevron_right,
+                                        ),
+                                        onTap: securityBusy ? null : addPasskey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      _SettingsSection(
+                        title: 'accountContactMethod',
+                        children: [
+                          _BindingRow(
+                            icon: Symbols.mail,
+                            label: 'authFlow.email'.tr(),
+                            value: settings.value?.email,
+                            busy: securityBusy,
+                            onBind: () => bindContact(email: true),
+                            onUnbind: () => unbind('email'),
+                          ),
+                          _BindingRow(
+                            icon: Symbols.phone,
+                            label: 'authFlow.phone'.tr(),
+                            value: settings.value?.phone,
+                            busy: securityBusy,
+                            onBind: () => bindContact(email: false),
+                            onUnbind: () => unbind('phone'),
+                          ),
+                          _BindingRow(
+                            icon: Symbols.code,
+                            label: 'GitHub',
+                            value: settings.value?.github,
+                            busy: securityBusy,
+                            onBind: bindGithub,
+                            onUnbind: () => unbind('github'),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  _SettingsSection(
-                    title: 'accountContactMethod',
-                    children: [
-                      _BindingRow(
-                        icon: Symbols.mail,
-                        label: 'authFlow.email'.tr(),
-                        value: settings.value?.email,
-                        busy: busy.value,
-                        onBind: () => bindContact(email: true),
-                        onUnbind: () => unbind('email'),
-                      ),
-                      _BindingRow(
-                        icon: Symbols.phone,
-                        label: 'authFlow.phone'.tr(),
-                        value: settings.value?.phone,
-                        busy: busy.value,
-                        onBind: () => bindContact(email: false),
-                        onUnbind: () => unbind('phone'),
-                      ),
-                      _BindingRow(
-                        icon: Symbols.code,
-                        label: 'GitHub',
-                        value: settings.value?.github,
-                        busy: busy.value,
-                        onBind: bindGithub,
-                        onUnbind: () => unbind('github'),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
     );
@@ -715,32 +863,51 @@ Future<String?> _askText(
   required String label,
   bool number = false,
   String? initial,
-}) {
-  final controller = TextEditingController(text: initial);
-  return showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: TextField(
-        controller: controller,
-        autofocus: true,
-        keyboardType: number ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(labelText: label),
-        onSubmitted: (value) => Navigator.pop(context, value.trim()),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('cancel'.tr()),
+  String? helperText,
+  int? maxLength,
+}) => showDialog<String>(
+  context: context,
+  builder: (context) => HookBuilder(
+    builder: (context) {
+      final controller = useTextEditingController(text: initial);
+      final formKey = useMemoized(GlobalKey<FormState>.new);
+      void submit() {
+        if (formKey.currentState!.validate()) {
+          Navigator.pop(context, controller.text.trim());
+        }
+      }
+
+      return AlertDialog(
+        title: Text(title),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            maxLength: maxLength,
+            keyboardType: number ? TextInputType.number : TextInputType.text,
+            decoration: InputDecoration(
+              labelText: label,
+              helperText: helperText,
+            ),
+            validator: (value) =>
+                maxLength != null && (value ?? '').runes.length > maxLength
+                ? 'authFlow.valueTooLong'.tr(args: ['$maxLength'])
+                : null,
+            onFieldSubmitted: (_) => submit(),
+          ),
         ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, controller.text.trim()),
-          child: Text('confirm'.tr()),
-        ),
-      ],
-    ),
-  );
-}
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('cancel'.tr()),
+          ),
+          FilledButton(onPressed: submit, child: Text('confirm'.tr())),
+        ],
+      );
+    },
+  ),
+);
 
 Future<(String?, String?)?> _askTwoFactor(BuildContext context) async {
   final controller = TextEditingController();
@@ -782,6 +949,7 @@ Future<(String?, String?)?> _askTwoFactor(BuildContext context) async {
 }
 
 String _describe(Object failure) {
+  if (failure is StateError) return failure.message;
   if (failure is ApiException) return failure.message;
   if (failure is ApiTransportException) return failure.message;
   return '$failure';

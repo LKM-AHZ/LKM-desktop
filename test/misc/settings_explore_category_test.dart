@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:island/accounts/account_pod.dart';
 import 'package:island/core/config.dart';
+import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/network.dart';
 import 'package:island/posts/posts_pod.dart';
 import 'package:island/route.dart';
@@ -52,6 +53,7 @@ class _StubAdapter implements HttpClientAdapter {
 
 late AppRouter _router;
 late ProviderContainer _container;
+final _probedAddresses = <String>[];
 
 /// Boots the real router at `/settings` with a real `SharedPreferences` store,
 /// so the explore preferences are read exactly as the app reads them.
@@ -59,6 +61,7 @@ Future<void> _pumpSettings(
   WidgetTester tester,
   Map<String, Object> prefsValues,
 ) async {
+  _probedAddresses.clear();
   SharedPreferences.setMockInitialValues(prefsValues);
   final prefs = await SharedPreferences.getInstance();
 
@@ -76,6 +79,14 @@ Future<void> _pumpSettings(
   _container = ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
+      lkmServerAddressProbeProvider.overrideWith((ref, address) async {
+        _probedAddresses.add(address);
+        return const LkmServerProbe(
+          reachable: true,
+          isLkmService: true,
+          status: 'ok',
+        );
+      }),
       userInfoProvider.overrideWith(_SignedOutUserInfo.new),
       apiClientProvider.overrideWithValue(
         Dio(BaseOptions(baseUrl: 'https://example.test'))
@@ -225,4 +236,78 @@ void main() {
 
     await _teardown(tester);
   });
+  testWidgets(
+    'settings drafts survive rebuilds and search clearing restores the selected category',
+    (tester) async {
+      await _pumpSettings(tester, const {});
+      await tester.enterText(
+        find.byKey(const ValueKey('settings-fonts')),
+        'Draft Font',
+      );
+      _container.read(appSettingsProvider.notifier).setThemeMode('dark');
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('settings-fonts')))
+            .controller!
+            .text,
+        'Draft Font',
+      );
+      await tester.tap(find.text('Connection'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('settings-lkm-url')),
+        'https://draft.example',
+      );
+      await tester.enterText(find.byType(SearchBar), 'font');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Clear'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('settings-lkm-url')), findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('settings-lkm-url')))
+            .controller!
+            .text,
+        'https://draft.example',
+      );
+      await _teardown(tester);
+    },
+  );
+
+  testWidgets(
+    'connection testing probes the draft without switching the saved server',
+    (tester) async {
+      await _pumpSettings(tester, const {});
+      await tester.tap(find.text('Connection'));
+      await tester.pumpAndSettle();
+      final saved = _container.read(lkmServerUrlProvider);
+      await tester.enterText(
+        find.byKey(const ValueKey('settings-lkm-url')),
+        'not a server',
+      );
+      await tester.tap(find.byTooltip('Test connection'));
+      await tester.pumpAndSettle();
+      expect(_probedAddresses, isEmpty);
+      expect(_container.read(lkmServerUrlProvider), saved);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('settings-lkm-url')),
+        'https://candidate.example',
+      );
+      await tester.tap(find.byTooltip('Test connection'));
+      await tester.pumpAndSettle();
+      expect(_probedAddresses, ['https://candidate.example']);
+      expect(_container.read(lkmServerUrlProvider), saved);
+      expect(find.text('settingsLkmServerHealthy'.tr()), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('settings-lkm-url')),
+        'https://another.example',
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('settingsLkmServerHealthy'.tr()), findsNothing);
+      expect(_probedAddresses, ['https://candidate.example']);
+      await _teardown(tester);
+    },
+  );
 }

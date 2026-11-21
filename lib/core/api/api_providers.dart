@@ -158,8 +158,13 @@ final lkmServerProbeRequestedProvider =
       LkmServerProbeRequested.new,
     );
 
+/// Probes an address without changing the active API session.
+final lkmServerAddressProbeProvider = FutureProvider.autoDispose
+    .family<LkmServerProbe, String>(
+      (ref, serverUrl) => LkmServerProbe.check(serverUrl),
+    );
+
 /// Probes the configured server. Invalidate to re-run.
 final lkmServerProbeProvider = FutureProvider<LkmServerProbe>((ref) async {
-  final serverUrl = ref.watch(lkmServerUrlProvider);
-  return LkmServerProbe.check(serverUrl);
+  return LkmServerProbe.check(ref.watch(lkmServerUrlProvider));
 });

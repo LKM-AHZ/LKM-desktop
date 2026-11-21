@@ -17,6 +17,7 @@ import 'package:island/core/database.dart';
 import 'package:island/data/database.dart';
 import 'package:island/core/network.dart';
 import 'package:island/core/api/api_providers.dart';
+import 'package:island/core/api/api_client.dart' show normalizeApiBase;
 import 'package:island/core/network/relay.dart';
 import 'package:island/core/widgets/content/network_status_sheet.dart';
 import 'package:island/accounts/account_pod.dart';
@@ -72,10 +73,27 @@ class SettingsScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final serverUrl = ref.watch(serverUrlProvider);
     final prefs = ref.watch(sharedPreferencesProvider);
-    final controller = TextEditingController(text: serverUrl);
+    final controller = useTextEditingController(text: serverUrl);
     final lkmServerUrl = ref.watch(lkmServerUrlProvider);
-    final lkmController = TextEditingController(text: lkmServerUrl);
+    final lkmController = useTextEditingController(text: lkmServerUrl);
     final settings = ref.watch(appSettingsProvider);
+    final fontsController = useTextEditingController(
+      text: settings.customFonts,
+    );
+    final probeTarget = useState<String?>(null);
+    useEffect(() {
+      controller.text = serverUrl;
+      return null;
+    }, [serverUrl]);
+    useEffect(() {
+      lkmController.text = lkmServerUrl;
+      probeTarget.value = null;
+      return null;
+    }, [lkmServerUrl]);
+    useEffect(() {
+      fontsController.text = settings.customFonts ?? '';
+      return null;
+    }, [settings.customFonts]);
     final isDesktop =
         !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
     final isIos = !kIsWeb && Platform.isIOS;
@@ -112,7 +130,7 @@ class SettingsScreen extends HookConsumerWidget {
 
     useEffect(() {
       getApplicationSupportDirectory().then((dir) {
-        docBasepath.value = dir.path;
+        if (context.mounted) docBasepath.value = dir.path;
       });
       return null;
     }, []);
@@ -159,11 +177,33 @@ class SettingsScreen extends HookConsumerWidget {
       for (final term in category.searchTerms) {
         if (hit(term)) return true;
         // Allow i18n keys in searchTerms so localized labels are searchable.
-        final translated = term.tr();
-        if (translated != term && hit(translated)) return true;
+        if (term.trExists() && hit(term.tr())) return true;
       }
       return false;
     }
+
+    categories.add(
+      _SettingCategory(
+        icon: Symbols.manage_accounts,
+        title: 'Account',
+        localizedTitleKey: 'accountSettings',
+        searchTerms: [
+          'profile',
+          'avatar',
+          'nickname',
+          'security',
+          'passkey',
+          'email',
+          'authFlow.nickname',
+          'authFlow.uploadAvatar',
+          'authFlow.twoFactor',
+          'accountProfileTitle',
+          'accountSecurityTitle',
+          'accountContactMethod',
+        ],
+        children: const [_AccountSettingsEntry()],
+      ),
+    );
 
     categories.add(
       _SettingCategory(
@@ -657,13 +697,15 @@ class SettingsScreen extends HookConsumerWidget {
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 6),
               child: TextField(
-                controller: TextEditingController(text: settings.customFonts),
+                key: const ValueKey('settings-fonts'),
+                controller: fontsController,
                 decoration: InputDecoration(
                   hintText: 'Nunito, Arial, sans-serif',
                   helperText: 'settingsCustomFontsHelper'.tr(),
                   suffixIcon: IconButton(
                     icon: const Icon(Symbols.restart_alt),
                     onPressed: () {
+                      fontsController.clear();
                       ref
                           .read(appSettingsProvider.notifier)
                           .setCustomFonts(null);
@@ -1377,6 +1419,7 @@ class SettingsScreen extends HookConsumerWidget {
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 6),
               child: TextField(
+                key: const ValueKey('settings-network-url'),
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: kNetworkServerDefault,
@@ -1421,6 +1464,7 @@ class SettingsScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
+                    key: const ValueKey('settings-lkm-url'),
                     controller: lkmController,
                     decoration: InputDecoration(
                       hintText: kLkmServerDefault,
@@ -1429,10 +1473,17 @@ class SettingsScreen extends HookConsumerWidget {
                         tooltip: 'settingsLkmServerTest'.tr(),
                         icon: const Icon(Symbols.network_check),
                         onPressed: () {
-                          ref
-                              .read(lkmServerProbeRequestedProvider.notifier)
-                              .request();
-                          ref.invalidate(lkmServerProbeProvider);
+                          final candidate = lkmController.text.trim();
+                          try {
+                            normalizeApiBase(candidate);
+                          } on ArgumentError {
+                            showSnackBar('settingsLkmServerInvalid'.tr());
+                            return;
+                          }
+                          probeTarget.value = candidate;
+                          ref.invalidate(
+                            lkmServerAddressProbeProvider(candidate),
+                          );
                         },
                       ),
                       border: OutlineInputBorder(
@@ -1455,12 +1506,28 @@ class SettingsScreen extends HookConsumerWidget {
                       showSnackBar('settingsApplied'.tr());
                     },
                   ),
-                  if (ref.watch(lkmServerProbeRequestedProvider)) ...[
-                    const SizedBox(height: 6),
-                    _LkmServerProbeLine(
-                      probe: ref.watch(lkmServerProbeProvider),
+                  if (probeTarget.value != null ||
+                      ref.watch(lkmServerProbeRequestedProvider))
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: lkmController,
+                      builder: (context, value, child) =>
+                          value.text.trim() ==
+                              (probeTarget.value ?? lkmServerUrl)
+                          ? child!
+                          : const SizedBox.shrink(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: _LkmServerProbeLine(
+                          probe: probeTarget.value == null
+                              ? ref.watch(lkmServerProbeProvider)
+                              : ref.watch(
+                                  lkmServerAddressProbeProvider(
+                                    probeTarget.value!,
+                                  ),
+                                ),
+                        ),
+                      ),
                     ),
-                  ],
                 ],
               ),
             ),
@@ -2387,10 +2454,28 @@ class SettingsScreen extends HookConsumerWidget {
                     ? selectedCategory.wideContent!(context)
                     : SingleChildScrollView(
                         padding: const EdgeInsets.only(bottom: 24),
-                        child: _SettingsSection(
-                          title: selectedCategory.title,
-                          localizedTitleKey: selectedCategory.localizedTitleKey,
-                          children: selectedCategory.children,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 960),
+                            margin: const EdgeInsets.all(16),
+                            child: Material(
+                              color: colorScheme.surfaceContainerLowest,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: colorScheme.outlineVariant,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: _SettingsSection(
+                                title: selectedCategory.title,
+                                localizedTitleKey:
+                                    selectedCategory.localizedTitleKey,
+                                children: selectedCategory.children,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
               ),
@@ -2505,6 +2590,7 @@ class SettingsScreen extends HookConsumerWidget {
                     searchQuery.value = '';
                     searchFocusNode.unfocus();
                   },
+                  tooltip: 'clear'.tr(),
                   icon: Icon(
                     Symbols.close,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -2548,21 +2634,31 @@ class SettingsScreen extends HookConsumerWidget {
               ) ??
               filteredCategories.first;
 
-          if (selectedCategoryId.value != selectedCategory.title) {
-            // Keep selection valid when search filters remove the prior category.
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (selectedCategoryId.value != selectedCategory.title) {
-                selectedCategoryId.value = selectedCategory.title;
-              }
-            });
-          }
-
           return buildSettingsList(
             constraints,
             filteredCategories,
             selectedCategory,
           );
         },
+      ),
+    );
+  }
+}
+
+class _AccountSettingsEntry extends ConsumerWidget {
+  const _AccountSettingsEntry();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signedIn = ref.watch(lkmApiSessionProvider).isSignedIn;
+    return ListTile(
+      contentPadding: _kSettingsTilePadding,
+      leading: const Icon(Symbols.manage_accounts),
+      title: Text((signedIn ? 'accountSettings' : 'login').tr()),
+      subtitle: Text('authFlow.accountSettingsHint'.tr()),
+      trailing: const Icon(Symbols.chevron_right),
+      onTap: () => context.router.push(
+        signedIn ? const AccountSettingsRoute() : LoginRoute(),
       ),
     );
   }

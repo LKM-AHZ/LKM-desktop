@@ -152,6 +152,8 @@ class _LkmAccountPage extends HookConsumerWidget {
         children: [
           _ProfileHeader(
             account: account,
+            onEdit: () =>
+                context.router.push(const AccountUpdateProfileRoute()),
             onAvatarTap: () => context.router.push(
               AccountProfileRoute(name: '', id: account.id),
             ),
@@ -296,10 +298,15 @@ class _LkmAccountPage extends HookConsumerWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.account, required this.onAvatarTap});
+  const _ProfileHeader({
+    required this.account,
+    required this.onAvatarTap,
+    required this.onEdit,
+  });
 
   final LkmAccount account;
   final VoidCallback onAvatarTap;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +354,12 @@ class _ProfileHeader extends StatelessWidget {
                   visualDensity: VisualDensity.compact,
                 ),
             ],
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: onEdit,
+            icon: const Icon(Symbols.edit, size: 18),
+            label: Text('updateYourProfile'.tr()),
           ),
           if (account.email != null && account.email!.isNotEmpty) ...[
             const SizedBox(height: 8),

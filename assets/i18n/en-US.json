@@ -3526,6 +3526,7 @@
   "settingsSaved": "Settings saved",
   "settingsServer": "Server",
   "settingsServerUrl": "Server URL",
+  "settingsLkmServerInvalid": "Enter a full http(s) server address.",
   "settingsLkmServerUrl": "LKM-service URL",
   "settingsLkmServerUrlHelper": "Host only — /api/v1 is appended automatically",
   "settingsLkmServerTest": "Test connection",
@@ -6094,6 +6095,11 @@
     "files": "Files"
   },
   "authFlow": {
+    "nicknameHint": "Leave blank to use your username. Up to 100 characters.",
+    "valueTooLong": "Use no more than {} characters.",
+    "avatarTooLarge": "Choose an image no larger than 2 MB.",
+    "avatarEmpty": "The selected image is empty.",
+    "accountSettingsHint": "Manage your nickname, avatar, account bindings and sign-in security.",
     "registerTitle": "Create account",
     "registerSubtitle": "Sign up for LKM-service with a username and password.",
     "modeNormal": "Username + contact",
