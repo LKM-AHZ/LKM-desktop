@@ -351,8 +351,7 @@ class _PinnedChatRoomTile extends HookConsumerWidget {
                 Text(
                   titleText,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight:
-                        hasUnread || presenceFriend != null || isActive
+                    fontWeight: hasUnread || presenceFriend != null || isActive
                         ? FontWeight.w600
                         : FontWeight.w500,
                     color: isActive
@@ -374,6 +373,7 @@ class _PinnedChatRoomTile extends HookConsumerWidget {
     );
   }
 }
+
 int _totalUnreadForRooms(
   Iterable<SnChatRoom> rooms,
   Map<String, SnChatSummary> summaries,
@@ -475,8 +475,9 @@ class _ChatListSkeleton extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Friend',
-                        style:
-                            theme.textTheme.labelSmall?.copyWith(height: 1.1),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          height: 1.1,
+                        ),
                       ),
                     ],
                   );
@@ -485,59 +486,56 @@ class _ChatListSkeleton extends StatelessWidget {
             ),
           ),
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: SolSpace.xl,
-                    vertical: SolSpace.md,
-                  ),
-                  child: Row(
-                    children: [
-                      const CircleAvatar(radius: 22),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Room title placeholder',
-                                    maxLines: 1,
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.1,
-                                    ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SolSpace.xl,
+                  vertical: SolSpace.md,
+                ),
+                child: Row(
+                  children: [
+                    const CircleAvatar(radius: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Room title placeholder',
+                                  maxLines: 1,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.1,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '12:00 PM',
-                                  style: theme.textTheme.labelSmall,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Latest chat message preview that fits in the tile line',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
                               ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '12:00 PM',
+                                style: theme.textTheme.labelSmall,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Latest chat message preview that fits in the tile line',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-              childCount: 8,
-            ),
+                    ),
+                  ],
+                ),
+              );
+            }, childCount: 8),
           ),
           const SliverGap(96),
         ],
@@ -553,6 +551,7 @@ class ChatListBodyWidget extends HookConsumerWidget {
   final List<SnChatGroup> chatGroups;
   final Future<void> Function() onChatGroupsChanged;
   final String? accountId;
+  final String searchQuery;
 
   /// Blank space held above the first room, in logical pixels.
   ///
@@ -571,6 +570,7 @@ class ChatListBodyWidget extends HookConsumerWidget {
     super.key,
     this.isFloating = false,
     this.headerGap = 0,
+    this.searchQuery = '',
     this.onScroll,
     required this.tabController,
     required this.selectedTab,
@@ -608,18 +608,22 @@ class ChatListBodyWidget extends HookConsumerWidget {
           accountId: accountId,
           chatGroups: chatGroups,
           onChatGroupsChanged: onChatGroupsChanged,
-          child: ChatRoomListTile(
-            room: room,
-            isDirect: room.type == 1,
-            selected: activeChatId == room.id,
-            pushNotificationsSuppressed:
-                accountStatus
-                    .whenData((data) => data)
-                    .value
-                    ?.isPushNotificationsSuppressed(room.id) ??
-                false,
-            onTap: () => _navigateToChatRoom(context, room.id),
-          ),
+          child:
+              ChatRoomListTile(
+                room: room,
+                isDirect: room.type == 1,
+                selected: activeChatId == room.id,
+                pushNotificationsSuppressed:
+                    accountStatus
+                        .whenData((data) => data)
+                        .value
+                        ?.isPushNotificationsSuppressed(room.id) ??
+                    false,
+                onTap: () => _navigateToChatRoom(context, room.id),
+              ).padding(
+                horizontal: isWideScreen(context) ? 8 : 0,
+                vertical: isWideScreen(context) ? 2 : 0,
+              ),
         ),
       );
     }
@@ -642,12 +646,13 @@ class ChatListBodyWidget extends HookConsumerWidget {
                 () => sortedItems
                     .where(
                       (item) =>
-                          selectedTabValue == 0 ||
-                          (selectedTabValue == 1 && item.type == 1) ||
-                          (selectedTabValue == 2 && item.type != 1),
+                          (selectedTabValue == 0 ||
+                              (selectedTabValue == 1 && item.type == 1) ||
+                              (selectedTabValue == 2 && item.type != 1)) &&
+                          chatRoomMatchesSearch(item, searchQuery),
                     )
                     .toList(),
-                [sortedItems, selectedTabValue],
+                [sortedItems, selectedTabValue, searchQuery],
               );
               final onlineFriends = useMemoized(
                 () => _getOnlineFriends(friendsOverview),
@@ -790,12 +795,7 @@ class ChatListBodyWidget extends HookConsumerWidget {
                           child: SizedBox(
                             height: 92,
                             child: HoverHorizontalScrollList(
-                              padding: const EdgeInsets.fromLTRB(
-                                12,
-                                10,
-                                12,
-                                8,
-                              ),
+                              padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
                               itemCount: pinnedItems.length,
                               separatorWidth: 2,
                               itemBuilder: (context, index) {
@@ -807,19 +807,18 @@ class ChatListBodyWidget extends HookConsumerWidget {
                                     isActive: activeChatId == room.id,
                                     isDirect: room.type == 1,
                                     onTap: () {
-                                      ref
-                                          .read(chatSummaryProvider.future)
-                                          .then((summary) {
-                                            if (summary[room.id]?.hasUnread ??
-                                                false) {
-                                              ref
-                                                  .read(
-                                                    chatSummaryProvider
-                                                        .notifier,
-                                                  )
-                                                  .clearUnreadCount(room.id);
-                                            }
-                                          });
+                                      ref.read(chatSummaryProvider.future).then(
+                                        (summary) {
+                                          if (summary[room.id]?.hasUnread ??
+                                              false) {
+                                            ref
+                                                .read(
+                                                  chatSummaryProvider.notifier,
+                                                )
+                                                .clearUnreadCount(room.id);
+                                          }
+                                        },
+                                      );
                                       if (isWideScreen(context)) {
                                         context.router.navigate(
                                           ChatRoomRoute(id: room.id),
@@ -1033,7 +1032,11 @@ class ChatListBodyWidget extends HookConsumerWidget {
                                 hasScrollBody: false,
                                 child: EmptyState(
                                   icon: Symbols.chat_bubble_outline,
-                                  title: 'noChatRoomsAvailable'.tr(),
+                                  title:
+                                      (searchQuery.trim().isEmpty
+                                              ? 'noChatRoomsAvailable'
+                                              : 'noResultsFound')
+                                          .tr(),
                                   compact: true,
                                 ),
                               );
@@ -1048,7 +1051,11 @@ class ChatListBodyWidget extends HookConsumerWidget {
                                 hasScrollBody: false,
                                 child: EmptyState(
                                   icon: Symbols.chat_bubble_outline,
-                                  title: 'noChatRoomsAvailable'.tr(),
+                                  title:
+                                      (searchQuery.trim().isEmpty
+                                              ? 'noChatRoomsAvailable'
+                                              : 'noResultsFound')
+                                          .tr(),
                                   compact: true,
                                 ),
                               );
@@ -1474,7 +1481,8 @@ class _ChatSplitBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasUnread = (ref.watch(chatUnreadCountProvider).value ?? 0) > 0 ||
+    final hasUnread =
+        (ref.watch(chatUnreadCountProvider).value ?? 0) > 0 ||
         ref.watch(chatReadSyncProvider).isLoading;
 
     return PillSplitBar(
@@ -1486,32 +1494,94 @@ class _ChatSplitBar extends ConsumerWidget implements PreferredSizeWidget {
   }
 }
 
-/// Floating controls above the wide chat layout's list pane.
-///
-/// The navigation toggle (where the rail cannot show one) and the section
-/// picker lead the pane's top row, with the mark-as-read action in its own
-/// capsule on the trailing edge.
-class _ChatListFloatingButtons extends ConsumerWidget {
+/// Fixed desktop header keeps search and creation available while scrolling.
+class _DesktopChatListHeader extends ConsumerWidget {
   final TabController tabController;
+  final TextEditingController searchController;
   final bool isSyncing;
-  final Color foreground;
 
-  const _ChatListFloatingButtons({
+  const _DesktopChatListHeader({
     required this.tabController,
+    required this.searchController,
     required this.isSyncing,
-    required this.foreground,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasUnread = (ref.watch(chatUnreadCountProvider).value ?? 0) > 0 ||
-        ref.watch(chatReadSyncProvider).isLoading;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final selfChatId = ref.watch(chatSelfIdProvider);
+    final invites = ref.watch(chatroomInvitesProvider);
 
-    return PillSplitBar(
-      statusTop: 0,
-      loading: isSyncing,
-      trailing: hasUnread ? _MarkAllReadButton(color: foreground) : null,
-      child: _ChatSectionButton(tabController: tabController),
+    return Material(
+      color: colors.surface,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                if (SolDrawerButton.isShownIn(context)) const SolDrawerButton(),
+                Expanded(
+                  child: Text('chat'.tr(), style: theme.textTheme.titleLarge),
+                ),
+                if (isSyncing)
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox.square(
+                      dimension: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                const _MarkAllReadButton(),
+                if (selfChatId != null)
+                  IconButton(
+                    tooltip: 'createChatRoom'.tr(),
+                    icon: const Icon(Symbols.edit_square, size: 20),
+                    onPressed: () =>
+                        ChatScreen._showCreateSheet(context, ref, invites),
+                  ),
+              ],
+            ),
+            const Gap(12),
+            TextField(
+              controller: searchController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: 'chatSearchRooms'.tr(),
+                prefixIcon: const Icon(Symbols.search, size: 20),
+                suffixIcon: searchController.text.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: 'clear'.tr(),
+                        icon: const Icon(Symbols.close, size: 18),
+                        onPressed: searchController.clear,
+                      ),
+                filled: true,
+                fillColor: colors.surfaceContainer,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const Gap(8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: _ChatSectionButton(tabController: tabController),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1523,10 +1593,13 @@ class ChatListWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabController = useMaterialTabController(initialLength: 3);
+    final searchController = useTextEditingController();
+    useListenable(searchController);
     final selectedTab = useState(
       0,
     ); // 0 for All, 1 for Direct Messages, 2 for Group Chats
-    final isSyncing = ref.watch(chatSyncingProvider) ||
+    final isSyncing =
+        ref.watch(chatSyncingProvider) ||
         ref.watch(chatSummaryProvider).isLoading;
     final lifecycleState = ref.watch(appLifecycleStateProvider);
     final previousLifecycleState = useRef<AppLifecycleState?>(null);
@@ -1611,37 +1684,29 @@ class ChatListWidget extends HookConsumerWidget {
     const maxSidebarWidth = 520.0;
 
     if (asideLayout) {
-      // No outer card: the pane floats on the page background, and only the
-      // floating pills carry a surface.
       return SizedBox(
         width: sidebarWidth.value,
         child: Stack(
           children: [
-            // The room list runs the full height of the pane; the band above
-            // it is reserved so the floating controls never cover a room.
-            ChatListBodyWidget(
-              isFloating: false,
-              tabController: tabController,
-              selectedTab: selectedTab,
-              chatGroups: chatGroups,
-              onChatGroupsChanged: refreshChatGroups,
-              accountId: accountId,
-              headerGap: kPillSplitBarBand,
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _ChatListFloatingButtons(
-                tabController: tabController,
-                isSyncing: isSyncing,
-                foreground: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 6,
-              child: ChatFabWidget().padding(bottom: 16, right: 8),
+            Column(
+              children: [
+                _DesktopChatListHeader(
+                  tabController: tabController,
+                  searchController: searchController,
+                  isSyncing: isSyncing,
+                ),
+                Expanded(
+                  child: ChatListBodyWidget(
+                    isFloating: false,
+                    tabController: tabController,
+                    selectedTab: selectedTab,
+                    chatGroups: chatGroups,
+                    onChatGroupsChanged: refreshChatGroups,
+                    accountId: accountId,
+                    searchQuery: searchController.text,
+                  ),
+                ),
+              ],
             ),
             Positioned(
               top: 0,

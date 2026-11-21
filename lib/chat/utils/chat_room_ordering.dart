@@ -27,7 +27,12 @@ bool chatRoomMatchesSearch(SnChatRoom room, String query) {
   final normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery.isEmpty) return true;
 
-  return [room.name, ...?room.members?.map((member) => member.account.nick)]
-      .whereType<String>()
-      .any((value) => value.toLowerCase().contains(normalizedQuery));
+  return [
+    room.name,
+    ...?room.members?.expand(
+      (member) => [member.account.nick, member.account.name, member.nick],
+    ),
+  ].whereType<String>().any(
+    (value) => value.toLowerCase().contains(normalizedQuery),
+  );
 }

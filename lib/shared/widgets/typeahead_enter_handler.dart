@@ -30,7 +30,8 @@ class TypeAheadEnterHandler<T> extends StatelessWidget {
       },
       child: Actions(
         actions: {
-          _TypeAheadEnterIntent: CallbackAction<_TypeAheadEnterIntent>(
+          _TypeAheadEnterIntent: _TypeAheadEnterAction(
+            controller: controller,
             onInvoke: (_) {
               final highlightedSuggestion =
                   suggestionsController.highlightedSuggestion;
@@ -58,6 +59,19 @@ class TypeAheadEnterHandler<T> extends StatelessWidget {
         child: child,
       ),
     );
+  }
+}
+
+// Let the text input method confirm its candidate before Enter can submit.
+class _TypeAheadEnterAction extends CallbackAction<_TypeAheadEnterIntent> {
+  final TextEditingController controller;
+
+  _TypeAheadEnterAction({required this.controller, required super.onInvoke});
+
+  @override
+  bool isEnabled(_TypeAheadEnterIntent intent) {
+    final composing = controller.value.composing;
+    return !composing.isValid || composing.isCollapsed;
   }
 }
 

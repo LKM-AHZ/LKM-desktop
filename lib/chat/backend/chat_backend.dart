@@ -175,10 +175,15 @@ class ChatBackend {
       _maxSeq[topic] ?? _int(_subs[topic]?['seq']);
 
   /// One realtime frame translated into the Solar message JSON shape.
-  Map<String, dynamic> messageJsonFor(TinodeMessage message) => chatMessageJson(
-    message,
-    memberFor: (uid) => memberFor(message.topic, uid),
-  );
+  Map<String, dynamic> messageJsonFor(TinodeMessage message) {
+    if (message.seq > (_maxSeq[message.topic] ?? 0)) {
+      _maxSeq[message.topic] = message.seq;
+    }
+    return chatMessageJson(
+      message,
+      memberFor: (uid) => memberFor(message.topic, uid),
+    );
+  }
 
   Future<Map<String, Map<String, dynamic>>> summaries() async {
     await _ensureClient();
@@ -214,9 +219,7 @@ class ChatBackend {
       final raw = await client.history(topic, limit: offset + take);
       final page = raw.reversed.skip(offset).take(take).toList();
       return ChatMessagePage(
-        messages: [
-          for (final message in page) _toRemote(topic, message),
-        ],
+        messages: [for (final message in page) _toRemote(topic, message)],
         totalCount: raw.length,
         hasMore: raw.length >= offset + take,
       );
@@ -241,6 +244,39 @@ class ChatBackend {
       totalCount: total,
       hasMore: offset + messages.length < total,
     );
+  }
+
+  /// Fetch all history newer than the sync boundary, paging by sequence so
+  /// deleted messages do not make an offset skip over undelivered rows.
+  Future<List<SnChatMessage>> messagesAfterTimestamp(
+    String topic,
+    int timestamp,
+  ) async {
+    await _ensureClient();
+    final result = <SnChatMessage>[];
+    int? before;
+    while (true) {
+      final page = await _client.history(topic, limit: 100, before: before);
+      if (page.isEmpty) break;
+      var oldestSequence = page.first.seq;
+      var reachedBoundary = false;
+      for (final message in page) {
+        if (message.seq < oldestSequence) oldestSequence = message.seq;
+        final remote = _toRemote(topic, message);
+        if (remote.createdAt.millisecondsSinceEpoch < timestamp) {
+          reachedBoundary = true;
+        } else {
+          result.add(remote);
+        }
+      }
+      if (reachedBoundary || oldestSequence <= 1) break;
+      if (before != null && oldestSequence >= before) {
+        // Do not advance the global cursor past history we could not scan.
+        throw StateError('Chat history cursor did not advance');
+      }
+      before = oldestSequence;
+    }
+    return result;
   }
 
   Future<SnChatMessage?> fetchMessage(String topic, String messageId) async {

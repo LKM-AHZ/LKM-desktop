@@ -388,14 +388,14 @@ void main() {
     await disposeTree(tester);
   });
 
-  testWidgets('an online DM paints the explore presence badge', (
-    tester,
-  ) async {
+  testWidgets('an online DM paints the explore presence badge', (tester) async {
     final nia = _account('nia', 'Nia');
     await pumpList(
       tester,
       const Size(400, 800),
-      rooms: [_room('d1', 'Nia', type: 1, members: [_member(nia)])],
+      rooms: [
+        _room('d1', 'Nia', type: 1, members: [_member(nia)]),
+      ],
       // A busy friend: the badge must follow the status colour, not paint a
       // fixed green dot the way the pinned tile used to.
       friends: [_friend(nia, isOnline: true, type: SnAccountStatusType.busy)],
@@ -429,7 +429,9 @@ void main() {
     await pumpList(
       tester,
       const Size(400, 800),
-      rooms: [_room('d1', 'Nia', type: 1, members: [_member(nia)])],
+      rooms: [
+        _room('d1', 'Nia', type: 1, members: [_member(nia)]),
+      ],
       friends: [_friend(nia, isOnline: false)],
     );
 
@@ -441,51 +443,56 @@ void main() {
     await disposeTree(tester);
   });
 
-  testWidgets('wide: the picker leads the pane while the controls float', (
+  testWidgets('wide: search filters rooms and clears without losing filters', (
     tester,
   ) async {
     await pumpList(
       tester,
       const Size(1400, 900),
-      rooms: [_room('r1', 'Design crew'), _room('r2', 'Ops')],
+      rooms: [
+        _room('r1', 'Design crew'),
+        _room('r2', 'Ops'),
+        _room('d1', 'Design DM', type: 1),
+      ],
     );
 
     expect(tester.takeException(), isNull);
+    expect(find.text('Chat'), findsOneWidget);
+    expect(find.byType(PillSurface), findsNothing);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.byTooltip('Create a Room'), findsOneWidget);
+    final search = find.byType(TextField);
+    expect(search, findsOneWidget);
+    expect(
+      tester.getBottomLeft(search).dy,
+      lessThan(tester.getTopLeft(find.byType(ChatRoomListTile).first).dy),
+    );
+
+    await tester.enterText(search, '  DESIGN  ');
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.byType(ChatRoomListTile), findsNWidgets(2));
-    // The pane carries no "Chat" title any more: the section picker takes the
-    // leading slot of the floating band.
-    expect(find.byType(PillAppBar), findsNothing);
-    expect(find.text('Chat'), findsNothing);
-    expect(find.byType(PillSurface), findsNWidgets(2));
-    expect(find.byType(BackdropFilter), findsNothing);
-    // The three-way switcher is the explore page's dropdown, not a tab strip.
-    expect(find.byType(TabBar), findsNothing);
-    expect(find.byType(MenuAnchor), findsOneWidget);
+    expect(find.text('Ops'), findsNothing);
 
-    // Navigation toggle first, then the picker: both lead the pane's row
-    // instead of the picker sitting flush right.
-    final navLeft = tester.getTopLeft(find.byType(GlassNavigationButton)).dx;
-    final pickerLeft = tester.getTopLeft(find.byType(MenuAnchor)).dx;
-    expect(pickerLeft, greaterThan(navLeft));
-    expect(pickerLeft, lessThan(400));
-    expect(
-      tester.getCenter(find.byType(MenuAnchor)).dy,
-      closeTo(tester.getCenter(find.byType(GlassNavigationButton)).dy, 1),
-    );
-    expect(
-      tester.getTopLeft(find.byType(ChatRoomListTile).first).dy,
-      closeTo(kPillSplitBarBand, 1),
-    );
+    await tester.tap(find.text('All'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.widgetWithText(MenuItemButton, 'Group Chats'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(ChatRoomListTile), findsOneWidget);
+    expect(find.text('Design crew'), findsOneWidget);
 
-    // The pane no longer paints a card surface of its own: only the header
-    // pills carry a surface, and the list floats on the page background.
-    expect(
-      find.descendant(
-        of: find.byType(ChatListWidget),
-        matching: find.byType(Card),
-      ),
-      findsNothing,
-    );
+    await tester.enterText(search, 'missing');
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('No results found'), findsOneWidget);
+    expect(find.byType(ChatRoomListTile), findsNothing);
+
+    await tester.tap(find.byTooltip('Clear'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(ChatRoomListTile), findsNWidgets(2));
+    expect(find.text('Group Chats'), findsOneWidget);
+    expect(find.text('Design DM'), findsNothing);
+    expect(tester.takeException(), isNull);
 
     await disposeTree(tester);
   });

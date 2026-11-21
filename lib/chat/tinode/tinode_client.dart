@@ -139,10 +139,15 @@ class TinodeEvent {
 }
 
 class _Pending {
-  _Pending({required this.collectData, required this.awaitMeta});
+  _Pending({
+    required this.collectData,
+    required this.awaitMeta,
+    this.acceptsData,
+  });
 
   final bool collectData;
   final bool awaitMeta;
+  final bool Function(TinodeMessage)? acceptsData;
   final data = <TinodeMessage>[];
   final meta = <Map<String, dynamic>>[];
   final completer = Completer<_Result>();
@@ -265,9 +270,17 @@ class TinodeClient {
 
   /// Publishes a message; `content` is the Tinode JSON payload (`txt`, `img`…).
   Future<TinodeMessage> send(String topic, Map<String, dynamic> content) async {
-    final result = await _call({
-      'pub': {'topic': topic, 'content': jsonEncode(content)},
-    }, collectData: true);
+    final encodedContent = jsonEncode(content);
+    final result = await _call(
+      {
+        'pub': {'topic': topic, 'content': encodedContent},
+      },
+      collectData: true,
+      acceptsData: (message) =>
+          message.topic == topic &&
+          message.from == userId &&
+          jsonEncode(message.content) == encodedContent,
+    );
     final ctrl = result.ctrl;
     if (ctrl == null || ctrl.code >= 400) {
       throw TinodeException(
@@ -280,7 +293,7 @@ class TinodeClient {
     return TinodeMessage(
       topic: topic,
       from: userId ?? '',
-      seq: 0,
+      seq: int.tryParse('${ctrl.params['seq'] ?? 0}') ?? 0,
       ts: DateTime.now(),
       content: content,
     );
@@ -294,13 +307,20 @@ class TinodeClient {
     int? before,
     int? since,
   }) async {
-    final result = await _call({
-      'get': {
-        'topic': topic,
-        'what': 'data',
-        'data': {'limit': limit, 'before': ?before, 'since': ?since},
+    final result = await _call(
+      {
+        'get': {
+          'topic': topic,
+          'what': 'data',
+          'data': {'limit': limit, 'before': ?before, 'since': ?since},
+        },
       },
-    }, collectData: true);
+      collectData: true,
+      acceptsData: (message) =>
+          message.topic == topic &&
+          (before == null || message.seq < before) &&
+          (since == null || message.seq >= since),
+    );
     final ctrl = result.ctrl;
     if (ctrl != null && ctrl.code >= 400) {
       throw TinodeException('history failed: ${ctrl.text}', code: ctrl.code);
@@ -310,10 +330,7 @@ class TinodeClient {
 
   /// Reads topic metadata: `desc` carries `public`/`private`/`acs`, `sub`
   /// carries the subscriber list.
-  Future<Map<String, dynamic>?> meta(
-    String topic,
-    String what,
-  ) async {
+  Future<Map<String, dynamic>?> meta(String topic, String what) async {
     final result = await _call({
       'get': {'topic': topic, 'what': what},
     }, awaitMeta: true);
@@ -331,8 +348,7 @@ class TinodeClient {
     final raw = meta['sub'];
     if (raw is! List) return const [];
     return [
-      for (final item in raw.whereType<Map>())
-        Map<String, dynamic>.from(item),
+      for (final item in raw.whereType<Map>()) Map<String, dynamic>.from(item),
     ];
   }
 
@@ -440,10 +456,16 @@ class TinodeClient {
   }
 
   Future<void> close() async {
+    final channel = _channel;
+    _channel = null;
+    final pending = _pending;
+    _pending = null;
+    if (pending != null && !pending.completer.isCompleted) {
+      pending.completer.completeError(const TinodeException('client closed'));
+    }
     await _subscription?.cancel();
     _subscription = null;
-    await _channel?.sink.close();
-    _channel = null;
+    await channel?.sink.close();
     _pending = null;
     await _events.close();
   }
@@ -454,9 +476,15 @@ class TinodeClient {
     Map<String, dynamic> body, {
     bool collectData = false,
     bool awaitMeta = false,
+    bool Function(TinodeMessage)? acceptsData,
   }) {
     final future = _queue.then(
-      (_) => _doCall(body, collectData: collectData, awaitMeta: awaitMeta),
+      (_) => _doCall(
+        body,
+        collectData: collectData,
+        awaitMeta: awaitMeta,
+        acceptsData: acceptsData,
+      ),
     );
     // Keep the chain alive even when this request fails.
     _queue = future.then<void>((_) {}, onError: (_) {});
@@ -467,18 +495,26 @@ class TinodeClient {
     Map<String, dynamic> body, {
     required bool collectData,
     required bool awaitMeta,
+    bool Function(TinodeMessage)? acceptsData,
   }) {
     final channel = _channel;
     if (channel == null) {
       return Future.error(const TinodeException('not connected'));
     }
-    final pending = _Pending(collectData: collectData, awaitMeta: awaitMeta);
+    final pending = _Pending(
+      collectData: collectData,
+      awaitMeta: awaitMeta,
+      acceptsData: acceptsData,
+    );
     _pending = pending;
     _send({...body, 'id': '${++_id}'});
     return pending.completer.future.timeout(
       _timeout,
       onTimeout: () {
-        if (identical(_pending, pending)) _pending = null;
+        // Replies have no request id. Once one times out, a late reply could
+        // otherwise complete the next FIFO request with the wrong response.
+        _onClosed(const TinodeException('request timed out'));
+        unawaited(channel.sink.close());
         throw const TinodeException('request timed out');
       },
     );
@@ -522,7 +558,9 @@ class TinodeClient {
       final topic = '${json['topic'] ?? _lastTopic}';
       final message = TinodeMessage.fromJson(topic, json);
       final pending = _pending;
-      if (pending != null && pending.collectData) {
+      if (pending != null &&
+          pending.collectData &&
+          (pending.acceptsData?.call(message) ?? true)) {
         pending.data.add(message);
       } else {
         _events.add(TinodeEvent('data', json));
@@ -570,7 +608,9 @@ class TinodeClient {
   }
 
   void _onClosed([Object? error]) {
+    if (_channel == null) return;
     _channel = null;
+    unawaited(_subscription?.cancel());
     _subscription = null;
     final pending = _pending;
     _pending = null;

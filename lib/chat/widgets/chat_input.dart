@@ -1550,6 +1550,15 @@ class ChatInput extends HookConsumerWidget {
       final isEnter = event.logicalKey == LogicalKeyboardKey.enter;
 
       if (isEnter) {
+        final composing = messageController.value.composing;
+        if (composing.isValid && !composing.isCollapsed) {
+          return KeyEventResult.ignored;
+        }
+        if (!isShiftPressed &&
+            suggestionsController.isOpen &&
+            suggestionsController.highlightedSuggestion != null) {
+          return KeyEventResult.ignored;
+        }
         if (isShiftPressed) {
           insertNewLine();
           return KeyEventResult.handled;
@@ -1562,18 +1571,17 @@ class ChatInput extends HookConsumerWidget {
       return KeyEventResult.ignored;
     };
 
-    final double leftMargin = isWideScreen(context) ? 8 : 16;
-    final double rightMargin = isWideScreen(context) ? leftMargin : 16;
+    final isWide = isWideScreen(context);
+    const double leftMargin = 16;
+    const double rightMargin = 16;
     // Keep clear of the home indicator / windowed safe area (iPad split view,
     // Stage Manager, iPhone landscape). When the keyboard is up, the system
     // reports a zero bottom padding, so this stays at the resting 16 there.
     final double bottomMargin = 16 + MediaQuery.paddingOf(context).bottom;
-    final inputBorderRadius = BorderRadius.circular(32);
+    final inputBorderRadius = BorderRadius.circular(isWide ? 12 : 32);
 
     List<SnChatMember> getValidMembers(List<SnChatMember> members) {
-      return members
-          .where((member) => member.accountId != selfChatId)
-          .toList();
+      return members.where((member) => member.accountId != selfChatId).toList();
     }
 
     final roomEncryptKey = chatRoom.encryptionMode == 3
@@ -1593,6 +1601,17 @@ class ChatInput extends HookConsumerWidget {
       // also swallowed the pointer over the whole strip, which would stop taps
       // from reaching the messages the composer floats above.
       child: Container(
+        decoration: isWide
+            ? BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                borderRadius: inputBorderRadius,
+                border: Border.all(
+                  color: isDraggingOver.value
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.outlineVariant,
+                ),
+              )
+            : null,
         margin: EdgeInsets.only(
           top: 10,
           left: leftMargin,
@@ -1600,6 +1619,7 @@ class ChatInput extends HookConsumerWidget {
           bottom: bottomMargin,
         ),
         child: PillSurface(
+          t: isWide ? 0 : 1,
           radius: inputBorderRadius,
           highlight: isDraggingOver.value,
           contentPadding: const EdgeInsets.symmetric(
@@ -2340,13 +2360,18 @@ class ChatInput extends HookConsumerWidget {
                                             chatRoom.name == null)
                                         ? 'chatDirectMessageHint'.tr(
                                             args: [
-                                              getValidMembers(chatRoom.members!)
+                                              getValidMembers(
+                                                    chatRoom.members ??
+                                                        const [],
+                                                  )
                                                   .map((e) => e.account.nick)
                                                   .join(', '),
                                             ],
                                           )
                                         : 'chatMessageHint'.tr(
-                                            args: [chatRoom.name!],
+                                            args: [
+                                              chatRoom.name ?? 'chat'.tr(),
+                                            ],
                                           ),
                                     border: InputBorder.none,
                                     filled: false,
@@ -2360,8 +2385,8 @@ class ChatInput extends HookConsumerWidget {
                                         ? '${messageController.text.length}/4096'
                                         : null,
                                   ),
-                                  maxLines: 5,
-                                  minLines: 1,
+                                  maxLines: isWide ? 8 : 5,
+                                  minLines: isWide ? 2 : 1,
                                   onTapOutside: (_) => FocusManager
                                       .instance
                                       .primaryFocus
@@ -2514,9 +2539,9 @@ class ChatInput extends HookConsumerWidget {
                           ),
                   ),
                   if (!isVoiceMode.value)
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      color: Theme.of(context).colorScheme.primary,
+                    IconButton.filled(
+                      tooltip: 'send'.tr(),
+                      icon: const Icon(Icons.arrow_upward, size: 20),
                       onPressed: canCompose ? send : null,
                     ),
                 ],

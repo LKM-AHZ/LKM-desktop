@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -209,6 +210,133 @@ void main() {
     );
   });
 
+  test(
+    'history preserves live messages outside its topic and seq window',
+    () async {
+      final server = _FakeTinode((ws, frame) {
+        if (_replyAuth(ws, frame)) return;
+        if (frame['get'] != null) {
+          for (final entry in [('other', 1), ('grp', 20), ('grp', 9)]) {
+            ws.add(
+              jsonEncode({
+                'data': {
+                  'topic': entry.$1,
+                  'seq': entry.$2,
+                  'from': 'usrPeer',
+                  'content': {'txt': '${entry.$2}'},
+                },
+              }),
+            );
+          }
+          _reply(ws, {'code': 208, 'topic': 'grp'});
+        }
+      });
+      await server.start();
+      addTearDown(server.stop);
+      final client = TinodeClient(
+        endpoint: Uri.parse(server.url),
+        apiKey: 'key',
+      );
+      addTearDown(client.close);
+      await client.connect('token');
+      final events = <TinodeEvent>[];
+      final subscription = client.events.listen(events.add);
+      addTearDown(subscription.cancel);
+      final page = await client.history('grp', before: 10);
+      await Future<void>.delayed(Duration.zero);
+      expect(page.map((m) => m.seq), [9]);
+      expect(events.map((e) => e.payload['topic']), ['other', 'grp']);
+      expect(events.last.payload['seq'], 20);
+    },
+  );
+
+  test(
+    'a peer message during publish is not used as the send result',
+    () async {
+      final server = _FakeTinode((ws, frame) {
+        if (_replyAuth(ws, frame)) return;
+        final pub = frame['pub'];
+        if (pub is Map) {
+          for (final from in ['usrABC', 'usrPeer']) {
+            ws.add(
+              jsonEncode({
+                'data': {
+                  'topic': pub['topic'],
+                  'seq': from == 'usrABC' ? 1 : 2,
+                  'from': from,
+                  'content': pub['content'],
+                },
+              }),
+            );
+          }
+          _reply(ws, {'code': 200, 'topic': pub['topic']});
+        }
+      });
+      await server.start();
+      addTearDown(server.stop);
+      final client = TinodeClient(
+        endpoint: Uri.parse(server.url),
+        apiKey: 'key',
+      );
+      addTearDown(client.close);
+      await client.connect('token');
+      final received = client.events.firstWhere(
+        (event) => event.kind == 'data',
+      );
+      final sent = await client.send('grp', {'txt': 'hello'});
+      expect(sent.from, 'usrABC');
+      expect((await received).payload['from'], 'usrPeer');
+    },
+  );
+
+  test(
+    'timeout closes FIFO transport before the next queued request',
+    () async {
+      final server = _FakeTinode((ws, frame) {
+        _replyAuth(ws, frame);
+      });
+      await server.start();
+      addTearDown(server.stop);
+      final client = TinodeClient(
+        endpoint: Uri.parse(server.url),
+        apiKey: 'key',
+        timeout: const Duration(milliseconds: 100),
+      );
+      addTearDown(client.close);
+      await client.connect('token');
+      final first = expectLater(
+        client.history('first'),
+        throwsA(isA<TinodeException>()),
+      );
+      final second = expectLater(
+        client.history('second'),
+        throwsA(isA<TinodeException>()),
+      );
+      await Future.wait([first, second]);
+      expect(client.isConnected, isFalse);
+      expect(server.frames.where((f) => f['get'] != null).length, 1);
+    },
+  );
+
+  test('closing the client fails in-flight requests immediately', () async {
+    final requested = Completer<void>();
+    final server = _FakeTinode((ws, frame) {
+      if (_replyAuth(ws, frame)) return;
+      if (frame['get'] != null) requested.complete();
+    });
+    await server.start();
+    addTearDown(server.stop);
+    final client = TinodeClient(endpoint: Uri.parse(server.url), apiKey: 'key');
+    await client.connect('token');
+    final failure = expectLater(
+      client.history('grp'),
+      throwsA(isA<TinodeException>()),
+    );
+    await requested.future;
+    await client.close();
+    await failure.timeout(const Duration(milliseconds: 500));
+  });
+
   test('tinodeEndpoint rewrites the LKM base URL to the chat websocket', () {
     expect(
       tinodeEndpoint(Uri.parse('https://community.example'))?.toString(),
@@ -219,4 +347,19 @@ void main() {
       'ws://127.0.0.1:8000/v0/channels',
     );
   });
+}
+
+bool _replyAuth(WebSocket ws, Map<String, dynamic> frame) {
+  if (frame['hi'] != null) {
+    _reply(ws, {'code': 201, 'params': {}});
+    return true;
+  }
+  if (frame['login'] != null) {
+    _reply(ws, {
+      'code': 200,
+      'params': {'user': 'usrABC'},
+    });
+    return true;
+  }
+  return false;
 }

@@ -359,12 +359,18 @@ class MessageSender {
   MessageSendSession retryMessage(
     String pendingMessageId, {
     required SnChatMember sender,
+    MessageSendRequest? request,
   }) {
     final events = _SendEvents();
     unawaited(
       _runSend(
         events,
-        () => _retryMessage(pendingMessageId, sender: sender, events: events),
+        () => _retryMessage(
+          pendingMessageId,
+          sender: sender,
+          events: events,
+          request: request,
+        ),
       ),
     );
     return events.session;
@@ -374,6 +380,7 @@ class MessageSender {
     String pendingMessageId, {
     required SnChatMember sender,
     required _SendEvents events,
+    MessageSendRequest? request,
   }) async {
     final pending = _pendingCache.get(pendingMessageId);
     if (pending == null) {
@@ -412,9 +419,14 @@ class MessageSender {
         repliedMessageId: pending.repliedMessageId,
         forwardedMessageId: pending.forwardedMessageId,
         threadId: pending.threadId,
+        isEditing: request?.editingTo != null,
+        embeds: request?.embeds,
       );
 
-      final remoteMessage = await _sendToServer(payload: payload);
+      final remoteMessage = await _sendToServer(
+        payload: payload,
+        editingTo: request?.editingTo,
+      );
 
       final withPlaintext = _e2eeService?.isE2eeRoom == true
           ? E2eeMessageService.preserveSenderPlaintext(
@@ -424,17 +436,29 @@ class MessageSender {
             )
           : remoteMessage;
 
+      final editingTo = request?.editingTo;
       final sent = LocalChatMessage.fromRemoteMessage(
-        withPlaintext,
+        editingTo == null
+            ? withPlaintext
+            : _buildEditedTargetMessage(editingTo, withPlaintext),
         MessageStatus.sent,
       );
+      final eventMessage = editingTo == null
+          ? null
+          : LocalChatMessage.fromRemoteMessage(
+              withPlaintext,
+              MessageStatus.sent,
+            );
 
       _pendingCache.remove(pendingMessageId);
       await _repository.deleteMessage(pendingMessageId);
       await _repository.saveMessage(sent);
+      if (eventMessage != null && eventMessage.id != sent.id) {
+        await _repository.saveMessage(eventMessage);
+      }
 
       _logger.info('[retry:$pendingMessageId] Retry successful: ${sent.id}');
-      return SendResult.success(sent);
+      return SendResult.success(sent, eventMessage: eventMessage);
     } catch (e, stackTrace) {
       _logger.severe('[retry:$pendingMessageId] Retry failed', e, stackTrace);
 
@@ -683,69 +707,10 @@ class MessageSender {
       );
     }
 
-    // MLS (E2EE) messages must go through HTTP
-    if (_e2eeService?.isE2eeRoom == true) {
-      return _repository.sendMessage(payload, options: _mlsOptions);
-    }
-
-    // Try WebSocket first for non-E2EE rooms
-    if (_isWebSocketConnected) {
-      try {
-        return await _sendViaWebSocket(payload);
-      } catch (e) {
-        _logger.info('WebSocket send failed, falling back to HTTP: $e');
-      }
-    }
-
-    // HTTP fallback
-    return _repository.sendMessage(payload);
-  }
-
-  Future<SnChatMessage> _sendViaWebSocket(Map<String, dynamic> payload) async {
-    final ws = _ref.read(chatRealtimeProvider);
-    final wsState = _ref.read(chatRealtimeStateProvider.notifier);
-
-    final packet = WebSocketPacket(
-      type: 'messages.send',
-      endpoint: 'messager',
-      data: {'chat_room_id': _roomId, ...payload},
-    );
-
-    final completer = Completer<SnChatMessage>();
-    StreamSubscription? subscription;
-
-    subscription = ws.dataStream
-        .where((pkt) => pkt.type == 'messages.delivered')
-        .map((pkt) => pkt.data)
-        .where((data) => data is Map<String, dynamic>)
-        .cast<Map<String, dynamic>>()
-        .where((data) {
-          final roomId = data['chat_room_id']?.toString();
-          final clientId =
-              data['client_message_id']?.toString() ??
-              data['nonce']?.toString();
-          return roomId == _roomId && clientId == payload['client_message_id'];
-        })
-        .listen((data) {
-          subscription?.cancel();
-          final message = _parseMessage(data);
-          if (message != null) {
-            completer.complete(message);
-          } else {
-            completer.completeError('Invalid message response');
-          }
-        });
-
-    // Timeout
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!completer.isCompleted) {
-        subscription?.cancel();
-        completer.completeError(TimeoutException('Message delivery timeout'));
-      }
-    });
-
-    wsState.sendMessage(jsonEncode(packet));
-    return completer.future;
+    // The REST adapter and realtime bridge both publish through Tinode.
+    // Await that one request: replaying it after a shorter bridge timeout can
+    // publish the same message twice while the original is still queued.
+    return _repository.sendMessage(payload, options: _mlsOptions);
   }
 
   Future<SnChatMessage> _finalizePlaceholderAndWait(
@@ -837,10 +802,6 @@ class MessageSender {
       return null;
     }
   }
-
-  bool get _isWebSocketConnected => _ref
-      .read(chatRealtimeStateProvider)
-      .maybeWhen(connected: () => true, orElse: () => false);
 
   Options? get _mlsOptions => null;
 

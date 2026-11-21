@@ -320,6 +320,7 @@ class ChatOutboxNotifier extends Notifier<Map<String, List<ChatOutboxEntry>>> {
     final session = task.sender.retryMessage(
       pendingId,
       sender: task.request.sender,
+      request: task.request,
     );
     final result = await _observeSession(task, session);
     await _finish(task, result);

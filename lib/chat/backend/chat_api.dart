@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:solar_network_sdk/solar_network_sdk.dart';
 
 import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/tinode/tinode_provider.dart';
@@ -95,7 +96,6 @@ class ChatApiInterceptor extends Interceptor {
       return _ApiResult(await _backend.summaries());
     }
     if (path == '/messager/chat/unread' && method == 'GET') {
-      await _backend.rooms();
       var total = 0;
       for (final room in await _backend.rooms()) {
         total += _backend.unreadOf('${room['id']}');
@@ -111,7 +111,6 @@ class ChatApiInterceptor extends Interceptor {
       return const _ApiResult([]);
     }
     if (path == '/messager/chat/rooms/sync' && method == 'POST') {
-      await _backend.rooms();
       final rooms = await _backend.rooms();
       final summaries = await _backend.summaries();
       return _ApiResult({
@@ -396,30 +395,22 @@ class ChatApiInterceptor extends Interceptor {
     };
   }
 
-  /// The global sync the room-list refresh uses: every topic's messages newer
-  /// than the cursor, newest page only.
+  /// Capture the boundary before fetching: a message arriving in an already
+  /// scanned topic must remain eligible on the next pass.
   Future<Map<String, dynamic>> _globalSync(Map<String, dynamic> body) async {
     final cursor = int.tryParse('${body['last_sync_timestamp'] ?? 0}') ?? 0;
+    final syncStartedAt = DateTime.now().millisecondsSinceEpoch;
     final rooms = await _backend.rooms();
-    final messages = <Map<String, dynamic>>[];
+    final messages = <SnChatMessage>[];
     for (final room in rooms) {
-      final topic = '${room['id']}';
-      final page = await _backend.fetchMessages(topic, offset: 0, take: 100);
-      for (final message in page.messages) {
-        if (cursor > 0 && message.createdAt.millisecondsSinceEpoch <= cursor) {
-          continue;
-        }
-        messages.add(message.toJson());
-      }
+      messages.addAll(
+        await _backend.messagesAfterTimestamp('${room['id']}', cursor),
+      );
     }
-    messages.sort((a, b) {
-      final left = DateTime.tryParse('${a['created_at']}');
-      final right = DateTime.tryParse('${b['created_at']}');
-      return (right ?? DateTime(0)).compareTo(left ?? DateTime(0));
-    });
+    messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return {
-      'messages': messages,
-      'current_timestamp': DateTime.now().millisecondsSinceEpoch,
+      'messages': [for (final message in messages) message.toJson()],
+      'current_timestamp': syncStartedAt,
       'total_count': messages.length,
     };
   }
