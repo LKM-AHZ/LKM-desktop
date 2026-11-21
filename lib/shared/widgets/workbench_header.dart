@@ -12,13 +12,11 @@ class WorkbenchHeader extends StatelessWidget {
     required this.onSearch,
     required this.onAccount,
     required this.onSettings,
-    this.accountName,
     this.avatarUrl,
     this.fallbackName,
   });
 
   final String title;
-  final String? accountName;
   final String? avatarUrl;
   final String? fallbackName;
   final VoidCallback onSearch;
@@ -91,27 +89,13 @@ class WorkbenchHeader extends StatelessWidget {
                 const SizedBox(width: 4),
                 TextButton(
                   onPressed: onAccount,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (avatarUrl != null || fallbackName != null) ...[
-                        ProfilePictureWidget(
+                  child: avatarUrl != null || fallbackName != null
+                      ? ProfilePictureWidget(
                           imageUrl: avatarUrl,
                           fallbackName: fallbackName,
                           radius: 13,
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 110),
-                        child: Text(
-                          accountName ?? 'login'.tr(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
+                        )
+                      : Text('login'.tr()),
                 ),
               ],
             );

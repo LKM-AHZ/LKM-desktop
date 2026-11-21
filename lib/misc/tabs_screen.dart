@@ -569,7 +569,6 @@ class _TabsScreenContentState extends ConsumerState<_TabsScreenContent> {
                             orElse: () => allDestinations.first,
                           )
                           .label,
-                      accountName: me?.displayName,
                       avatarUrl: me == null
                           ? null
                           : userAvatarUrl(
