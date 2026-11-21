@@ -65,6 +65,9 @@ Future<List<SnFriendOverviewItem>> _withPulsarActivities(
 
 @riverpod
 Future<List<SnFriendOverviewItem>> friendsOverview(Ref ref) async {
+  // Signed-out visitors have no friends list; skip the Solar-only endpoint
+  // instead of logging a 404 on every dashboard build.
+  if (ref.watch(tokenProvider) == null) return const [];
   final client = ref.watch(solarNetworkClientProvider);
   final apiClient = ref.watch(apiClientProvider);
   final websocket = ref.watch(websocketProvider);
@@ -82,6 +85,7 @@ Future<List<SnFriendOverviewItem>> friendsOverview(Ref ref) async {
 
 final friendsOverviewExpandedProvider =
     FutureProvider<List<SnFriendOverviewItem>>((ref) async {
+      if (ref.watch(tokenProvider) == null) return const [];
       final apiClient = ref.watch(apiClientProvider);
       final websocket = ref.watch(websocketProvider);
       final subscription = websocket.dataStream.listen((packet) {

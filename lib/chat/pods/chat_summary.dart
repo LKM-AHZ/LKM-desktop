@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:island/chat/backend/chat_backend.dart';
 import 'package:island/chat/backend/chat_realtime.dart';
 import 'package:island/chat/backend/chat_api.dart';
+import 'package:island/core/api/api_providers.dart';
 import 'package:island/core/database.dart';
 import 'package:island/chat/pods/chat_subscribe.dart';
 import 'package:island/core/utils/bounded_id_set.dart';
@@ -112,6 +113,9 @@ class ChatUnreadCountNotifier extends _$ChatUnreadCountNotifier {
     });
 
     try {
+      // The chat adapter passes unmatched paths through when no Tinode session
+      // exists, so an anonymous visitor would hit a 404 on the LKM backend.
+      if (!ref.read(lkmApiSessionProvider).isSignedIn) return 0;
       final client = ref.read(chatApiProvider);
       final response = await client.get('/messager/chat/unread');
       return (response.data as num).toInt();
