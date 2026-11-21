@@ -56,18 +56,13 @@ class DriftStore {
         PRIMARY KEY(app_id, scope)
       )
     ''');
-    final legacyStarHope = await _connection.executor.runSelect(
-      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'starhope_workspaces'",
-      const [],
+    // StarHope 已移除：清掉旧的独立工作区表与归属它的快照行。
+    await _connection.executor.runCustom(
+      'DROP TABLE IF EXISTS starhope_workspaces',
     );
-    if (legacyStarHope.isNotEmpty) {
-      // Idempotent if interrupted between copying and dropping the old table.
-      await _connection.executor.runCustom('''
-        INSERT OR IGNORE INTO mini_app_workspaces(app_id, scope, payload)
-        SELECT 'starhope', scope, payload FROM starhope_workspaces
-      ''');
-      await _connection.executor.runCustom('DROP TABLE starhope_workspaces');
-    }
+    await _connection.executor.runCustom(
+      "DELETE FROM mini_app_workspaces WHERE app_id = 'starhope'",
+    );
     for (final table in _tables) {
       if (table == 'accounts') {
         await _connection.executor.runCustom('''

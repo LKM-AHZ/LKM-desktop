@@ -5,7 +5,6 @@ on:
     paths:
       - "webf/**"
       - "lib/mini_apps/**"
-      - "lib/starhope/**"
       - "lib/data/drift_store.dart"
       - "lib/data/database.drift_impl.dart"
       - "lib/route.dart"

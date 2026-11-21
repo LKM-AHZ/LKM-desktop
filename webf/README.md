@@ -1,6 +1,6 @@
 # 官方小程序（桌面 / Web）
 
-客户端通过 `assets/webf/manifest.json` 显示内置小程序列表，所有应用共用路由和宿主接口，通过平台容器分别在桌面和 Web 中运行。当前内置 StarHope、便签和番茄钟；账户页和学习看板的小程序入口均打开此列表，旧 `/starhope` 链接继续可用。
+客户端通过 `assets/webf/manifest.json` 显示内置小程序列表，所有应用共用路由和宿主接口，通过平台容器分别在桌面和 Web 中运行。当前内置便签和番茄钟；账户页和学习看板的小程序入口均打开此列表。
 
 ## 分层架构
 
@@ -48,7 +48,7 @@ const id = await miniApp.newId();
 
 API v1 提供 `context()`、`newId()`、`load<T>()`、`save(value)`、`request<T>(name, options)`。所有调用都是 Promise，失败时抛出 Error，其 message 为 `host`、`session`、`invalid`、`forbidden`、`storage`、`offline` 或 `sync`。保存失败时应用应保留输入并允许重试；只有保存成功才显示已保存。
 
-`load`/`save` 是每个应用自己的 JSON 快照，最大 16 MiB。数据按服务器、账户、小程序 ID 隔离，存入 Drift，独立于聊天缓存。便签和番茄钟只保存在本机；番茄钟保存截止时间，重新打开后恢复倒计时，但不提供后台系统通知。StarHope 的旧数据会自动迁移，题库、文件夹、作答记录继续使用原有同步协议。
+`load`/`save` 是每个应用自己的 JSON 快照，最大 16 MiB。数据按服务器、账户、小程序 ID 隔离，存入 Drift，独立于聊天缓存。便签和番茄钟只保存在本机；番茄钟保存截止时间，重新打开后恢复倒计时，但不提供后台系统通知。
 
 ## React 小程序
 
@@ -72,7 +72,7 @@ function App() {
 createRoot(document.getElementById('app')!).render(<App />);
 ```
 
-JSX 自动导入 `react/jsx-runtime`，无需添加 `import React`。React 的状态、effect、事件处理及宿主调用可参考 `notes/App.tsx`。便签采用 React 实现，沿用原来的 JSON 存储格式；StarHope、番茄钟仍采用 Vue，三者由同一构建命令打包。生产单文件构建不使用 Fast Refresh，也不包含 SSR / React Server Components。
+JSX 自动导入 `react/jsx-runtime`，无需添加 `import React`。React 的状态、effect、事件处理及宿主调用可参考 `notes/App.tsx`。便签采用 React 实现，沿用原来的 JSON 存储格式；番茄钟仍采用 Vue，两者由同一构建命令打包。生产单文件构建不使用 Fast Refresh，也不包含 SSR / React Server Components。
 
 ## 服务端请求
 
@@ -80,12 +80,12 @@ JSX 自动导入 `react/jsx-runtime`，无需添加 `import React`。React 的�
 
 ```json
 "requests": {
-  "questions.list": {"method": "GET", "path": "/starhope/questions"}
+  "items.list": {"method": "GET", "path": "/demo/items"}
 }
 ```
 
 ```ts
-const result = await miniApp.request('questions.list', {
+const result = await miniApp.request('items.list', {
   query: { since: '2026-11-13T00:00:00Z' },
 });
 ```
@@ -106,12 +106,12 @@ pnpm --dir webf build
 flutter test --no-pub test/core/mini_app_manifest_test.dart test/core/mini_app_bridge_test.dart test/core/mini_apps_screen_test.dart
 ```
 
-每个小程序构建为单文件 IIFE，CSS 一并内联，不允许额外模块导入或未内联的资源文件。生成的 HTML 与目录清单不提交；`flutter run` / `flutter build` 前先执行 `pnpm --dir webf build`（CI 发布构建同样先构建）。StarHope 支持五种题型、练习即时判分、考试到期交卷和历史恢复；文本题采用忽略大小写的原文匹配，不含 AI 评分。
+每个小程序构建为单文件 IIFE，CSS 一并内联，不允许额外模块导入或未内联的资源文件。生成的 HTML 与目录清单不提交；`flutter run` / `flutter build` 前先执行 `pnpm --dir webf build`（CI 发布构建同样先构建）。
 
 真实引擎回归需要对应平台 WebF 动态库：设置 `WEBF_LIBRARY_PATH` 为库目录，Linux 同时把该目录加入 `LD_LIBRARY_PATH`，再运行：
 
 ```sh
-flutter test --no-pub test/core/starhope_webf_runtime_test.dart test/core/mini_app_webf_runtime_test.dart
+flutter test --no-pub test/core/mini_app_webf_runtime_test.dart
 ```
 
 未配置动态库时会跳过这两项。设置 `MINI_APP_SCREENSHOT_DIR` 可从真实引擎回归导出便签和番茄钟截图，`MINI_APPS_SCREENSHOT` 可从列表界面测试导出截图。
@@ -127,6 +127,6 @@ Flutter 浏览器测试服务器不提供应用 assets，`test-browser.mjs` 会�
 
 浏览器回归在真实隔离 iframe 内运行同一份 React 便签产物，通过 SDK 和宿主桥接完成保存，并验证外部窗口不能伪造小程序请求。Web 部署需继续包含 `web/DRIFT_WEB_ASSETS.md` 说明的 SQLite WASM / worker 资源。
 
-当前原生 WebF 宿主管理器最多保留两个实例、同时挂载一个。存储采用整份快照写入，单应用多窗口并发和大型数据集需要后续扩展。StarHope 同步的 LWW 冲突处理依赖设备时钟。
+当前原生 WebF 宿主管理器最多保留两个实例、同时挂载一个。存储采用整份快照写入，单应用多窗口并发和大型数据集需要后续扩展。
 
 界面截图：[小程序列表](../docs/screenshots/mini-apps/catalog.png)、[便签（React / Web）](../docs/screenshots/mini-apps/notes-react-web.png)、[番茄钟](../docs/screenshots/mini-apps/pomodoro.png)。

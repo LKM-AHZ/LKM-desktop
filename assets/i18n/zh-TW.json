@@ -6205,7 +6205,6 @@
     "metric_memory_system_mb": "系統記憶體（MB）",
     "metric_thread_count": "執行緒數"
   },
-  "starHope": {"signIn": "登入後使用 StarHope"},
   "home": {
     "personal": "個人看板",
     "questions": "懸賞問答",

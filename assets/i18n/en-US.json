@@ -6395,7 +6395,6 @@
     "metric_memory_system_mb": "System memory (MB)",
     "metric_thread_count": "Threads"
   },
-  "starHope": {"signIn": "Sign in to use StarHope"},
   "home": {
     "personal": "My overview",
     "questions": "Bounty questions",

@@ -13,7 +13,7 @@ void main() {
       final apps = parseMiniAppCatalog(source);
       expect(
         apps.map((app) => app.id),
-        containsAll(['starhope', 'notes', 'pomodoro']),
+        containsAll(['notes', 'pomodoro']),
       );
       for (final app in apps) {
         expect(File(app.asset).existsSync(), isTrue);

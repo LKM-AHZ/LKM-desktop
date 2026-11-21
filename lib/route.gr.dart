@@ -89,7 +89,6 @@ import 'package:island/posts/screens/publisher_profile.dart' as _i60;
 import 'package:island/posts/widgets/compose/post_shuffle.dart' as _i58;
 import 'package:island/realms/screens/realm_detail.dart' as _i62;
 import 'package:island/realms/screens/realms.dart' as _i63;
-import 'package:island/starhope/starhope_screen.dart' as _i70;
 import 'package:island/stickers/screens/pack_detail.dart' as _i71;
 import 'package:island/stickers/screens/sticker_marketplace.dart' as _i72;
 import 'package:island/surveys/screens/survey_editor.dart' as _i74;
@@ -3056,22 +3055,6 @@ class SettingsRoute extends _i84.PageRouteInfo<void> {
     name,
     builder: (data) {
       return const _i69.SettingsScreen();
-    },
-  );
-}
-
-/// generated route for
-/// [_i70.StarHopeScreen]
-class StarHopeRoute extends _i84.PageRouteInfo<void> {
-  const StarHopeRoute({List<_i84.PageRouteInfo>? children})
-    : super(StarHopeRoute.name, initialChildren: children);
-
-  static const String name = 'StarHopeRoute';
-
-  static _i84.PageInfo page = _i84.PageInfo(
-    name,
-    builder: (data) {
-      return const _i70.StarHopeScreen();
     },
   );
 }

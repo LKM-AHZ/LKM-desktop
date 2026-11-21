@@ -9,8 +9,6 @@ import 'package:island/core/api/api_session.dart';
 import 'package:island/data/database.dart';
 import 'package:island/mini_apps/mini_app_bridge.dart';
 import 'package:island/mini_apps/mini_app_manifest.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:island/starhope/starhope_screen.dart';
 
 class _Adapter implements HttpClientAdapter {
   final requests = <RequestOptions>[];
@@ -55,9 +53,33 @@ String _token(String user) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
+  // 桥接层用一个最小清单夹具，覆盖声明式请求白名单，不依赖具体内置应用。
   final app = parseMiniAppCatalog(
-    File('assets/webf/manifest.json').readAsStringSync(),
-  ).singleWhere((app) => app.id == 'starhope');
+    jsonEncode({
+      'apiVersion': 1,
+      'apps': [
+        {
+          'id': 'demo',
+          'apiVersion': 1,
+          'version': '1.0.0',
+          'icon': '🧪',
+          'name': {'zh-CN': 'Demo'},
+          'description': {'zh-CN': 'Bridge fixture'},
+          'requests': {
+            'questions.pull': {'method': 'GET', 'path': '/demo/questions'},
+            'questions.push': {
+              'method': 'POST',
+              'path': '/demo/questions/sync',
+            },
+            'sessions.push': {
+              'method': 'POST',
+              'path': '/demo/sessions/sync',
+            },
+          },
+        },
+      ],
+    }),
+  ).single;
 
   test('scope normalizes server and isolates deployments and accounts', () {
     expect(miniAppUserId(_token('one')), 'one');
@@ -74,11 +96,10 @@ void main() {
       miniAppAccountScope('http://localhost:8000', 'one'),
       isNot(miniAppAccountScope('http://localhost:8000', 'two')),
     );
-    expect(const StarHopeScreen(), isNotNull);
   });
 
   test(
-    'bridge exposes only scoped data and limited StarHope endpoints, never credentials',
+    'bridge exposes only scoped data and limited declared endpoints, never credentials',
     () async {
       final adapter = _Adapter();
       final session = ApiSession(
@@ -104,7 +125,7 @@ void main() {
       final context = jsonDecode(await bridge.call('context', []));
       expect(context['data'], {
         'apiVersion': 1,
-        'appId': 'starhope',
+        'appId': 'demo',
         'version': '1.0.0',
         'userId': 'one',
         'locale': 'zh-CN',
@@ -128,7 +149,7 @@ void main() {
           'body': {'upserts': [], 'deletes': []},
         },
       ]);
-      expect(adapter.requests[0].uri.path, '/api/v1/starhope/questions');
+      expect(adapter.requests[0].uri.path, '/api/v1/demo/questions');
       expect(
         adapter.requests[0].queryParameters['since'],
         '2026-11-11T00:00:00Z',
@@ -137,7 +158,7 @@ void main() {
         adapter.requests[0].headers['Authorization'],
         'Bearer ${session.cachedAccessToken}',
       );
-      expect(adapter.requests[1].uri.path, '/api/v1/starhope/sessions/sync');
+      expect(adapter.requests[1].uri.path, '/api/v1/demo/sessions/sync');
       expect(adapter.requests[1].data, {'upserts': [], 'deletes': []});
       for (final name in [
         'agents',
@@ -232,16 +253,16 @@ void main() {
   test(
     'Drift reopens offline snapshots and chat snapshots do not erase them',
     () async {
-      final directory = await Directory.systemTemp.createTemp('lkm-starhope-');
+      final directory = await Directory.systemTemp.createTemp('lkm-mini-app-');
       final scope = miniAppAccountScope('http://localhost:8000', 'one');
       var db = AppDatabase.native(Future.value(directory.path));
       try {
-        await db.saveMiniApp('starhope', scope, '{"offline":"question"}');
-        expect(await db.readMiniApp('starhope', 'different-scope'), isNull);
+        await db.saveMiniApp('demo', scope, '{"offline":"question"}');
+        expect(await db.readMiniApp('demo', 'different-scope'), isNull);
         expect(await db.readMiniApp('notes', scope), isNull);
         await db.saveMiniApp('notes', scope, '["offline note"]');
         expect(
-          await db.readMiniApp('starhope', scope),
+          await db.readMiniApp('demo', scope),
           '{"offline":"question"}',
         );
         // Normal chat cache writes still exercise the existing persistence path.
@@ -249,47 +270,14 @@ void main() {
         await db.close();
         db = AppDatabase.native(Future.value(directory.path));
         expect(
-          await db.readMiniApp('starhope', scope),
+          await db.readMiniApp('demo', scope),
           '{"offline":"question"}',
         );
         expect(await db.readMiniApp('notes', scope), '["offline note"]');
         await db.reset();
         db = AppDatabase.native(Future.value(directory.path));
-        expect(await db.readMiniApp('starhope', scope), isNull);
+        expect(await db.readMiniApp('demo', scope), isNull);
         expect(await db.readMiniApp('notes', scope), isNull);
-      } finally {
-        await db.close();
-        await directory.delete(recursive: true);
-      }
-    },
-  );
-  test(
-    'legacy StarHope offline data migrates without changing account scopes',
-    () async {
-      final directory = await Directory.systemTemp.createTemp(
-        'lkm-mini-app-migrate-',
-      );
-      final scope = miniAppAccountScope('http://localhost:8000', 'one');
-      sqfliteFfiInit();
-      final old = await databaseFactoryFfi.openDatabase(
-        '${directory.path}/island.sqlite',
-      );
-      await old.execute(
-        'CREATE TABLE starhope_workspaces(scope TEXT PRIMARY KEY, payload TEXT NOT NULL)',
-      );
-      await old.execute('INSERT INTO starhope_workspaces VALUES (?, ?)', [
-        scope,
-        '{"legacy":true}',
-      ]);
-      await old.close();
-      var db = AppDatabase.native(Future.value(directory.path));
-      try {
-        expect(await db.readMiniApp('starhope', scope), '{"legacy":true}');
-        expect(await db.readMiniApp('notes', scope), isNull);
-        await db.saveMiniApp('starhope', scope, '{"new":true}');
-        await db.close();
-        db = AppDatabase.native(Future.value(directory.path));
-        expect(await db.readMiniApp('starhope', scope), '{"new":true}');
       } finally {
         await db.close();
         await directory.delete(recursive: true);

@@ -93,7 +93,7 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 100));
       });
       await tester.pumpAndSettle();
-      for (final name in ['StarHope', 'Notes', 'Focus timer']) {
+      for (final name in ['Notes', 'Focus timer']) {
         expect(find.text(name), findsOneWidget);
       }
       expect(tester.takeException(), isNull);

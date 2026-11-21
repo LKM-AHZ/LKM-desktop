@@ -64,7 +64,6 @@ class AppRouter extends RootStackRouter {
       builder: (_, data) =>
           MiniAppScreen(appId: data.pathParams.getString('appId')),
     ),
-    AutoRoute(page: StarHopeRoute.page, path: '/starhope'),
     AutoRoute(page: LibraryRoute.page, path: '/library/files'),
     AutoRoute(page: AiConsoleRoute.page, path: '/thoughts/console'),
     AutoRoute(
